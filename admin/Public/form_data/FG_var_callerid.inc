@@ -186,7 +186,7 @@ if (isset($form_action) && $form_action=="ask-edit") {
             $selecteddest = ($destination && array_search($destination,array_column($destlist,0))===false) ? "<OPTION value=\"$destination\">".$destination."</OPTION>" : NULL;
         } else $selecteddest = NULL;
 } else $selecteddest = NULL;
-$HD_Form -> AddEditElement (gettext("PHONE NUMBER"),
+$HD_Form -> AddEditElement (gettext("DESTINATION TO FORWARD"),
 			"phonenumber",
 			'$value',
 			($form_action=='ask-delete')?"INPUT":"DATALIST",

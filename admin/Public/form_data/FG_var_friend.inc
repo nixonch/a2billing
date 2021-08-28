@@ -629,7 +629,7 @@ $HD_Form -> AddEditElement (gettext("AVPF"),
 						   "",
 						   "",
 						   "",
-						    "list", "", "", "", $values_list['avpf'], "%1", "NO-NULL", gettext("Inter-operability with media streams using the AVPF RTP profile"));
+						    "list", "", "", "", $values_list['avpf'], "%1", "NO-NULL", gettext("Inter-operability with media streams using the AVPF RTP profile. Typically used for WebRTC technology (e.g. <a href=\"https://chrome.google.com/webstore/detail/webrtc-sip-phone-with-cli/pofkcckikkdhiieipefhkaelgnbdkcib\">WebRTC SIP Phone</a> for web browser)."));
 
 $HD_Form -> AddEditElement (gettext("FORCE_AVP"),
 						   "force_avp",

@@ -57,15 +57,6 @@ $HD_Form -> AddEditElement (gettext("COMPANY NAME"),
 			   gettext("Insert Company name"),
 			   "", "", "", "", "", "", "NO", "");
 
-$HD_Form -> AddEditElement (gettext("LASTNAME"),
-			   "lastname",
-			   '$value',
-			   "INPUT",
-			   "size=40 maxlength=50",
-			   "11",
-			   gettext("Insert the lastname of the customers"),
-			   "", "", "", "", "", "", "NO", "");
-
 $HD_Form -> AddEditElement (gettext("FIRSTNAME"),
 			   "firstname",
 			   '$value',
@@ -73,6 +64,15 @@ $HD_Form -> AddEditElement (gettext("FIRSTNAME"),
 			   "size=40 maxlength=50",
 			   "11",
 			   gettext("Insert the firstname of the customers"),
+			   "", "", "", "", "", "", "NO", "");
+
+$HD_Form -> AddEditElement (gettext("LASTNAME"),
+			   "lastname",
+			   '$value',
+			   "INPUT",
+			   "size=40 maxlength=50",
+			   "11",
+			   gettext("Insert the lastname of the customers"),
 			   "", "", "", "", "", "", "NO", "");
 
 $language_list = Constants::getLanguagesList();
@@ -267,7 +267,7 @@ $HD_Form -> AddEditElement (gettext("STORAGE"),
 	$add_fields_monitor = ', speech2mail, send_text, send_sound, monitor';
 } else	$add_fields_monitor = '';
 
-$HD_Form -> FieldEditElement ('company_name, lastname, firstname, language, id_timezone, phone, fax, address, city, state, zipcode, country, areaprefix, citylength, removeaddprefix, addprefixinternational, recalldays, recalltime'.$add_fields_voicemail.$add_fields_monitor);
+$HD_Form -> FieldEditElement ('company_name, firstname, lastname, language, id_timezone, phone, fax, address, city, state, zipcode, country, areaprefix, citylength, removeaddprefix, addprefixinternational, recalldays, recalltime'.$add_fields_voicemail.$add_fields_monitor);
 
 $HD_Form -> FG_INTRO_TEXT_ADD = gettext("you can add easily update your information clicking on the button.");
 

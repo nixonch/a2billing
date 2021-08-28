@@ -210,7 +210,7 @@ if ($form_action != 'ask-delete') {
 			    "", "", "", gettext("Yes").":1, - ".gettext("No").":0", "", "", "",
 			    gettext("Choose 'Yes' if you want to place this CallerID to Black List. This will break any autorization attempts from this CallerID."));
 
-	$HD_Form -> AddEditElement (gettext("PHONE FORWARD"),
+	$HD_Form -> AddEditElement (gettext("DESTINATION TO FORWARD"),
 			    "phonenumber",
 			    '$value',
 			    ($form_action=='ask-delete')?"INPUT":"DATALIST",

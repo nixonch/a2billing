@@ -60,7 +60,7 @@ if ($argc > 1 && ($argv[1] == '--version' || $argv[1] == '-v')) {
 
 /********** 	 CREATE THE AGI INSTANCE + ANSWER THE CALL		**********/
 $agi = new AGI();
-
+$agi-> set_variable('_PARENTCHANNAME', $agi -> get_variable("CDR(channel)", true));
 
 $optconfig = array();
 if ($argc > 1 && strstr($argv[1], "+")) {

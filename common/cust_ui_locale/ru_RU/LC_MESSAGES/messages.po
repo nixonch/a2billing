@@ -1125,7 +1125,7 @@ msgid "COMPANY"
 msgstr "КОМПАНИЯ"
 
 #: FG_var_logrefill:80
-msgid "BILLING"
+msgid "MONEY MATTERS"
 msgstr "ФИНАНСЫ"
 
 #: A2B_entity_logrefill:81

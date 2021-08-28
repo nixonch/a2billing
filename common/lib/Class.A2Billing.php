@@ -1997,6 +1997,8 @@ class A2Billing {
 	    while (true) {
 		if (!$this -> ivr($agi,$inst_listdestination[4],$initialdestination,$isvoip)) {
 			$this -> destination_start_inuse($agi, $inst_listdestination[1], false);
+			$RateEngine->dialstatus = $dialstatus = "CANCEL";
+			$RateEngine->rate_engine_updatesystem($this, $agi, $this->destination, $doibill, 2);
 			break 2;
 		}
 // IF VOIP CALL
@@ -2292,7 +2294,7 @@ $this -> debug( ERROR, $agi, __FILE__, __LINE__, "[ \033[1;34m".$bridgepeer." ".
     {
     	$card_number = $this -> username; // username of the caller
         $nbused = $this -> nbused;
-		$res = 0;
+	$res = $doibill = 0;
         $connection_charge = $listdestination[0][8];
         $selling_rate = $this->didsellrate = $listdestination[0][9];
 
@@ -2306,8 +2308,6 @@ $this -> debug( ERROR, $agi, __FILE__, __LINE__, "[ \033[1;34m".$bridgepeer." ".
 	
 	if (($listdestination[0][2]==0) || ($listdestination[0][2]==2)) {
 		$doibill = 1;
-	} else {
-		$doibill = 0;
 	}
 	$credit = $this -> credit;
         if (!$call_did_free) {
@@ -2380,6 +2380,8 @@ $this -> debug( ERROR, $agi, __FILE__, __LINE__, "[ \033[1;34m".$bridgepeer." ".
 	    while (true) {
 		if (!$this -> ivr($agi,$inst_listdestination[4],$initialdestination,$isvoip)) {
 			$this -> destination_start_inuse($agi, $inst_listdestination[1], false);
+			$RateEngine->dialstatus = $dialstatus = "CANCEL";
+			$RateEngine->rate_engine_updatesystem($this, $agi, $this->destination, $doibill, 2);
 			break 2;
 		}
             // IF call on did is not free calculate time to call
@@ -4230,7 +4232,8 @@ $this -> debug( ERROR, $agi, __FILE__, __LINE__, "FAXRESOLUTION: ".$faxresolutio
 					$prompt = "prepaid-auth-fail";
 
 				// CHECK IF THE CARD IS USED
-				if (($isused>0) && ($simultaccess!=1))	$prompt="prepaid-card-in-use";
+				if ($isused>0 && ($isused>$simultaccess || $simultaccess==0) && $simultaccess!=1)
+					$prompt="prepaid-card-in-use";
 				
 				// CHECK FOR EXPIRATION  -  enableexpire ( 0 : none, 1 : expire date, 2 : expire days since first use, 3 : expire days since creation)
 				if ($this->enableexpire>0) {
@@ -4412,7 +4415,8 @@ $this -> debug( ERROR, $agi, __FILE__, __LINE__, "FAXRESOLUTION: ".$faxresolutio
 					break;
 				}
 				// CHECK IF THE CARD IS USED
-				if (($isused>0) && ($simultaccess!=1))	$prompt="prepaid-card-in-use";
+				if ($isused>0 && ($isused>$simultaccess || $simultaccess==0) && $simultaccess!=1)
+					$prompt="prepaid-card-in-use";
 				// CHECK FOR EXPIRATION  -  enableexpire ( 0 : none, 1 : expire date, 2 : expire days since first use, 3 : expire days since creation)
 				if ($this->enableexpire>0) {
 					if ($this->enableexpire==1  && $this->expirationdate!='00000000000000' && strlen($this->expirationdate)>5) {
@@ -4649,7 +4653,8 @@ $this -> debug( ERROR, $agi, __FILE__, __LINE__, "FAXRESOLUTION: ".$faxresolutio
 				if ( $this->status != "1") 	$prompt = "prepaid-auth-fail";	// not expired but inactive.. probably not yet sold.. find better prompt
 				
 				// CHECK IF THE CARD IS USED
-				if (($isused>0) && ($simultaccess!=1))	$prompt="prepaid-card-in-use";
+				if ($isused>0 && ($isused>$simultaccess || $simultaccess==0) && $simultaccess!=1)
+					$prompt="prepaid-card-in-use";
 				
 				// CHECK FOR EXPIRATION  -  enableexpire ( 0 : none, 1 : expire date, 2 : expire days since first use, 3 : expire days since creation)
 				if ($this->enableexpire>0) {
@@ -4820,7 +4825,7 @@ $this -> debug( ERROR, $agi, __FILE__, __LINE__, "FAXRESOLUTION: ".$faxresolutio
 		}
 
 		// CHECK IF THE CARD IS USED
-		if (($isused>0) && ($simultaccess!=1)) {
+		if ($isused>0 && ($isused>$simultaccess || $simultaccess==0) && $simultaccess!=1) {
 			$error_msg = '<font face="Arial, Helvetica, sans-serif" size="2" color="red"><b>'.gettext("Error : Card is actually in use!!!").'</b></font><br>';
 			return 0;
 		}

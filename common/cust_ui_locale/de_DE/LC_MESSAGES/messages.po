@@ -815,13 +815,6 @@ msgstr "Login: "
 msgid "Password is "
 msgstr "Passwort: "
 
-
-
-
-
-
-
-
 #: form_data/FG_var_signup.inc:430 activate.php:111
 #: signup_confirmation.php:121
 msgid "Your password is "
@@ -832,7 +825,7 @@ msgid "SIGNUP"
 msgstr "REGISTIRIEREN"
 
 #: FG_var_logrefill:80
-msgid "BILLING"
+msgid "MONEY MATTERS"
 msgstr "FINANZEN"
 
 #: A2B_entity_logrefill:81

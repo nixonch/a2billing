@@ -182,7 +182,7 @@ $HD_Form -> AddEditElement (gettext("WebRTC"),
                                         "",
                                         "",
                                         "",
-                                        "list", "", "", "", $values_list['avpf'], "%1", "NO-NULL", gettext("Is this extension for WebRTC tech? (like webrtc_sip-phone for web browser)"));
+                                        "list", "", "", "", $values_list['avpf'], "%1", "NO-NULL", gettext("Is this extension for WebRTC tech? (like <a href=\"https://chrome.google.com/webstore/detail/webrtc-sip-phone-with-cli/pofkcckikkdhiieipefhkaelgnbdkcib\">WebRTC SIP Phone</a> for web browser)"));
 
 $HD_Form -> AddEditElement (gettext("NAT"),
 					"nat",

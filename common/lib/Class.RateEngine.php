@@ -2019,12 +2019,8 @@ $A2B -> debug( ERROR, $agi, __FILE__, __LINE__, 'set_callerid "'.$calleridname.'
 				if ($agi) {
 
 				    if ($this->dialstatus == "ANSWER") {
-//					$answeredtime					= $agi->get_variable("ANSWEREDTIME",true);
-//					if ($answeredtime == "")	$answeredtime	= $agi->get_variable("CDR(billsec)",true);
-					$answeredtime					= ceil(time()-$agi->get_variable("answer_timestamp",true));
-$tempdebug="Calculated TIME: ".$answeredtime.";  CDR(billsec): ".$agi->get_variable("CDR(billsec)",true).";  ANSWEREDTIME: ".$agi->get_variable("ANSWEREDTIME",true);
-//					$answeredtime					= $agi->get_variable("CDR(billsec)",true);
-//					if ($answeredtime == "")	$answeredtime	= $agi->get_variable("ANSWEREDTIME",true);
+					$answeredtime					= ceil(time()-$agi->get_variable("SHARED(ANSWER_TIMESTAMP)",true));
+$tempdebug="Calculated TIME: ".($answeredtime>100000?'Error time '.strftime('%Y-%m-%d %H:%M:%S',$answeredtime):$answeredtime).";  CDR(billsec): ".$agi->get_variable("CDR(billsec)",true).";  ANSWEREDTIME: ".$agi->get_variable("ANSWEREDTIME",true)."; ANSWER_TIMESTAMP: ".strftime('%Y-%m-%d %H:%M:%S',$agi -> get_variable("SHARED(ANSWER_TIMESTAMP)", true));
 					$temptime = $agi->get_variable("CDR(billsec)",true);
 					if ($answeredtime > 100000 || $answeredtime == $temptime - 1)	  $answeredtime = $temptime;
 					if ($answeredtime > 100000 || $answeredtime == 0)		  $answeredtime = $agi->get_variable("ANSWEREDTIME",true);
