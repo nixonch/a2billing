@@ -81,26 +81,30 @@ if (isset ($pr_email) && isset ($action)) {
 			foreach ($list as $recordset) {
 			    list ($id_card, $username, $lastname, $firstname, $email, $uipass, $cardalias, $phone, $secsleft) = $recordset;
 			}
-			if (!D7_API_TOKEN || $secsleft<3600) {
+			$notmobile = ((strpos($phone,'49')===0 && strpos($phone,'491')!==0) || strpos($phone,'38044')===0) ? true : false;
+			if (!D7_API_TOKEN || $secsleft<3600 || $notmobile) {
 			    foreach ($list as $recordset) {
 				list ($id_card, $username, $lastname, $firstname, $email, $uipass, $cardalias, $phone, $secsleft) = $recordset;
 				if (filter_var(trim($email), FILTER_VALIDATE_EMAIL)) try {
-				    $mail = new Mail(Mail :: $TYPE_FORGETPASSWORD, $id_card);
+				    $mail = new Mail(Mail::$TYPE_FORGETPASSWORD, $id_card);
+				    $mail -> replaceInEmail(Mail::$CUSTOMER_INTERFACE, CUSTOMER_INTERFACE_URL);
 				    $mail -> send();
+				    $mailto .= "<br>".preg_replace("/(?!^).(?=[^@]+@)/", "*", $email);
 				} catch (A2bMailException $e) {
 				    $error_msg = $e->getMessage();
 				}
 			    }
-			    sendForgot(5,gettext("Your login information email<br>has been sent to you."));
+			    if ($notmobile) {
+				sendForgot(5,gettext("Your home phone can't receive SMS.<br>Login information has been sent to your e-mailbox.").$mailto);
+			    } else {
+				sendForgot(5,gettext("Your login information email<br>has been sent to you.").$mailto);
+			    }
 			}
 			switch(LANGUAGE) {
 			    case 'german'	: $message = "Login: $cardalias\nPasswort: $uipass"; break;
 			    case 'russian'	: $message = "Логин: $cardalias\nПароль: $uipass"; break;
 			    case 'ukrainian'	: $message = "Логін: $cardalias\nПароль: $uipass"; break;
 			    default		: $message = "Login: $cardalias\nPassword: $uipass";
-			}
-			if ((strpos($phone,'49')===0 && strpos($phone,'491')!==0) || strpos($phone,'38044')===0) {
-			    sendForgot(5,gettext("Your home phone can't receive SMS.<br>Login information has been sent to your e-mailbox."));
 			}
 			$client = new GuzzleHttp\Client(['headers' => ['Authorization' => 'Basic '.D7_API_TOKEN]]);
 			$requestData = [
@@ -131,7 +135,8 @@ if (isset ($pr_email) && isset ($action)) {
 			    foreach ($list as $recordset) {
 				list ($id_card, $username, $lastname, $firstname, $email, $uipass, $cardalias, $phone, $secsleft) = $recordset;
 				if (filter_var(trim($email), FILTER_VALIDATE_EMAIL)) try {
-				    $mail = new Mail(Mail :: $TYPE_FORGETPASSWORD, $id_card);
+				    $mail = new Mail(Mail::$TYPE_FORGETPASSWORD, $id_card);
+				    $mail -> replaceInEmail(Mail::$CUSTOMER_INTERFACE, CUSTOMER_INTERFACE_URL);
 				    $mail -> send();
 				} catch (A2bMailException $e) {
 				    $error_msg = $e->getMessage();
@@ -159,6 +164,7 @@ if (isset ($pr_email) && isset ($action)) {
 			list ($id_card, $username, $lastname, $firstname, $email, $uipass, $cardalias) = $recordset;
 			try {
 				$mail = new Mail(Mail :: $TYPE_FORGETPASSWORD, $id_card);
+				$mail -> replaceInEmail(Mail::$CUSTOMER_INTERFACE, CUSTOMER_INTERFACE_URL);
 				$mail -> send();
 			} catch (A2bMailException $e) {
 				sendForgot(7,gettext("Mail sender error.<br>Try again please."));
@@ -255,5 +261,7 @@ $smarty -> assign("error", $error);
 
 $smarty -> assign("username", $username);
 $smarty -> assign("password", $password);
+
+$smarty -> assign("SECONDARY_TITLE", "Sign in or Register");
 
 $smarty -> display('index.tpl');

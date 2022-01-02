@@ -995,6 +995,9 @@ SPAN.errorText {
 	border-left: #FF7777 1px dashed;
 	border-bottom: #FF7777 1px dashed;
 }
+input:focus{
+	outline: 1px solid #555;
+}
 
 .viewhandler_span2
 {	

@@ -113,7 +113,7 @@ switch ($error) {
 		$login_message = gettext("Please provide your email address to get your login information.");
 		break;
 }
-
+$_SESSION["last_page"] = "Forgot password";
 $smarty->display('header.tpl');
 
 ?>

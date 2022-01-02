@@ -289,7 +289,7 @@ class FormBO {
 		    $total = number_format($result[0]['credit'], 2);
 		    $lang = $result[0]['language'];
 		    switch($lang) {
-			case 'de': $message = "Sehr geehrter Kunde, Sie haben Ihrem Konto $credit$currency hinzugefügt. Ihr Guthaben beträgt jetzt $total$currency."; break;//" Wir wünschen eine angenehme Verbindung!"; break;
+			case 'de': $message = "Sehr geehrter Kunde, Sie haben Ihrem Konto $credit$currency hinzugefügt. Ihr Guthaben beträgt jetzt $total$currency."; break;/**" Wir wünschen eine angenehme Verbindung!";**/
 			case 'ru': $message = "Ваш счёт пополнен на $credit$currency. Общий баланс $total$currency. Приятного общения!"; break;
 			case 'uk': $message = "Рахунок поповнено на $credit$currency. Залишок $total$currency. Приємного спілкування!"; break;
 			default  : $message = "Your account has been recharged for $credit$currency. Total: $total$currency. Enjoy your communication!";

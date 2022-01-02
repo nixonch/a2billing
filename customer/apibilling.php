@@ -9,11 +9,11 @@ Parameters :
     t : Destination number, as it is dialed. This parameter will probably be always present.
 
 Usage :
-    https://localhost/customer/rate.php?u=XXXXXXXXXXX&p=XXXXXXXXXXX&t=1234567890
-    https://localhost/customer/rate.php?u=XXXXXXXXXXX&t=1234567890                <<== Will have returned rate in xml with authenticate by request ip instead password
-or in Acrobits apps:
-    https://localhost/customer/rate.php?u=%account[username]%&p=%account[password]%&t=%targetNumber%
-    https://localhost/customer/rate.php?u=%account[username]%&t=%targetNumber%    <<== Will have returned rate in xml with authenticate by request ip instead password
+    https://localhost/customer/webchecker.php?u=XXXXXXXXXXX&p=XXXXXXXXXXX&t=1234567890
+    https://localhost/customer/webchecker.php?u=XXXXXXXXXXX&t=1234567890                <<== Will have returned rate in xml with authenticate by request ip instead password
+ In Acrobits apps:
+    https://localhost/customer/webchecker.php?u=%account[username]%&p=%account[password]%&t=%targetNumber%
+    https://localhost/customer/webchecker.php?u=%account[username]%&t=%targetNumber%    <<== Will have returned rate in xml with authenticate by request ip instead password
 
 =========================================================================
 
@@ -25,20 +25,25 @@ Parameters :
     p : Customer's SIP secret
     html=1 : to display with <pre> tag
     html=xml : to return format for the balance checker is a simple XML
+    html=2 : for set sip account to webrtc-mode if not setted
 
 Usage :
-    https://localhost/customer/balance.php?u=XXXXXXXXXXX&p=XXXXXXXXXXX&html=1
-    https://localhost/customer/balance.php?u=XXXXXXXXXXX&p=XXXXXXXXXXX&html=xml
-    https://localhost/customer/balance.php?u=XXXXXXXXXXX           <<== Will have returned balance in xml with authenticate by request ip instead password
-    In Acrobits apps:
-    https://localhost/customer/balance.php?u=%account[username]%&p=%account[password]%   <<== Will have returned balance in xml with authenticate by login+password
-    https://localhost/customer/balance.php?u=%account[username]%                         <<== Will have returned balance in xml with authenticate by request ip instead password
+    https://localhost/customer/webchecker.php?u=XXXXXXXXXXX&p=XXXXXXXXXXX&html=1
+    https://localhost/customer/webchecker.php?u=XXXXXXXXXXX&p=XXXXXXXXXXX&html=xml
+    https://localhost/customer/webchecker.php?u=XXXXXXXXXXX                                 <<== Will have returned balance in xml with authenticate by request ip instead password
+ In Acrobits apps:
+    https://localhost/customer/webchecker.php?u=%account[username]%&p=%account[password]%   <<== Will have returned balance in xml with authenticate by login+password
+    https://localhost/customer/webchecker.php?u=%account[username]%                         <<== Will have returned balance in xml with authenticate by request ip instead password
 */
 
 include ("lib/customer.defines.php");
 include ("lib/Class.RateEngine.php");
 
 getpost_ifset(array('u', 'p', 't', 'html'));
+
+if (isset ($_SESSION["api_timeout"]) && (time() - $_SESSION["api_timeout"]) <= 10) {
+    die();
+}
 
 if (!isset($u)) $u='';
 if (!isset($p)) $p='';
@@ -110,6 +115,7 @@ global $A2B;
     $res = $A2B->instance_table->SQLExec($A2B->DBHandle, "SELECT cc.id, tariff, credit, currency, cc.username, status, creditlimit FROM cc_card cc LEFT JOIN cc_sip_buddies ON cc.id=id_cc_card WHERE name LIKE '$accountnumber' AND (secret LIKE '$password' OR ipaddr LIKE '".$_SERVER['REMOTE_ADDR']."') LIMIT 1");
 
     if (!is_array($res) || count($res) == 0) {
+	$_SESSION["api_timeout"] = time();
         return array('400', '400', 'ERROR - AUTHENTICATE CODE');
     }
     $cardid		= $res[0][0];
@@ -195,6 +201,7 @@ global $A2B;
     for ($i=10;$i>=0;$i--) {
 	$res = $instance_table->ExecuteQuery($A2B->DBHandle, $QUERY);
 	if ($res===false) {
+	    $_SESSION["api_timeout"] = time();
 	    return array('400', 'ERROR - AUTHENTICATE CODE ', '0');
 	} else {
 	    $num = $res -> RecordCount();
@@ -222,7 +229,7 @@ global $A2B;
 	$allow = array_filter(explode(',',str_replace(' ','',$row[0][7])),function($v){ return strcasecmp($v,'opus')!=0;});
 	array_unshift($allow,'opus');
 	$allow = rtrim(implode(',',$allow),', ');
-	$QUERY = "UPDATE cc_sip_buddies SET allow='$allow',avpf='yes',dtmfmode='info',dtlscertfile='".$A2B->config['global']['certfile']."',dtlsprivatekey='".$A2B->config['global']['privatekey']."',dtlscafile='".$A2B->config['global']['cafile']."',force_avp='yes',icesupport='yes',dtlsenable='yes',dtlsverify='fingerprint',dtlssetup='actpass',rtcp_mux='yes' WHERE id='{$row[0][5]}'";
+	$QUERY = "UPDATE cc_sip_buddies SET allow='$allow',avpf='yes',dtmfmode='info',dtlscertfile='".$A2B->config['global']['certfile']."',dtlsprivatekey='".$A2B->config['global']['privatekey']."',dtlscafile='".$A2B->config['global']['cafile']."',force_avp='yes',icesupport='yes',dtlsenable='yes',dtlsverify='fingerprint',dtlssetup='actpass',rtcp_mux='yes',transport=NULL WHERE id='{$row[0][5]}'";
 	$instance_table->SQLExec($A2B->DBHandle, $QUERY, 0);
 	require_once (dirname(__FILE__)."/lib/phpagi/phpagi-asmanager.php");
 	$as = new AGI_AsteriskManager();

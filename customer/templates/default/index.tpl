@@ -1,25 +1,38 @@
 <!DOCTYPE html>
 {php} header('X-Frame-Options: SAMEORIGIN'); {/php}
-<html>
+<html class="no-js" lang="en">
 <head>
-    <link rel="shortcut icon" href="{$FAVICONPATH}"/>
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{$FAVICONPATH}"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Sign in or Register | {$CCMAINTITLE}</title>
-    <link rel="stylesheet" href="templates/default/css/index.css" type="text/css">
+    <title>{$SECONDARY_TITLE} | {$CCMAINTITLE}</title>
+    <link rel="stylesheet" href="templates/default/css/left-nav-style.css" type="text/css"/>
+    <link rel="stylesheet" href="templates/default/css/index.css" type="text/css"/>
+    <script>
+	var emptyemail = "{php} echo gettext("You must enter an email address!"){/php}";
+	var emptylogin = "{php} echo gettext("AUTHENTICATION REFUSED :<br>please check your login/password!");{/php}";
+	var noservice = "{php} echo gettext("Service temporally not available.<br>Try again later.");{/php}";
+    </script>
 </head>
 <body class="bodygradient">
-<script>
-var emptyemail = "{php} echo gettext("You must enter an email address!"){/php}";
-var emptylogin = "{php} echo gettext("AUTHENTICATION REFUSED :<br>please check your login/password!");{/php}";
-var noservice = "{php} echo gettext("Service temporally not available.<br>Try again later.");{/php}";
-</script>
-  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
-
-<div class="container">
-  <div class="frameback lgrad">
-  </div>
-  <div class="frame">
+<input type="checkbox" id="navi-toggle" hidden>
+<nav class="navi">
+<label for="navi-toggle" class="navi-toggle" onclick=""></label>
+<ul>
+    <li><h4>Main</h4></li>
+    <li><a href="{$CUSTOMER_INTERFACE_URL}">Sign-in/up</a></li>
+    <li><a href="{$CUSTOMER_INTERFACE_URL}terms">Terms & Conditions</a></li>
+    <li><a href="{$CUSTOMER_INTERFACE_URL}policy">Privacy Policy</a></li>
+    <li><h4>Knowledge base</h4></li>
+    <li><a href="{$CUSTOMER_INTERFACE_URL}AsteriskWebRTC">WebRTC setup in Asterisk</a></li>
+    <li><a href="{$CUSTOMER_INTERFACE_URL}APICheckers"">Own Checking Web Service</a></li>
+    <li><a href="{$CUSTOMER_INTERFACE_URL}how-to-CRM">Integration with CRM</a></li>
+</ul>
+</nav>
+<aside class="ads_right">
+</aside>
+<div class="container" onClick="if ($('#navi-toggle').prop('checked') && event.target.tagName!='A') document.getElementById('navi-toggle').checked=false">
+  <div class="frame laud">
     <div class="nav">
       <ul class="links">
         <li class="signin-active"><a class="btn_in">{php} echo gettext("Sign in");{/php}</a></li>
@@ -32,21 +45,6 @@ var noservice = "{php} echo gettext("Service temporally not available.<br>Try ag
                         <option value="ukrainian" {php} if(LANGUAGE=="ukrainian") echo "selected";{/php} >Українська</option>
                         <option value="russian" {php} if(LANGUAGE=="russian") echo "selected";{/php} >Русский</option>
                         <option value="german" {php} if(LANGUAGE=="german") echo "selected";{/php} >Deutsch</option>
-{if (false)}
-                        <option style="background-image:url(templates/{$SKIN_NAME}/images/flags/es.gif);" value="spanish" {php} if(LANGUAGE=="spanish") echo "selected";{/php} >Spanish</option>Român
-                        <option style="background-image:url(templates/{$SKIN_NAME}/images/flags/fr.gif);" value="french" {php} if(LANGUAGE=="french") echo "selected";{/php} >French</option>
-                        <option style="background-image:url(templates/{$SKIN_NAME}/images/flags/fi.gif);" value="finnish" {php} if(LANGUAGE=="finnish") echo "selected";{/php} >Finnish</option>
-                        <option style="background-image:url(templates/{$SKIN_NAME}/images/flags/pt.gif);" value="portuguese" {php} if(LANGUAGE=="portuguese") echo "selected";{/php} >Portuguese</option>
-                        <option style="background-image:url(templates/{$SKIN_NAME}/images/flags/br.gif);" value="brazilian" {php} if(LANGUAGE=="brazilian") echo "selected";{/php}>Brazilian</option>
-                        <option style="background-image:url(templates/{$SKIN_NAME}/images/flags/it.gif);" value="italian" {php} if(LANGUAGE=="italian") echo "selected";{/php} >Italian</option>
-                        <option style="background-image:url(templates/{$SKIN_NAME}/images/flags/cn.gif);" value="chinese" {php} if(LANGUAGE=="chinese") echo "selected";{/php} >Chinese</option>
-                        <option style="background-image:url(templates/{$SKIN_NAME}/images/flags/ro.gif);" value="romanian" {php} if(LANGUAGE=="romanian") echo "selected";{/php} >Romanian</option>
-                        <option style="background-image:url(templates/{$SKIN_NAME}/images/flags/pl.gif);" value="polish" {php} if(LANGUAGE=="polish") echo "selected";{/php} >Polish</option>
-                        <option style="background-image:url(templates/{$SKIN_NAME}/images/flags/tr.gif);" value="turkish" {php} if(LANGUAGE=="turkish") echo "selected";{/php} >Turkish</option>
-                        <option style="background-image:url(templates/{$SKIN_NAME}/images/flags/pk.gif);" value="urdu" {php} if(LANGUAGE=="urdu") echo "selected";{/php} >Urdu</option>
-                        <option style="background-image:url(templates/{$SKIN_NAME}/images/flags/gr.gif);" value="greek" {php} if(LANGUAGE=="greek") echo "selected";{/php} >Greek</option>
-                        <option style="background-image:url(templates/{$SKIN_NAME}/images/flags/id.gif);" value="indonesian" {php} if(LANGUAGE=="indonesian") echo "selected";{/php} >Indonesian</option>
-{/if}
       </select>
     </div>
     <div ontouchstart="turn_start(event);" ontouchmove="turn_page(event);">
@@ -128,34 +126,11 @@ var noservice = "{php} echo gettext("Service temporally not available.<br>Try ag
 	</form>
 {php}}{/php}
       </div>
-{if (false)}
-      <div class="success">
-              <svg width="270" height="270" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 60 60" id="check" ng-class="checked ? 'checked' : ''">
-                 <path fill="#ffffff" d="M40.61,23.03L26.67,36.97L13.495,23.788c-1.146-1.147-1.359-2.936-0.504-4.314
-                  c3.894-6.28,11.169-10.243,19.283-9.348c9.258,1.021,16.694,8.542,17.622,17.81c1.232,12.295-8.683,22.607-20.849,22.042
-                  c-9.9-0.46-18.128-8.344-18.972-18.218c-0.292-3.416,0.276-6.673,1.51-9.578" />
-                <div class="successtext">
-                   <p> Thanks for signing up! Check your email for confirmation.</p>
-                </div>
-      </div>
-{/if}
     </div>
   </div>
-  <div>
-  <a id="refresh" value="Refresh" onClick="opback()">
-    <svg class="refreshicon"   version="1.1" id="Capa_1"  xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink" x="0px" y="0px"
-         width="25px" height="25px" viewBox="0 0 322.447 322.447" style="enable-background:new 0 0 322.447 322.447;"
-         xml:space="preserve">
-         <path  d="M321.832,230.327c-2.133-6.565-9.184-10.154-15.75-8.025l-16.254,5.281C299.785,206.991,305,184.347,305,161.224
-                c0-84.089-68.41-152.5-152.5-152.5C68.411,8.724,0,77.135,0,161.224s68.411,152.5,152.5,152.5c6.903,0,12.5-5.597,12.5-12.5
-                c0-6.902-5.597-12.5-12.5-12.5c-70.304,0-127.5-57.195-127.5-127.5c0-70.304,57.196-127.5,127.5-127.5
-                c70.305,0,127.5,57.196,127.5,127.5c0,19.372-4.371,38.337-12.723,55.568l-5.553-17.096c-2.133-6.564-9.186-10.156-15.75-8.025
-                c-6.566,2.134-10.16,9.186-8.027,15.751l14.74,45.368c1.715,5.283,6.615,8.642,11.885,8.642c1.279,0,2.582-0.198,3.865-0.614
-                l45.369-14.738C320.371,243.946,323.965,236.895,321.832,230.327z"/>
-    </svg>
-  </a>
-  </div>
-  <div class="footer">
+  <div class="frameback laud lgrad"></div>
+</div>
+<div class="footer_icons">
 {if (false)}<div style="color: #BD2A15; font-size: 11px; text-align:center;">{$COPYRIGHT}</div>{/if}
 {php}
     $DBHandle = DbConnect();
@@ -178,12 +153,22 @@ var noservice = "{php} echo gettext("Service temporally not available.<br>Try ag
     }
 
 //    $show_logo .= ' <a href="http://www.gnu.org/licenses/agpl.html" target="_blank"><img src="' . KICON_PATH . '/agplv3-155x51.png" alt="AGPLv3"/></a> &nbsp; ';
+    echo $show_logo;
 {/php}
-
-    <table style="width:100%;margin:0 auto;" align="center">
-    <tr><td valign="top" align="center" class="tableBodyRight">{php} echo $show_logo;{/php}
-    </td></tr></table>
-  </div>
+</div>
+<div>
+  <a id="refresh" value="Refresh" onClick="opback()">
+    <svg class="refreshicon" version="1.1" id="Capa_1"  xmlns="https://www.w3.org/2000/svg"  xmlns:xlink="https://www.w3.org/1999/xlink" x="0px" y="0px"
+         width="25px" height="25px" viewBox="0 0 322.447 322.447" style="enable-background:new 0 0 322.447 322.447;"
+         xml:space="preserve">
+         <path  d="M321.832,230.327c-2.133-6.565-9.184-10.154-15.75-8.025l-16.254,5.281C299.785,206.991,305,184.347,305,161.224
+                c0-84.089-68.41-152.5-152.5-152.5C68.411,8.724,0,77.135,0,161.224s68.411,152.5,152.5,152.5c6.903,0,12.5-5.597,12.5-12.5
+                c0-6.902-5.597-12.5-12.5-12.5c-70.304,0-127.5-57.195-127.5-127.5c0-70.304,57.196-127.5,127.5-127.5
+                c70.305,0,127.5,57.196,127.5,127.5c0,19.372-4.371,38.337-12.723,55.568l-5.553-17.096c-2.133-6.564-9.186-10.156-15.75-8.025
+                c-6.566,2.134-10.16,9.186-8.027,15.751l14.74,45.368c1.715,5.283,6.615,8.642,11.885,8.642c1.279,0,2.582-0.198,3.865-0.614
+                l45.369-14.738C320.371,243.946,323.965,236.895,321.832,230.327z"/>
+    </svg>
+  </a>
 </div>
 {php}if(!isset($_COOKIE["cookiescript"])) {{/php}
 <div id="cookiescript_container">

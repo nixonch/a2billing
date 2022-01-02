@@ -38,8 +38,11 @@ include ("lib/customer.defines.php");
 include ("lib/customer.module.access.php");
 include ("lib/customer.smarty.php");
 
+$smarty -> assign("SECONDARY_TITLE", "Policy");
 $smarty -> assign("CUSTOMER_INTERFACE_URL", CUSTOMER_INTERFACE_URL);
 $smarty -> assign("MAILTO", SUPPORT_MAILTO);
 $smarty -> assign("ADDRESS", SUPPORT_ADDRESS);
 
+$smarty -> display('slidebar.tpl');
 $smarty -> display('policy.tpl');
+$smarty -> display('slidebarfooter.tpl');

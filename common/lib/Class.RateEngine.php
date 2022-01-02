@@ -1458,7 +1458,7 @@ for ($i=0; $i<count($this->ratecard_obj); $i++) {
 			while ($loop_failover <= $A2B->agiconfig['failover_recursive_limit']
 			    && (!$this->dialstatus
 				|| ($failover_trunk > 0 && time()-$timecur < 24
-				    && ((in_array($this->dialstatus, array("","CHANUNAVAIL","CONGESTION")) && $intellect_count < 0) || ($typecall == 8 && $intellect_count >= 0)) // Rule for callback daemon
+				    && ((in_array($this->dialstatus, array("","CHANUNAVAIL","CONGESTION")) && ($intellect_count<0 || ($inuse>=$maxuse && $maxuse!=-1) || $intellect_failover_trunk != -1)) || ($typecall == 8 && $intellect_count >= 0)) // Rule for callback daemon
 				   )
 			       )
 			    && !in_array($this->dialstatus, array("ANSWER","CANCEL"))

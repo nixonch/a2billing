@@ -169,7 +169,7 @@ try {
     $response = $client->get('https://texttospeech.googleapis.com/v1/voices?key=' . GOOGLE_TTS_KEY);
 } catch (Exception $e) {
     $istts = false;
-//    die('Something went wrong, e.g. make sure that GOOGLE_TTS_KEY is setted.');//: ' . $e->getMessage());
+//    die('Something went wrong, e.g. make sure that GOOGLE_TTS_KEY is setted: ' . $e->getMessage());
 }
 if ($istts) {
     $fileData = json_decode($response->getBody()->getContents(), true);

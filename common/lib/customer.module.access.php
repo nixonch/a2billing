@@ -94,7 +94,7 @@ if (!isset($_SESSION['pr_login']) || !isset($_SESSION['pr_password']) || !isset(
 	if ($FG_DEBUG == 1) echo "<br>0. HERE WE ARE";
 
 	if ($done=="submit_log" || $done=="submit_sig") {
-		 if (!isset ($_SESSION["date_forgot"]) || (time() - $_SESSION["date_forgot"]) > 5) {
+		if (!isset ($_SESSION["date_forgot"]) || (time() - $_SESSION["date_forgot"]) > 5) {
                         $_SESSION["date_forgot"] = time();
                 } else {
                         sendSignin(9,gettext("Too frequent requests"));

@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 html, body * { box-sizing: border-box; font-family: 'Open Sans', sans-serif; }
 
 body {
@@ -23,7 +25,7 @@ body {
 /* Let's get this party started*/
 ::-webkit-scrollbar {
     width: 12px;
-    clientHeight: 200px;
+    min-height: 100%;
 }
 ::-webkit-scrollbar:horizontal {
     display: none;
@@ -50,15 +52,64 @@ height: 0px;
 ::-webkit-scrollbar-thumb:window-inactive {
     background: rgba(255,0,0,0.4);
 }
-
+.ads_right {
+    max-width: 338px;
+    min-width: 250px;
+    max-height: 100%;
+    position: fixed;
+    right: 0px;
+    top: .7em;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    flex-basis: 338px;
+    -webkit-transition: all 1s ease;
+    transition: all 1s ease;
+}
+.ads_right:hover, .ads_right:focus-within {
+    z-index: 10;
+    opacity: 1;
+}
+aside ins.adsbygoogle > :first-child {
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+@media screen and (max-width: 945px) {
+  .ads_right {
+    opacity: .5;
+  }
+  aside ins.adsbygoogle > :first-child {
+    left: 100%;
+    transform: translate(-100%, 0);
+  }
+}
+@media screen and (max-width: 639px) {
+    .ads_right {
+        right: -400px;
+    }
+}
 .container {
   -moz-user-select: none;
   -khtml-user-select: none;
   user-select: none;
 }
 
-.opback {opacity:0}
+.footer_icons {
+  position: fixed;
+  left: 50%;
+  transform: translate(-50%, 0);
+  margin-bottom: 1em;
+  bottom: 0;
+  white-space: nowrap;
+}
 
+.opback {opacity:0}
+.opback:hover, .opback:focus-within {
+    opacity: 1;
+}
 .lgrad {
   background: linear-gradient(
     rgba(6,12,58,0.8),
@@ -74,26 +125,48 @@ height: 0px;
   width: 412px;
   position: absolute;
   left: 50%;
-  top: 50%;
-  margin-right: -50%;
-  transform: translate(-50%, -50%);
   z-index: 3;
 }
 
+.frame:hover ~ .lgrad2, .frame:focus-within ~ .lgrad2 {
+  background: linear-gradient(
+    rgba(6,12,58,0.8),
+    rgba(17,21,53,0.7));
+  border-radius: 5px;
+  border-top: solid 1px rgba(255,255,255,.5);
+  border-radius: 5px;
+  box-shadow: 0px 2px 7px rgba(0,0,0,0.2);
+}
 .frame {
   height: 665px;
   width: 412px;
   position: absolute;
   left: 50%;
-  top: 50%;
-  margin-right: -50%;
-  transform: translate(-50%, -50%);
-  overflow: hidden;
+  overflow-x: hidden;
   display: flex;
-  z-index: 5;
   flex-direction: column;
-  -webkit-transition: all .5s ease;
-  transition: all .5s ease;
+  -webkit-transition: left .5s ease;
+  transition: left .5s ease;
+  z-index: 5;
+}
+
+@media screen and (min-height: 615px) {
+    .laud {
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .footer_icons {
+      z-index: 4;
+    }
+}
+
+@media screen and (max-height: 614px) {
+    .laud {
+      transform: translate(-50%, -5%);
+    }
+    .footer_icons {
+      z-index: 2;
+    }
 }
 
 .frame-long {
@@ -119,7 +192,6 @@ height: 0px;
 .nav-up {
   -webkit-transform: translateY(-100px);
           transform: translateY(-100px);
-/*  opacity: 0;*/
 }
 
 .nav select option {
@@ -197,28 +269,6 @@ height: 0px;
 .signup-inactive a {
 }
 /* ===============================================================*/
-
-.footer {
-  position: fixed;
-  margin-bottom: 1em;
-  right: 0px;
-  left: 0px;
-  bottom: 0;
-  z-index: 4;
-}
-
-.centerrow {
-  position: fixed;
-  left: 50%;
-  margin-right: -50%;
-  transform: translate(-50%, 0);
-/*  right: 0px;*/
-  margin-bottom: 1em;
-  bottom: 0;
-  text-align: center;
-  z-index: 4;
-}
-
 .forms {
   position: relative;
   left: -412px;
@@ -689,12 +739,12 @@ p2 {
   text-align: justify;
 }
 /* refresh button styling */
-
 #refresh {
     position: fixed;
     bottom: 20px;
-    right: 20px; 
-    background-color: #ffffff;
+    right: 20px;
+    background-color: #DDDDDD;
+    opacity: 0.5;
     width: 50px;
     height: 50px;
     border-radius: 25px;
@@ -702,9 +752,11 @@ p2 {
     padding: 13px 0 0 13px;
     z-index: 10;
 }
-
+#refresh:hover {
+  opacity: 1;
+}
 .refreshicon {
-    fill: #d3d3d3;
+    fill: #838383;
     -webkit-transform: rotate(0deg);
             transform: rotate(0deg);
     -webkit-transition: fill .25s ease, -webkit-transform .25s ease;
@@ -712,7 +764,6 @@ p2 {
     transition: fill .25s ease, transform .25s ease;
     transition: fill .25s ease, transform .25s ease, -webkit-transform .25s ease;
 }
-
 .refreshicon:hover {
   cursor: pointer;
   fill: #1059FF;

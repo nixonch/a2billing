@@ -104,7 +104,7 @@ $HD_Form -> FieldViewElement ('id, IF(agent=2,iduser,cua.login), loglevel, actio
 $HD_Form -> CV_NO_FIELDS  = gettext("THERE IS NO LOG AVAILABLE1!");
 $HD_Form -> FG_INTRO_TEXT_EDITION = "";
 $HD_Form -> FG_EDITION = false;
-$HD_Form -> FG_DELETION = false;
+$HD_Form -> FG_DELETION = true;
 $HD_Form -> FG_ADDITION = false;
 $HD_Form -> FG_INFO = true;
 $HD_Form -> FG_INFO_LINK = "A2B_log_activity_info.php?id=";

@@ -155,6 +155,7 @@ class Mail {
 	public static $CUSTOMER_LOGIN = '$login$';
 	public static $CUSTOMER_LOGINKEY = '$loginkey$';
 	public static $CUSTOMER_CREDIT_NOTIFICATION = '$credit_notification$';
+	public static $CUSTOMER_INTERFACE = '$customerinterface$';
 
 	//used in all mail
 	public static $SYSTEM_CURRENCY = '$base_currency$';

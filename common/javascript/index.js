@@ -8,8 +8,11 @@ $("#ui_language").change(function () {
 });
 
 function opback() {
-	$(".frameback").toggleClass("lgrad");
+	$(".frameback").toggleClass("lgrad lgrad2");
 	$(".frame").toggleClass("opback");
+	$(".ads_right").toggleClass("opback");
+	$(".footer_icons").toggleClass("opback");
+	$("main").toggleClass("opback");
 	$("body").toggleClass("bodygradient");
 }
 
@@ -44,7 +47,7 @@ $(function() {
 	$(".forms").addClass("forms-right");
 	$(".signin-active").addClass("signin-inactive");
 	$(".signup-inactive").removeClass("signup-active");
-	$('#pr_email').focus();
+	if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)){}else{$('#pr_email').focus();}
 	scrnum = 1;
     });
 });
@@ -120,6 +123,7 @@ $('body').on('click', '.btn-forgot', function () {
 	url = url.replace(".php","");
 	url = url.replace("/index","");
 	url = url.replace(/^\/+|\/+$/g, '');
+	url += '/index';
 	var body = 'action=email&pr_email='+pr_email.value;
 	var xhttp = new XMLHttpRequest();
 	xhttp.open("POST",url,true);

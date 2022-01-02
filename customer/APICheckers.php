@@ -38,11 +38,12 @@ include ("lib/customer.defines.php");
 include ("lib/customer.module.access.php");
 include ("lib/customer.smarty.php");
 
-$smarty -> assign("SECONDARY_TITLE", "Terms");
+$smarty -> assign("SECONDARY_TITLE", "Balance and Rate Checking Web Service");
 $smarty -> assign("CUSTOMER_INTERFACE_URL", CUSTOMER_INTERFACE_URL);
 $smarty -> assign("MAILTO", SUPPORT_MAILTO);
 $smarty -> assign("ADDRESS", SUPPORT_ADDRESS);
+$smarty -> assign("WEBPHONE", "https://chrome.google.com/webstore/detail/webrtc-sip-phone-with-cli/pofkcckikkdhiieipefhkaelgnbdkcib");
 
 $smarty -> display('slidebar.tpl');
-$smarty -> display('terms.tpl');
+$smarty -> display('apicheckers.tpl');
 $smarty -> display('slidebarfooter.tpl');
