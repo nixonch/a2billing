@@ -73,6 +73,7 @@
     public $port;
 
     public $actionid = NULL;
+    public $channel = NULL;
 
    /**
     * Parent AGI

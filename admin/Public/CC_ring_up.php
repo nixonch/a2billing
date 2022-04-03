@@ -441,6 +441,7 @@ function clearMyForm()
     }
     $('#myForm').jqDynaForm('set', ringupJson);
     $('#destlist').empty();
+//    $('#dest').prop('disabled', true);
     $('#rhead').html('<?php echo gettext("Ring-Up").". ".gettext("New upload");?>.');
     $('#id').remove();
 }
@@ -490,6 +491,14 @@ function isValidChars(sText,ValidChars)
 		}
 	}
 	return IsNumber;
+}
+
+function checkDest(){
+	if (document.myForm.custid.value.length < 1){
+		$('#dest').prop('disabled', true);
+		alert ('<?php echo addslashes(gettext("Please, you have first select a Customer !")); ?>');
+		return (false);
+	}
 }
 
 function sendtoupload(form){
@@ -688,7 +697,7 @@ function sendtoupload(form){
          </tr>
          <tr bgcolor="#E2E2E2">
            <td valign="top" style="padding:5px">
-	    <?php echo gettext("Destination");?>:</td><td style="padding-left:5px;padding-top:5px"><INPUT type="text" class="form_input_text" id="dest" name="dest" list="destlist" autocomplete="off" maxlength="100" style="width:50%"><br>
+	    <?php echo gettext("Destination");?>:</td><td style="padding-left:5px;padding-top:5px"><INPUT type="text" class="form_input_text" id="dest" name="dest" list="destlist" autocomplete="off" maxlength="100" style="width:50%" onClick="checkDest();"><br>
 	    <?php echo gettext("Enter here the phonenumber or IVR name you wish to send call, or select destination from the drop-down list");?>
            </td>
          </tr>

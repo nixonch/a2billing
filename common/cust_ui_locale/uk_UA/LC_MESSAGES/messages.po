@@ -128,7 +128,7 @@ msgid "Get password"
 msgstr "Отримати пароль"
 
 #: templates/default/index.tpl
-msgid "You must enter an email address!"
+msgid "You have to enter an email address!"
 msgstr "Введіть Вашу email адресу!"
 
 #: templates/default/index.tpl

@@ -61,7 +61,7 @@ if ($resmax) {
     foreach ($resmax as $val)
 	$destlist[] = array($val[0],$val[0]);
 }
-$QUERYpop = "SELECT `name` FROM cc_queues WHERE id_cc_card=$custid ORDER BY `na`";
+$QUERYpop = "SELECT `name` FROM cc_queues WHERE id_cc_card=$custid ORDER BY `name`";
 $resmax = $DBHandle->Execute($QUERYpop);
 if ($resmax) {
     foreach ($resmax as $val)

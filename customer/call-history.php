@@ -443,6 +443,8 @@ IF(t1.sipiax IN (2,3,7) AND t1.terminatecauseid<>1,'',IF(t1.card_called$calledsb
 IF(t1.card_id$calledsbquery,t2.destination,'') Destination,
 $et Duration,
 ROUND(IF(t1.card_id$calledsbquery, t1.sessionbill+margindillers, 0),5) Cost";
+//IceShock
+//IF(ROUND(UNIX_TIMESTAMP(t1.starttime)-INSERT(t1.uniqueid,1,1,1))>0,ROUND(UNIX_TIMESTAMP(t1.starttime)-INSERT(t1.uniqueid,1,1,1)),0) WaitUp";
 
 // EXPORT
 $FG_EXPORT_SESSION_VAR = "pr_export_entity_call";

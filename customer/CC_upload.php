@@ -126,6 +126,7 @@ if ($method) {
 							$_SESSION['message'] .= "<br><img src=\"$dir_img/error.gif\" width=\"15\" height=\"15\">&nbsp;<b><font size=\"2\">" . gettext("ERROR: please get the file size less than") . " " . $file_size_ind . " BYTES  (" . round(($file_size_ind / 1024), 2) . " KB)</font></b><br>";
 						} else {
 							$file_to_upload = $upload_dir . "/" . $_FILES['file']['name'][0];
+							if (!file_exists($upload_dir)) mkdir($upload_dir, 0755);
 							move_uploaded_file($_FILES['file']['tmp_name'][0], $file_to_upload);
 							//echo "<br>::$file_to_upload</br>";
 							chmod($upload_dir, 0755);

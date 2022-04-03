@@ -44,17 +44,17 @@ function originateresponse($e, $parameters, $server, $port, &$ast) {
 
 function newstateresponse($e, $parameters, $server, $port, &$ast) {
 
-    if ($e == 'newstate') {
-	$res = $ast->GetVar($parameters['Channel'],'ACTIONID');
-	if ($res['Response'] == "Success" && $res['Value'] == $ast->actionid && !isset($parameters['Value'])) {
-//		write_log(LOGFILE_API_CALLBACK, "NewState: ".var_export($parameters, true));
-//		write_log(LOGFILE_API_CALLBACK, var_export($ast->actionid, true) . " GetVar: " . var_export($res, true));
-		unset($ast->event_handlers[$e]);
-		$ast->channel = $parameters['Channel'];
-		$res = $parameters['ChannelStateDesc'];
-		if ($res =="Up")	$res = "ANSWER";
-		return $res;
-	}
+    if ($e == "varset" && $parameters['Variable'] == "ACTIONID" && strcmp($parameters['Value'], $ast->actionid) === 0) {
+	if (isset($ast->event_handlers[$e])) unset($ast->event_handlers[$e]);
+	$ast->channel = $parameters['Channel'];
+    }
+    if ($e == 'newstate' && $parameters['Channel'] == $ast->channel && !isset($parameters['Value'])) {
+//	write_log(LOGFILE_API_CALLBACK, "NewState: ".var_export($parameters, true));
+//	write_log(LOGFILE_API_CALLBACK, var_export($ast->actionid, true) . " GetVar: " . var_export($res, true));
+	if (isset($ast->event_handlers[$e])) unset($ast->event_handlers[$e]);
+	$res = $parameters['ChannelStateDesc'];
+	if ($res =="Up")	$res = "ANSWER";
+	return strtoupper($res);
     }
     if ($e == 'originateresponse' && $parameters['ActionID'] == $ast->actionid) {
 //	write_log(LOGFILE_API_CALLBACK, "OriginateResponse: ".var_export($parameters, true));
@@ -137,17 +137,26 @@ global $A2B;
 	$res = $ast -> connect($server, $username, $secret);
 	if (!$res) return -4;
 	$ast -> actionid = $AmiVars[5];
+	$ast -> add_event_handler('VarSet', 'newstateresponse');
 	$ast -> add_event_handler('Newstate', 'newstateresponse');
 	$ast -> add_event_handler('OriginateResponse', 'newstateresponse');
 //	MAKE THE CALL
-	$res = $ast -> Originate($channel,NULL,NULL,NULL,NULL,NULL,$A2B->config['callback']['timeout']*1000,$AmiVars[2],$AmiVars[3],NULL,true,$ast->actionid);
-	$response = $ast -> wait_response(true,$ast->actionid);
-	if ($ast->channel)	$ast -> Hangup ($ast->channel);
+	write_log(LOGFILE_API_CALLBACK, " ActionID = {$ast->actionid} [#### Starting AMI ORIGINATE     ####] $channel ");
+	$res = $ast -> Originate($channel,$AmiVars[0],$AmiVars[6],NULL,NULL,NULL,$A2B->config['callback']['timeout']*1000,$AmiVars[2],$AmiVars[3],$AmiVars[4],true,$ast->actionid);
+	write_log(LOGFILE_API_CALLBACK, " ActionID = {$ast->actionid} [#### RESULT   AMI ORIGINATE     ####]\r\n".var_export($res, true));
+	write_log(LOGFILE_API_CALLBACK, " ActionID = {$ast->actionid} [#### Starting AMI WAIT_RESPONSE ####] $channel ");
+	$response = $ast -> wait_response(true);
+	if ($AmiVars[0] && $response=='ANSWER') {
+	    if ($AmiVars[7])	$res = $ast -> AbsoluteTimeout($ast->channel, $AmiVars[7]-0.2);
+	} elseif ($ast->channel) {
+	    $ast -> Hangup ($ast->channel);
+	}
 	$ast -> disconnect();
 	if (is_array($response)) {
-		write_log(LOGFILE_API_CALLBACK, "!!!!!!!!!========= ARRAY =========: ".var_export($response, true));
+		write_log(LOGFILE_API_CALLBACK, " ActionID = {$ast->actionid} [#### ERROR    AMI WAIT_RESPONSE ####]: ".var_export($response, true));
 		$response = 'ERROR';
 	}
+	write_log(LOGFILE_API_CALLBACK, " ActionID = {$ast->actionid} [#### RESULT   AMI WAIT_RESPONSE ####] $channel = ".$response." ");
 	return $response;
 //	if ($res !== false) return $res;
 //	else return -2; // not enough free trunk for make call
@@ -363,11 +372,23 @@ while(true)
 			$outcid = (is_array($cidresult) && count($cidresult) > 0) ? $cidresult[0][0] : NULL;
 		    }
 		    if (is_array($trunk) && count($trunk)>0) {
-			$query = "UPDATE `cc_ringup`,`cc_ringup_list`,`cc_trunk` SET `try`=`try`+1,`cc_ringup`.`inuse`=`cc_ringup`.`inuse`+1,`cc_ringup_list`.`inuse`='1',`cc_trunk`.`inuse`=`cc_trunk`.`inuse`+1 WHERE `cc_ringup`.`id`='$ringup_id' AND `cc_ringup_list`.`id`='$cc_id' AND `id_trunk`='{$trunk[0][0]}'";
+			$query = "UPDATE `cc_ringup`,`cc_ringup_list`,`cc_trunk` SET `try`=`try`+1,`cc_ringup`.`inuse`=`cc_ringup`.`inuse`+1,`lastattempt`=NOW(),`cc_ringup_list`.`inuse`='1',`cc_trunk`.`inuse`=`cc_trunk`.`inuse`+1 WHERE `cc_ringup`.`id`='$ringup_id' AND `cc_ringup_list`.`id`='$cc_id' AND `id_trunk`='{$trunk[0][0]}'";
 			if (!$A2B->DBHandle->Execute($query)) die("Can't execute query '$query'\n");
-			$return = ringup_engine($manager_host.":5038", $manager_username, $manager_secret, array('1234567890',1,$outcid,'ACTIONID=RingUp-'.$cc_id,$cc_account,'RingUp-'.$cc_id), $cc_exten_leg_a, $acc_tariff, $trunk[0]);
-			$query = "UPDATE `cc_ringup`,`cc_ringup_list`,`cc_trunk` SET `cc_ringup`.`status`=IF(`lefte`='1',2,`cc_ringup`.`status`),`cc_ringup`.`inuse`=`cc_ringup`.`inuse`-1,`processed`=`processed`+1,`lefte`=`lefte`-1,`cc_ringup_list`.`inuse`='0',`channelstatedesc`='$return',`lastattempt`=NOW(),`passed`=1,`cc_trunk`.`inuse`=`cc_trunk`.`inuse`-1 WHERE `cc_ringup`.`id`='$ringup_id' AND `cc_ringup_list`.`id`='$cc_id' AND `id_trunk`='{$trunk[0][0]}'";
-			if (!$A2B->DBHandle->Execute($query)) die("Can't execute query '$query'\n");
+			
+			$cc_variable = "ACTIONID=RingUp-$cc_id,RINGUPID=$ringup_id,RINGUPLISTID=$cc_id,CALLED=$cc_exten_leg_a,CALLING=$cc_exten,LEG=$cc_account,TRUNK={$trunk[0][0]}";
+			$return = ringup_engine($manager_host.":5038", $manager_username, $manager_secret, array($cc_exten,1,$outcid,$cc_variable,$cc_account,'RingUp-'.$cc_id,$cc_context,$maxduration), $cc_exten_leg_a, $acc_tariff, $trunk[0]);
+			if ($cc_exten) {
+			    if ($return=='ANSWER') {
+				$query = "UPDATE `cc_ringup_list`,`cc_trunk` SET `channelstatedesc`='$return',`cc_trunk`.`inuse`=`cc_trunk`.`inuse`-1 WHERE `id`='$cc_id' AND `id_trunk`='{$trunk[0][0]}'";
+				if (!$A2B->DBHandle->Execute($query)) die("Can't execute query '$query'\n");
+			    } else {
+				$query = "UPDATE `cc_ringup`,`cc_ringup_list`,`cc_trunk` SET `cc_ringup`.`status`=IF(`lefte`='1' AND `try`>=$adding_attempts,2,`cc_ringup`.`status`),`cc_ringup`.`inuse`=`cc_ringup`.`inuse`-1,`processed`=IF(`try`>=$adding_attempts,`processed`+1,`processed`),`lefte`=IF(`try`>=$adding_attempts,`lefte`-1,`lefte`),`lastattempt`=NOW(),`cc_ringup_list`.`inuse`='0',`channelstatedesc`='$return',`passed`=0,`cc_trunk`.`inuse`=`cc_trunk`.`inuse`-1 WHERE `cc_ringup`.`id`='$ringup_id' AND `cc_ringup_list`.`id`='$cc_id' AND `id_trunk`='{$trunk[0][0]}'";
+				if (!$A2B->DBHandle->Execute($query)) die("Can't execute query '$query'\n");
+			    }
+			} else {
+			    $query = "UPDATE `cc_ringup`,`cc_ringup_list`,`cc_trunk` SET `cc_ringup`.`status`=IF(`lefte`='1',2,`cc_ringup`.`status`),`cc_ringup`.`inuse`=`cc_ringup`.`inuse`-1,`processed`=`processed`+1,`lefte`=`lefte`-1,`lastattempt`=NOW(),`cc_ringup_list`.`inuse`='0',`channelstatedesc`='$return',`passed`=1,`cc_trunk`.`inuse`=`cc_trunk`.`inuse`-1 WHERE `cc_ringup`.`id`='$ringup_id' AND `cc_ringup_list`.`id`='$cc_id' AND `id_trunk`='{$trunk[0][0]}'";
+			    if (!$A2B->DBHandle->Execute($query)) die("Can't execute query '$query'\n");
+			}
 		    } else {
 			/////////////////////////////////////////////////////////////
 			$query = "UPDATE `cc_ringup`,`cc_ringup_list` SET `try`=`try`+1,`lastattempt`=NOW(),`cc_ringup`.`inuse`=`cc_ringup`.`inuse`+1,`cc_ringup_list`.`inuse`=`cc_ringup_list`.`inuse`+1 WHERE `cc_ringup`.`id`='$ringup_id' AND `cc_ringup_list`.`id`='$cc_id'";
@@ -378,7 +399,7 @@ while(true)
 //			$inuse  = ($return==4)?0:1;
 			if ($return==4) {
 				$query = ",`cc_ringup`.`status`=IF(`lefte`='1',2,`cc_ringup`.`status`)";
-			} else $query = ",`cc_ringup`.`inuse`=`cc_ringup`.`inuse`-1,`cc_ringup_list`.`inuse`='0'";
+			} else	$query = ",`cc_ringup`.`inuse`=`cc_ringup`.`inuse`-1,`cc_ringup_list`.`inuse`='0'";
 			if (is_array($return)) $return = 9; //ERROR_UNKNOWN
 //			$query = "UPDATE `cc_ringup`,`cc_ringup_list` SET `cc_ringup`.`status`=IF(`lefte`='1',2,`cc_ringup`.`status`),`cc_ringup`.`inuse`=`cc_ringup`.`inuse`-1,`processed`=`processed`+$passed,`lefte`=`lefte`-$passed,`cc_ringup_list`.`inuse`='0',`channelstatedesc`='$return',`lastattempt`=NOW(),`passed`='$passed' WHERE `cc_ringup`.`id`='$ringup_id' AND `cc_ringup_list`.`id`='$cc_id'";
 			$query = "UPDATE `cc_ringup`,`cc_ringup_list` SET `channelstatedesc`='$return'".$query." WHERE `cc_ringup`.`id`='$ringup_id' AND `cc_ringup_list`.`id`='$cc_id'";

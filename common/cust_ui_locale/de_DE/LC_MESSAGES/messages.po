@@ -84,7 +84,7 @@ msgid "Too frequent requests"
 msgstr "Zu viele Aufträge"
 
 #: templates/default/index.tpl
-msgid "You must enter an email address!"
+msgid "You have to enter an email address!"
 msgstr "Sie müssen eine E-Mail-Adresse eingeben!"
 
 #: templates/default/index.tpl

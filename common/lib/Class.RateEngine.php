@@ -1968,7 +1968,7 @@ $A2B -> debug( ERROR, $agi, "", "", "\r                  CallBack for Trunk=$thi
 					}
 					if ($outcid != 0) {
 						$outcid = 0;
-$A2B -> debug( ERROR, $agi, __FILE__, __LINE__, 'set_callerid "'.$calleridname.'"<'.$A2B -> CallerID.'>');
+//$A2B -> debug( ERROR, $agi, __FILE__, __LINE__, 'set_callerid "'.$calleridname.'"<'.$A2B -> CallerID.'>');
 						$agi -> set_callerid('"'.$calleridname.'"<'.$A2B -> CallerID.'>');
 //						$agi -> set_variable('CALLERID(ani)', $A2B -> CallerID);
 //						$agi -> set_variable('CALLERID(name)', $calleridname);

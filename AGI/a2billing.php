@@ -60,7 +60,7 @@ if ($argc > 1 && ($argv[1] == '--version' || $argv[1] == '-v')) {
 
 /********** 	 CREATE THE AGI INSTANCE + ANSWER THE CALL		**********/
 $agi = new AGI();
-$agi-> set_variable('_PARENTCHANNAME', $agi -> get_variable("CDR(channel)", true));
+//$agi-> set_variable('_PARENTCHANNAME', $agi -> get_variable("CDR(channel)", true));
 
 $optconfig = array();
 if ($argc > 1 && strstr($argv[1], "+")) {
@@ -105,6 +105,10 @@ if ($argc > 2 && strlen($argv[2]) > 0) {
 	    default:				$mode = 'standard'; break;
 	}
 } else $mode = 'standard';
+
+if ($mode != 'sms') {
+	$agi-> set_variable('_PARENTCHANNAME', $agi -> get_variable("CDR(channel)", true));
+}
 
 $A2B = new A2Billing();
 $A2B -> load_conf($agi, NULL, 0, $idconfig, $optconfig);
@@ -218,7 +222,7 @@ if ($startUpSystem && $startUpOS == "") {
 	} elseif ($startUpSystem > $startUpTime+30) {
 		$QUERY = "UPDATE cc_config SET config_value=$startUpSystem WHERE config_key='startup_time' AND config_group_title='global'";
 		$A2B -> DBHandle -> Execute($QUERY);
-		$QUERY = "UPDATE cc_card, cc_trunk, cc_did_destination SET cc_card.inuse=0, cc_trunk.inuse=0, cc_did_destination.destinuse=0";
+		$QUERY = "UPDATE cc_card SET inuse=0; UPDATE cc_trunk SET inuse=0; UPDATE cc_did_destination SET destinuse=0";
 		$A2B -> DBHandle -> Execute($QUERY);
 		$QUERY = "UPDATE cc_callback_spool SET status='PENDING', last_attempt_time='1980-01-01 00:00:00', next_attempt_time=NOW() WHERE surveillance > 0 AND agi_result='AGI PROCESSING'";
 		$A2B -> DBHandle -> Execute($QUERY);
@@ -1194,12 +1198,7 @@ if ($mode == 'standard') {
 						" OR TIME(CONVERT_TZ(NOW(),@@global.time_zone,IF(CONCAT(id_timezone+0) = id_timezone, @@global.time_zone, SUBSTRING_INDEX(id_timezone, ';', -1))))>=`timefrom`)))))".
 				" ORDER BY priority ASC";
 
-//		$A2B -> debug( DEBUG, $agi, __FILE__, __LINE__, $QUERY);
-//$A2B -> debug( ERROR, $agi, __FILE__, __LINE__, $QUERY);
 		$result = $A2B -> instance_table -> SQLExec ($A2B->DBHandle, $QUERY);
-//		$A2B -> debug( DEBUG, $agi, __FILE__, __LINE__, var_export($result,true));
-//$A2B -> debug( ERROR, $agi, __FILE__, __LINE__, var_export($result,true));
-        
 		if (is_array($result) && !is_null($result[0][1])) {
 		    //Off Net
 			$chanlang = $result[0][36];
@@ -1592,7 +1591,7 @@ $A2B -> debug( ERROR, $agi, __FILE__, __LINE__, "\033[1;32m============INSERT===
 	$newuniqueid = explode('.',$A2B->uniqueid);
 	$newuniqueid[0] = time();
 	$A2B->uniqueid = implode('.',$newuniqueid);
-	
+	$dialstatus = $ans = '1';
 	$callback_been_connected = 0;
 	
 	$A2B -> debug( DEBUG, $agi, __FILE__, __LINE__, '[CALLBACK]:[MODE : CALLBACK]');
@@ -1690,9 +1689,12 @@ $A2B -> debug( ERROR, $agi, __FILE__, __LINE__, "\033[1;32m============INSERT===
 
 		for ($i=0;$i< $A2B -> agiconfig['number_try'] ;$i++) {
 
+			if ($agi -> channel_status('',true) == AST_STATE_DOWN || $dialstatus == 'ANSWER' || $ans != '1') {
+			    break;
+			}
 			$RateEngine->Reinit();
 			$A2B-> Reinit();
-			
+
 			// DIVIDE THE AMOUNT OF CREDIT BY 2 IN ORDER TO AVOID NEGATIVE BALANCE IF THE USER USE ALL HIS CREDIT
 			$orig_credit = $A2B -> credit;
 

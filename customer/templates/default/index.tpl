@@ -9,7 +9,10 @@
     <link rel="stylesheet" href="templates/default/css/left-nav-style.css" type="text/css"/>
     <link rel="stylesheet" href="templates/default/css/index.css" type="text/css"/>
     <script>
-	var emptyemail = "{php} echo gettext("You must enter an email address!"){/php}";
+if(!CSS.supports("display:flex")) {
+	location.replace("index1");
+}
+	var emptyemail = "{php} echo gettext("You have to enter an email address!"){/php}";
 	var emptylogin = "{php} echo gettext("AUTHENTICATION REFUSED :<br>please check your login/password!");{/php}";
 	var noservice = "{php} echo gettext("Service temporally not available.<br>Try again later.");{/php}";
     </script>

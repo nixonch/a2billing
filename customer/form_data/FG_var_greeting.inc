@@ -85,8 +85,11 @@ $HD_Form -> FG_FK_DELETE_ALLOWED = true;
 $HD_Form -> FG_FK_DELETE_CONFIRM = true;
 $HD_Form -> FG_FK_DELETE_BUTTON_IF_DEPENDENT = false;
 $HD_Form -> FG_FK_WARNONLY = true;
-$HD_Form -> FG_FK_TABLENAMES = array("cc_did_destination");
-$HD_Form -> FG_FK_EDITION_CLAUSE = array("INSTR(playsound, (SELECT SUBSTRING_INDEX(greet_filename, '.', 1) FROM cc_greeting_records WHERE id = '%id'))>0 AND '%id'");
+$HD_Form -> FG_FK_TABLENAMES = array("cc_did_destination","cc_ivr_sounds","cc_ivr_destinations");
+//$HD_Form -> FG_FK_EDITION_CLAUSE = array("INSTR(playsound, (SELECT SUBSTRING_INDEX(greet_filename, '.', 1) FROM cc_greeting_records WHERE id = '%id'))>0 AND '%id'");
+$HD_Form -> FG_FK_EDITION_CLAUSE = array("SUBSTRING_INDEX(playsound, '.', 1) LIKE (SELECT SUBSTRING_INDEX(greet_filename, '.', 1) FROM cc_greeting_records WHERE id = '%id') AND '%id'",
+					 "SUBSTRING_INDEX(playsound, '.', 1) LIKE (SELECT SUBSTRING_INDEX(greet_filename, '.', 1) FROM cc_greeting_records WHERE id = '%id') AND '%id'",
+					 "SUBSTRING_INDEX(playsoundcallee, '.', 1) LIKE (SELECT SUBSTRING_INDEX(greet_filename, '.', 1) FROM cc_greeting_records WHERE id = '%id') AND '%id'");
 
 $HD_Form -> FG_FK_DELETE_MESSAGE = gettext("There are some inbound DID destinations where this greeting message included.<br>Please edit the dependent destinations first.");
 

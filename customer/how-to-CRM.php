@@ -42,7 +42,7 @@ $smarty -> assign("SECONDARY_TITLE", "Integration WebRTC SIP Phone with CRM");
 $smarty -> assign("CUSTOMER_INTERFACE_URL", CUSTOMER_INTERFACE_URL);
 $smarty -> assign("MAILTO", SUPPORT_MAILTO);
 $smarty -> assign("ADDRESS", SUPPORT_ADDRESS);
-$smarty -> assign("WEBPHONE", "https://chrome.google.com/webstore/detail/webrtc-sip-phone-with-cli/pofkcckikkdhiieipefhkaelgnbdkcib");
+$smarty -> assign("WEBPHONE", "https://chrome.google.com/webstore/detail/webrtc-sip-phone-with-cli/pofkcckikkdhiieipefhkaelgnbdkcib"); // ссылка на описание телефона
 
 $smarty -> display('slidebar.tpl');
 $smarty -> display('how-to-CRM.tpl');

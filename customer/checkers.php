@@ -1,1 +1,1 @@
-/home/billing_https/customer/apibilling.php
+apibilling.php

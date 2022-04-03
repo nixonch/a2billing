@@ -171,6 +171,7 @@ function sendValue(selvalue, othervalue){
                 window.opener.document.<?php echo $popup_formname ?>.accountcode.value = othervalue;
         } else if(othervalue && window.opener.document.getElementById('tzc')){
                 window.opener.document.getElementById('tzc').innerHTML = othervalue;
+		window.opener.document.getElementById('dest').disabled = false;
         }
         window.close();
 }
