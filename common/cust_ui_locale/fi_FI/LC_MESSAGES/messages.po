@@ -776,7 +776,7 @@ msgid "RECALL TIME"
 msgstr "TAKAISINKUTSUN AIKA"
 
 #: form_data/FG_var_card.inc:175
-msgid "Max time to recall in seconds. Set '-1' for paritet calls."
+msgid "Max duration to recall in seconds. Set '-1' for paritet calls."
 msgstr "Pisin puheluaika sekunneissa, takatsinkutsuissa. Aseta '-1' ulkopuheluiden pariteettipuheluille. "
 
 #: form_data/FG_var_card.inc:178

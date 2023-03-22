@@ -292,9 +292,11 @@ while(true)
 		    case  1: $last_status="BUSY";$timeout=$acc_to_busy;break;
 		    case  3: $last_status="NO-ANSWER";$timeout=$acc_to_noansw;break;
 		    case  4: $last_status="SENT";$fatal=1;break;
-		    case  5: $last_status="ERROR_CONGESTION";$fatal=1;break;
+//		    case  5: $last_status="ERROR_CONGESTION";$fatal=1;break;
+		    case  5: $last_status="ERROR_CONGESTION";$fatal=0;$timeout=$acc_to_unav;break;
 		    case  8: $last_status="ERROR_CONGESTION_OR_CHANNEL-UNAVAILABLE";$fatal=0;$timeout=$acc_to_unav;break;
-		    default: $last_status="ERROR_UNKNOWN (#$return)";$fatal=1;break;
+//		    default: $last_status="ERROR_UNKNOWN (#$return)";$fatal=1;break;
+		    default: $last_status="ERROR_UNKNOWN (#$return)";$fatal=0;$timeout=$acc_to_unav;break;
 		}
 		if($fatal && ($duration == 0 || $return == 4) && $flagringup==0) {
 			$status=$last_status;

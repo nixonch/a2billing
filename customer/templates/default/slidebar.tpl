@@ -15,7 +15,7 @@
   <label for="navi-toggle" class="navi-toggle" onclick=""></label>
   <ul>
     <li><h4>Main</h4></li>
-    <li><a href="{$CUSTOMER_INTERFACE_URL}">Sign-in/up</a></li>
+    <li><a href="{$CUSTOMER_INTERFACE_URL}/">Sign-in/up</a></li>
     <li><a href="{$CUSTOMER_INTERFACE_URL}terms">Terms & Conditions</a></li>
     <li><a href="{$CUSTOMER_INTERFACE_URL}policy">Privacy Policy</a></li>
     <li><h4>Knowledge base</h4></li>

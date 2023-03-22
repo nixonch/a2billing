@@ -95,7 +95,7 @@ class paypal {
 //					 tep_draw_hidden_field('shipping', number_format($order->info['shipping_cost'] * $currencyObject->get_value($my_currency), $currencyObject->get_decimal_places($my_currency))) .
 					 tep_draw_hidden_field('currency_code', $my_currency) .
 					 tep_draw_hidden_field('notify_url', tep_href_link("checkout_process?transactionID=".$transactionID."&sess_id=".session_id()."&key=".$key, '', 'SSL')) .
-					 tep_draw_hidden_field('return', tep_href_link("userinfo", '', 'SSL')) .
+					 tep_draw_hidden_field('return', tep_href_link("payment-history", '', 'SSL')) .
 					 tep_draw_hidden_field('cbt', gettext('Return to ').STORE_NAME) .
 					 tep_draw_hidden_field('cancel_return', tep_href_link("checkout_payment", '', 'SSL'));
 

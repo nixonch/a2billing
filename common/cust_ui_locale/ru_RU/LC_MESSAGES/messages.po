@@ -68,6 +68,17 @@ msgstr "Email не был отправлен по неизвестной при�
 msgid "Your login information email<br>has been sent to you."
 msgstr "На Ваш адрес электронной почты<br>отправлено сообщение c информацией<br>о существующем пароле.<br><br>Не получили электронное сообщение?<br>Проверьте, нет ли письма в папке,<br>предназначенной для спама и<br>рекламных сообщений (Spam/Junk)."
 
+#: review_webrtc.php
+msgid "Your information was successfully received."
+msgstr "Ваша информация успешно сохранена."
+
+#: review_webrtc.php
+msgid "Wait for answer, please."
+msgstr "Ожидайте пожалуйста ответ."
+
+#: review_webrtc.php
+msgid "Thank you so much!"
+msgstr "Благодарю Вас!"
 
 #: templates/default/index.tpl
 msgid "Sign in"
@@ -130,7 +141,7 @@ msgid "Get password"
 msgstr "Запросить пароль"
 
 #: templates/default/index.tpl
-msgid "You have to enter an email address!"
+msgid "You have to enter a valid email address!"
 msgstr "Введите ваш действительный email адрес!"
 
 #: templates/default/index.tpl
@@ -145,13 +156,21 @@ msgstr "Недопустимая операция"
 msgid "Service temporally not available.<br>Try again later."
 msgstr "Проверьте подключение к Интернету<br>и повторите запрос."
 
+#: templates/default/review_webrtc.tpl
+msgid "Service temporally not available. Try again later."
+msgstr "Проверьте подключение к Интернету и повторите запрос."
+
+#: templates/default/review_webrtc.tpl
+msgid "Enter something, please!"
+msgstr "Пожалуйста, введите что-нибудь!"
+
 #: templates/default/index.tpl
 msgid "Please provide your valid email address<br>to get your login information"
 msgstr "Пожалуйста, укажите правильный адрес<br>чтобы получить информацию для входа."
 
 #: templates/default/index.tpl
 msgid "Please provide your valid email address"
-msgstr "Пожалуйста, укажите правильный<br>e-mail адрес"
+msgstr "Пожалуйста, укажите правильный e-mail адрес"
 
 #: templates/default/index.tpl
 msgid "Please wait 1 minute before making any other request for the signup!"
@@ -1241,7 +1260,7 @@ msgid "RECALL TIME"
 msgstr "ПРОДОЛЖИТЕЛЬНОСТЬ ОТЗВОНА"
 
 #: form_data/FG_var_card.inc:175
-msgid "Max time to recall in seconds. Set '-1' for paritet calls."
+msgid "Max duration to recall in seconds. Set '-1' for paritet calls."
 msgstr "Ограничение продолжительности разговора при отзвоне в секундах. Значение '-1' означает паритетность с продолжительностью исходящих разговоров."
 
 #: form_data/FG_var_card.inc:178

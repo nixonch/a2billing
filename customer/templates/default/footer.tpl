@@ -39,9 +39,11 @@
   }
   function closeCookieScript() {
     $("#cookiescript_container").remove();
+    document.cookie = "PHPSESSID=;max-age=-1;path=/";
+    document.cookie = "UICSESSION="+self.crypto.randomUUID()+";path=/";
     var expiryDate = new Date();
-    expiryDate.setMonth(expiryDate.getMonth() + 3);
-    document.cookie = "cookiescript=set;expires="+expiryDate.toGMTString()+";path=/;";
+    expiryDate.setMonth(expiryDate.getMonth() + 12);
+    document.cookie = "cookiescript=set;expires="+expiryDate.toGMTString()+";path=/";
   }
 </script>
 {php}}{/php}

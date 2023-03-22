@@ -79,6 +79,18 @@ msgstr "На Ваш номер надіслано SMS c інформацією �
 msgid "By creating this account, you agree to our <a href=\"terms\">Terms</a> and <a href=\"policy\">Privacy Policy</a>."
 msgstr "Створюючи акаунт ви погоджуєтеся з <a href=\"terms\">Умовами Користування</a> та <a href=\"policy\">Політикою Конфіденційності</a>"
 
+#: review_webrtc.php
+msgid "Your information was successfully received."
+msgstr "Вашу інформацію успішно збережено."
+
+#: review_webrtc.php
+msgid "Wait for answer, please."
+msgstr "Чекайте на відповідь, будь ласка."
+
+#: review_webrtc.php
+msgid "Thank you so much!"
+msgstr "Дякую Вам!"
+
 #: templates/default/index.tpl
 msgid "This website uses cookies"
 msgstr "Цей веб-сайт використовує cookie-файли"
@@ -128,8 +140,8 @@ msgid "Get password"
 msgstr "Отримати пароль"
 
 #: templates/default/index.tpl
-msgid "You have to enter an email address!"
-msgstr "Введіть Вашу email адресу!"
+msgid "You have to enter a valid email address!"
+msgstr "Введіть Вашу дійсну email адресу!"
 
 #: templates/default/index.tpl
 msgid "No such login exists"
@@ -143,9 +155,21 @@ msgstr "Неприпустима операція"
 msgid "Service temporally not available.<br>Try again later."
 msgstr "Сервіс тимчасово недоступний.<br>Перевірте підключення до Інтернету<br>та повторіть запит."
 
+#: templates/default/review_webrtc.tpl
+msgid "Service temporally not available. Try again later."
+msgstr "Сервіс тимчасово недоступний. Перевірте підключення до Інтернету та повторіть запит."
+
+#: templates/default/review_webrtc.tpl
+msgid "Enter something, please!"
+msgstr "Будь ласка, введіть щось!"
+
 #: templates/default/index.tpl
 msgid "Please provide your valid email address<br>to get your login information"
-msgstr "Будь ласка, вкажіть правильну email адресу,<br>щоб отримати інформацію для входу."
+msgstr "Будь ласка, вкажіть вірну email адресу,<br>щоб отримати інформацію для входу."
+
+#: templates/default/index.tpl
+msgid "Please provide your valid email address"
+msgstr "Будь ласка, вкажіть вірну email адресу!"
 
 #: A2B_notification.php:76
 #, fuzzy

@@ -69,8 +69,10 @@ define ("ENABLE_LOG", 1);
 include (FSROOT."lib/Class.Logger.php");
 $log = new Logger();
 
-session_name("UICSESSION");
-session_start();
+if (isset($_COOKIE["UICSESSION"])) {
+    session_name("UICSESSION");
+    session_start();
+}
 
 $G_instance_Query_trace = Query_trace::getInstance();
 

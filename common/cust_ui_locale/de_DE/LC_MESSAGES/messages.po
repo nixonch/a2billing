@@ -63,6 +63,26 @@ msgstr "Service steht temporär leider nicht zur Verfügung.<br>Überprüfen Sie
 msgid "Please provide your valid email address<br>to get your login information"
 msgstr "Bitte geben Sie Ihre E-Mail-Adresse,<br>um Ihre Login-Daten."
 
+#: review_webrtc.php
+msgid "Please provide your valid email address"
+msgstr "Bitte geben Sie Ihre gültige E-Mail-Adresse an"
+
+#: review_webrtc.php
+msgid "Service temporally not available. Try again later."
+msgstr "Service steht temporär leider nicht zur Verfügung.<br>Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut."
+
+#: review_webrtc.php
+msgid "Your information was successfully received."
+msgstr "Ihre Informationen wurden erfolgreich empfangen."
+
+#: review_webrtc.php
+msgid "Wait for answer, please."
+msgstr "Warten Sie bitte auf Antwort."
+
+#: review_webrtc.php
+msgid "Thank you so much!"
+msgstr "Herzlichen Dank!"
+
 #: lib/customer.module.access.php
 msgid "AUTHENTICATION REFUSED :<br>please check your login/password!"
 msgstr "AUTHENTIFIZIERUNG ABGELEHNT<br>Bitte überprüfen Sie Ihre Benutzer / Passwort!"
@@ -84,12 +104,16 @@ msgid "Too frequent requests"
 msgstr "Zu viele Aufträge"
 
 #: templates/default/index.tpl
-msgid "You have to enter an email address!"
-msgstr "Sie müssen eine E-Mail-Adresse eingeben!"
+msgid "You have to enter a valid email address!"
+msgstr "Sie müssen eine gültige E-Mail Adresse eingeben!"
 
 #: templates/default/index.tpl
 msgid "Sign in"
 msgstr "Anmelden"
+
+#: templates/default/review_webrtc.tpl
+msgid "Enter something, please!"
+msgstr "Bitte geben Sie etwas ein!"
 
 #: templates/default/index.tpl
 msgid "Sign up"

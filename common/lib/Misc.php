@@ -247,7 +247,7 @@ function write_log($logfile, $output) {
  */
 function cleanInput($input) {
 	$search = array (
-			'@<script[^>]*?>.*?</script>@si', // Strip out javascript
+		'@<script[^>]*?>.*?</script>@si', // Strip out javascript
 		'@<[\/\!]*?[^<>]*?>@si', // Strip out HTML tags
 		'@<style[^>]*?>.*?</style>@siU', // Strip style tags properly
 		'@<![\s\S]*?--[ \t\n\r]*>@' // Strip multi-line comments
@@ -261,6 +261,7 @@ function cleanInput($input) {
  * function sanitize_data
  */
 function sanitize_data($input) {
+	global $DBHandle;
 
 	if (is_array($input)) {
 		foreach ($input as $var => $val) {
@@ -271,6 +272,7 @@ function sanitize_data($input) {
 		// remove whitespaces (not a must though)  
 		$input = trim($input);
 		$input = str_replace('--', '', $input);
+		$input = str_replace('..', '', $input);
 //		$input = str_replace(';', '', $input);
 //		$input = str_replace('#', '', $input);
 		$input = str_replace('/*', '', $input);
@@ -281,27 +283,29 @@ function sanitize_data($input) {
 		$input = str_ireplace('SUBSTRING', '', $input);
 		$input = str_ireplace('ASCII', '', $input);
 		$input = str_ireplace('SHA1', '', $input);
-		$input = str_ireplace('MD5', '', $input);
+//		$input = str_ireplace('MD5', '', $input);
 //		$input = str_ireplace('SCRIPT', '', $input);
 		$input = str_ireplace('ROW_COUNT', '', $input);
 //		$input = str_ireplace('SELECT', '', $input);
 //		$input = str_ireplace('INSERT', '', $input);
+		$input = str_ireplace('CASE WHEN', '', $input);
+		$input = str_ireplace('INFORMATION_SCHEMA', '', $input);
 //		$input = str_ireplace('DROP', '', $input);
+		$input = str_ireplace('RLIKE', '', $input);
 //		$input = str_ireplace('DELETE', '', $input);
 //		$input = str_ireplace('CONCAT', '', $input);
 //		$input = str_ireplace('WHERE', '', $input);
 //		$input = str_ireplace('UPDATE', '', $input);
-		
-		if (!(stripos($input, ' or 1') === FALSE)) {
-			return false;
-		}
-		if (!(stripos($input, ' or true') === FALSE)) {
-			return false;
-		}
+		$input = str_ireplace(' or 1', '', $input);
+		$input = str_ireplace(' or true', '', $input);
+		$input = str_ireplace('=$', '+$', $input);
+		$input = str_ireplace('=', '', $input);
+		$input = str_ireplace('+$', '=$', $input);
 
 //		$input  = stripslashes($input);
 		$input  = cleanInput($input);
 		$output = addslashes($input);
+//		$output = mysqli_real_escape_string( $DBHandle->_connectionID, $input );
 	}
 
 	return $output;

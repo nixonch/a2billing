@@ -211,7 +211,7 @@ $HD_Form -> AddEditElement (gettext("RECALL TIME"),
 			   "size=30 maxlength=4 readonly",
 			   "4",
 			   "",
-			   "" , "", "", "", "", "", "NO", gettext("Max time to recall in seconds. Set '-1' for paritet calls."));
+			   "" , "", "", "", "", "", "NO", gettext("Max duration to recall in seconds. Set '-1' for paritet calls."));
 
 if (ACT_VOICEMAIL && $ACXVOICEMAIL) {
 	$HD_Form -> AddEditElement (gettext("ACTIVE VOICEMAIL SERVICE"),

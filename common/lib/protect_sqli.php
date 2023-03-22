@@ -26,23 +26,23 @@ function recursive_filter($arr) {
 }
 
 // Clean up POST, GET, and COOKIES vars.
-$_POST = array_map_recursive('stripslashes',$_POST);
-$_GET  = array_map_recursive('stripslashes', $_GET);
-$_COOKIE  = array_map_recursive('stripslashes', $_COOKIE);
-
-if ( function_exists('mysql_real_escape_string'))
+$_POST		= array_map_recursive('stripslashes',$_POST);
+$_GET		= array_map_recursive('stripslashes',$_GET);
+$_COOKIE	= array_map_recursive('stripslashes',$_COOKIE);
+/**
+if ( function_exists('mysqli_real_escape_string'))
 {
-//    $_POST = array_map_recursive('mysql_real_escape_string',$_POST);
-//    $_GET  = array_map_recursive('mysql_real_escape_string', $_GET);
-//    $_COOKIE  = array_map_recursive('mysql_real_escape_string', $_COOKIE);
+    $_POST	= array_map_recursivec($_POST);
+    $_GET	= array_map_recursivec($_GET);
+    $_COOKIE	= array_map_recursivec($_COOKIE);
 }
 else
 {
-    $_POST = array_map_recursive('addslashes',$_POST);
-    $_GET  = array_map_recursive('addslashes', $_GET);
-    $_COOKIE  = array_map_recursive('addslashes', $_COOKIE);
+    $_POST	= array_map_recursive('addslashes',$_POST);
+    $_GET	= array_map_recursive('addslashes',$_GET);
+    $_COOKIE	= array_map_recursive('addslashes',$_COOKIE);
 }
-
-$_POST = recursive_filter($_POST);
-$_GET  = recursive_filter($_GET);
-$_COOKIE  = recursive_filter($_COOKIE);
+**/
+$_POST		= recursive_filter($_POST);
+$_GET		= recursive_filter($_GET);
+$_COOKIE	= recursive_filter($_COOKIE);

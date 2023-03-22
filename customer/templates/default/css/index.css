@@ -4,7 +4,7 @@ html, body * { box-sizing: border-box; font-family: 'Open Sans', sans-serif; }
 
 body {
   background:
-    url(https://static.asiawebdirect.com/m/bangkok/portals/vietnam/homepage/ha-long-bay/pagePropertiesImage/ha-long-bay.jpg) no-repeat center center fixed;
+    url(https://vietexplorer.com/wp-content/uploads/2020/03/ha-long-bay.jpg) no-repeat center center fixed;
   background-size: cover;
 }
 
@@ -13,12 +13,12 @@ body {
     -webkit-linear-gradient(
     rgba(246,247,249,.6),
     rgba(246,247,249,.6)),
-    url(https://static.asiawebdirect.com/m/bangkok/portals/vietnam/homepage/ha-long-bay/pagePropertiesImage/ha-long-bay.jpg) no-repeat center center fixed;
+    url(https://vietexplorer.com/wp-content/uploads/2020/03/ha-long-bay.jpg) no-repeat center center fixed;
   background:
     linear-gradient(
     rgba(246,247,249,.6),
     rgba(246,247,249,.6)),
-    url(https://static.asiawebdirect.com/m/bangkok/portals/vietnam/homepage/ha-long-bay/pagePropertiesImage/ha-long-bay.jpg) no-repeat center center fixed;
+    url(https://vietexplorer.com/wp-content/uploads/2020/03/ha-long-bay.jpg) no-repeat center center fixed;
   background-size: cover;
 }
 
@@ -628,6 +628,13 @@ input:focus, select:focus, textarea:focus {
   background-color: #1059FF;
 }
 
+a.btn-submit:hover {
+    cursor: pointer; 
+    background-color: #0F4FE6;
+    -webkit-transition: background-color .5s;
+    transition: background-color .5s; 
+}
+
 .btn-animate {
   flex-shrink: 0;
   font-weight: 700;
@@ -656,13 +663,6 @@ input:focus, select:focus, textarea:focus {
   top: -420px;
   color: rgba(255,255,255,0);
   background-color: rgba(255,255,255,1);
-}
-
-a.btn-submit:hover {
-    cursor: pointer; 
-    background-color: #0F4FE6;
-    -webkit-transition: background-color .5s;
-    transition: background-color .5s; 
 }
 
 .welcome {

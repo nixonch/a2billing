@@ -145,7 +145,7 @@ $instance_table = new Table('cc_greeting_records');
 
 if ($play==3) {
 	$filename = $greetname.'.wav';
-	$QUERY = "INSERT INTO cc_greeting_records (id_cc_card,technology,lang_locale,voice_name,gender,speed,greet_text,greet_filename) VALUES ({$_SESSION["card_id"]},'Google','$langlocale','$voicename','$gender','$speakingRate','$greettext','$filename') ON DUPLICATE KEY UPDATE no_browther_cache=no_browther_cache+1, technology='Google', lang_locale='$langlocale', voice_name='$voicename', gender='$gender', speed='$speakingRate', greet_text='$greettext', updatetime=NOW()";
+	$QUERY = "INSERT INTO cc_greeting_records (id_cc_card,technology,lang_locale,voice_name,gender,speed,greet_text,greet_filename) VALUES ({$_SESSION["card_id"]},'Google','$langlocale','$voicename','$gender','$speakingRate','$greettext','$filename') ON DUPLICATE KEY UPDATE no_browther_cache=no_browther_cache+1, technology='Google', lang_locale='$langlocale', voice_name='$voicename', gender='$gender', speed='$speakingRate', greet_text='$greettext', updatetime=CURRENT_TIMESTAMP";
 	$instance_table -> SQLExec ($HD_Form -> DBHandle, $QUERY, 0);
 }
 

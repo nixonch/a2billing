@@ -12,7 +12,7 @@
 if(!CSS.supports("display:flex")) {
 	location.replace("index1");
 }
-	var emptyemail = "{php} echo gettext("You have to enter an email address!"){/php}";
+	var emptyemail = "{php} echo gettext("You have to enter a valid email address!"){/php}";
 	var emptylogin = "{php} echo gettext("AUTHENTICATION REFUSED :<br>please check your login/password!");{/php}";
 	var noservice = "{php} echo gettext("Service temporally not available.<br>Try again later.");{/php}";
     </script>
@@ -194,9 +194,11 @@ if(!CSS.supports("display:flex")) {
 <script>
 function closeCookieScript() {
     $("#cookiescript_container").remove();
+    document.cookie = "PHPSESSID=;max-age=-1;path=/";
+    document.cookie = "UICSESSION="+self.crypto.randomUUID()+";path=/";
     var expiryDate = new Date();
-    expiryDate.setMonth(expiryDate.getMonth() + 3);
-    document.cookie = "cookiescript=set;expires="+expiryDate.toGMTString()+";path=/;";
+    expiryDate.setMonth(expiryDate.getMonth() + 12);
+    document.cookie = "cookiescript=set;expires="+expiryDate.toGMTString()+";path=/";
 }
 </script>
 {php}}{/php}

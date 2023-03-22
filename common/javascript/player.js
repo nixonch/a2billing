@@ -102,7 +102,7 @@ var	langlocale   = document.theForm.langlocale.value,
 		return;
 	}
 
-	goURL = langlocale + "&voicename=" + voicename + "&gender=" + gender + "&play=" + play + "&speakingRate=" + speakingRate + "&greetname=" + greetname + "&greettext=" + greettext;
+	goURL = langlocale + "&voicename=" + voicename + "&gender=" + gender + "&play=" + play + "&speakingRate=" + speakingRate + "&greetname=" + encodeURIComponent(greetname) + "&greettext=" + encodeURIComponent(greettext);
 	
 	self.location.href = theLINK + goURL;
 	
