@@ -79,9 +79,9 @@ $return = null;
 if (tep_not_null($action)) {
 	switch ($action) {
 		case 'save' :
-			while (list ($key, $value) = each($configuration)) {
+			foreach($configuration as $key => $value) {
 				if ($key == 'MODULE_PAYMENT_PLUGNPAY_ACCEPTED_CC' || $key == 'MODULE_PAYMENT_PAYPAL_CURRENCY') {
-					$value = join($value, ', ');
+					$value = implode(', ', $value);
 				}
 				$instance_sub_table->Update_table($DBHandle, "configuration_value = '" . $value . "'", "configuration_key = '" . $key . "'");
 			}
