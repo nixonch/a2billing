@@ -28,11 +28,11 @@ if( ! defined( 'IN_PHPSYSINFO' ) ) {
 setlocale( LC_ALL, $text['locale'] );
 global $XPath;
 
-header( "Cache-Control: no-cache, must-revalidate" );
+//header( "Cache-Control: no-cache, must-revalidate" );
 if( ! isset( $charset ) ) {
 	$charset = "iso-8859-1";
 } 
-header( "Content-Type: text/html; charset=" . $charset );
+//header( "Content-Type: text/html; charset=" . $charset );
 
 echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n";
 echo "<html>\n";
