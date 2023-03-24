@@ -69,7 +69,7 @@ define ("ENABLE_LOG", 1);
 include (FSROOT."lib/Class.Logger.php");
 $log = new Logger();
 
-if (isset($_COOKIE["UICSESSION"])) {
+if (isset($_COOKIE["UICSESSION"]) || !isset($_SERVER['HTTPS'])) {
     session_name("UICSESSION");
     session_start();
 }

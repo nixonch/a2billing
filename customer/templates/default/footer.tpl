@@ -9,7 +9,7 @@
 	
 	<br><br>
 	{include file="profiler.tpl"}
-{php}if(!isset($_COOKIE["cookiescript"])) {{/php}
+{php}if(!isset($_COOKIE["cookiescript"]) && !isset($_COOKIE["UICSESSION"])) {{/php}
 <div id="cookiescript_container">
     <div id="cookiescript_wrapper">
 	<span id="cookiescript_header">{php} echo gettext("This website uses cookies"){/php}</span>
