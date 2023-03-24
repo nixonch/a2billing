@@ -282,9 +282,9 @@ class sysinfo {
 		$keys = array_keys($results);
 		$keys2be = array('model', 'cpuspeed', 'cache', 'bogomips', 'cpus');
 		
-		while ($ar_buf = each($keys2be)) {
-			if (! in_array($ar_buf[1], $keys)) {
-				$results[$ar_buf[1]] = 'N.A.';
+		foreach ($keys2be as $val) {
+			if (!in_array($val, $keys)) {
+				$results[$val] = 'N.A.';
 			} 
 		}
 		

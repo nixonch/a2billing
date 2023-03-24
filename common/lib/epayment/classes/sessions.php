@@ -182,8 +182,10 @@
 
     $ret = '';
 // Create a string containing the serialized variables
-    for (reset($session->vars); list($i)=each($session->vars);) {
-      $ret .= $session->vars[$i] . $session->delimiter_value . serialize($GLOBALS[$session->vars[$i]]) . $session->delimiter;
+//    for (reset($session->vars); list($i)=each($session->vars);) {}
+    foreach ($session->vars as $v) {
+//      $ret .= $session->vars[$i] . $session->delimiter_value . serialize($GLOBALS[$session->vars[$i]]) . $session->delimiter;
+      $ret .= $v . $session->delimiter_value . serialize($GLOBALS[$v]) . $session->delimiter;
     }
 
     return $ret;
@@ -196,8 +198,10 @@
     $vars = explode($session->delimiter, $data);
 
 // Add the variables to the global namespace
-    for (reset($vars); list($i)=each($vars);) {
-      $tmp = explode($session->delimiter_value, $vars[$i]);
+//    for (reset($vars); list($i)=each($vars);) {}
+    foreach ($vars as $var) {
+//      $tmp = explode($session->delimiter_value, $vars[$i]);
+      $tmp = explode($session->delimiter_value, $var);
       $name = trim($tmp[0]);
       $value = trim($tmp[1]);
       $GLOBALS[$name] = unserialize($value);
@@ -283,8 +287,10 @@
   function session_unregister($var) {
     global $session;
 
-    for (reset($session->vars); list($i)=each($session->vars);) {
-      if ($session->vars[$i] == trim($var)) {
+//    for (reset($session->vars); list($i)=each($session->vars);) {//}
+    foreach ($session->vars as $i => $v) {
+//      if ($session->vars[$i] == trim($var)) {//}
+      if ($v == trim($var)) {
         unset($session->vars[$i]);
         break;
       }
@@ -294,8 +300,10 @@
   function session_is_registered($var) {
     global $session;
 
-    for (reset($session->vars); list($i)=each($session->vars);) {
-      if ($session->vars[$i] == trim($var)) {
+//    for (reset($session->vars); list($i)=each($session->vars);) {//}
+    foreach ($session->vars as $v) {
+//      if ($session->vars[$i] == trim($var)) {//}
+      if ($v == trim($var)) {
         return true;
       }
     }

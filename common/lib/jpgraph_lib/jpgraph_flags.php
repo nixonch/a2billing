@@ -307,7 +307,7 @@ class FlagImages {
 	    reset($this->iCountryNameMap);
 	    $this->iOrdIdx=array();
 	    $i=0;
-	    while( list($key,$val) = each($this->iCountryNameMap) ) {
+	    foreach ($this->iCountryNameMap as $key => $val) {
 		$this->iOrdIdx[$i++] = array($val,$key);
 	    }
 	    $tmp=$this->iOrdIdx[$aOrd];
@@ -337,7 +337,7 @@ class FlagImages {
 	$nlen = strlen($aName);
 	reset($this->iCountryNameMap);
 	// Match partial full country name or exact idx name
-	while( list($key,$val) = each($this->iCountryNameMap) ) {
+	foreach ($this->iCountryNameMap as $key => $val) {
 	    if( strpos(strtolower($key), $aName) !== false || 
                 ($nlen == strlen($val) && $val == $aName) ) {
 		$found=true;

@@ -123,7 +123,7 @@ if ($lng == 'browser') {
   if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
     $plng = preg_split('/,/', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
     if (count($plng) > 0) {
-      while (list($k, $v) = each($plng)) {
+      foreach($plng as $v) {
         $k = preg_split('/;/', $v, 1);
         $k = preg_split('/-/', $k[0]);
         if (file_exists(APP_ROOT . '/includes/lang/' . $k[0] . '.php')) {

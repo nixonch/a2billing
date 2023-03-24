@@ -96,8 +96,7 @@
 			}
 			else
 			{
-				reset($handle);
-				while(list($h, $f) = each($handle))
+				foreach($handle as $h => $f)
 				{
 					$this->file[$h] = $this->filename($f);
 				}
@@ -150,8 +149,7 @@
 			}
 			else
 			{
-				reset($varname);
-				while(list($k, $v) = each($varname))
+				foreach($varname as $k => $v)
 				{
 					if (!empty($k))
 					{
@@ -178,8 +176,7 @@
 			}
 
 			$str = $this->get_var($handle);
-			reset($this->varkeys);
-			while (list($k, $v) = each($this->varkeys))
+			foreach($this->varkeys as $k => $v)
 			{
 				$str = str_replace($v, $this->varvals[$k], $str);
 			}
@@ -217,8 +214,7 @@
 			}
 			else
 			{
-				reset($handle);
-				while(list($i, $h) = each($handle))
+				foreach($handle as $i => $h)
 				{
 					$str = $this->subst($h);
 					$this->set_var($target, $str);
@@ -249,8 +245,7 @@
 		 */
 		function get_vars()
 		{
-			reset($this->varkeys);
-			while(list($k, $v) = each($this->varkeys))
+			foreach($this->varkeys as $k => $v)
 			{
 				$result[$k] = $this->varvals[$k];
 			}
@@ -271,8 +266,7 @@
 			}
 			else
 			{
-				reset($varname);
-				while(list($k, $v) = each($varname))
+				foreach($varname as $k => $v)
 				{
 					$result[$k] = $this->varvals[$k];
 				}
@@ -297,8 +291,7 @@
 			{
 				return false;
 			}
-			reset($m);
-			while(list($k, $v) = each($m))
+			foreach($m as $k => $v)
 			{
 				if (!isset($this->varkeys[$v]))
 				{

@@ -61,13 +61,13 @@ class iam_csvdump
     $ret = array();
     reset($array);
     if (is_array(current($array))) {
-      while (list(,$lineArr) = each($array)) {
+      foreach ($array as $lineArr) {
         if (!is_array($lineArr)) {
           //Could issue a warning ...
           $ret[] = array();
         } else {
           $subArr = array();
-          while (list(,$val) = each($lineArr)) {
+	  foreach ($lineArr as $val) {
             $val      = $this->_valToCsvHelper($val, $separator, $trimFunction);
             $subArr[] = $val;
           }
@@ -76,7 +76,7 @@ class iam_csvdump
       }
       return join("\n", $ret);
     } else {
-      while (list(,$val) = each($array)) {
+      foreach ($array as $val) {
         $val   = $this->_valToCsvHelper($val, $separator, $trimFunction);
         $ret[] = strip_tags($val);
       }

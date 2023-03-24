@@ -217,7 +217,7 @@ ksort($fluctuation);
 
 $maxload = 1;
 $load = 0;
-while (list ($key, $val) = each($fluctuation)) {
+foreach($fluctuation as $key => $value) {
 	//echo "<br>$key => $val\n";  
 	$load = $load + $val;
 	if (is_numeric($key))
