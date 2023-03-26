@@ -212,6 +212,7 @@ define ("PAYPAL_PURCHASE_AMOUNT", isset($A2B->config['paypal']['purchase_amount'
 define ("PAYPAL_LOGFILE", isset($A2B->config['paypal']['paypal_logfile'])?$A2B->config['paypal']['paypal_logfile']:null);
 
 
+define ("SHOW_SLIDEBAR", isset($A2B->config['webcustomerui']['slidebar'])?$A2B->config['webcustomerui']['slidebar']:null);
 define ("SUPPORT_MAILTO", isset($A2B->config["webcustomerui"]['mailto'])?$A2B->config["webcustomerui"]['mailto']:'support@my.domain');
 define ("SUPPORT_ADDRESS", isset($A2B->config["webcustomerui"]['address'])?$A2B->config["webcustomerui"]['address']:'support@my.domain');
 define ("RETURN_URL_DISTANT_LOGIN", isset($A2B->config["webcustomerui"]['return_url_distant_login'])?$A2B->config["webcustomerui"]['return_url_distant_login']:null);
