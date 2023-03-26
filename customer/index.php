@@ -262,6 +262,7 @@ $smarty -> assign("error", $error);
 $smarty -> assign("username", $username);
 $smarty -> assign("password", $password);
 
+$smarty -> assign("SHOW_SLIDEBAR", SHOW_SLIDEBAR);
 $smarty -> assign("SECONDARY_TITLE", "Sign in or Register");
 
 $smarty -> display('index.tpl');

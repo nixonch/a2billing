@@ -18,6 +18,7 @@ if(!CSS.supports("display:flex")) {
     </script>
 </head>
 <body class="bodygradient">
+{if SHOW_SLIDEBAR}
 <input type="checkbox" id="navi-toggle" hidden>
 <nav class="navi">
 <label for="navi-toggle" class="navi-toggle" onclick=""></label>
@@ -32,6 +33,7 @@ if(!CSS.supports("display:flex")) {
     <li><a href="{$CUSTOMER_INTERFACE_URL}how-to-CRM">Integration with CRM</a></li>
 </ul>
 </nav>
+{/if}
 <aside class="ads_right">
 </aside>
 <div class="container" onClick="if ($('#navi-toggle').prop('checked') && event.target.tagName!='A') document.getElementById('navi-toggle').checked=false">

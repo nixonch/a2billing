@@ -807,6 +807,27 @@ delimiter //
 create procedure a2b_trf_check()
 begin
     declare a int;
+    select count(*) into a from cc_config where config_key='slidebar';
+    if a=0 then
+	INSERT INTO cc_config (config_title, config_key, config_value, config_description, config_valuetype, config_listvalues, config_group_title)
+	VALUES ('Enabling slidebar', 'slidebar', '0', 'Show slidebar for commercial using', '1', 'yes,no', 'webcustomerui');
+    elseif a>1 then
+	select id into a from cc_config where config_key='slidebar' order by id limit 0,1;
+	delete from cc_config where config_key='slidebar' and id>a;
+    end if;
+end //
+
+delimiter ;
+
+call a2b_trf_check;
+
+drop procedure if exists a2b_trf_check;
+
+delimiter //
+
+create procedure a2b_trf_check()
+begin
+    declare a int;
     select count(*) into a from cc_config where config_key='mailto';
     if a=0 then
 	INSERT INTO cc_config (config_title, config_key, config_value, config_description, config_valuetype, config_listvalues, config_group_title)
