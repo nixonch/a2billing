@@ -18,7 +18,7 @@ if(!CSS.supports("display:flex")) {
     </script>
 </head>
 <body class="bodygradient">
-{if SHOW_SLIDEBAR}
+{if (SHOW_SLIDEBAR)}
 <input type="checkbox" id="navi-toggle" hidden>
 <nav class="navi">
 <label for="navi-toggle" class="navi-toggle" onclick=""></label>
