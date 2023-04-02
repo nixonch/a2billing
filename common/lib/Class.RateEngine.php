@@ -1851,8 +1851,8 @@ $A2B -> debug( ERROR, $agi, "", "", "\r                  CallBack for Trunk=$thi
 				$dialstr = $channel.$dialparams;
 				//ADDITIONAL PARAMETER 			%dialingnumber%,	%cardnumber%
 				$dialstr .= $addparameter;
-				$addparameter = str_replace("%cardnumber%", $A2B->cardnumber, $addparameter);
-				$addparameter = str_replace("%dialingnumber%", $prefix.$destination, $addparameter);
+				$dialstr = str_replace("%cardnumber%", $A2B->cardnumber, $dialstr);
+				$dialstr = str_replace("%dialingnumber%", $prefix.$destination, $dialstr);
 				$this -> trunk_start_inuse($agi, $A2B, 1);
 				if ($agi) {
 				    if ($A2B->dtmf_destination && strlen($A2B->oldphonenumber) && $firstgo && (!isset($trunkcode) || strpos($trunkcode,"-INFOLINE") === false) && $typecall < 44) {
