@@ -308,21 +308,40 @@ class FormBO {
 			    }
 			}
 		    }
-		    $client = new GuzzleHttp\Client(['headers' => ['Authorization' => 'Basic '.D7_API_TOKEN], 'connect_timeout' => 3.0, 'timeout' => 3.0, 'http_errors' => false]);
-		    $requestData = [
-			'coding' => 8,
-			'to' => $phone,
-			'hex_content' => bin2hex(mb_convert_encoding($message,'UTF-16BE')),
-			'from' => CCMAINTITLE
+
+		    $client = new GuzzleHttp\Client([	'base_uri' => "https://api.d7networks.com",
+							'connect_timeout' => 3.0,
+							'timeout' => 3.0,
+							'http_errors' => false,
+							'headers' => [	'User-Agent' => 'sipde.net/Guzzle php/'.phpversion(),
+									'Content-Type' => 'application/json',
+									'Accept' => 'application/json',
+									'Authorization' => 'Bearer '.D7_API_TOKEN
+								     ]
+						    ]);
+		    $requestData =
+		    [ 'messages' =>
+		      [
+			[
+			'originator' => CCMAINTITLE,
+			'channel' => "sms",
+			'recipients' => [$phone],
+			'content' => $message,
+			'msg_type' => "text",
+			'data_coding' => "auto"
+//			'report_url' => null,
+//			'schedule_time' => null
+			]
+		      ]
 		    ];
 		    try {
-			$response = $client->post('https://rest-api.d7networks.com/secure/send', ['json' => $requestData]);
+			$response = $client->post('https://api.d7networks.com/messages/v1/send', ['json' => $requestData]);
 		    } catch (ConnectException $e) {
-			$response = $client->get('https://rest-api.d7networks.com/secure/balance');
+			$response = $client->get('https://api.d7networks.com/messages/v1/balance');
 			if ($response->getStatusCode() == 200) {
 			    $body = json_decode($response->getBody(),true);
-			    $balance = '$'.$body['data']['balance'];
-			    $sms_count = $body['data']['sms_count'];
+			    $balance = '$'.$body['balance'];
+			    $sms_count = (isset($body['sms_count'])) ? $body['sms_count'] : 'N/A';
 			} else {
 			    $balance = $sms_count = 'N/A';
 			}
@@ -335,11 +354,11 @@ class FormBO {
 			    $error_msg = $e->getMessage();
 			}
 		    } catch (Exception $e) {
-			$response = $client->get('https://rest-api.d7networks.com/secure/balance');
+			$response = $client->get('https://api.d7networks.com/messages/v1/balance');
 			if ($response->getStatusCode() == 200) {
 			    $body = json_decode($response->getBody(),true);
-			    $balance = '$'.$body['data']['balance'];
-			    $sms_count = $body['data']['sms_count'];
+			    $balance = '$'.$body['balance'];
+			    $sms_count = (isset($body['sms_count'])) ? $body['sms_count'] : 'N/A';
 			} else {
 			    $balance = $sms_count = 'N/A';
 			}
@@ -355,11 +374,11 @@ class FormBO {
 			$stcode = $response->getStatusCode();
 			if ($stcode != 200) {
 			    $bodyR = json_decode($response->getBody(),true);
-			    $response = $client->get('https://rest-api.d7networks.com/secure/balance');
+			    $response = $client->get('https://api.d7networks.com/messages/v1/balance');
 			    if ($response->getStatusCode() == 200) {
 				$body = json_decode($response->getBody(),true);
-				$balance = '$'.$body['data']['balance'];
-				$sms_count = $body['data']['sms_count'];
+				$balance = '$'.$body['balance'];
+				$sms_count = (isset($body['sms_count'])) ? $body['sms_count'] : 'N/A';
 			    } else {
 				$balance = $sms_count = 'N/A';
 			    }

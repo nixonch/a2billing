@@ -46,16 +46,25 @@ $smarty->display('main.tpl');
 
 $balance = $sms_count = 'N/A';
 if (D7_API_TOKEN) {
-    $client = new GuzzleHttp\Client(['headers' => ['Authorization' => 'Basic '.D7_API_TOKEN], 'connect_timeout' => 3.0, 'timeout' => 3.0, 'http_errors' => false]);
+    $client = new GuzzleHttp\Client([	'base_uri' => "https://api.d7networks.com",
+					'connect_timeout' => 3.0,
+					'timeout' => 3.0,
+					'http_errors' => false,
+					'headers' => [	'User-Agent' => 'sipde.net/Guzzle php/'.phpversion(),
+							'Content-Type' => 'application/json',
+							'Accept' => 'application/json',
+							'Authorization' => 'Bearer '.D7_API_TOKEN
+						     ]
+				    ]);
     try {
-	$response = $client->get('https://rest-api.d7networks.com/secure/balance');
+	$response = $client->get('https://api.d7networks.com/messages/v1/balance');
     } catch (GuzzleHttp\Exception\GuzzleException $e) {
 	$sms_count .= '<br>'.$e->getMessage();
     } finally {
 	if ($response && $response->getStatusCode() == 200) {
 	    $body = json_decode($response->getBody(),true);
-	    $balance = '$'.$body['data']['balance'];
-	    $sms_count = $body['data']['sms_count'];
+	    $balance = '$'.$body['balance'];
+	    if (isset($body['sms_count'])) $sms_count = $body['sms_count'];
 	}
     }
 }

@@ -149,11 +149,12 @@ if($form_action == "list") {
 }
 
 $HD_Form -> FG_EDITION_CLAUSE = "id = %id";
-$HD_Form -> AddViewElement(gettext("TITLE"), "config_title", "20%", "center");
-$HD_Form -> AddViewElement(gettext("KEY"), "config_key", "15%", "center");
-$HD_Form -> AddViewElement(gettext("VALUE"), "config_value", "10%", "center","","","list-conf",$yesno);
-$HD_Form -> AddViewElement(gettext("DESCRIPTION"), "config_description", "40%", "left");
+$HD_Form -> AddViewElement(gettext("TITLE"), "config_title", "10%", "center");
+$HD_Form -> AddViewElement(gettext("KEY"), "config_key", "5%", "center");
+$HD_Form -> AddViewElement(gettext("VALUE"), "config_value", "20%", 'center" style="word-break: break-all;min-width: 10%;max-width: 25%',"","","list-conf",$yesno);
+$HD_Form -> AddViewElement(gettext("DESCRIPTION"), "config_description", "30%", 'left" style="word-break: break-all;min-width: 10%;max-width: 60%');
 $HD_Form -> AddViewElement(gettext("GROUP"), "config_group_title", "5%", "center");
+$HD_Form -> FG_ACTION_SIZE_COLUMN = '4%';
 
 $HD_Form -> FieldViewElement ('config_title, config_key, config_value, config_description, config_group_title');
 
