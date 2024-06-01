@@ -1,4 +1,16 @@
+# Setze das ETag auf die Zeit, zu der die Datei zuletzt geändert wurde und ihre Größe
+<FilesMatch "\.(gif|ico|jpg|jpeg|png|GIF|ICO|JPG|JPEG|PNG|css|js|woff|CSS|JS|WOFF|ttf|TTF)$">
+    FileETag All
+    <IfModule mod_headers.c>
+	Header unset Set-Cookie
+	Header set Cache-Control "max-age=0, must-revalidate"
+	Header set Expires "0"
+    </IfModule>
+</FilesMatch>
+#
 RewriteEngine On
+
+RewriteBase /
 
 # To externally redirect /dir/foo.php to /dir/foo/
 RewriteCond %{REQUEST_METHOD} !=POST
