@@ -1,10 +1,9 @@
 # Setze das ETag auf die Zeit, zu der die Datei zuletzt geändert wurde und ihre Größe
-<FilesMatch "\.(gif|ico|jpg|jpeg|png|GIF|ICO|JPG|JPEG|PNG|css|js|woff|CSS|JS|WOFF|ttf|TTF)$">
+<FilesMatch "\.(gif|ico|jpe?g|png|GIF|ICO|JPE?G|PNG|css|js|woff|CSS|JS|WOFF|ttf|TTF|wav|WAV|mp3|MP3|alaw)$">
     FileETag All
     <IfModule mod_headers.c>
 	Header unset Set-Cookie
 	Header set Cache-Control "max-age=0, must-revalidate"
-	Header set Expires "0"
     </IfModule>
 </FilesMatch>
 #

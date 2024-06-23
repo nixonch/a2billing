@@ -83,7 +83,7 @@ $HD_Form -> FG_FK_EDITION_CLAUSE = array("id_cc_ivr_dest IN (SELECT id FROM cc_i
 
 $HD_Form -> FG_OTHER_BUTTON1 = true;
 //$HD_Form -> FG_OTHER_BUTTON1_CONDITION = '"|col5|" != ""';
-$HD_Form -> FG_OTHER_BUTTON1_LINK= $_SERVER['PHP_SELF']."?section=15&form_action=list&id=|param|";
+$HD_Form -> FG_OTHER_BUTTON1_LINK= $PHP_SELF."?section=15&form_action=list&id=|param|";
 $HD_Form -> FG_OTHER_BUTTON1_IMG = Images_Path . "/edit.png";
 
 $HD_Form -> AddEditElement (gettext("IVR Name"),
@@ -127,6 +127,6 @@ $HD_Form -> FG_INTRO_TEXT_ADITION = '';
 $HD_Form -> FG_BUTTON_EDITION_SRC = $HD_Form -> FG_BUTTON_ADITION_SRC  = Images_Path . "/cormfirmboton.gif";
 $HD_Form -> FG_BUTTON_EDITION_BOTTOM_TEXT = $HD_Form -> FG_BUTTON_ADITION_BOTTOM_TEXT = gettext("Click 'Confirm Data' to continue");
 **/
-$HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD = $_SERVER['PHP_SELF']."?id=";
-$HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT = $_SERVER['PHP_SELF']."?id=";
-$HD_Form -> FG_GO_LINK_AFTER_ACTION_DELETE = $_SERVER['PHP_SELF']."?id=";
+$HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD = $PHP_SELF."?id=";
+$HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT = $PHP_SELF."?id=";
+$HD_Form -> FG_GO_LINK_AFTER_ACTION_DELETE = $PHP_SELF."?id=";

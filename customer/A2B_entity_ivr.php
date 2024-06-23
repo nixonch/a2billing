@@ -42,6 +42,66 @@ if (!has_rights(ACX_SIP_IAX)) {
 	die();
 }
 
+getpost_ifset(array('download', 'file'));
+
+$diraudio = DIR_STORE_AUDIO . "/" . $_SESSION["pr_login"] . "/";
+
+$soundlist = array();
+$return = scandir($diraudio);
+if ($return!==false) {
+        foreach ($return as $val) {
+            if (is_file($diraudio.$val) && $val != 'tempplay.wav') {
+                $soundlist[preg_replace('/\.[^\.\/]+$/', '', $val)] = $val;
+            }
+        }
+}
+
+if (($download == "file") && $file) {
+	if (strpos($file, '/') !== false) {
+	    if (substr_count($file,'/') > 1) exit();
+	    $path_parts = pathinfo($file);
+	    if (strlen($path_parts['dirname'])>3 || !ereg("[^0-9_\.]",$path_parts['dirname'])) exit();
+	    $diraudio = DIR_STORE_AUDIO."/".$path_parts['dirname']."/";
+	    $return = scandir($diraudio);
+	    if ($return!==false) {
+		foreach ($return as $val) {
+		    if (is_file($diraudio.$val) && strpos($path_parts['dirname']."/".$val, $file) === 0) {
+			$file = preg_replace('/\.[^\.\/]+$/', '', $val);
+			$source = $diraudio . $val;
+			$path_parts = pathinfo($source);
+			if ($path_parts['extension']=='alaw') {
+			    $val = $file.".wav";
+			    $diraudio = "/tmp/";
+			    $sox = "/usr/bin/sox --channels 1 --type raw --rate 8000 -e a-law ".$source." ".$diraudio.$val;
+			    exec($sox." >/dev/null 2>&1");
+			}
+			$soundlist[$file] = $val;
+			break;
+		    }
+		}
+	    } else exit();
+	}
+        $dl_full = $diraudio . $soundlist[$file];
+        if (!file_exists($dl_full)) {
+                echo gettext ( "ERROR: Cannot download file " . $soundlist[$file] . ", it does not exist.<br>" );
+                exit ();
+        }
+        header ( "Content-Type: application/octet-stream" );
+        header ( 'Content-Disposition: attachment; filename="'.$soundlist[$file].'"');
+        header ( "Content-Length: " . filesize ( $dl_full ) );
+        header ( "Accept-Ranges: bytes" );
+        header ( "Pragma: no-cache" );
+        header ( "Expires: 0" );
+        header ( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
+        header ( "Content-transfer-encoding: binary" );
+
+        @readfile ( $dl_full );
+
+	if (isset($sox)) unlink($dl_full);
+
+        exit ();
+}
+
 include ("./form_data/FG_var_ivr.inc");
 
 $HD_Form->setDBHandler(DbConnect());
@@ -63,16 +123,6 @@ echo $CC_help_ivr;
 
 if ($form_action=='list') {
 
-$diraudio = DIR_STORE_AUDIO."/" . $_SESSION["pr_login"] . "/";
-$soundlist = array();
-$return = scandir($diraudio);
-if ($return!==false) {
-        foreach ($return as $val) {
-            if (is_file($diraudio.$val) && $val != 'tempplay.wav') {
-                $soundlist[] = array(preg_replace('/\.[^\.\/]+$/', '', $val),preg_replace('/\.[^\.\/]+$/', '', $val));
-            }
-        }
-}
 $destlist = array();
 $QUERYpop = "SELECT ivrname FROM cc_ivr WHERE id_cc_card=".$_SESSION["card_id"]." ORDER BY ivrname";
 $resmax = $instance_table -> SQLExec ($DBHandle,$QUERYpop);
@@ -264,7 +314,7 @@ if ($form_action=='list') {
 <a href="#" target="_self" class="toggle_menu"><font class="fontstyle_002"><?php echo gettext("HIDE");?></font> <img src="<?php echo Images_Path; ?>/toggle_hide2show_on.png" onmouseover="this.style.cursor='hand';" HEIGHT="16"></a>
 </div>
 <div class="itema centera tohide">
-<form name="myForm" method="POST" id="myForm" enctype="multipart/form-data" action="<?php echo $_SERVER['PHP_SELF'];?>">
+<form name="myForm" method="POST" id="myForm" enctype="multipart/form-data" action="<?php echo $PHP_SELF;?>">
     <input type="hidden" value="list" name="form_action"/>
     <div class="bgivr">
 	    <div class="bgivrth">
@@ -286,16 +336,6 @@ if ($form_action=='list') {
 	    </div>
 	    <div class="bgivrth">
 		<?php echo gettext("Wait for input, sec")?>: <SELECT name="waitsecsfordigits" class="form_input_select">
-					<option>0</option>
-					<option>1</option>
-					<option>2</option>
-					<option>3</option>
-					<option>4</option>
-					<option>5</option>
-					<option>6</option>
-					<option>7</option>
-					<option>8</option>
-					<option>9</option>
 				     </SELECT>
 	    </div>
 	    <div data-holder-for="soundArray" class="bgivrth"></div>
@@ -309,15 +349,14 @@ if ($form_action=='list') {
 <div class="itema"></div>
 </div>
 </div>
-
 <datalist id="soundlist">
-    <?php foreach ($soundlist as $value) {?>
-	<option value="<?php echo $value[0];?>">
+    <?php foreach ($soundlist as $ke => $value) {?>
+	<option value="<?php echo $ke?>">
     <?php }?>
 </datalist>
 <datalist id="destlist">
     <?php foreach ($destlist as $value) {?>
-	<option value="<?php echo $value[0];?>">
+	<option value="<?php echo $value[0]?>">
     <?php }?>
 </datalist>
 <datalist id="eventlist">
@@ -338,30 +377,37 @@ if ($form_action=='list') {
 	<div class="ivrbeetd">
 	    <?php echo gettext("Exit Action")?>:<br><INPUT type="text" name="destinationnum" list="destlist" class="form_input_text" maxlength="100" style="width:100%"/>
 	</div>
-	<div class="ivrbeetd">
-	    <?php echo gettext("Callee sound")?>:<br><INPUT type="text" name="playsoundcallee" list="soundlist" class="form_input_text" style="width:100%"/>
+	<div class="ivrbeetd" style="position:relative">
+	    <?php echo gettext("Callee sound")?>:
+	    <div style="position:relative">
+		<INPUT type="text" name="playsoundcallee" list="soundlist" class="form_input_text" maxlength="100" style="width:100%;padding-left:13px;box-sizing:border-box" onchange="Visi(this)"/>
+		<a href="javascript:;" name="ton" style="position:absolute;left:2px;top:.3em;visibility:hidden">
+		    <img src="<?php echo Images_Path; ?>/flv.gif" height="10" onClick="GreetPlay(this)">
+		</a>
+	    </div>
 	</div>
 	<div class="ivrbeetd">
 	</div>
 </div>
-<div data-name="soundArray" data-label="Sound" class="soundFlex">
+<div class="soundFlex" data-name="soundArray" data-label="Sound">
 	<div style="white-space:nowrap">
-	<?php echo gettext("Pause,sec")?>: <SELECT name="timeout" class="form_input_select">
-	    <option>0</option>
-	    <option>1</option>
-	    <option>2</option>
-	    <option>3</option>
-	    <option>4</option>
-	    <option>5</option>
-	    <option>6</option>
-	    <option>7</option>
-	    <option>8</option>
-	    <option>9</option>
-	</SELECT>&nbsp;&nbsp;<?php echo gettext("Sound")?>:&nbsp;</div>
-	<div><INPUT type="text" name="playsound" list="soundlist" class="form_input_text" maxlength="100" style="width:99%"/></div>
+	<?php echo gettext("Pause,sec")?>: <SELECT name="timeout" class="form_input_select"></SELECT>&nbsp;&nbsp;<?php echo gettext("Sound")?>:&nbsp;
+	</div>
+	<div style="position:relative">
+	    <INPUT type="text" name="playsound" list="soundlist" class="form_input_text" maxlength="100" style="width:100%;padding-left:13px;box-sizing:border-box" onchange="Visi(this)"/>
+	    <a href="javascript:;" name="ton" style="position:absolute;left:2px;top:.3em;visibility:hidden">
+		<img src="<?php echo Images_Path; ?>/flv.gif" height="10" onClick="GreetPlay(this)">
+	    </a>
+	</div>
 </div>
 </div>
 <div id="popup"></div>
+<script>
+    $('select').html($('select[name="repeats"]').html());
+</script>
+<audio id="sound1" preload="auto" controlsList="nodownload" onended="playnext(sound2)"></audio>
+<audio id="sound2" preload="auto" controlsList="nodownload" onended="playnext(sound1)"></audio>
+<script src="./javascript/ivrplayer.js"></script>
 <?php
 }
 

@@ -79,6 +79,7 @@ $(document).ready(function(){
     }
     $('#myForm').jqDynaForm();
     $('#myForm').jqDynaForm('set', PopUpDayTimeJson);
+    $('a[name="ton"]').filter(function(){return this.previousElementSibling.value;}).css('visibility', 'visible');
     $('#myForm').submit(function(event){
 	var json = $('#myForm').jqDynaForm('get');
 	var postTo = $('#myForm').attr('action');
