@@ -506,15 +506,23 @@ function updatecontent(id_el, record, field_inst, instance)
 						$select_list = $this->FG_TABLE_EDITION[$i][11];
 						if ($this->FG_DEBUG >= 2) { echo "<br>"; print_r($select_list);}
 					}
-					 if ($this->FG_DEBUG >= 2) print_r ($list);			 
+					 if ($this->FG_DEBUG >= 2) print_r ($list);
 					 if ($this->FG_DEBUG >= 2) echo "<br>#$i<br>::>".$this->VALID_SQL_REG_EXP;
 					 if ($this->FG_DEBUG >= 2) echo "<br><br>::>".$list[0][$i];
 					 if ($this->FG_DEBUG >= 2) echo "<br><br>::>".$this->FG_TABLE_ADITION[$i][1];
 					 $myname = $this->FG_TABLE_EDITION[$i][1];
 					 if (strpos($this->FG_TABLE_EDITION[$i][4], "multiple"))
 						$myname.= "[]";
-					 ?>
-					<INPUT type="text" list="list_<?php echo $myname;?>" name="<?php echo $myname;?>" class="form_input_text" <?php echo $this->FG_TABLE_EDITION[$i][4];?> value="<?php if($this->VALID_SQL_REG_EXP){ echo stripslashes($list[0][$i]); }else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]];  }?>">
+					 if (stripos($this->FG_TABLE_EDITION[$i][1],'sound')!==false) {?>
+					<div style="position:relative;width:100%">
+					    <INPUT type="text" list="list_<?php echo $myname;?>" name="<?php echo $myname;?>" style="padding-left:13px;width:237px" class="form_input_text" onchange="Visi(this)" <?php echo $this->FG_TABLE_EDITION[$i][4];?> value="<?php if($this->VALID_SQL_REG_EXP){ echo stripslashes($list[0][$i]); }else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]];  }?>"/>
+					    <a href="javascript:;" name="ton" style="position:absolute;left:2px;top:.1em;visibility:hidden">
+						<img src="<?php echo Images_Path; ?>/flv.gif" height="10" onClick="GreetPlay(this)">
+					    </a>
+					</div>
+<?php					 } else {?>
+					<INPUT type="text" list="list_<?php echo $myname;?>" name="<?php echo $myname;?>" class="form_input_text" <?php echo $this->FG_TABLE_EDITION[$i][4];?> value="<?php if($this->VALID_SQL_REG_EXP){ echo stripslashes($list[0][$i]); }else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]];  }?>"/>
+<?php					 }?>
 					<datalist id="list_<?php echo $myname;?>" autocomplete="off">
 						<?php if ($this->FG_TABLE_EDITION[$i][15]) echo ($this->FG_TABLE_EDITION[$i][15]);
 						elseif (array_search($list[0][$i],array_column($select_list,0))===false)
@@ -694,8 +702,7 @@ echo "		<br>".$this->FG_TABLE_EDITION[$i][6]." - ".$this->FG_regular[$this->FG_T
 <?php					}
 					if (strlen($this->FG_TABLE_COMMENT[$i])>1){
 						if (strtoupper ($this->FG_TABLE_EDITION[$i][3])!="MULTSELECT")
-echo "			<br/>";
-echo $this->FG_TABLE_COMMENT[$i]?>&nbsp;<?php
+echo '<div>'.$this->FG_TABLE_COMMENT[$i]?>&nbsp;</div><?php
 					} ?>
 			
 			</TD>

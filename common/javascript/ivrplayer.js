@@ -35,10 +35,12 @@ function playnext(nextAudio)
 		    if (nextel) break;
 		}})
 	    .catch(error => {
-		prevel.src = c_play;
-		setTimeout(() => {alert(error.name+' in '+file.value+': '+error.message)},10);
+		if (error.name!='TypeError') {
+		    prevel.src = c_play;
+		    setTimeout(() => {alert(error.name+' in '+file.value+': '+error.message)},10);
+		}
 	    });
-	},(file.getAttribute('name')=="playsoundcallee")? 0 : prevel.closest('.soundFlex').querySelector('select').value*1000);
+	},(file.getAttribute('name')!="playsound" || myForm.getAttribute('action')!='/A2B_entity_ivr')? 0 : prevel.closest('.soundFlex').querySelector('select').value*1000);
     } else {
 	prevel.src = c_play;
 	idTimeout = setTimeout(()=>{prevel.src=flv},5000);

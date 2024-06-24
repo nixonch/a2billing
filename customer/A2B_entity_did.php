@@ -44,6 +44,66 @@ if (!has_rights(ACX_DID)) {
 	die();
 }
 
+getpost_ifset(array('download', 'file'));
+
+$diraudio = DIR_STORE_AUDIO . "/" . $_SESSION["pr_login"] . "/";
+
+$soundlist = array();
+$return = scandir($diraudio);
+if ($return!==false) {
+        foreach ($return as $val) {
+            if (is_file($diraudio.$val) && $val != 'tempplay.wav') {
+                $soundlist[preg_replace('/\.[^\.\/]+$/', '', $val)] = $val;
+            }
+        }
+}
+
+if (($download == "file") && $file) {
+	if (strpos($file, '/') !== false) {
+	    if (substr_count($file,'/') > 1) exit();
+	    $path_parts = pathinfo($file);
+	    if (strlen($path_parts['dirname'])>3 || !ereg("[^0-9_\.]",$path_parts['dirname'])) exit();
+	    $diraudio = DIR_STORE_AUDIO."/".$path_parts['dirname']."/";
+	    $return = scandir($diraudio);
+	    if ($return!==false) {
+		foreach ($return as $val) {
+		    if (is_file($diraudio.$val) && strpos($path_parts['dirname']."/".$val, $file) === 0) {
+			$file = preg_replace('/\.[^\.\/]+$/', '', $val);
+			$source = $diraudio . $val;
+			$path_parts = pathinfo($source);
+			if ($path_parts['extension']=='alaw') {
+			    $val = $file.".wav";
+			    $diraudio = "/tmp/";
+			    $sox = "/usr/bin/sox --channels 1 --type raw --rate 8000 -e a-law ".$source." ".$diraudio.$val;
+			    exec($sox." >/dev/null 2>&1");
+			}
+			$soundlist[$file] = $val;
+			break;
+		    }
+		}
+	    } else exit();
+	}
+        $dl_full = $diraudio . $soundlist[$file];
+        if (!file_exists($dl_full)) {
+                echo gettext ( "ERROR: Cannot download file " . $soundlist[$file] . ", it does not exist.<br>" );
+                exit ();
+        }
+        header ( "Content-Type: application/octet-stream" );
+        header ( 'Content-Disposition: attachment; filename="'.$soundlist[$file].'"');
+        header ( "Content-Length: " . filesize ( $dl_full ) );
+        header ( "Accept-Ranges: bytes" );
+        header ( "Pragma: no-cache" );
+        header ( "Expires: 0" );
+        header ( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
+        header ( "Content-transfer-encoding: binary" );
+
+        @readfile ( $dl_full );
+
+	if (isset($sox)) unlink($dl_full);
+
+        exit ();
+}
+
 $HD_Form->setDBHandler(DbConnect());
 $HD_Form->init();
 
@@ -493,7 +553,11 @@ function CheckCountry(Source){
   <?php
 	}
 				$HD_Form->create_form($form_action, $list, $id = null);
+?>
+<audio id="sound1" preload="auto" controlsList="nodownload" onended="playnext(sound2)"></audio>
+<audio id="sound2" preload="auto" controlsList="nodownload" onended="playnext(sound1)"></audio>
+<script src="./javascript/ivrplayer.js"></script>
+<?php
 			} // End Switch
-
 // #### FOOTER SECTION
 $smarty->display('footer.tpl');
