@@ -109,7 +109,7 @@ msgid "Keep me signed in"
 msgstr "Помнить меня"
 
 #: templates/default/index.tpl
-msgid "By creating this account, you agree to our <a href=\"terms\">Terms</a> and <a href=\"policy\">Privacy Policy</a>."
+msgid "By creating this account, you agree to our <a href=\"terms\">Terms</a> and <a href=\"policy\">Privacy Policy</a>"
 msgstr "Создавая аккаунт вы соглашаетесь с <a href=\"terms\">Условиями Использования</a> и <a href=\"policy\">Политикой Конфиденциальности</a>"
 
 #: templates/default/index.tpl

@@ -76,7 +76,7 @@ msgid "Login information SMS<br>has been sent to your phonenumber"
 msgstr "На Ваш номер надіслано SMS c інформацією для входу.<br>Дякуємо, що Ви з нами!"
 
 #: index.php
-msgid "By creating this account, you agree to our <a href=\"terms\">Terms</a> and <a href=\"policy\">Privacy Policy</a>."
+msgid "By creating this account, you agree to our <a href=\"terms\">Terms</a> and <a href=\"policy\">Privacy Policy</a>"
 msgstr "Створюючи акаунт ви погоджуєтеся з <a href=\"terms\">Умовами Користування</a> та <a href=\"policy\">Політикою Конфіденційності</a>"
 
 #: review_webrtc.php

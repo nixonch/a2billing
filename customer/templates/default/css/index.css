@@ -122,7 +122,7 @@ aside ins.adsbygoogle > :first-child {
 
 .frameback {
   height: 665px;
-  width: 412px;
+  width: 100vw;
   position: absolute;
   left: 50%;
   z-index: 3;
@@ -139,7 +139,7 @@ aside ins.adsbygoogle > :first-child {
 }
 .frame {
   height: 665px;
-  width: 412px;
+  width: 100vw;
   position: absolute;
   left: 50%;
   overflow-x: hidden;
@@ -182,7 +182,7 @@ aside ins.adsbygoogle > :first-child {
 .nav {
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   height: 100px;
   padding-top: 40px;
   -webkit-transition: all .5s ease;
@@ -223,15 +223,17 @@ aside ins.adsbygoogle > :first-child {
 
 .links {
   -webkit-padding-start: 45px;
+  padding-top: .5em;
+  display: flex;
 }
-.links li {
+.links div {
   font-size: 18px;
   display: inline;
   text-align: left;
   text-transform: uppercase;
   color: #ffffff;
 }
-.links li:first-child {
+.links div:first-child {
   padding-right: 20px;
 }
 
@@ -239,7 +241,7 @@ aside ins.adsbygoogle > :first-child {
   cursor: pointer;
   text-decoration: none;
   border-bottom: solid 2px #1059FF;
-  padding-bottom: 10px;
+  padding-bottom: 5px;
   -webkit-transition: all .25s ease;
   transition: all .25s ease;
 }
@@ -256,7 +258,7 @@ aside ins.adsbygoogle > :first-child {
   cursor: pointer;
   text-decoration: none;
   border-bottom: solid 2px #1059FF;
-  padding-bottom: 10px;
+  padding-bottom: 5px;
 }
 
 .signup-inactive a {
@@ -266,19 +268,17 @@ aside ins.adsbygoogle > :first-child {
   transition: all .25s ease;
 }
 
-.signup-inactive a {
-}
 /* ===============================================================*/
 .forms {
+  left: -100vw;
   position: relative;
-  left: -412px;
   display: flex;
   -webkit-transition: all .5s ease;
   transition: all .5s ease;
 }
 
 .form-forgot {
-  min-width: 412px;
+  min-width: 100vw;
   height: 375px;
   font-size: 16px;
   font-weight: 300;
@@ -289,7 +289,18 @@ aside ins.adsbygoogle > :first-child {
 }
 
 .form-signin {
-  min-width: 412px;
+  min-width: 100vw;
+  height: 375px;
+  font-size: 16px;
+  font-weight: 300;
+  padding-left: 30px;
+  padding-right: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-signup {
+  min-width: 100vw;
   height: 375px;
   font-size: 16px;
   font-weight: 300;
@@ -300,8 +311,6 @@ aside ins.adsbygoogle > :first-child {
 }
 
 .login-title {
-  flex-shrink: 0;
-  height: 50px;
   font-size: 14px;
   font-weight: bold;
   color: #BC2222;
@@ -325,59 +334,41 @@ aside ins.adsbygoogle > :first-child {
   text-decoration: none;
 }
 
-.form-signup {
-  min-width: 412px;
-  height: 375px;
-  font-size: 16px;
-  font-weight: 300;
-  padding-left: 30px;
-  padding-right: 30px;
-  display: flex;
-  flex-direction: column;
-}
-
 .forms-left {
-  -webkit-transform: translateX(-412px);
-          transform: translateX(-412px);
+  -webkit-transform: translateX(-100vw);
+          transform: translateX(-100vw);
 }
 
 .forms-right {
-  -webkit-transform: translateX(412px);
-          transform: translateX(412px);
+  -webkit-transform: translateX(100vw);
+          transform: translateX(100vw);
 }
 
 .forms-down {
   top: 500px;
   opacity: 0;
 }
+
+@media screen and (min-width: 412px) {
+    .frameback, .frame {
+	width: 412px;
+    }
+    .forms {
+	left: -412px;
+    }
+    .form-forgot, .form-signin, .form-signup {
+	min-width: 412px;
+    }
+    .forms-left {
+	-webkit-transform: translateX(-412px);
+		transform: translateX(-412px);
+    }
+    .forms-right {
+	-webkit-transform: translateX(412px);
+		transform: translateX(412px);
+    }
+}
 /* ===============================================================*/
-
-.success {
-  width: 80%;
-  height: 150px;
-  text-align: center;
-  position: relative;
-  top: -890px;
-  left: 450px;
-  opacity: .0;
-  -webkit-transition: all .8s .4s ease;
-  transition: all .8s .4s ease;
-}
-
-.success-left {
-  -webkit-transform: translateX(-406px);
-          transform: translateX(-406px);
-  opacity: 1;
-}
-
-.successtext {
-  color: #ffffff;
-	font-size: 16px;
-	font-weight: 300;
-  margin-top: -35px;
-  padding-left: 37px;
-  padding-right: 37px;
-}
 
 #check path {
     stroke: #ffffff;
@@ -490,13 +481,16 @@ aside ins.adsbygoogle > :first-child {
   background: rgba(255,255,255,.2);
 }
 
-label {
+label, .textinframe {
   font-weight: 400;
-  text-transform: uppercase;
   font-size: 13px;
   padding-left: 15px;
-  padding-bottom: 10px;
   color: rgba(255,255,255,.7);
+}
+
+label {
+  text-transform: uppercase;
+  padding-bottom: 10px;
   display: block;
 }
 

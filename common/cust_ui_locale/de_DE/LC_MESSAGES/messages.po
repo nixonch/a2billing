@@ -144,8 +144,8 @@ msgid "Full name"
 msgstr "Vollständiger Name"
 
 #: templates/default/index.tpl
-msgid "By creating this account, you agree to our <a href=\"terms\">Terms</a> and <a href=\"policy\">Privacy Policy</a>."
-msgstr "Indem du auf Registrieren klickst, erklärst du dich mit unseren <a href=\"terms\">Nutzungsbedingungen</a> einverstanden und bestätigst unsere <a href=\"policy\">Datenverwendungsrichtlinien</a>."
+msgid "By creating this account, you agree to our <a href=\"terms\">Terms</a> and <a href=\"policy\">Privacy Policy</a>"
+msgstr "Indem du auf Registrieren klickst, erklärst du dich mit unseren <a href=\"terms\">Nutzungsbedingungen</a> einverstanden und bestätigst unsere <a href=\"policy\">Datenverwendungsrichtlinien</a>"
 
 #: templates/default/index.tpl
 msgid "Agree and Create Account"

@@ -39,30 +39,30 @@ if(!CSS.supports("display:flex")) {
 <div class="container" onClick="if ($('#navi-toggle').prop('checked') && event.target.tagName!='A') document.getElementById('navi-toggle').checked=false">
   <div class="frame laud">
     <div class="nav">
-      <ul class="links">
-        <li class="signin-active"><a class="btn_in">{php} echo gettext("Sign in");{/php}</a></li>
-{php}if(SIGNUPENABLE){{/php}
-        <li class="signup-inactive"><a class="btn_up" style="color: rgba(255,255,255,.3)">{php} echo gettext("Sign up");{/php}</a></li>
-{php}}{/php}
-      </ul>
-      <select name="ui_language" id="ui_language">
+      <select name="ui_language" id="ui_language" style="align-self:flex-end">
                         <option value="english" {php} if(LANGUAGE=="english") echo "selected";{/php} >English</option>
                         <option value="ukrainian" {php} if(LANGUAGE=="ukrainian") echo "selected";{/php} >Українська</option>
                         <option value="russian" {php} if(LANGUAGE=="russian") echo "selected";{/php} >Русский</option>
                         <option value="german" {php} if(LANGUAGE=="german") echo "selected";{/php} >Deutsch</option>
       </select>
+      <div class="links">
+        <div class="signin-active"><a class="btn_in">{php} echo gettext("Sign in");{/php}</a></div>
+{php}if(SIGNUPENABLE){{/php}
+        <div class="signup-inactive"><a class="btn_up" style="color: rgba(255,255,255,.3)">{php} echo gettext("Sign up");{/php}</a></div>
+{php}}{/php}
+      </div>
     </div>
     <div ontouchstart="turn_start(event);" ontouchmove="turn_page(event);">
 
       <div class="forms">
 	<form class="form-forgot" method="post" name="formforgot">
-          <div class="login-title" id="warningforgot"></div>
+          <div style="min-height:55px;display:flex;justify-content:center;align-items:center"><div class="login-title" id="warningforgot"></div></div>
           <label for="pr_email">{php} echo gettext("E-Mail / Phone number");{/php}</label>
           <input class="form-styling" type="email" name="pr_email" id="pr_email"/>
           <a class="btn-submit btn-forgot">{php} echo gettext("Get password");{/php}</a>
 	</form>
 	<form class="form-signin" action="userinfo" method="post" name="formsignin">
-          <div class="login-title" id="warningsignin"></div>
+          <div style="min-height:55px;display:flex;justify-content:center;align-items:center"><div class="login-title" id="warningsignin"></div></div>
           <label for="pr_login">{php} echo gettext("Login / E-mail");{/php}</label>
           <input autofocus class="form-styling" type="text" name="pr_login" id="pr_login"/>
           <label for="pr_password">{php} echo gettext("Password");{/php}</label>
@@ -78,7 +78,7 @@ if(!CSS.supports("display:flex")) {
 	<form class="form-signup" action="" method="post" name="formsignup">
           <input type="hidden" name="country" id="country">
           <input type="hidden" name="id_timezone" id="id_timezone">
-          <div class="login-title" id="warningsignup"></div>
+          <div style="min-height:55px;display:flex;justify-content:center;align-items:center"><div class="login-title" id="warningsignup"></div></div>
           <label for="fullname">{php} echo gettext("Full name");{/php}</label>
           <input class="form-styling" type="text" name="fullname" id="fullname"/>
           <label for="r_email">{php} echo gettext("E-Mail");{/php}</label>
@@ -126,7 +126,7 @@ if(!CSS.supports("display:flex")) {
 {/php}
 	    </ul>
           </div>
-	  <label style="text-transform:none;padding-bottom:0">{php}echo gettext('By creating this account, you agree to our <a href="terms">Terms</a> and <a href="policy">Privacy Policy</a>.'){/php}</label>
+	  <div class="textinframe">{php}echo gettext('By creating this account, you agree to our <a href="terms">Terms</a> and <a href="policy">Privacy Policy</a>'){/php}</div>
 	  <a class="btn-submit btn-signup">{php} echo gettext("Agree and Create Account");{/php}</a>
 	</form>
 {php}}{/php}
