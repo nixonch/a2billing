@@ -300,6 +300,7 @@ class RateEngine
             }
             unset($mysearchvalue);
         }
+		
 		//2) TAKE THE VALUE OF LCTYPE
 		//LCR : According to the buyer price	-0 	buyrate [col 9]
 		//LCD : According to the seller price	-1  rateinitial	[col 12]

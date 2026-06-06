@@ -1,5 +1,7 @@
 RewriteEngine On
 
+RewriteBase /
+
 # To externally redirect /dir/foo.php to /dir/foo/
 RewriteCond %{REQUEST_METHOD} !=POST
 RewriteCond %{THE_REQUEST} \s(\S+)(\.php)+/*

@@ -64,7 +64,7 @@ $smarty->display('main.tpl');
 // #### HELP SECTION
 if ($form_action == 'ask-add')
 	echo $CC_help_edit_alarm;
-else
+else if ($popup_select != 4)
 	echo $CC_help_list_alarm;
 
 // #### TOP SECTION PAGE

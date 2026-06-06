@@ -37,13 +37,13 @@ getpost_ifset(array('id', 'username', 'useralias', 'uipass', 'credit', 'language
 'id_didgroup','id_campaign', 'callback', 'simultaccess', 'currency','typepaid', 'creditlimit', 'lastname', 'firstname',
 'email', 'address','city', 'state', 'areaprefix', 'citylength', 'country', 'removeaddprefix', 'addprefixinternational',
 'zipcode', 'phone', 'fax', 'inuse', 'recalldays', 'recalltime', 'cid', 'runservice', 'paypal', 'firstusedate', 'dillertariffs',
-'expirationdate', 'enableexpire', 'expiredays', 'sip_buddy', 'iax_buddy','popup_select', 'vat', 'autorefill', 'dillergroups',
+'expirationdate', 'enableexpire', 'expiredays', 'sip_buddy', 'iax_buddy', 'vat', 'autorefill', 'dillergroups',
 'initialbalance', 'mac_addr', 'cardnumberlenght_list', 'popup_fieldname', 'status', 'block', 'lock_pin', 'template_invoice',
 'template_outstanding', 'description', 'voicemail_activated', 'voicemail_permitted', 'email_notification',
 'credit_notification', 'notify_email', 'id_seria', 'id_diller', 'company_name', 'company_website', 'vat_rn', 'traffic',
 'traffic_target', 'discount', 'restriction'));
 
-if ($popup_select>=1 && $popup_fieldname=='id_diller') {
+if ($popup_select && $popup_select<4 && $popup_fieldname=='id_diller') {
 	$HD_Form = new FormHandler("cc_card LEFT JOIN (SELECT id idd, users_perms FROM cc_card_group) ab ON ab.idd=id_group", gettext("Card"));
 	if (strlen($HD_Form -> FG_TABLE_CLAUSE)>0) $HD_Form -> FG_TABLE_CLAUSE.=" AND ";
 	$HD_Form -> FG_TABLE_CLAUSE.="users_perms & 524288 AND id != '$id'";
@@ -60,6 +60,7 @@ $HD_Form -> FG_FK_EDITION_CLAUSE = array("id_cc_card", "id_cc_card", "id_cc_card
 // DEFINE IF WE WANT TO DELETE THE CARD OR NOT
 $HD_Form -> FG_FK_WARNONLY = (DELETE_FK_CARD == true) ? false: true;
 $HD_Form -> FG_ACTION_SIZE_COLUMN = '1%';
+$HD_Form -> FG_CAPCHA_POPUP = "";
 
 if (DELETE_FK_CARD) {
 	// WE WILL DELETE THE FK
@@ -195,12 +196,16 @@ foreach ($show_list as $i => $value) {
 			$FG_COL_QUERY_FIELD = $FG_COL_QUERY_FIELD .', (select GROUP_CONCAT(cid SEPARATOR \'<br>\') from cc_callerid where id_cc_card=cc_card.id) callerid';
 		} elseif ($value=='customer') {
 			$FG_COL_QUERY_FIELD = $FG_COL_QUERY_FIELD .", CONCAT_WS(' ',lastname,firstname,IF(company_name='','',CONCAT('(',company_name,')'))) customer";
+			$HD_Form->FG_CAPCHA_POPUP .= "| |col$index|";
 		} elseif ($value=='timezone') {
 			$FG_COL_QUERY_FIELD = $FG_COL_QUERY_FIELD .", IF(CONCAT(id_timezone+0)=id_timezone,@@global.time_zone,SUBSTRING_INDEX(id_timezone,';',-1)) timezone";
+		} elseif ($value=='username') {
+			$FG_COL_QUERY_FIELD .= ', '.$value;
+			$HD_Form->FG_CAPCHA_POPUP = "|col$index| " . $HD_Form -> FG_CAPCHA_POPUP;
 		} else {
 			$FG_COL_QUERY_FIELD .= ', '.$value;
 		}
-		$index = $index + 1;
+		$index++;
 	}
 }
 if (strlen($FG_COL_QUERY_FIELD)>2) {
@@ -262,7 +267,7 @@ $HD_Form -> AddSearchElement_Select(gettext("SELECT CURRENCY"), null, null, null
 $HD_Form -> AddSearchElement_Select(gettext("SELECT LANGUAGE"), null, null, null, null, null, "language", 0, $language_list_r);
 $HD_Form -> AddSearchElement_Select(gettext("SELECT PAYMENT TYPE"), null, null, null, null, null, "typepaid", 0, $typepaid_list_r);
 
-if (($popup_select>=1)) {
+if ($popup_select && $popup_select<4) {
 	$HD_Form -> FG_OTHER_BUTTON1 = true;
 	$HD_Form -> FG_OTHER_BUTTON1_ALT = '<font color="red">&lt;select&gt;</font>';
 	$HD_Form -> FG_OTHER_BUTTON1_IMG = '';
@@ -320,10 +325,10 @@ if (isset($filterprefix)  &&  (strlen($filterprefix)>0)) {
 
 $HD_Form -> FG_ADDITION = true;
 
-if (has_rights (ACX_MODIFY_CUSTOMERS) && !($popup_select>=1)) {
+if (has_rights (ACX_MODIFY_CUSTOMERS) && (!($popup_select>=1) || $popup_select==4)) {
 	$HD_Form -> FG_EDITION = true;
 	$HD_Form -> FG_DELETION = true;
-	
+
 	$maxi	= '';
 	$maxi2	= '';
 	$maxi3	= '';

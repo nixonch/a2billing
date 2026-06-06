@@ -22,7 +22,7 @@ ExecStart=/home/billing/CallBack/callback-daemon-php/callback_daemon.php
 #KillMode=mixed
 
 PrivateTmp=true
-Restart=on-failure
+Restart=always
 
 RestartSec=5
 #TimeoutSec=10

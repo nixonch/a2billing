@@ -121,7 +121,7 @@ if ($task == 'upload') {
 	}
 	$prefix = (is_numeric($importprefix) && $importprefix>0) ? " AND dialprefix LIKE '".$importprefix."%'" : "";
 	$begin_date = date("Y");
-	$begin_date_plus = date("Y") + 15;
+	$begin_date_plus = date("Y") + 10;
 	$end_date = date("-m-d H:i:s");
 	$nb_imported = 0;
 	$nb_to_import = 0;

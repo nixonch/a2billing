@@ -58,7 +58,7 @@ if (!isset ($form_action))
 if (!isset ($action))
 	$action = $form_action;
 
-if ($message != "success")
+if ($message != "addsuccess")
 	$list = $HD_Form->perform_action($form_action);
 
 // #### HEADER SECTION
@@ -75,15 +75,15 @@ if ($form_action == "list") {
 // #### TOP SECTION PAGE
 $HD_Form->create_toppage($form_action);
 
-if ($message != "success") {
+if ($message != "addsuccess") {
 	$HD_Form->create_form($form_action, $list, $id = null);
 ?>	<script type="text/javascript">
-	document.getElementById('<?php if ($form_action=='ask-add') echo 'credit'; else echo 'filterprefix';?>').focus();
+	document.getElementById('<?php if ($form_action=='ask-add') echo 'credit'; else echo 'filterprefix';?>')?.focus();
 	</script>
 <?php
 }
 
-if ($form_action == "list" && $message != "success" && has_rights (ACX_DISTRIBUTION)) {
+if ($form_action == "list" && $message != "addsuccess" && has_rights (ACX_DISTRIBUTION)) {
 
 	$table = new Table();
 
@@ -165,7 +165,7 @@ if ($form_action == "list" && $message != "success" && has_rights (ACX_DISTRIBUT
 	}
 }
 
-if ($message == "success") {
+if ($message == "addsuccess") {
 ?>
 <TABLE cellSpacing=2 class="toppage_actionfinish">
     <TR>
@@ -185,10 +185,11 @@ if ($message == "success") {
 <center>
 <form runat="server">
     <div>
-        <input id="button1" onclick="self.close()" class="form_input_button" type="button" value="" />
+        <input id="button1" onclick="window.parent.postMessage({action:'closeAlert'},'*')" class="form_input_button" type="button" value="" />
     </div>
 </form>
 <script type="text/javascript">
+    window.parent.postMessage({action:'refreshInside'},'*');
     objbutton=document.getElementById('button1');
     objbutton.focus();
     timeleft=10;
@@ -199,9 +200,7 @@ if ($message == "success") {
 	}
         objbutton.value = '<?php echo gettext("Close Window")?> ('+timeleft+')';
     }
-    window.opener.location.reload();
     buttontimer();
-    window.resizeBy(0, -120);
     setInterval(function() {buttontimer()}, 1000);
 </script>
 

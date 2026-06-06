@@ -55,7 +55,7 @@ if ($id!="" || !is_null($id)){
 if (!isset($form_action))  $form_action="list"; //ask-add
 if (!isset($action)) $action = $form_action;
 
-if ($message != "success") {
+if ($message != "editsuccess") {
 	$list = $HD_Form -> perform_action($form_action);
 }
 
@@ -69,12 +69,12 @@ echo $CC_help_card;
 // #### TOP SECTION PAGE
 $HD_Form -> create_toppage ($form_action);
 
-if($message == "success") {
+if($message == "editsuccess") {
 
 ?>
 <table width="50%" align="center">
 <tr height="100px">
-<td align="center"><?php echo gettext("Your personal information has successfully been updated.")?></td>
+<td align="center"><?php echo gettext("Personal information has successfully been updated.")?></td>
 </tr>
 </table>
 

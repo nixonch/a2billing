@@ -104,6 +104,7 @@ $HD_Form -> FG_FILTER_SEARCH_1_TIME_FIELD = 'cc_ticket.creationdate';
 
 $HD_Form -> AddSearchElement_C1(gettext("ACCOUNT NUMBER"), 'username','usernametype');
 
+$HD_Form -> FG_CAPCHA_POPUP = '|col0| | |col1|';
 $HD_Form -> FG_OTHER_BUTTON1 = true;
 $HD_Form -> FG_EDITION = true;
 $HD_Form -> FG_DELETION = true;
@@ -203,5 +204,3 @@ $HD_Form -> FG_BUTTON_EDITION_BOTTOM_TEXT = $HD_Form -> FG_BUTTON_ADITION_BOTTOM
 $HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
 $HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
 $HD_Form -> FG_GO_LINK_AFTER_ACTION_DELETE = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
-
-

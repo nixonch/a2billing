@@ -157,10 +157,7 @@ $HD_Form_c -> AddEditElement (gettext("DESCRIPTION"),
 	gettext("Insert the description"),
 	"" , "", "", "", "" , "", "", "");
 
-
 $HD_Form_c -> FieldEditElement ('id_cc_card, amount, chargetype, description');
-
-
 
 // Set the filter variables
 
@@ -173,23 +170,16 @@ if (isset($filterprefix)  &&  (strlen($filterprefix)>0)){
 	$HD_Form_c -> FG_TABLE_CLAUSE.="username like '$filterprefix%'";
 }
 
-
-
 $HD_Form_c -> FG_INTRO_TEXT_EDITION= gettext("Modify the properties of the charge");
 $HD_Form_c -> FG_INTRO_TEXT_ASK_DELETION = gettext("If you really want remove this")." ".$HD_Form_c->FG_INSTANCE_NAME.", ".gettext("click on the delete button.");
 $HD_Form_c -> FG_INTRO_TEXT_ADD = gettext("you can add easily a new")." ".$HD_Form_c->FG_INSTANCE_NAME.".<br>".gettext("Fill the following fields and confirm by clicking on the button add.");
 
-
 $HD_Form_c -> FG_INTRO_TEXT_ADITION = '';
 $HD_Form_c -> FG_TEXT_ADITION_CONFIRMATION = gettext("Your new")." ".$HD_Form_c->FG_INSTANCE_NAME." ".gettext("has been inserted.")." <br>";
-
 
 $HD_Form_c -> FG_BUTTON_EDITION_SRC = $HD_Form_c -> FG_BUTTON_ADITION_SRC  = Images_Path . "/cormfirmboton.gif";
 $HD_Form_c -> FG_BUTTON_EDITION_BOTTOM_TEXT = $HD_Form_c -> FG_BUTTON_ADITION_BOTTOM_TEXT = gettext("Click 'Confirm Data' to continue");
 
-
-
-$HD_Form_c -> FG_GO_LINK_AFTER_ACTION_ADD = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
-$HD_Form_c -> FG_GO_LINK_AFTER_ACTION_EDIT = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
-$HD_Form_c -> FG_GO_LINK_AFTER_ACTION_DELETE = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
-
+$HD_Form_c -> FG_GO_LINK_AFTER_ACTION_ADD = $_SERVER['REDIRECT_URL']."?atmenu=document&stitle=Document&wh=AC&id=";
+$HD_Form_c -> FG_GO_LINK_AFTER_ACTION_EDIT = "A2B_entity_did_billing?atmenu=document&stitle=Document&wh=AC&id=";
+$HD_Form_c -> FG_GO_LINK_AFTER_ACTION_DELETE = "A2B_entity_did_billing?atmenu=document&stitle=Document&wh=AC&id=";

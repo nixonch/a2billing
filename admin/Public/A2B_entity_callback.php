@@ -61,9 +61,8 @@ $list = $HD_Form -> perform_action($form_action);
 $smarty->display('main.tpl');
 
 // #### HELP SECTION
-echo $CC_help_callback;
-
-
+if ($popup_select != 4)
+    echo $CC_help_callback;
 ?>
 
 <script language="JavaScript" src="./javascript/calendar2.js"></script>

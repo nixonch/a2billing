@@ -166,6 +166,77 @@ $('body').on('click', '.btn-forgot', function () {
 	return false;
 });
 
+$('body').on('click', '.btn-review', function () {
+	var warning = $("#warningreview");
+	if(email.value.length>0 && !validateEmail(email.value))
+	{
+	    clearTimeout(warningIDup);
+	    warning.html(emptyemail);
+	    warningIDup = setTimeout(function(){
+		warning.html('');
+	    },10000);
+	    return false;
+	}
+	if(email.value=='' && review.value=='')
+	{
+	    clearTimeout(warningIDup);
+	    warning.html(entersomething);
+	    warningIDup = setTimeout(function(){
+		warning.html('');
+	    },10000);
+	    return false;
+	}
+	if (lasttimeout) return false;
+	if (document.cookie.match(/^(.*;)?\s*SIPSESSION\s*=\s*[^;]+(.*)?$/) == null) {
+	    var expiryDate = new Date();
+	    expiryDate.setMonth(expiryDate.getMonth() + 13);
+	    document.cookie = "SIPSESSION="+self.crypto.randomUUID()+";expires="+expiryDate.toGMTString()+";path=/";
+	}
+	clearTimeout(warningIDup);
+	$(".btn-submit").css({'background-color':'#666666','color':'#999999'});
+	warning.html('');
+	var url = location.origin+location.pathname;
+	url = url.replace(".php","");
+	url = url.replace("/index","");
+	url = url.replace(/^\/+|\/+$/g, '');
+	var answer = ($('#answeronly').is(":checked"))?'1':'0';
+	var news = ($('#fornews').is(":checked"))?'1':'0';
+	var body = 'action=review&answer='+answer+'&news='+news+'&email='+encodeURIComponent(email.value)+'&review='+encodeURIComponent(review.value);
+	var xhttp = new XMLHttpRequest();
+	xhttp.open("POST",url,true);
+	xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xhttp.timeout = 5000;
+	xhttp.onreadystatechange = function() {
+	  if (xhttp.readyState == 4)
+	    if (xhttp.status == 200) {
+		var error = xhttp.responseXML.getElementsByTagName('response')[0].getElementsByTagName('error')[0].childNodes[0].nodeValue;
+		var answer= xhttp.responseXML.getElementsByTagName('response')[0].getElementsByTagName('forgotString')[0].childNodes[0].nodeValue;
+		if (error==5) {
+		    $('.form_feedback div:last-child').html('');
+		    warning.html(answer);
+		} else {
+		    warning.html(answer);
+		    lasttimeout = setTimeout(function(){
+			$(".btn-submit").css({'background-color':'#1059FF','color':'#FFFFFF'});
+			lasttimeout = null;
+			warningIDup = setTimeout(function(){
+			    warning.html('');
+			},4000);
+		    },4000);
+		}
+	    } else {
+		warning.html(noservice);
+		lasttimeout = setTimeout(function(){
+		    $(".btn-submit").css({'background-color':'#1059FF','color':'#FFFFFF'});
+		    lasttimeout = null;
+		    warning.html('');
+		},4000);
+	    }
+	};
+	xhttp.send(body);
+	return false;
+});
+
 $(function() {
     $(".btn-signup").click(function() {
 	var warning = $("#warningsignup");

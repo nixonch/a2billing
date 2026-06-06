@@ -274,7 +274,7 @@ h4 {
     transition: opacity .5s .3s, transform .5s .3s;
 }
 
-.navi > ul > li:nth-child(6) {
+.navi > ul > li:nth-child(5) {
     -webkit-transition: opacity .5s .4s, -webkit-transform .5s .4s;
     transition: opacity .5s .4s, transform .5s .4s;
 }
@@ -287,6 +287,11 @@ h4 {
 .navi > ul > li:nth-child(8) {
     -webkit-transition: opacity .5s .6s, -webkit-transform .5s .6s;
     transition: opacity .5s .6s, transform .5s .6s;
+}
+
+.navi > ul > li:nth-child(9) {
+    -webkit-transition: opacity .5s .7s, -webkit-transform .5s .7s;
+    transition: opacity .5s .7s, transform .5s .7s;
 }
 
 /**

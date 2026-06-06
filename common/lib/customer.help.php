@@ -141,7 +141,7 @@ if (SHOW_HELP) {
 	$CC_help_list_voucher = create_help(gettext("Enter your voucher number to top up your card."),$credit_cur,$limit_cur);
 
 	$CC_help_campaign = create_help(gettext("This section will allow you to create and edit campaign. ") .
-	gettext("Predictive dialer will browse all the phone numbers from the campaign and perform outgoing calls."),$credit_cur,$limit_cur);
+					gettext("Predictive dialer will browse all the phone numbers from the campaign and perform outgoing calls."),$credit_cur,$limit_cur);
 
 	$CC_help_phonelist = create_help(gettext("Phonelist are all the phone numbers attached to a campaign. You can add, remove and edit the phone numbers."),$credit_cur,$limit_cur);
 
@@ -163,15 +163,19 @@ if (SHOW_HELP) {
 
 	$CC_help_view_refill = create_help(gettext("Customers Refill history - The section below allows you to see customers refill"),$credit_cur,$limit_cur);
 
-	$CC_help_surveillance = create_help("Назначте номер телефона, принадлежащий Вашему записывающему устройству, и частоту нарезки роликов для аудио или видео наблюдения.",$credit_cur,$limit_cur);
+	$CC_help_surveillance = create_help(gettext("Set the phone number of your recording device and the segment length for audio or video surveillance."),$credit_cur,$limit_cur);
 
-	$CC_help_ringuplist = create_help("<b>Список номеров периодического дозвона.</b><br>В колонке 'ПОСЛЕДНЯЯ АКТИВНОСТЬ' синим цветом обозначается простаивающий дозвон, зелёным - действующий.<br>Нажав на 'НОМЕР', откроется статистика звонков на этот номер за текущий месяц.",$credit_cur,$limit_cur);
+	$CC_help_ringuplist = create_help(gettext("<b>List of periodic call numbers.</b><br>In the 'LAST ACTIVITY' column, blue marks an idle periodic call, and green marks an active one.<br>Click 'NUMBER' to open call statistics for this number for the current month."),$credit_cur,$limit_cur);
 
-	$CC_help_ringupedit = create_help("Назначте расписание событий дозвона, паузу между событиями, количество звонков каждый раз и ограничение максимальной продолжительности звонка.",$credit_cur,$limit_cur);
+	$CC_help_ringupedit = create_help(gettext("Set the event schedule for periodic dialing, the pause between events, the number of calls each time, and the maximum call duration limit."),$credit_cur,$limit_cur);
 
 	$CC_help_log_viewer_info = create_help(gettext("The system log helps you track all events on your application. Log levels are the Importance Levels for the events - 1 is lowest level and 3 is highest level. 1 is used for Login, Logout and Page Visit. 2 is used for Add, Import, Export. 3 is for Update and Delete."),$credit_cur,$limit_cur);
 
 	$CC_help_ivr = create_help(gettext("Create your own voice menus and use them when setting up INCOMING CALLS.<br>Before that, create voice phrases or upload your own in the VOICE GREETINGS section."),$credit_cur,$limit_cur);
+
+	$CC_help_caller_id = create_help(gettext("You can add your home phone or cellphone number below to allow you to call in, be automatically recognized, and use your telephony services without having to enter your PIN."),$credit_cur,$limit_cur);
+
+	$CC_help_empty = create_help("",$credit_cur,$limit_cur);
 
 } //ENDIF SHOW_HELP
 

@@ -166,7 +166,7 @@ if ((isset($id_cc_card) && is_numeric($id_cc_card)) && ($form_action == "add_sip
 }
 
 $HD_Form -> FG_EDITION_LINK	= $_SERVER['PHP_SELF']."?form_action=ask-edit&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&filterprefix2=$filterprefix2&id=";
-$HD_Form -> FG_DELETION_LINK	= $_SERVER['PHP_SELF']."?form_action=ask-delete&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&filterprefix2=$filterprefix2&id=";
+$HD_Form -> FG_DELETION_LINK	= "url:".$_SERVER['PHP_SELF']."?popup_select=4&form_action=ask-delete&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&filterprefix2=$filterprefix2&id=";
 
 if ($id!="" || !is_null($id)) {
 	$HD_Form -> FG_EDITION_CLAUSE = str_replace("%id", "$id", $HD_Form -> FG_EDITION_CLAUSE);	
@@ -234,7 +234,7 @@ if ($form_action=='list') {
 		</center>
 	<?php 
 	}
-} else {
+} else if ($popup_select < 2) {
 	echo $CC_help_sipfriend_edit;
 }
 

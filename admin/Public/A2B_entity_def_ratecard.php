@@ -44,7 +44,7 @@ if (!has_rights(ACX_RATECARD)) {
 	die();
 }
 
-getpost_ifset(array('package','popup_select', 'popup_formname', 'popup_fieldname','posted', 'Period', 'frommonth', 'fromstatsmonth', 'tomonth', 'tostatsmonth', 
+getpost_ifset(array('package', 'popup_formname', 'popup_fieldname','posted', 'Period', 'frommonth', 'fromstatsmonth', 'tomonth', 'tostatsmonth', 
 		    'fromday', 'fromstatsday_sday', 'fromstatsmonth_sday', 'today', 'tostatsday_sday', 'tostatsmonth_sday', 'removeallrate', 
 		    'removetariffplan', 'definecredit', 'IDCust', 'mytariff_id', 'destination', 'dialprefix', 'buyrate1', 'buyrate2', 'buyrate1type', 
 		    'buyrate2type', 'rateinitial1', 'rateinitial2', 'rateinitial1type', 'rateinitial2type', 'id_trunk', 'check', 'type', 'mode'));
@@ -195,8 +195,8 @@ if ($batchupdate == 1 && is_array($check)) {
 }
 /********************************* END BATCH UPDATE ***********************************/
 
-$HD_Form -> FG_EDITION_LINK  = $_SERVER['PHP_SELF']."?form_action=ask-edit&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&filterprefix2=$filterprefix2&id=";
-$HD_Form -> FG_DELETION_LINK = $_SERVER['PHP_SELF']."?form_action=ask-delete&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&filterprefix2=$filterprefix2&id=";
+$HD_Form -> FG_EDITION_LINK  = $_SERVER['REDIRECT_URL']."?form_action=ask-edit&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&filterprefix2=$filterprefix2&id=";
+$HD_Form -> FG_DELETION_LINK = 'url:'.$_SERVER['REDIRECT_URL']."?form_action=ask-delete&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&filterprefix2=$filterprefix2&popup_select=4&id=";
 
 if ($id != "" || !is_null($id)) {
 	$HD_Form->FG_EDITION_CLAUSE = str_replace("%id", "$id", $HD_Form->FG_EDITION_CLAUSE);
@@ -246,7 +246,7 @@ if (!$popup_select) {
 if (isset ($update_msg) && strlen($update_msg) > 0)
 	echo $update_msg;
 
-if ($popup_select && empty($package) && !is_numeric($package) ) {
+if ($popup_select && $popup_select!=4 && empty($package) && !is_numeric($package) ) {
 ?>
 <SCRIPT LANGUAGE="javascript">
 <!-- Begin
@@ -261,7 +261,7 @@ function sendValue(selvalue){
 }
 
 
-if ($popup_select && is_numeric($package)) {
+if ($popup_select && $popup_select!=4 && is_numeric($package)) {
 $HD_Form-> CV_FOLLOWPARAMETERS .= "&package=".$package;
 ?>
 <SCRIPT LANGUAGE="javascript">
@@ -458,7 +458,7 @@ if ($form_action == "list" && !$popup_select) {
 
 
 /********************************* BATCH ASSIGNED ***********************************/
-if ($popup_select) { 
+if ($popup_select && $popup_select!=4) {
 
 	$instance_table = new Table("cc_prefix GROUP BY destination", "destination");
 	$FG_TABLE_CLAUSE = "";

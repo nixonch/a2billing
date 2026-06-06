@@ -586,7 +586,7 @@ function linkonfaxfile_customer($value) {
  * function linkdelete_cdr
  */
 function linkdelete_cdr($value) {
-	echo "<a target=\"_blank\" href=\"A2B_entity_call.php?form_action=ask-delete&id=" . $value . "\">";
+	echo "<a href=\"javascript:;\" onClick=\"alertBase('url:A2B_entity_call?form_action=ask-delete&popup_select=4&id=" . $value . "',null,true,false,'#445760',event.pageX-20,event.pageY-100,'UR')\">";
 	echo '<img src="' . Images_Path . '/delete.png"/></a>';
 }
 

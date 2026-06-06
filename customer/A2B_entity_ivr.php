@@ -119,7 +119,9 @@ if (!isset ($action)) $action = $form_action;
 $smarty->display('main.tpl');
 
 // #### HELP SECTION
-echo $CC_help_ivr;
+if ($form_action!='ask-delete') {
+    echo $CC_help_ivr;
+}
 
 if ($form_action=='list') {
 

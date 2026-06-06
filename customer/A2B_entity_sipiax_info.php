@@ -125,7 +125,7 @@ $HD_Form->setDBHandler(DbConnect());
 $HD_Form->init();
 
 $HD_Form -> FG_EDITION_LINK	= $_SERVER['PHP_SELF']."?form_action=ask-edit&atmenu=$atmenu&id=";
-$HD_Form -> FG_DELETION_LINK	= $_SERVER['PHP_SELF']."?form_action=ask-delete&atmenu=$atmenu&id=";
+//$HD_Form -> FG_DELETION_LINK	= $_SERVER['PHP_SELF']."?form_action=ask-delete&atmenu=$atmenu&id=";
 
 if (strlen($HD_Form -> FG_EDITION_CLAUSE)>0)
     $HD_Form -> FG_EDITION_CLAUSE .= " AND ";
@@ -144,7 +144,8 @@ $list = $HD_Form->perform_action($form_action);
 $smarty->display('main.tpl');
 
 // #### HELP SECTION
-echo $CC_help_sipiax_info;
+if ($popup_select !=4)
+    echo $CC_help_sipiax_info;
 
 if ($form_action == "list") {
 ?>

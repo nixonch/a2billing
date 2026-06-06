@@ -154,7 +154,8 @@ $table_rates = new Table("cc_package_rate JOIN cc_ratecard ON cc_ratecard.id = c
 $rates_clauses = " cc_package_rate.package_id = $id";
 $result_rates=$table_rates ->Get_list(DbConnect(), $rates_clauses);
 
-echo $CC_help_offer_package;
+if ($form_action == "list" || $popup_select < 2)
+    echo $CC_help_offer_package;
 
 ?>
 <br/>

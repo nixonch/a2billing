@@ -49,11 +49,11 @@ if (! has_rights (ACX_CUSTOMER)) {
 $HD_Form -> setDBHandler (DbConnect());
 $HD_Form -> init();
 
-$HD_Form -> FG_EDITION_LINK	= $_SERVER['PHP_SELF']."?form_action=ask-edit&current_page=$current_page&filterprefix=$filterprefix&id=";
-$HD_Form -> FG_DELETION_LINK  = $_SERVER['PHP_SELF']."?form_action=ask-delete&current_page=$current_page&filterprefix=$filterprefix&id=";
+$HD_Form -> FG_EDITION_LINK		 = $_SERVER['PHP_SELF']."?form_action=ask-edit&current_page=$current_page&filterprefix=$filterprefix&id=";
+$HD_Form -> FG_DELETION_LINK	= "url:".$_SERVER['PHP_SELF']."?form_action=ask-delete&current_page=$current_page&filterprefix=$filterprefix&popup_select=4&id=";
 
 /********************************* BATCH UPDATE ***********************************/
-getpost_ifset(array('popup_select', 'popup_formname', 'popup_fieldname', 'upd_inuse', 'upd_status', 'upd_language', 'upd_tariff', 'upd_credit',
+getpost_ifset(array('popup_formname', 'popup_fieldname', 'upd_inuse', 'upd_status', 'upd_language', 'upd_tariff', 'upd_credit',
  	'upd_credittype', 'upd_simultaccess', 'upd_currency', 'upd_typepaid', 'upd_creditlimit', 'upd_enableexpire', 'upd_expirationdate', 
 	'upd_expiredays', 'upd_runservice', 'upd_runservice', 'batchupdate', 'check', 'type', 'mode', 'addcredit', 'cardnumber','description',
 	'upd_id_group','upd_discount','upd_refill_type','upd_description','upd_id_seria', 'upd_vat', 'upd_country'));
@@ -161,7 +161,7 @@ $smarty->display('main.tpl');
 
 
 
-if ($popup_select) {
+if ($popup_select==1) {
 ?>
 <SCRIPT LANGUAGE="javascript">
 <!-- Begin
@@ -205,7 +205,7 @@ if ($form_action == "list") {
 <?php
 
 /********************************* BATCH UPDATE ***********************************/
-if ( $form_action == "list" && (!($popup_select>=1)) ) {
+if ( $form_action == "list" && !($popup_select >= 1) ) {
 		
 	$instance_table_tariff = new Table("cc_tariffgroup", "id, tariffgroupname");
 	$FG_TABLE_CLAUSE = "";

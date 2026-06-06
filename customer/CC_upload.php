@@ -178,9 +178,9 @@ $smarty->display('main.tpl');
 
 ?>
 <center>
-<table cellspacing="0" cellpadding="0" border="0" align="center">
+<table cellspacing="0" cellpadding="0" border="0" align="center" style="padding:10px;">
   <tr>
-    <td><font size="3"><b><i><?php echo gettext("File Upload");?></i></b></font>&nbsp;
+    <td nowrap><font size="3"><b><i><?php echo gettext("File Upload");?></i></b></font>&nbsp;
     <br><br>
     <font style="text-decoration: bold; font-size: 9px;">  <b><?php echo gettext("Note that if you're using .wav, (eg, recorded with Microsoft Recorder)<br>the file must be PCM Encoded, 16 Bits, at 8000Hz.");?> </b>
     </font>&nbsp;
@@ -190,62 +190,60 @@ $smarty->display('main.tpl');
 </table>
 
 
-<table cellspacing="5" cellpadding="2" border="0" style="padding-top:5px;padding-left=5px;padding-bottom:5px;padding-right:5px">
-  <form method='post' enctype='multipart/form-data' action='<?php echo $_SERVER['PHP_SELF'];?>?popup_select=1&method=upload'>
-  <input type="hidden" value="<?php echo $acc?>" name="acc"/>
+<form method='post' enctype='multipart/form-data' action='<?php echo $_SERVER['PHP_SELF'];?>?popup_select=1&method=upload'>
+<input type="hidden" value="<?php echo $acc?>" name="acc"/>
+<table cellspacing="5" cellpadding="2" border="0" style="padding:5px;">
  <?php for( $i = 0; $i < $files_to_upload; $i++ ) { ?>
          <tr>
            <td>file:</td><td><input type='file' name='file[]' class="upload_textfield" size="30"></td>
          </tr>
     <?php } ?>
 	<tr>
-    <td nowrap><?php echo gettext("file types allowed");?>:</td><td>
-
-	<?php
-	for($i=0;$i<count($file_ext_allow);$i++) {
-		if (($i<>count($file_ext_allow)-1))$commas=", ";else $commas="";
-		list($key,$value)=each($file_ext_allow);
-		echo $value.$commas;
-	}
-	?>   </td>
+    <td nowrap><?php echo gettext("file types allowed");?>:</td>
+    <td>
+	<?= implode(', ', $file_ext_allow); ?>
+    </td>
   </tr>
 
   <tr>
     <td nowrap><?php echo gettext("file size limit");?>:</td>
-	<td>
-		<b><?php 
-			if ($file_size_ind >= 1048576) {
-				$file_size_ind_rnd = round(($file_size_ind/1024000),3) . " MB";
-			} elseif ($file_size_ind >= 1024) {	
-				$file_size_ind_rnd = round(($file_size_ind/1024),2) . " KB";
-			} elseif ($file_size_ind >= 0) {
-				$file_size_ind_rnd = $file_size_ind . " bytes";
-			} else {
-				$file_size_ind_rnd = "0 bytes";
-			}
-			
-			echo "$file_size_ind_rnd";
-		?></b>
-	</td>
+    <td>
+	<b><?php 
+		if ($file_size_ind >= 1048576) {
+			$file_size_ind_rnd = round(($file_size_ind/1024000),3) . " MB";
+		} elseif ($file_size_ind >= 1024) {	
+			$file_size_ind_rnd = round(($file_size_ind/1024),2) . " KB";
+		} elseif ($file_size_ind >= 0) {
+			$file_size_ind_rnd = $file_size_ind . " bytes";
+		} else {
+			$file_size_ind_rnd = "0 bytes";
+		}
 
+		echo "$file_size_ind_rnd";
+	?></b>
+    </td>
   </tr>
   <tr>
-    <td colspan="2"><input type="submit" value="<?php echo gettext("Upload");?>" class="upload_button">&nbsp;<input type="reset" value="<?php echo gettext("Clear");?>" class="upload_button"></td>
+    <td colspan="2" align="right"><font color="red"><?= $_SESSION['message']?:'' ?></font><br><br><br></td>
   </tr>
-  </form>
 </table>
+<?php   if (!isset($_SESSION['message']) || $_SESSION['message'] === gettext("No files selected!")) { ?>
+<div id="inline-alert-buttons">
+  <button type="submit" id="inline-alert-main" style="background:#1e3a83;border:1px solid #1e3a83;"><?php echo gettext("Upload") ?></button>
+  <button type="reset" id="inline-alert-secondary"><?= gettext("Clear") ?></button>
+</div>
+<?php   } ?>
+</form>
 <?php
         //When there is a message, after an action, show it
         if(isset($_SESSION['message']))
         {
-          echo "<br><font color='red'>" . $_SESSION['message'] . "</font>";
-          unset($_SESSION['message']);
+	  if ($_SESSION['message'] !== gettext("No files selected!")) {
 ?>
-<br>
 <center>
 <form runat="server">
     <div>
-        <input id="button1" onclick="self.close()" class="form_input_button" type="button" value="" />
+        <input id="button1" onclick="window.parent.postMessage({action:'closeAlert'},'*')" class="form_input_button" type="button" value="" />
     </div>
 </form>
 <script type="text/javascript">
@@ -259,12 +257,15 @@ $smarty->display('main.tpl');
 	}
         objbutton.value = '<?php echo gettext("Close Window")?> ('+timeleft+')';
     }
-    window.opener.location.href = window.opener.location.protocol + '//' + window.opener.location.host + window.opener.location.pathname + '?play=2';
+    var updateLink = window.parent.location.protocol + '//' + window.parent.location.host + window.parent.location.pathname + '?play=2';
+    window.parent.postMessage({action:'refreshInside',payload:updateLink},'*')
     buttontimer();
-    window.resizeBy(0, 90);
     setInterval(function() {buttontimer()}, 1000);
 </script>
 
-<?php   } ?>
+<?php     }
+          unset($_SESSION['message']);
+	}
+?>
 </center>
 <?php

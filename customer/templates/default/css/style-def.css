@@ -46,7 +46,7 @@ body {
 
 .upload_textfield {
 	font-family: Arial,Verdana;
-	font-size: 9px;
+	font-size: 10px;
 	color: #666666;
 	border: solid 1px;
 	border-color: #DBDBDB;
@@ -55,7 +55,8 @@ body {
 
 .upload_button {
 	font-family: Arial,Verdana;
-	font-size: 10px;
+	font-size: 12px;
+	padding: 4px;
 	color: #FFFFFF;
 	background-color: #3399FF;
 	border: solid 0px;

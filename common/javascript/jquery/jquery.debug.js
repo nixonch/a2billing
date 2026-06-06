@@ -18,7 +18,7 @@ if (!("console" in window) || !("firebug" in console)){
 	// create the logging div
 	jQuery(document).ready(
 		function(){
-			$(document.body).append('<div id="DEBUG"><ol></ol></div>');
+			$(document.body).prepend('<div id="DEBUG"><ol></ol></div>');
 		}
 	);
 	// attach a function to each of the firebug methods

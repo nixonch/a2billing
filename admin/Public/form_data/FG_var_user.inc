@@ -33,7 +33,7 @@
 
 
 
-getpost_ifset(array('id', 'groupID', 'userid', 'login','country','city', 'pwd_encoded', 'perms', 'name', 'direction', 'zipcode', 'state', 'phone', 'fax', 'popup_select', 'popup_formname', 'popup_fieldname', 'email'));
+getpost_ifset(array('id', 'groupID', 'userid', 'login','country','city', 'pwd_encoded', 'perms', 'name', 'direction', 'zipcode', 'state', 'phone', 'fax', 'popup_formname', 'popup_fieldname', 'email'));
 
 
 if ($groupID=="0") {
@@ -115,7 +115,7 @@ $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
 
 
 	$HD_Form -> CV_FOLLOWPARAMETERS= "&popup_select=".$popup_select."&popup_formname=".$popup_formname."&popup_fieldname=".$popup_fieldname;
-if ($popup_select>=1) {
+if ($popup_select>=1 && $popup_select!=4) {
 	$HD_Form -> FG_OTHER_BUTTON1 	 = true;
 	$HD_Form -> FG_OTHER_BUTTON1_ALT = '<font color="red">&lt;select&gt;</font>';
 	$HD_Form -> FG_OTHER_BUTTON1_IMG = '';
@@ -129,7 +129,8 @@ if ($popup_select>=1) {
 	$HD_Form -> FG_INFO_LINK = "A2B_admin_info.php?groupID=$groupID&id=";
 }
 
-if (has_rights (ACX_MODIFY_ADMINS) && !($popup_select)) {
+if (has_rights (ACX_MODIFY_ADMINS) && !($popup_select && $popup_select!=4)) {
+	$HD_Form -> FG_CAPCHA_POPUP = '|col2|';
 	$HD_Form -> FG_DELETION = true;
 	$HD_Form -> FG_EDITION = true;
 	
@@ -288,24 +289,24 @@ if (has_rights (ACX_MODIFY_ADMINS) && !($popup_select)) {
 	if ($groupID!="0") {
 		$FG_QUERY_EDITION .= 'perms, ';
 	}
-	
+
 	$FG_QUERY_EDITION .= 'name, direction,city, zipcode, state,country, phone, fax,email';
-	
+
 	$HD_Form -> FieldEditElement ($FG_QUERY_EDITION);
-	
+
 	$HD_Form -> FG_EDITION_CLAUSE = " userid='%id'";
-	
+
 	if (is_numeric($groupID)) {
 		$HD_Form -> FG_QUERY_ADITION_HIDDEN_FIELDS .= "groupID";
 		$HD_Form -> FG_QUERY_ADITION_HIDDEN_VALUE  .= "$groupID";
-	
+
 		$HD_Form -> FG_QUERY_EDITION_HIDDEN_FIELDS  = "groupID";
 		$HD_Form -> FG_QUERY_EDITION_HIDDEN_VALUE   = "$groupID";
 	
 		if ($groupID=="0") {
 			$HD_Form -> FG_QUERY_ADITION_HIDDEN_FIELDS .= ", perms";
 			$HD_Form -> FG_QUERY_ADITION_HIDDEN_VALUE  .= ", 5242879";
-	
+
 			$HD_Form -> FG_QUERY_EDITION_HIDDEN_FIELDS .= ", perms";
 			$HD_Form -> FG_QUERY_EDITION_HIDDEN_VALUE  .= ", 5242879";
 		}
@@ -313,23 +314,19 @@ if (has_rights (ACX_MODIFY_ADMINS) && !($popup_select)) {
 		$HD_Form -> FG_QUERY_ADITION_HIDDEN_FIELDS .= "groupID";
 		$HD_Form -> FG_QUERY_ADITION_HIDDEN_VALUE  .= "1";
 	}
-	
+
 	$HD_Form -> FG_INTRO_TEXT_EDITION= gettext("Modify the properties of the")." ".$HD_Form->FG_INSTANCE_NAME;
 	$HD_Form -> FG_INTRO_TEXT_ASK_DELETION = gettext("If you really want remove this")." ".$HD_Form->FG_INSTANCE_NAME.", ".gettext("click on the delete button.");
 	$HD_Form -> FG_INTRO_TEXT_ADD = gettext("you can add easily a new")." ".$HD_Form->FG_INSTANCE_NAME.".<br>".gettext("Fill the following fields and confirm by clicking on the button add.");
-	
-	
+
 	$HD_Form -> FG_INTRO_TEXT_ADITION = '';
 	$HD_Form -> FG_TEXT_ADITION_CONFIRMATION = gettext("Your new")." ".$HD_Form->FG_INSTANCE_NAME." ".gettext("has been inserted.")."<br>";
-	
-	
+
 	$HD_Form -> FG_BUTTON_EDITION_SRC = $HD_Form -> FG_BUTTON_ADITION_SRC  = Images_Path . "/cormfirmboton.gif";
 	$HD_Form -> FG_BUTTON_EDITION_BOTTOM_TEXT = $HD_Form -> FG_BUTTON_ADITION_BOTTOM_TEXT = gettext("Click 'Confirm Data' to continue");
-	
-	
-	$HD_Form -> FG_GO_LINK_AFTER_ACTION = $_SERVER['PHP_SELF']."?atmenu=user&groupID=$groupID&stitle=Administrator+management&id=";
-	$HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD = $_SERVER['PHP_SELF']."?atmenu=user&groupID=$groupID&stitle=Administrator+management&id=";
-	$HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT = $_SERVER['PHP_SELF']."?atmenu=user&groupID=$groupID&stitle=Administrator+management&id=";
-	$HD_Form -> FG_GO_LINK_AFTER_ACTION_DELETE = $_SERVER['PHP_SELF']."?atmenu=user&groupID=$groupID&stitle=Administrator+management&id=";
-}
 
+	$HD_Form -> FG_GO_LINK_AFTER_ACTION		= $_SERVER['REDIRECT_URL']."?atmenu=user&groupID=$groupID&stitle=Administrator+management&id=";
+	$HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD 	= $_SERVER['REDIRECT_URL']."?atmenu=user&groupID=$groupID&stitle=Administrator+management&id=";
+	$HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT	= $_SERVER['REDIRECT_URL']."?atmenu=user&groupID=$groupID&stitle=Administrator+management&id=";
+	$HD_Form -> FG_GO_LINK_AFTER_ACTION_DELETE	= $_SERVER['REDIRECT_URL']."?atmenu=user&groupID=$groupID&stitle=Administrator+management&id=";
+}

@@ -185,10 +185,11 @@ if ($message == "success") {
 <center>
 <form runat="server">
     <div>
-        <input id="button1" onclick="self.close()" class="form_input_button" type="button" value="" />
+        <input id="button1" onclick="window.parent.postMessage({action:'closeAlert'},'*')" class="form_input_button" type="button" value="" />
     </div>
 </form>
 <script type="text/javascript">
+    window.parent.postMessage({action:'refreshInside'},'*');
     objbutton=document.getElementById('button1');
     objbutton.focus();
     timeleft=10;
@@ -199,9 +200,7 @@ if ($message == "success") {
 	}
         objbutton.value = '<?php echo gettext("Close Window")?> ('+timeleft+')';
     }
-    window.opener.location.reload();
     buttontimer();
-    window.resizeBy(0, -120);
     setInterval(function() {buttontimer()}, 1000);
 </script>
 

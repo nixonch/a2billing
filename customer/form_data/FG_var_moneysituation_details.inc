@@ -2,9 +2,10 @@
 
 getpost_ifset(array('message', 'id', 'idcust', 'displayheader', 'type', 'popup_formname', 'popup_fieldname', 'atmenu'));
 
-if ($form_action == "ask-edit" || $form_action == "edit" || $message == "success") {
+if ($form_action == "ask-edit" || $form_action == "edit" || $message == "editsuccess") {
 
-getpost_ifset(array('lastname', 'firstname', 'company_name', 'id_group', 'email', 'company_website', 'address','city', 'state', 'areaprefix', 'citylength', 'country', 'removeaddprefix', 'addprefixinternational', 'zipcode', 'language', 'id_timezone', 'phone', 'fax', 'voicemail_activated', 'monitor', 'recalldays', 'tariff', 'margin', 'paypal'));
+getpost_ifset(array('lastname', 'firstname', 'company_name', 'id_group', 'email', 'company_website', 'address','city', 'state', 'areaprefix', 'citylength', 'country', 'removeaddprefix',
+		    'addprefixinternational', 'zipcode', 'language', 'id_timezone', 'phone', 'fax', 'voicemail_activated', 'monitor', 'recalldays', 'tariff', 'margin', 'paypal'));
 
 $HD_Form = new FormHandler("cc_card","Card");
 $HD_Form -> FG_TABLE_CLAUSE = "id_diller = {$_SESSION['card_id']}";
@@ -352,12 +353,13 @@ $HD_Form -> FieldEditElement ($group_editFG.$tariff_editFG.'lastname, firstname,
 $HD_Form->FG_ADITION_HIDDEN_PARAM = $HD_Form->FG_EDITION_HIDDEN_PARAM = 'popup_select, idcust';
 $HD_Form->FG_ADITION_HIDDEN_PARAM = $HD_Form->FG_EDITION_HIDDEN_PARAM_VALUE = "$popup_select, $idcust";
 
-$HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT = $_SERVER['PHP_SELF']."?idcust=$idcust&message=success&popup_select=$popup_select";
+$HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT = $PHP_SELF."?idcust=$idcust";
 
 } else {
 
     if ($type == 'payment') {
 	$HD_Form = new FormHandler("cc_logpayment as t2 LEFT JOIN cc_card ON cc_card.id=t2.card_id ", gettext("Payments"));
+	$HD_Form->FG_LIMITE_DISPLAY = 24;
 	$HD_Form->FG_TABLE_CLAUSE = "t2.card_id = $idcust AND cc_card.id_diller = {$_SESSION['card_id']}";
 	$HD_Form->FG_TABLE_ID = 't2.id';
 	$HD_Form->FG_TABLE_DEFAULT_SENS = "DESC";
@@ -374,6 +376,7 @@ $HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT = $_SERVER['PHP_SELF']."?idcust=$idcust
 	"LEFT JOIN ( SELECT st1.id_invoice, SUM(st1.price*(1+(st1.vat/100))) AS total_price FROM cc_invoice_item AS st1 GROUP BY st1.id_invoice) " .
 	"AS items ON items.id_invoice=cc_invoice.id ";
 	$HD_Form = new FormHandler($list_sql, gettext("INVOICES"));
+	$HD_Form->FG_LIMITE_DISPLAY = 24;
 	$HD_Form->FG_TABLE_ID = 'cc_invoice.id';
 	$HD_Form->FG_TABLE_DEFAULT_SENS = "DESC";
 	$HD_Form->FG_TABLE_CLAUSE = "cc_invoice.id_card = $idcust AND cc_card.id_diller = {$_SESSION['card_id']} ";
@@ -386,6 +389,7 @@ $HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT = $_SERVER['PHP_SELF']."?idcust=$idcust
     } elseif ($type == 'sipiax') {
 	$atmenu = ($atmenu=='IAX')?$atmenu:'SIP';
 	$HD_Form = new FormHandler("cc_".strtolower($atmenu)."_buddies AS t2 LEFT JOIN cc_card ON cc_card.id = id_cc_card ", gettext($atmenu . " Config"));
+	$HD_Form -> FG_LIMITE_DISPLAY = 24;
 	$HD_Form -> FG_TABLE_ID = 't2.id';
 	$HD_Form -> FG_TABLE_DEFAULT_ORDER = "regexten ";
 	$HD_Form -> FG_TABLE_DEFAULT_SENS = "ASC";

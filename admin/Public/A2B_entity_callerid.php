@@ -41,8 +41,8 @@ include ("../lib/admin.smarty.php");
 
 if (! has_rights (ACX_CUSTOMER)) {
 	Header ("HTTP/1.0 401 Unauthorized");
-	Header ("Location: PP_error.php?c=accessdenied");	   
-	die();	   
+	Header ("Location: PP_error.php?c=accessdenied");
+	die();
 }
 
 
@@ -63,8 +63,8 @@ $list = $HD_Form -> perform_action($form_action);
 $smarty->display('main.tpl');
 
 // #### HELP SECTION
-echo $CC_help_callerid_list;
-
+if ($popup_select!=4)
+    echo $CC_help_callerid_list;
 
 // #### TOP SECTION PAGE
 $HD_Form -> create_toppage ($form_action);

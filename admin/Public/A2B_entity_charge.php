@@ -50,8 +50,8 @@ $HD_Form_c->init();
 
 // To fix internal links due $_SERVER["PHP_SELF"] from parent include that fakes them
 if ($wantinclude == 1) {
-	$HD_Form_c->FG_EDITION_LINK = "A2B_entity_charge.php?form_action=ask-edit&id=";
-	$HD_Form_c->FG_DELETION_LINK = "A2B_entity_charge.php?form_action=ask-delete&id=";
+	$HD_Form_c->FG_EDITION_LINK = "url:A2B_entity_charge?form_action=ask-edit&popup_select=4&id=";
+	$HD_Form_c->FG_DELETION_LINK = "url:A2B_entity_charge?form_action=ask-delete&popup_select=4&id=";
 }
 
 if ($id != "" || !is_null($id)) {
@@ -66,10 +66,11 @@ if (!isset ($action))
 $list = $HD_Form_c->perform_action($form_action);
 
 if ($wantinclude != 1) {
-	// #### HEADER SECTION
-	$smarty->display('main.tpl');
+    // #### HEADER SECTION
+    $smarty->display('main.tpl');
 
-	// #### HELP SECTION
+    // #### HELP SECTION
+    if ($form_action == "list" || $popup_select < 2)
 	echo $CC_help_edit_charge;
 }
 

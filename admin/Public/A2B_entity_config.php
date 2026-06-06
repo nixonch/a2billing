@@ -67,7 +67,8 @@ $list = $HD_Form -> perform_action($form_action);
 // #### HEADER SECTION
 $smarty->display('main.tpl');
 
-echo $CC_help_list_configuration;
+if ($form_action == "list" || $popup_select < 2)
+    echo $CC_help_list_configuration;
 
 // #### TOP SECTION PAGE
 $HD_Form -> create_toppage ($form_action);

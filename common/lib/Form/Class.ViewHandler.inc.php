@@ -10,7 +10,7 @@ if (!function_exists("stripos")) {
 
 // ******************** END IF $topviewer *******************************
 
-getpost_ifset(array('stitle', 'letter', 'current_page', 'popup_select'));
+getpost_ifset(array('stitle', 'letter', 'current_page', 'popup_select', 'message'));
 
 $processed = $this->getProcessed();
 ?>
@@ -27,7 +27,7 @@ function openURLFilter(theLINK)
 <div style="" align="center">
 <table width="<?php echo $this->FG_VIEW_TABLE_WITDH; ?>" border="0" cellpadding="0" cellspacing="0">
 <?php
-if( !($popup_select>=1) && ($this->FG_LIST_ADDING_BUTTON1 || $this->FG_LIST_ADDING_BUTTON2) && (strlen($this -> FG_LIST_ADDING_BUTTON_MSG1)>0 || !is_array($list))) {
+if( !$processed['popup_select'] && ($this->FG_LIST_ADDING_BUTTON1 || $this->FG_LIST_ADDING_BUTTON2) && (strlen($this -> FG_LIST_ADDING_BUTTON_MSG1)>0 || !is_array($list))) {
 	?>
 	<tr><td align="right">
 		<?php if($this->FG_LIST_ADDING_BUTTON1) {?>
@@ -40,7 +40,14 @@ if( !($popup_select>=1) && ($this->FG_LIST_ADDING_BUTTON1 || $this->FG_LIST_ADDI
 	<?php
 } //END IF
 
-if ((count($list)>0) && is_array($list)){
+if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
+?>
+<script type="text/javascript">
+    window.parent.postMessage({action:'refreshInside'},'*');
+    window.parent.postMessage({action:'closeAlert'},'*')
+</script>
+<?php
+} else if ((count($list)>0) && is_array($list)){
 	$ligne_number=0;
 ?>
 
@@ -95,7 +102,7 @@ if ((count($list)>0) && is_array($list)){
 		<td class="viewhandler_table2_td3">
 		    <table border="0" cellpadding="0" cellspacing="0" width="100%">
 		    <tr>
-		    <td><span class="viewhandler_span2"> - <?php echo $this->CV_TITLE_TEXT ?>  - </span>
+		    <td nowrap><span class="viewhandler_span2"> - <?php echo $this->CV_TITLE_TEXT ?>  - </span>
 			<span class="viewhandler_span1"> <?php echo $this -> FG_NB_RECORD.' '.gettext("Records"); ?></span>
 		<?php if($this->FG_LIST_ADDING_BUTTON1 &&  strlen($this -> FG_LIST_ADDING_BUTTON_MSG1)==0) {?>
 			<a href="<?php echo $this -> FG_LIST_ADDING_BUTTON_LINK1;?>"><img src="<?php echo $this -> FG_LIST_ADDING_BUTTON_IMG1?>" valign="bottom" border="0" title="<?php echo $this->FG_LIST_ADDING_BUTTON_ALT1?>" alt="<?php echo $this->FG_LIST_ADDING_BUTTON_ALT1?>"></a>
@@ -103,7 +110,7 @@ if ((count($list)>0) && is_array($list)){
 			<a href="<?php echo $this -> FG_LIST_ADDING_BUTTON_LINK2;?>"><img src="<?php echo $this -> FG_LIST_ADDING_BUTTON_IMG2?>" valign="bottom" border="0" title="<?php echo $this->FG_LIST_ADDING_BUTTON_ALT2?>" alt="<?php echo $this->FG_LIST_ADDING_BUTTON_ALT2?>"></a>
 		<?php }} ?>
 		    </td>
-		    <td align="right">
+		    <td align="right" nowrap>
 		    <span class="viewhandler_span2">
 			<?php
 			$c_url = $PHP_SELF.'?current_page=%s';
@@ -179,17 +186,16 @@ if ((count($list)>0) && is_array($list)){
 		<?php } ?>
 
         <TR>
-          <TD>
+          <TD id="main-list">
 			<TABLE border="0" cellPadding="2" cellSpacing="2" width="100%">
 				<TR class="form_head">
 				<?php
 					  for($i=0;$i<$this->FG_NB_TABLE_COL;$i++){
 				?>
 				 <td class="tableBody" style="padding: 2px;" align="center" width="<?php echo $this->FG_TABLE_COL[$i][2]?>" >
-						<strong>
 						<?php  if (strtoupper($this->FG_TABLE_COL[$i][4])=="SORT"){?>
 						<a href="<?php echo $PHP_SELF."?stitle=$stitle&atmenu=$atmenu&current_page=$current_page&letter=".$processed["letter"]."&popup_select=".$processed["popup_select"]."&order=".$this->FG_TABLE_COL[$i][1]."&sens="; if ($this->FG_SENS=="ASC"){echo"DESC";}else{echo"ASC";} echo $this-> CV_FOLLOWPARAMETERS;?>">
-						<font color="#FFFFFF"><?php  } ?>
+						<font color="#FFF999"><?php  } ?>
 						<?php echo $this->FG_TABLE_COL[$i][0]?>
 						<?php if ($this->FG_ORDER==$this->FG_TABLE_COL[$i][1] && $this->FG_SENS=="ASC"){?>
 						&nbsp;<img src="<?php echo Images_Path_Main;?>/icon_up_12x12.GIF" border="0">
@@ -199,7 +205,7 @@ if ((count($list)>0) && is_array($list)){
 						<?php  if (strtoupper($this->FG_TABLE_COL[$i][4])=="SORT"){?>
 						</font></a>
 						<?php }?>
-						</strong></TD>
+						</TD>
 			   <?php }
 				 if ($this->FG_DELETION || $this->FG_INFO || $this->FG_EDITION || $this -> FG_OTHER_BUTTON1 || $this -> FG_OTHER_BUTTON2 || $this -> FG_OTHER_BUTTON3 || $this -> FG_OTHER_BUTTON4 ){ ?>
 					 <td width="<?php echo $this->FG_ACTION_SIZE_COLUMN?>" align="center" class="tableBody" ><strong> <?php echo gettext("ACTION");?></strong> </td>
@@ -356,7 +362,7 @@ if ((count($list)>0) && is_array($list)){
 					if ( is_numeric($this->FG_TABLE_COL[$i][5]) && (strlen($record_display) > $this->FG_TABLE_COL[$i][5])  ){
 						$record_display = substr($record_display, 0, $this->FG_TABLE_COL[$i][5])."";
 					} ?>
-					<TD valign="top" align="<?php echo $this->FG_TABLE_COL[$i][3]?>" class="tableBody"><?php
+					<TD valign="middle" align="<?php echo $this->FG_TABLE_COL[$i][3]?>" class="tableBody"><?php
 						$origlist[$ligne_number][$i-$k] = $list[$ligne_number][$i-$k];
 						$list[$ligne_number][$i-$k] = is_null($record_clear) ? $record_display : $record_clear;
 
@@ -368,18 +374,25 @@ if ((count($list)>0) && is_array($list)){
 						?>
 					</TD>
 
-		 		 <?php  } ?>
+				 <?php  }
 
-				  	<?php if($this->FG_EDITION  || $this->FG_INFO || $this->FG_DELETION || $this -> FG_OTHER_BUTTON1 || $this -> FG_OTHER_BUTTON2 || $this -> FG_OTHER_BUTTON3 || $this -> FG_OTHER_BUTTON4 ){?>
-					  <TD align="center" valign=top class=tableBodyRight nowrap>
-					
-						<?php if($this->FG_INFO){?>&nbsp; <a href="<?php echo $this->FG_INFO_LINK?><?php echo $list[$ligne_number][$this->FG_NB_TABLE_COL]?>"><img src="<?php echo Images_Path_Main;?>/<?php echo $this->FG_INFO_IMG?>" border="0" title="<?php echo $this->FG_INFO_ALT?>" alt="<?php echo $this->FG_INFO_ALT?>"></a><?php } ?>
-						<?php if($this->FG_EDITION){
+					if($this->FG_EDITION  || $this->FG_INFO || $this->FG_DELETION || $this -> FG_OTHER_BUTTON1 || $this -> FG_OTHER_BUTTON2 || $this -> FG_OTHER_BUTTON3 || $this -> FG_OTHER_BUTTON4 || $this -> FG_OTHER_BUTTON5){
+						if (($capcha = $this->FG_CAPCHA_POPUP)) {
+							foreach ($list[$ligne_number] as $h => $val) {
+								$findme = "|col$h|";
+								$pos = stripos($capcha, $findme);
+								if ($pos !== false) {
+									$capcha = str_replace($findme,trim(strip_tags($val)),$capcha);
+								}
+							}
+						}
+						?><TD align="center" valign="middle" class="tableBodyRight" style="display:flex;justify-content:center;align-items:center;" nowrap><?php
+						if($this->FG_DELETION && !in_array($list[$ligne_number][$this->FG_NB_TABLE_COL],$this->FG_DELETION_FORBIDDEN_ID) ){
 							$check = true;
-					  		$condition_eval=$this->FG_EDITION_CONDITION;
-							$check_eval=false;	
-					  		if (!empty($this->FG_EDITION_CONDITION) && (preg_match ('/col[0-9]/i', $this->FG_EDITION_CONDITION))) {
-					  			$check =false;
+							$condition_eval=$this->FG_DELETION_CONDITION;
+							$check_eval=false;
+							if (!empty($this->FG_DELETION_CONDITION) && (preg_match ('/col[0-9]/', $this->FG_DELETION_CONDITION))) {
+								$check =false;
 								for ($h=count($list[$ligne_number]);$h>=0;$h--){
 									$findme = "|col$h|";
 									$pos = stripos($condition_eval, $findme);
@@ -387,19 +400,26 @@ if ((count($list)>0) && is_array($list)){
 										$condition_eval = str_replace($findme,$list[$ligne_number][$h],$condition_eval);
 									}
 								}
-								eval('$check_eval = '.$condition_eval.';');	
+								eval('$check_eval = '.$condition_eval.';');
 							}
-					  		if($check || $check_eval){
-							
-							?>&nbsp; <a href="<?php echo $this->FG_EDITION_LINK?><?php echo $list[$ligne_number][$this->FG_NB_TABLE_COL]?>"><img src="<?php echo Images_Path_Main;?>/<?php echo $this->FG_EDITION_IMG?>" border="0" title="<?php echo $this->FG_EDIT_ALT?>" alt="<?php echo $this->FG_EDIT_ALT?>"></a>
-						<?php }
-							} ?>
-                        <?php if($this->FG_DELETION && !in_array($list[$ligne_number][$this->FG_NB_TABLE_COL],$this->FG_DELETION_FORBIDDEN_ID) ){
-                        	$check = true;
-					  		$condition_eval=$this->FG_DELETION_CONDITION;
-							$check_eval=false;	
-					  		if (!empty($this->FG_DELETION_CONDITION) && (preg_match ('/col[0-9]/', $this->FG_DELETION_CONDITION))) {
-					  			$check =false;
+							if ($check || $check_eval) {
+							    if (strpos($this->FG_DELETION_LINK,'url:')===0) {
+							?><a href="javascript:;" onClick="alertBase('<?= $this->FG_DELETION_LINK . $list[$ligne_number][$this->FG_NB_TABLE_COL] ?>','<?= $capcha ?>',true,false,'#c33d3c',event.pageX-55,event.pageY-100,'UR')"><img src="<?php echo Images_Path_Main;?>/<?php echo $this->FG_DELETION_IMG?>" border="0" title="<?php echo $this->FG_DELETE_ALT?>" alt="<?php echo $this->FG_DELETE_ALT?>"></a><?php
+							    } else {
+							?><a href="<?php echo $this->FG_DELETION_LINK?><?php echo $list[$ligne_number][$this->FG_NB_TABLE_COL]?>"><img src="<?php echo Images_Path_Main;?>/<?php echo $this->FG_DELETION_IMG?>" border="0" title="<?php echo $this->FG_DELETE_ALT?>" alt="<?php echo $this->FG_DELETE_ALT?>"></a><?php
+							    }
+							?><div style="width:20px"></div><?php
+							}
+						}
+						if($this->FG_INFO){
+							?><a href="<?php echo $this->FG_INFO_LINK?><?php echo $list[$ligne_number][$this->FG_NB_TABLE_COL]?>"><img src="<?php echo Images_Path_Main;?>/<?php echo $this->FG_INFO_IMG?>" border="0" title="<?php echo $this->FG_INFO_ALT?>" alt="<?php echo $this->FG_INFO_ALT?>"></a><?php
+						}
+						if($this->FG_EDITION){
+							$check = true;
+							$condition_eval=$this->FG_EDITION_CONDITION;
+							$check_eval=false;
+							if (!empty($this->FG_EDITION_CONDITION) && (preg_match ('/col[0-9]/i', $this->FG_EDITION_CONDITION))) {
+								$check =false;
 								for ($h=count($list[$ligne_number]);$h>=0;$h--){
 									$findme = "|col$h|";
 									$pos = stripos($condition_eval, $findme);
@@ -407,20 +427,23 @@ if ((count($list)>0) && is_array($list)){
 										$condition_eval = str_replace($findme,$list[$ligne_number][$h],$condition_eval);
 									}
 								}
-								eval('$check_eval = '.$condition_eval.';');	
+								eval('$check_eval = '.$condition_eval.';');
 							}
-					  		if ($check || $check_eval) {
-                        	
-                        	?>&nbsp;  <a href="<?php echo $this->FG_DELETION_LINK?><?php echo $list[$ligne_number][$this->FG_NB_TABLE_COL]?>"><img src="<?php echo Images_Path_Main;?>/<?php echo $this->FG_DELETION_IMG?>" border="0" title="<?php echo $this->FG_DELETE_ALT?>" alt="<?php echo $this->FG_DELETE_ALT?>"></a>
-                        	<?php }
-                   		     } ?>
-					  	<?php if($this->FG_OTHER_BUTTON1){ 
-					  	
-					  		$check = true;
-					  		$condition_eval=$this->FG_OTHER_BUTTON1_CONDITION;
-							$check_eval=false;	
-					  		if (!empty($this->FG_OTHER_BUTTON1_CONDITION) && (preg_match ('/col[0-9]/i', $this->FG_OTHER_BUTTON1_CONDITION))) {
-					  			$check =false;
+							if($check || $check_eval){
+							    if (strpos($this->FG_EDITION_LINK,'url:')===0) {
+							?><a href="javascript:;" onClick="alertBase('<?= $this->FG_EDITION_LINK . $list[$ligne_number][$this->FG_NB_TABLE_COL] ?>','<?= $list[$ligne_number][0] ?>',true,false,'#445760',event.pageX-55,null,'UR')"><img src="<?= Images_Path_Main ?>/<?= $this->FG_EDITION_IMG ?>" border="0" title="<?= $this->FG_EDIT_ALT ?>" alt="<?= $this->FG_EDIT_ALT ?>"></a><?php
+							    } else {
+							?><a href="<?php echo $this->FG_EDITION_LINK?><?php echo $list[$ligne_number][$this->FG_NB_TABLE_COL]?>"><img src="<?php echo Images_Path_Main;?>/<?php echo $this->FG_EDITION_IMG?>" border="0" title="<?php echo $this->FG_EDIT_ALT?>" alt="<?php echo $this->FG_EDIT_ALT?>"></a><?php
+							    }
+							}
+						}
+						if($this->FG_OTHER_BUTTON1){ 
+
+							$check = true;
+							$condition_eval=$this->FG_OTHER_BUTTON1_CONDITION;
+							$check_eval=false;
+							if (!empty($this->FG_OTHER_BUTTON1_CONDITION) && (preg_match ('/col[0-9]/i', $this->FG_OTHER_BUTTON1_CONDITION))) {
+								$check =false;
 								for ($h=count($list[$ligne_number]);$h>=0;$h--){
 									$findme = "|col$h|";
 									$pos = stripos($condition_eval, $findme);
@@ -428,10 +451,10 @@ if ((count($list)>0) && is_array($list)){
 										$condition_eval = str_replace($findme,$list[$ligne_number][$h],$condition_eval);
 									}
 								}
-								eval('$check_eval = '.$condition_eval.';');	
+								eval('$check_eval = '.$condition_eval.';');
 							}
-					  		if ($check || $check_eval) {
-					  		?>
+							if ($check || $check_eval) {
+							?>
 							<a href="<?php
 								$new_FG_OTHER_BUTTON1_LINK = $this -> FG_OTHER_BUTTON1_LINK;
 								$new_FG_OTHER_BUTTON1_IMG = $this -> FG_OTHER_BUTTON1_IMG;
@@ -450,7 +473,7 @@ if ((count($list)>0) && is_array($list)){
 										$findme = "|col$h|";
 										$pos = stripos($new_FG_OTHER_BUTTON1_LINK, $findme);
 										if ($pos !== false) {
-											$new_FG_OTHER_BUTTON1_LINK = str_replace($findme,$list[$ligne_number][$h],$new_FG_OTHER_BUTTON1_LINK);
+											$new_FG_OTHER_BUTTON1_LINK = str_replace($findme,trim(strip_tags($list[$ligne_number][$h])),$new_FG_OTHER_BUTTON1_LINK);
 										}
 									}
 								}
@@ -542,7 +565,7 @@ if ((count($list)>0) && is_array($list)){
 										$findme = "|col$h|";
 										$pos = stripos($new_FG_OTHER_BUTTON2_LINK, $findme);
 										if ($pos !== false) {
-											$new_FG_OTHER_BUTTON2_LINK = str_replace($findme,$list[$ligne_number][$h],$new_FG_OTHER_BUTTON2_LINK);
+											$new_FG_OTHER_BUTTON2_LINK = str_replace($findme,trim(strip_tags($list[$ligne_number][$h])),$new_FG_OTHER_BUTTON2_LINK);
 										}
 									}
 								}
@@ -633,7 +656,7 @@ if ((count($list)>0) && is_array($list)){
 										$findme = "|col$h|";
 										$pos = stripos($new_FG_OTHER_BUTTON3_LINK, $findme);
 										if ($pos !== false) {
-											$new_FG_OTHER_BUTTON3_LINK = str_replace($findme,$list[$ligne_number][$h],$new_FG_OTHER_BUTTON3_LINK);
+											$new_FG_OTHER_BUTTON3_LINK = str_replace($findme,trim(strip_tags($list[$ligne_number][$h])),$new_FG_OTHER_BUTTON3_LINK);
 										}
 									}
 								}
@@ -725,7 +748,7 @@ if ((count($list)>0) && is_array($list)){
 										$findme = "|col_orig$h|";
 										$pos = stripos($new_FG_OTHER_BUTTON4_LINK, $findme);
 										if ($pos !== false) {
-											$new_FG_OTHER_BUTTON4_LINK = str_replace($findme,$origlist[$ligne_number][$h],$new_FG_OTHER_BUTTON4_LINK);
+											$new_FG_OTHER_BUTTON4_LINK = str_replace($findme,trim(strip_tags($origlist[$ligne_number][$h])),$new_FG_OTHER_BUTTON4_LINK);
 										}
 									}
 								}
@@ -796,7 +819,7 @@ if ((count($list)>0) && is_array($list)){
 										$findme = "|col$h|";
 										$pos = stripos($new_FG_OTHER_BUTTON5_LINK, $findme);
 										if ($pos !== false) {
-											$new_FG_OTHER_BUTTON5_LINK = str_replace($findme,$list[$ligne_number][$h],$new_FG_OTHER_BUTTON5_LINK);
+											$new_FG_OTHER_BUTTON5_LINK = str_replace($findme,trim(strip_tags($list[$ligne_number][$h])),$new_FG_OTHER_BUTTON5_LINK);
 										}
 									}
 								}
@@ -844,10 +867,8 @@ if ((count($list)>0) && is_array($list)){
 								?></a>
 						<?php
 							 }
-						} 
+						}
 						?>
-						
-
 					  </TD>
 					<?php  } ?>
 

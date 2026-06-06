@@ -29,6 +29,7 @@ if ($this->FG_FK_DELETE_CONFIRM && $form_action == "ask-del-confirm" && $this-> 
 	<INPUT type="hidden" name="id" value="<?php echo $id?>">
 	<INPUT type="hidden" name="atmenu" value="<?php echo $atmenu?>">
 	<INPUT type="hidden" name="form_action" value="delete">
+	<INPUT type="hidden" name="popup_select" value="<?php echo $processed['popup_select'];?>">
 	<INPUT type="hidden" name="current_page" value="<?php echo $processed['current_page'];?>">
 	<INPUT type="hidden" name="order" value="<?php echo $processed['order'];?>">
 	<INPUT type="hidden" name="sens" value="<?php echo $processed['sens'];?>">
@@ -92,6 +93,7 @@ else
 	<INPUT type="hidden" name="id" value="<?php echo $id?>">
 	<INPUT type="hidden" name="atmenu" value="<?php echo $atmenu?>">
 	<INPUT type="hidden" name="fkCount" value="<?php echo $this -> FG_FK_RECORDS_COUNT;?>">
+	<INPUT type="hidden" name="popup_select" value="<?php echo $processed['popup_select'];?>">
 	<INPUT type="hidden" name="current_page" value="<?php echo $processed['current_page'];?>">
 	<INPUT type="hidden" name="order" value="<?php echo $processed['order'];?>">
 	<INPUT type="hidden" name="sens" value="<?php echo $processed['sens'];?>">

@@ -72,7 +72,7 @@ if (strlen($HD_Form -> FG_EDITION_CLAUSE)>0)
 	
 
 //end My Code for Where Clause
-
+$HD_Form -> FG_CAPCHA_POPUP = '[ |col0| ] >> |col1|';
 $HD_Form -> FG_EDITION = true;
 $HD_Form -> FG_DELETION = true;
 

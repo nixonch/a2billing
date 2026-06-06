@@ -276,7 +276,7 @@ class FormHandler
      * Sets the ALT TEXT after mouse over the bouton 
      * @public   -  @string
      */	
-	 
+	var $FG_CAPCHA_POPUP = '|col1|';
 	var $FG_DELETE_ALT = "Delete this record";
 	var $FG_EDIT_ALT = "Edit this record";
 	var $FG_INFO_ALT = "Info on this record";
@@ -406,7 +406,7 @@ class FormHandler
     */
 	var $FG_GO_LINK_AFTER_ACTION;
 	var $FG_GO_LINK_AFTER_ACTION_ADD;
-	var $FG_GO_LINK_AFTER_ACTION_DELETE;	
+	var $FG_GO_LINK_AFTER_ACTION_DELETE;
 	var $FG_GO_LINK_AFTER_ACTION_EDIT;
 	
 	
@@ -624,9 +624,9 @@ class FormHandler
 		$ext_link ='';
 		if (is_numeric($processed['current_page']))	$ext_link.="&current_page=".$processed['current_page'];
 		if (strlen($processed['filterprefix'])>0)	$ext_link.="&filterprefix=".$processed['filterprefix'];
-		if (!empty($processed['order']) && !empty($processed['sens']))$ext_link.="&order=".$processed['order']."&sens=".$processed['sens'];
+		if (!empty($processed['order']) && !empty($processed['sens']))	$ext_link.="&order=".$processed['order']."&sens=".$processed['sens'];
 		$this -> FG_EDITION_LINK	= $PHP_SELF."?form_action=ask-edit".$ext_link."&id=";
-		$this -> FG_DELETION_LINK	= $PHP_SELF."?form_action=ask-delete".$ext_link."&id=";
+		$this -> FG_DELETION_LINK	= "url:".$PHP_SELF."?form_action=ask-delete&popup_select=4".$ext_link."&id=";
 		
 		$this -> FG_DELETE_ALT = gettext("Delete this ").$this -> FG_INSTANCE_NAME;
 		$this -> FG_EDIT_ALT = gettext("Edit this ").$this -> FG_INSTANCE_NAME;
@@ -912,7 +912,7 @@ class FormHandler
 			$cur = count($this->FG_TABLE_EDITION);
 			$this->FG_TABLE_EDITION[$cur] = array ( $displayname, $fieldname, $defaultvalue, $fieldtype, $fieldproperty, $regexpr_nb, $error_message,
 							$type_selectfield, $lie_tablename, $lie_tablefield, $lie_clause, $listname, $displayformat_selectfield, $check_emptyvalue,
-							$custom_query, $displayinput_defaultselect, $comment_above);		
+							$custom_query, $displayinput_defaultselect, $comment_above);
 			$this->FG_TABLE_COMMENT[$cur] = $comment;
 			$this->FG_TABLE_ADITION[$cur] = $this->FG_TABLE_EDITION[$cur];
 			$this->FG_NB_TABLE_ADITION = $this->FG_NB_TABLE_EDITION = count($this->FG_TABLE_EDITION);
@@ -1136,7 +1136,7 @@ class FormHandler
 			$sql = "$sql $fldsql";
 			if (isset ($processed[$fldtype])){                
                 switch ($processed[$fldtype]) {
-					case 1:	$sql = "$sql ='".$processed[$fld]."'";  break;
+					case 1: $sql = "$sql ='".$processed[$fld]."'";  break;
 					case 2: $sql = "$sql <= '".$processed[$fld]."'";  break;
 					case 3: $sql = "$sql < '".$processed[$fld]."'";  break;							
 					case 4: $sql = "$sql > '".$processed[$fld]."'";  break;
@@ -1590,7 +1590,7 @@ class FormHandler
 							}
 						}
 					}
-				}		
+				}
 			}
 		}
 		
@@ -1649,8 +1649,11 @@ class FormHandler
 			$id = $this -> RESULT_QUERY;
 			if ( !empty($id) && ($this->VALID_SQL_REG_EXP) && (isset($this->FG_GO_LINK_AFTER_ACTION_ADD))){				
 				if ($this->FG_DEBUG == 1)  echo "<br> GOTO ; ".$this->FG_GO_LINK_AFTER_ACTION_ADD.$id;
+				$ext_link ='&message=addsuccess';
+				if (strpos($this->FG_GO_LINK_AFTER_ACTION_ADD,'popup_select')===false && is_numeric($processed['popup_select']))
+												$ext_link.="&popup_select=".$processed['popup_select'];
 				//echo "<br> GOTO ; ".$this->FG_GO_LINK_AFTER_ACTION_ADD.$id;
-				Header ("Location: ".$this->FG_GO_LINK_AFTER_ACTION_ADD.$id);
+				Header ("Location: ".$this->FG_GO_LINK_AFTER_ACTION_ADD.$id.$ext_link);
 			}
 		}
 	}
@@ -1819,9 +1822,11 @@ class FormHandler
 			
 			if (($this->VALID_SQL_REG_EXP) && (isset($this->FG_GO_LINK_AFTER_ACTION_EDIT))) {				
 				if ($this->FG_DEBUG == 1)  echo "<br> GOTO ; ".$this->FG_GO_LINK_AFTER_ACTION_EDIT.$id;
-				$ext_link ='';
-				if(is_numeric($processed['current_page']))$ext_link.="&current_page=".$processed['current_page'];
-				if(!empty($processed['order']) && !empty($processed['sens']))$ext_link.="&order=".$processed['order']."&sens=".$processed['sens'];
+				$ext_link ='&message=editsuccess';
+				if (strpos($this->FG_GO_LINK_AFTER_ACTION_EDIT,'popup_select')===false && is_numeric($processed['popup_select']))
+												$ext_link.="&popup_select=".$processed['popup_select'];
+				if(is_numeric($processed['current_page']))			$ext_link.="&current_page=".$processed['current_page'];
+				if(!empty($processed['order']) && !empty($processed['sens']))	$ext_link.="&order=".$processed['order']."&sens=".$processed['sens'];
 				Header ("Location: ".$this->FG_GO_LINK_AFTER_ACTION_EDIT.$id.$ext_link);
 			}
 		}
@@ -1874,8 +1879,10 @@ class FormHandler
 		if (isset($this->FG_GO_LINK_AFTER_ACTION_DELETE)) {
 			if ($this->FG_DEBUG == 1)  echo "<br> GOTO ; ".$this->FG_GO_LINK_AFTER_ACTION_DELETE.$processed['id'];
 			if ($this->FG_GO_LINK_AFTER_ACTION_DELETE){
-				$ext_link ='';
-				if (is_numeric($processed['current_page']))	$ext_link="&current_page=".$processed['current_page'];
+				$ext_link ='&message=delsuccess';
+				if (strpos($this->FG_GO_LINK_AFTER_ACTION_DELETE,'popup_select')===false && is_numeric($processed['popup_select']))
+												$ext_link.="&popup_select=".$processed['popup_select'];
+				if (is_numeric($processed['current_page']))			$ext_link.="&current_page=".$processed['current_page'];
 				if (!empty($processed['order']) && !empty($processed['sens']))	$ext_link.="&order=".$processed['order']."&sens=".$processed['sens'];
 				if (substr($this->FG_GO_LINK_AFTER_ACTION_DELETE,-3)=="id=") {
 					Header ("Location: ".$this->FG_GO_LINK_AFTER_ACTION_DELETE.$processed['id'].$ext_link);

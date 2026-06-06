@@ -86,7 +86,7 @@ if ($popup_select) {
 if ($form_action == 'list') {
 	if (!$popup_select)
 		echo $CC_help_trunk_list;
-} else {
+} else if ($popup_select!=4) {
 	echo $CC_help_trunk_edit;
 }
 

@@ -73,6 +73,7 @@ $HD_Form -> FG_VIEW_TABLE_WITDH = '75%';
 $HD_Form -> FG_ADDITION = true;
 $HD_Form -> FG_EDITION = true;
 $HD_Form -> FG_DELETION = true;
+$HD_Form -> FG_CAPCHA_POPUP = '|col0| | |col5|';
 
 if ($form_action=="ask-add") {
 	$warning_threshold	='-2';
@@ -155,6 +156,19 @@ $HD_Form -> AddEditElement (gettext("CALLBACK"),
 
 $destlist = array();
 if (isset($form_action) && $form_action=="ask-edit") {
+	$QUERYpop = "SELECT DISTINCT calledstation
+		     FROM cc_call
+		     WHERE starttime > NOW() - INTERVAL 1 YEAR
+			AND card_caller = (SELECT id_cc_card FROM cc_callerid WHERE id=$id)
+			AND src LIKE (SELECT cid FROM cc_callerid WHERE id=$id LIMIT 1)
+			AND sessiontime > 90
+			AND CHAR_LENGTH(calledstation) > 6
+		     ORDER BY id DESC";
+	$resmax = $DBHandle->Execute($QUERYpop);
+	if ($resmax) {
+	    foreach ($resmax as $val)
+	    $destlist[] = array($val[0],$val[0]);
+	}
 	$QUERYpop = "SELECT ivrname FROM cc_ivr WHERE id_cc_card=(SELECT id_cc_card FROM cc_callerid WHERE id=$id) ORDER BY ivrname";
         $resmax = $DBHandle->Execute($QUERYpop);
         if ($resmax) {
@@ -173,12 +187,14 @@ if (isset($form_action) && $form_action=="ask-edit") {
 	    foreach ($resmax as $val)
 		$destlist[] = array($val[0],$val[0]);
         }
+/*
         $QUERYpop = "SELECT cid FROM cc_callerid WHERE id_cc_card=(SELECT id_cc_card FROM cc_callerid WHERE id=$id) AND blacklist=0 ORDER BY cid";
         $resmax = $DBHandle->Execute($QUERYpop);
         if ($resmax) {
 	    foreach ($resmax as $val)
 		$destlist[] = array($val[0],$val[0]);
         }
+*/
         $instance_table = new Table("cc_callerid", "phonenumber");
         $list = $instance_table -> Get_list($DBHandle, "id = $id", 0);
         if (is_array($list) && count($list)>0) {
@@ -190,7 +206,7 @@ $HD_Form -> AddEditElement (gettext("DESTINATION TO FORWARD"),
 			"phonenumber",
 			'$value',
 			($form_action=='ask-delete')?"INPUT":"DATALIST",
-			"size=50 maxlength=100 style=\"width: 250px;\"",
+			"size=50 maxlength=100 style=\"width: 250px;\" autocomplete=\"off\"",
 			"",
 			gettext("Insert the phone"),
 			"list", "", "", "", $destlist, "%1", "", gettext("Enter the destination for immediatly dial instead prompt to dial. There are the phonenumber, Queue or IVR name you wish to send call. Or select destination from the drop-down list.<br>Requires \"D I S A\" on and \"BLACKLIST\" off. After one attempt to redirect the call, the call will be dropped."), NULL, $selecteddest);
@@ -293,7 +309,6 @@ if (isset($filterprefix)  &&  (strlen($filterprefix)>0)){
 	if (strlen($HD_Form -> FG_TABLE_CLAUSE)>0) $HD_Form -> FG_TABLE_CLAUSE.=" AND ";
 	$HD_Form -> FG_TABLE_CLAUSE.="cid like '$filterprefix%'";
 }
-
 
 $HD_Form -> FG_INTRO_TEXT_EDITION= gettext("Modify via the form below, the properties of the callerID");
 $HD_Form -> FG_INTRO_TEXT_ASK_DELETION = gettext("If you really want remove this")." ".$HD_Form->FG_INSTANCE_NAME.", ".gettext("click on the delete button.");

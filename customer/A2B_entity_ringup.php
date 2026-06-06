@@ -145,7 +145,9 @@ $smarty->display('main.tpl');
 // #### HELP SECTION
 if ($form_action == 'list') {
 	echo $CC_help_ringuplist;
-} else	echo $CC_help_ringupedit;
+} elseif ($form_action == 'ask-edit') {
+	echo $CC_help_ringupedit;
+}
 
 if ($form_action == "list") {
 	$HD_Form->create_toppage("ask-add");

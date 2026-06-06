@@ -46,28 +46,22 @@ if (!isset ($action))
 //echo "form_action2=".$form_action.'<br>'
 //    ."account=".$account.'<br>';
 
-if ($message != "success")
-	$list = $HD_Form->perform_action($form_action);
-
 // #### HEADER SECTION
 $smarty->display('main.tpl');
 
-	$QUERY = "SELECT lastname, firstname, username, credit FROM cc_card WHERE id = $idcust AND id_diller = " . $_SESSION["card_id"];
-	$resmax = $DBHandle->Execute($QUERY);
-	if ($resmax) {
-		$row = $resmax->fetchRow();
-		$HD_Form -> FG_INTRO_TEXT_EDITION = "<u><font color=blue>".$row[0]." ".$row[1]."</font> (".$row[2].") <font color=green>".$row[3]." ".BASE_CURRENCY."</font></u>";
-		if ($form_action != "ask-edit") {
-			?><center><?php
-			echo $HD_Form -> FG_INTRO_TEXT_EDITION;
-		}
-		$HD_Form -> FG_INTRO_TEXT_EDITION = "<B>".$HD_Form -> FG_INTRO_TEXT_EDITION."</B>";
-	}
+$QUERY = "SELECT lastname, firstname, username, credit FROM cc_card WHERE id = $idcust AND id_diller = " . $_SESSION["card_id"];
+$resmax = $DBHandle->Execute($QUERY);
+if ($resmax) {
+    $row = $resmax->fetchRow();
+    $HD_Form -> FG_INTRO_TEXT_EDITION = "<u><font color=blue>".$row[0]." ".$row[1]."</font> (".$row[2].") <font color=green>".$row[3]." ".BASE_CURRENCY."</font></u>";
+    if ($form_action != "ask-edit") {
+	?><center><?php
+	echo $HD_Form -> FG_INTRO_TEXT_EDITION;
+    }
+    $HD_Form -> FG_INTRO_TEXT_EDITION = "<B>".$HD_Form -> FG_INTRO_TEXT_EDITION."</B>";
+}
 
-// #### TOP SECTION PAGE
-$HD_Form->create_toppage($form_action);
-
-if ($message == "success") {
+if ($message == "editsuccess") {
 ?>
 <table width="95%" align="center">
 <tr height="100px">
@@ -77,10 +71,11 @@ if ($message == "success") {
 <br>
 <form runat="server">
     <div>
-        <input id="button1" onclick="self.close()" class="form_input_button" type="button" value="" />
+        <input id="button1" onclick="window.parent.postMessage({action:'closeAlert'},'*')" class="form_input_button" type="button" value="" />
     </div>
 </form>
 <script type="text/javascript">
+    window.parent.postMessage({action:'refreshInside'},'*');
     objbutton=document.getElementById('button1');
     objbutton.focus();
     timeleft=10;
@@ -89,15 +84,16 @@ if ($message == "success") {
 	if(timeleft==0) {
 		objbutton.click();
 	}
-	objbutton.value = '<?php echo gettext("Close Window")?> ('+timeleft+')';
+	objbutton.value = '<?= gettext("Close Window") ?> ('+timeleft+')';
     }
     buttontimer();
-    window.opener.location.reload();
-    window.resizeBy(-100, -450);
     setInterval(function() {buttontimer()}, 1000);
 </script>
 
 <?php
 } else {
-	$HD_Form -> create_form ($form_action, $list, $id=null) ;
+    // #### TOP SECTION PAGE
+    $HD_Form->create_toppage($form_action);
+    $list = $HD_Form->perform_action($form_action);
+    $HD_Form -> create_form ($form_action, $list, $id=null) ;
 }

@@ -68,7 +68,8 @@ $smarty->display('main.tpl');
 
 
 // #### HELP SECTION
-echo $CC_help_campaign_config;
+if ($popup_select != 2)
+    echo $CC_help_campaign_config;
 
 
 // #### TOP SECTION PAGE

@@ -85,8 +85,12 @@ if (strlen($add_callerid)>0) {
 
 $HD_Form -> init();
 
-$HD_Form -> FG_EDITION_LINK = $_SERVER['PHP_SELF']."?form_action=ask-edit&popup_select=$popup_select&idcust=$idcust&id=";
-$HD_Form -> FG_DELETION_LINK = $_SERVER['PHP_SELF']."?form_action=ask-delete&popup_select=$popup_select&idcust=$idcust&id=";
+if ($idcust) {
+    $HD_Form -> FG_EDITION_LINK  = $_SERVER['PHP_SELF']."?form_action=ask-edit&popup_select=$popup_select&idcust=$idcust&id=";
+    $HD_Form -> FG_DELETION_LINK = $_SERVER['PHP_SELF']."?form_action=ask-delete&popup_select=$popup_select&idcust=$idcust&id=";
+} else {
+    $HD_Form -> FG_EDITION_LINK  = "url:".$_SERVER['PHP_SELF']."?form_action=ask-edit&popup_select=4&id=";
+}
 
 // My Code for Where Cluase
 if (strlen($HD_Form -> FG_EDITION_CLAUSE)>0)
@@ -104,34 +108,59 @@ $list = $HD_Form -> perform_action($form_action);
 // #### HEADER SECTION
 $smarty->display('main.tpl');
 
+// #### HELP SECTION
+if ((!has_rights(ACX_DISTRIBUTION) || !($popup_select>=1)) && $popup_select != 4) {
+    echo $CC_help_caller_id;
+}
 ?>
 <center>
 <?php
-if (has_rights(ACX_DISTRIBUTION) && ($popup_select>=1)) {
+if (has_rights(ACX_DISTRIBUTION) && is_numeric($idcust) /*&& ($popup_select>=1)*/) {
 	$instance_table_card = new Table('cc_card');
 	$QUERY = "SELECT lastname, firstname, phone, countryprefix FROM cc_card, cc_country WHERE cc_card.id = $idcust AND id_diller = " . $_SESSION["card_id"] . " AND countrycode LIKE country";
 	$resmax = $instance_table_card -> SQLExec ($HD_Form -> DBHandle, $QUERY, 1);
 	if ($resmax) {
-		echo "<u>".$resmax[0][0]." ".$resmax[0][1]."</u><br>";
-		$phonenumber = $filterprefix2 = preg_replace("/[^\d]/", '', $resmax[0][2]);
-		$countryprefix = $resmax[0][3];
-		if (strpos($phonenumber,$countryprefix)!==0) $phonenumber = $countryprefix . $phonenumber;
-		$QUERY = "SELECT cid FROM cc_callerid WHERE id_cc_card = $idcust AND cid LIKE '$phonenumber'";
-		$resmax = $instance_table_card -> SQLExec ($HD_Form -> DBHandle, $QUERY, 1);
-		if ($resmax) $phonenumber = $countryprefix;
+	    $backLink = '';
+
+	    if (
+		isset($form_action)
+		&& ($form_action == 'ask-edit' || $form_action == 'edit')
+		&& !empty($_SERVER['HTTP_REFERER'])
+	    ) {
+		$refHost = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
+		$currentHost = parse_url('http://' . $_SERVER['HTTP_HOST'], PHP_URL_HOST);
+
+		if ($refHost === $currentHost) {
+		    $backUrl = htmlspecialchars($_SERVER['HTTP_REFERER'], ENT_QUOTES, 'UTF-8');
+
+		    $backLink = '<a href="' . $backUrl . '" '
+			. 'style="position:absolute; left:10px; top:0; text-decoration:none; font-size:18px;" '
+			. 'title="Back">&#8592;</a>';
+		}
+	    }
+	    echo '<div style="position:relative; width:100%; text-align:center;">'
+		. $backLink
+		. '<u>' . htmlspecialchars($resmax[0][0] . ' ' . $resmax[0][1], ENT_QUOTES, 'UTF-8') . '</u>'
+		. '</div><br>';
+	    $phonenumber = $filterprefix2 = preg_replace("/[^\d]/", '', $resmax[0][2]);
+	    $countryprefix = $resmax[0][3];
+	    if (strpos($phonenumber,$countryprefix)!==0) $phonenumber = $countryprefix . $phonenumber;
+	    $QUERY = "SELECT cid FROM cc_callerid WHERE id_cc_card = $idcust AND cid LIKE '$phonenumber'";
+	    $resmax = $instance_table_card -> SQLExec ($HD_Form -> DBHandle, $QUERY, 1);
+	    if ($resmax) $phonenumber = $countryprefix;
 	} else exit();
 } else $phonenumber = "";
 
-if ($form_action == "list") {
+if ($form_action == "list" && ($message!=='success' || is_numeric($idcust))) {
 ?>
 <center>
-<table border="0" align="center" cellpadding="0" cellspacing="1">
+<table style="width:40%;min-width:200px" border="0" align="center" cellpadding="0" cellspacing="1">
 	<tr>
 	  <td  class="bgcolor_021">
 	  <table width="100%" border="0" cellspacing="1" cellpadding="0">
 		  <tr>
 			<td bgcolor="#FFFFFF" class="fontstyle_006">&nbsp;<?php echo gettext("LIST TYPE")?>&nbsp;</td>
-			<td bgcolor="#FFFFFF" class="fontstyle_006" align="right">
+			<td width="1%" bgcolor="#FFFFFF" class="fontstyle_006" align="right">
 			    <form name="form1" method="post" action="">
 				<select name="atmenub" id="col_configtype" onChange="window.document.form1.elements['PMChange'].value='Change';window.document.form1.submit();">
 				<option value="WHITE"<?php if($atmenub == "WHITE") echo " selected"?>>WHITELIST&nbsp;</option>
@@ -155,13 +184,13 @@ if ($form_action == "list") {
     if ($count_cid < $A2B->config["webcustomerui"]['limit_callerid']) {
 
 ?>
-	   <table align="center"  border="0" width="55%" class="bgcolor_006">
+	   <table width="40%" align="center" border="0" class="bgcolor_006">
 		<form name="theForm" action="<?php  $_SERVER["PHP_SELF"]?>">
 		<input name="popup_select" type=hidden value="<?php echo $popup_select?>">
 		<input name="idcust" type=hidden value="<?php echo $idcust?>">
 		<tr class="bgcolor_001" >
 
-		<td align="center" valign="top">
+		<td align="center" valign="top" nowrap>
 				<?php //echo gettext("CALLER ID :");?>
 				+<input class="form_input_text" id="add_callerid" name="add_callerid" size="15" maxlength="60" value="<?php echo $phonenumber;?>">
 			</td>
@@ -188,34 +217,68 @@ if ($form_action == "list") {
 	}
     // END END END My code for Creating two functionalities in a page
 }
+
+if (!is_numeric($idcust) && $message == "editsuccess") {
+?>
+<table width="95%" align="center">
+<tr height="80px">
+<td align="center"><b><?php echo gettext("Information has successfully been updated")?></b></td>
+</tr>
+</table>
+<form runat="server">
+    <div>
+        <input id="button1" onclick="window.parent.postMessage({action:'closeAlert'},'*')" class="form_input_button" type="button" value="" />
+    </div>
+</form>
+<br>
+<br>
+</center>
+<script type="text/javascript">
+    window.parent.postMessage({action:'refreshInside'},'*');
+    objbutton=document.getElementById('button1');
+    objbutton.focus();
+    timeleft=11;
+    function buttontimer(){
+        timeleft--;
+        if(timeleft==0) {
+                objbutton.click();
+        }
+        objbutton.value = '<?= gettext("Close Window") ?> ('+timeleft+')';
+    }
+    buttontimer();
+    setInterval(function() {buttontimer()}, 1000);
+</script>
+<?php
+} else {
 ?>
 </center>
 <?php
-
 // #### TOP SECTION PAGE
-$HD_Form -> create_toppage ($form_action);
+    $HD_Form -> create_toppage ($form_action);
 
-$HD_Form -> create_form ($form_action, $list, $id=null) ;
-?><script type="text/javascript">
-$.fn.setCursorPosition = function(pos) {
-    this.focus();
-    this.each(function(index, elem) {
-    if (elem.setSelectionRange) {
-        elem.setSelectionRange(pos, pos);
-    } else if (elem.createTextRange) {
-        var range = elem.createTextRange();
-        range.collapse(true);
-        range.moveEnd('character', pos);
-        range.moveStart('character', pos);
-        range.select();
-    }
-    });
-    return this;
-};
-var inputcid = $("#add_callerid");
-inputcid.setCursorPosition(inputcid.val().length);
+    $HD_Form -> create_form ($form_action, $list, $id=null) ;
+?>
+<script type="text/javascript">
+    $.fn.setCursorPosition = function(pos) {
+	this.focus();
+	this.each(function(index, elem) {
+	    if (elem.setSelectionRange) {
+		elem.setSelectionRange(pos, pos);
+	    } else if (elem.createTextRange) {
+		var range = elem.createTextRange();
+		range.collapse(true);
+		range.moveEnd('character', pos);
+		range.moveStart('character', pos);
+		range.select();
+	    }
+	});
+	return this;
+    };
+    var inputcid = $("#add_callerid");
+    inputcid.setCursorPosition(inputcid.val()?.length);
 </script>
 <?php
 
 // #### FOOTER SECTION
-$smarty->display( 'footer.tpl');
+    $smarty->display( 'footer.tpl');
+}

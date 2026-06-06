@@ -84,27 +84,130 @@ function keytoDownAny(e,id_el)
 	else  return true;
 }
 
-function openURL(theLINK,emptytextAlert,emptynameAlert,play)
+function openURL(theLINK, emptytextAlert, emptynameAlert, playOrParams)
 {
-var	langlocale   = document.theForm.langlocale.value,
-	voicename    = document.theForm.voicename.value,
+    var form = document.theForm;
+
+    var langlocale   = form.langlocale.value,
+	voicename    = form.voicename.value,
 	gender       = this.voicename.options[this.voicename.selectedIndex].getAttribute('second-value'),
-	greettext    = document.theForm.greettext.value,
-	greetname    = document.theForm.greetname.value,
-	speakingRate = document.theForm.speakingRate.value;
+	greettext    = form.greettext.value,
+	greetname    = form.greetname.value,
+	speakingRate = form.speakingRate.value;
 
-	if (greettext=='' && emptytextAlert){
-		alert(emptytextAlert);
-		return;
+	if (greettext === '' && emptytextAlert) {
+	    alert(emptytextAlert);
+	    return false;
 	}
-	if (greetname=='' && emptynameAlert){
-		alert(emptynameAlert);
-		return;
+	if (greetname === '' && emptynameAlert) {
+	    alert(emptynameAlert);
+	    return false;
 	}
 
-	goURL = langlocale + "&voicename=" + voicename + "&gender=" + gender + "&play=" + play + "&speakingRate=" + speakingRate + "&greetname=" + encodeURIComponent(greetname) + "&greettext=" + encodeURIComponent(greettext);
-	
-	self.location.href = theLINK + goURL;
-	
-	return false;
+    var params = new URLSearchParams();
+	params.set('langlocale', langlocale);
+	params.set('voicename', voicename);
+	params.set('gender', gender);
+	params.set('speakingRate', speakingRate);
+	params.set('greetname', greetname);
+	params.set('greettext', greettext);
+
+    if (playOrParams !== undefined && playOrParams !== null) {
+        if (typeof playOrParams === 'object') {
+            Object.keys(playOrParams).forEach(function(key) {
+                var val = playOrParams[key];
+
+                if (val === undefined || val === null) { return; }
+
+                if (Array.isArray(val)) {
+                    val.forEach(function(item) {
+                        if (item === undefined || item === null) { return; }
+                        params.append(key, String(item));
+                    });
+                } else {
+                    params.set(key, String(val));
+                }
+            });
+        } else {
+            params.set('play', String(playOrParams));
+        }
+    }
+
+    self.location.href = theLINK + '?' + params.toString();
+    return false;
+}
+
+function openURLAjax(theLINK, emptytextAlert, emptynameAlert, play, refreshTarget)
+{
+    var form = document.theForm;
+
+    var langlocale   = form.langlocale.value,
+	voicename    = form.voicename.value,
+	gender       = this.voicename.options[this.voicename.selectedIndex].getAttribute('second-value'),
+	greettext    = form.greettext.value,
+	greetname    = form.greetname.value,
+	speakingRate = form.speakingRate.value;
+
+    if (greettext === '' && emptytextAlert) {
+        alert(emptytextAlert);
+        return false;
+    }
+    if (greetname === '' && emptynameAlert) {
+        alert(emptynameAlert);
+        return false;
+    }
+
+    var url = new URL(theLINK, window.location.href);
+
+    var merged = new URLSearchParams(window.location.search);
+
+    for (const [k, v] of url.searchParams.entries()) {
+	merged.set(k, v);
+    }
+
+    merged.set('langlocale', langlocale);
+    merged.set('voicename', voicename);
+    merged.set('gender', gender);
+    merged.set('play', String(play));
+    merged.set('speakingRate', speakingRate);
+    merged.set('greetname', greetname);
+    merged.set('greettext', greettext);
+
+    url.search = merged.toString();
+    var link = url.toString();
+
+    var id = refreshTarget?.id ?? null;
+    var className = refreshTarget?.class ?? null;
+
+    fetch(link, { credentials: 'same-origin' })
+        .then(r => r.text())
+        .then(html => {
+            var tmp = document.createElement('div');
+            tmp.innerHTML = html;
+
+            var newPart = null;
+            var oldPart = null;
+
+            if (id && className) {
+                newPart = tmp.querySelector(`.${className} #${id}`);
+                if (newPart) { oldPart = document.querySelector(`.${className} #${id}`); }
+            } else if (id) {
+                newPart = tmp.querySelector(`#${id}`);
+                if (newPart) { oldPart = document.getElementById(id); }
+            } else if (className) {
+                newPart = tmp.querySelector(`.${className}`);
+                if (newPart) { oldPart = document.querySelector(`.${className}`); }
+            } else {
+                newPart = tmp.querySelector(`#main-content`);
+                if (newPart) { oldPart = document.getElementById('main-content'); }
+            }
+
+            if (newPart && oldPart) {
+                oldPart.innerHTML = newPart.innerHTML;
+            }
+        })
+        .catch(err => {
+            console.error('openURLAjax fetch failed', err);
+        });
+    return false;
 }

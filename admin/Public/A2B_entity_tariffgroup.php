@@ -75,9 +75,9 @@ $smarty->display('main.tpl');
 
 // #### HELP SECTION
 if ($form_action == 'list') {
-	if (!$popup_select)
 		echo $CC_help_list_tariffgroup;
 } else {
+	if ($popup_select != 4)
 	echo $CC_help_list_tariffgroup;
 }
 
@@ -90,4 +90,3 @@ $HD_Form->create_form($form_action, $list, $id = null);
 // #### FOOTER SECTION
 if (!$popup_select)
 	$smarty->display('footer.tpl');
-

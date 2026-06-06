@@ -268,7 +268,7 @@ if ($form_action == "list") {
 		</td>
 		<td align="right" width="5%">
 			<input class="form_input_text" style="width: 100%;" id="greetname" name="greetname" value="<?php echo $greetname?>" placeholder=" <?php echo gettext("Filename");?>" onkeypress="return keytoDownNumber(event,id,'<?php echo gettext("Enter the filename without extension");?>');" size="16" maxlength="96" required></br>
-			<input class="form_input_button" style="width: 100%;" type="button" value="&nbsp;<?php echo gettext("SAVE/UPDATE");?>&nbsp;" onClick="openURL('<?php echo $_SERVER['PHP_SELF']?>?langlocale=','<?php echo gettext("Enter greeting text");?>','<?php echo gettext("Enter the filename without extension");?>',3);">
+			<input class="form_input_button" style="width: 100%;" type="button" value="&nbsp;<?php echo gettext("SAVE/UPDATE");?>&nbsp;" onClick="openURLAjax('<?php echo $_SERVER['PHP_SELF']?>','<?php echo gettext("Enter greeting text");?>','<?php echo gettext("Enter the filename without extension");?>',3,{ id:'main-list' });">
 		</td>
 		<tr>
 	</form>
@@ -293,5 +293,3 @@ $HD_Form -> create_form ($form_action, $list, $id=null) ;
 
 // #### FOOTER SECTION
 $smarty->display( 'footer.tpl');
-
-

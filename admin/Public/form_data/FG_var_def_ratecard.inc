@@ -62,7 +62,7 @@ if ($cancelsearch_callplanlcr) {
 $rateinitial_field = "rateinitial";
 $use_lcr_callplan = false;
 
-if (isset($posted) && !$popup_select) {
+if (isset($posted) && !($popup_select && $popup_select!=4)) {
 	
 	if (is_string ($tariffgroup) && strlen(trim($tariffgroup))>0) {
 		
@@ -114,7 +114,7 @@ $HD_Form -> FG_FK_TABLENAMES = array("cc_sheduler_ratecard");
 $HD_Form -> FG_FK_EDITION_CLAUSE = array("id_ratecard");
 //$HD_Form -> FG_FK_DELETE_MESSAGE = gettext("You are going as well to remove all the schedules attached to this ratecard! Please confirm that you really want to remove this ratecard? ");
 
-if (!$popup_select) {
+if (!($popup_select && $popup_select!=4)) {
     $HD_Form ->FG_LIST_ADDING_BUTTON1 = true;
     $HD_Form ->FG_LIST_ADDING_BUTTON_LINK1 = "A2B_entity_def_ratecard.php?form_action=ask-add&atmenu=ratecard&current_page=$current_page&filterprefix=$filterprefix&filterprefix2=$filterprefix2&section=".$_SESSION["menu_section"];
     $HD_Form ->FG_LIST_ADDING_BUTTON_ALT1 = $HD_Form ->FG_LIST_ADDING_BUTTON_MSG1 = gettext("Add Rate");
@@ -130,27 +130,28 @@ $HD_Form -> AddViewElement(gettext("DESTINATION"), "destination", "17%", "center
 $HD_Form -> AddViewElement("<acronym title=\"DIALING PREFIX\">".gettext("PREFIX")."</acronym>", "dialprefix", "10%", "center", "sort", "");
 $HD_Form -> AddViewElement("<acronym title=\"BUYING RATE\">".gettext("BR")."</acronym>", "buyrate", "4%", "center", "sort");
 $HD_Form -> AddViewElement("<acronym title=\"SELLING RATE\">".gettext("SR")."</acronym>", "rateinitial", "4%", "center", "sort");
-if (!$popup_select) $HD_Form -> AddViewElement(gettext("START-DATE"), "startdate", "13%", "center", "sort", "35", "", "", "", "", "", "display_dateformat");
-if (!$popup_select) $HD_Form -> AddViewElement(gettext("STOP-DATE"), "stopdate", "13%", "center", "sort", "35", "", "", "", "", "", "display_dateformat");
-if (!$popup_select) $HD_Form -> AddViewElement("<acronym title=\"INITBLOCK\">".gettext("INITB")."</acronym>", "initblock", "4%", "center", "sort");
-if (!$popup_select) $HD_Form -> AddViewElement("<acronym title=\"CONNECT CHARGE\">".gettext("CC")."</acronym>", "connectcharge", "4%", "center", "sort");
-if (!$popup_select) $HD_Form -> AddViewElement(gettext("TRUNK"), "id_trunk", "10%", "center", "sort", "30", "lie", "cc_trunk", "trunkcode", "id_trunk='%id'", "%1");
-if (!$popup_select) $HD_Form -> AddViewElement(gettext("RATE CARD"), "idtariffplan", "12%", "center", "sort", "30", "lie", "cc_tariffplan", "tariffname", "id='%id'", "%1");
-
-
 if (!$popup_select) {
-	if ($use_lcr_callplan)
-		$HD_Form -> FieldViewElement ("destination, dialprefix, buyrate, ".$rateinitial_field.", startdate, stopdate, initblock, connectcharge, IF(cc_ratecard.id_trunk=-1,cc_tariffplan.id_trunk,cc_ratecard.id_trunk) id_trunk , idtariffplan ");
-	else
-		$HD_Form -> FieldViewElement ("cc_prefix.destination, cc_ratecard.dialprefix, cc_ratecard.buyrate, IF(cc_ratecard.buyrate>cc_ratecard.rateinitial,CONCAT('<font color=red>',cc_ratecard.rateinitial,'</font>'),cc_ratecard.rateinitial), IF(cc_ratecard.startdate>NOW(),CONCAT('<font color=red>',cc_ratecard.startdate,'</font>'),cc_ratecard.startdate) AS startdate, IF(cc_ratecard.stopdate<NOW(),CONCAT('<font color=red>',cc_ratecard.stopdate,'</font>'),cc_ratecard.stopdate) AS stopdate, cc_ratecard.initblock, cc_ratecard.connectcharge, IF(cc_ratecard.id_trunk=-1,cc_tariffplan.id_trunk,cc_ratecard.id_trunk) id_trunk, cc_ratecard.idtariffplan ");
-} else {
+    $HD_Form -> AddViewElement(gettext("START-DATE"), "startdate", "13%", "center", "sort", "35", "", "", "", "", "", "display_dateformat");
+    $HD_Form -> AddViewElement(gettext("STOP-DATE"), "stopdate", "13%", "center", "sort", "35", "", "", "", "", "", "display_dateformat");
+    $HD_Form -> AddViewElement("<acronym title=\"INITBLOCK\">".gettext("INITB")."</acronym>", "initblock", "4%", "center", "sort");
+    $HD_Form -> AddViewElement("<acronym title=\"CONNECT CHARGE\">".gettext("CC")."</acronym>", "connectcharge", "4%", "center", "sort");
+    $HD_Form -> AddViewElement(gettext("TRUNK"), "id_trunk", "10%", "center", "sort", "30", "lie", "cc_trunk", "trunkcode", "id_trunk='%id'", "%1");
+    $HD_Form -> AddViewElement(gettext("RATE CARD"), "idtariffplan", "12%", "center", "sort", "30", "lie", "cc_tariffplan", "tariffname", "id='%id'", "%1");
+}
+
+if ($popup_select) {
 	if ($use_lcr_callplan)
 		$HD_Form -> FieldViewElement ('id, destination, dialprefix, buyrate, '.$rateinitial_field);
 	else
 		$HD_Form -> FieldViewElement ('cc_ratecard.id, cc_prefix.destination, cc_ratecard.dialprefix, cc_ratecard.buyrate, '.$rateinitial_field);
+} else {
+	if ($use_lcr_callplan)
+		$HD_Form -> FieldViewElement ("destination, dialprefix, buyrate, ".$rateinitial_field.", startdate, stopdate, initblock, connectcharge, IF(cc_ratecard.id_trunk=-1,cc_tariffplan.id_trunk,cc_ratecard.id_trunk) id_trunk , idtariffplan ");
+	else
+		$HD_Form -> FieldViewElement ("cc_prefix.destination, cc_ratecard.dialprefix, cc_ratecard.buyrate, IF(cc_ratecard.buyrate>cc_ratecard.rateinitial,CONCAT('<font color=red>',cc_ratecard.rateinitial,'</font>'),cc_ratecard.rateinitial), IF(cc_ratecard.startdate>NOW(),CONCAT('<font color=red>',cc_ratecard.startdate,'</font>'),cc_ratecard.startdate) AS startdate, IF(cc_ratecard.stopdate<NOW(),CONCAT('<font color=red>',cc_ratecard.stopdate,'</font>'),cc_ratecard.stopdate) AS stopdate, cc_ratecard.initblock, cc_ratecard.connectcharge, IF(cc_ratecard.id_trunk=-1,cc_tariffplan.id_trunk,cc_ratecard.id_trunk) id_trunk, cc_ratecard.idtariffplan ");
 }
 
-if ($popup_select) {
+if ($popup_select && $popup_select!=4) {
 	$HD_Form -> FG_LIMITE_DISPLAY = 7;
 	$HD_Form -> CV_FOLLOWPARAMETERS = "&popup_select=" . $popup_select . "&popup_formname=" . $popup_formname . "&popup_fieldname=" . $popup_fieldname;
 
@@ -167,6 +168,7 @@ if ($popup_select) {
 	$HD_Form -> FG_EXPORT_CSV = true;
 	$HD_Form -> FG_EXPORT_XML = true;
 	$HD_Form -> FG_EXPORT_SESSION_VAR = "pr_export_entity_rates";
+	$HD_Form -> FG_CAPCHA_POPUP = '|col1| | |col9|';
 	$HD_Form -> FG_EDITION = true;
 	$HD_Form -> FG_DELETION = true;
 	$HD_Form -> FG_ADDITION = true;

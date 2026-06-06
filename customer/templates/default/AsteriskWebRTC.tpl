@@ -32,8 +32,8 @@
 <p2>&nbsp;&nbsp;&nbsp; ./configure &amp;&amp; make menuselect</p2>
 <p2>Build and install Asterisk:</p2>
 <p2>make &amp;&amp; make install &amp;&amp; make samples</p2>
-<p2>You can find more details about Asterisk 11 setup <a href="https://sipjs.com/guides/server-configuration/asterisk/">here</a> and <a href="https://wiki.asterisk.org/wiki/display/AST/WebRTC+tutorial+using+SIPML5">here</a>.</p2>
-<p2>- With <strong>Asterisk 12 </strong>you must have<a href="https://wiki.asterisk.org/wiki/display/AST/Building+and+Installing+pjproject"> pjproject installed</a>.</p2>
+<p2>You can find more details about Asterisk 11 setup <a href="https://sipjs.com/guides/server-configuration/asterisk/">here</a> and <a href="https://docs.asterisk.org/Configuration/WebRTC/WebRTC-tutorial-using-SIPML5/">here</a>.</p2>
+<p2>- With <strong>Asterisk 12 </strong>you must have<a href="https://docs.asterisk.org/Getting-Started/Installing-Asterisk/Installing-Asterisk-From-Source/Prerequisites/PJSIP-pjproject/?h=pjproject+installing#building-and-installing-pjproject"> pjproject installed</a>.</p2>
 <p2>A good tutorial can be found <a href="http://www.nethram.com/webrtc-with-asterisk-12/">here</a>.</p2>
 <p2>- <strong>Asterisk 13</strong> or higher made a lot of improvements for WebRTC handling so we recommend this latest version. WebRTC should work just fine out of the box, without the need to change/recompile any binary.</p2>
 <br>
@@ -43,7 +43,7 @@
 <p1>A public static IP address is highly recommended to avoid NAT related issues. Otherwise make sure that your Asterisk is configured properly (private/public IP, port forwarding, NAT handling).</p1>
 <p1>Your Asterisk root directory will be located at /etc/asterisk.</p1>
 <h3>SIP:</h3>
-<p>Asterisk 11 used the old sip.conf however from Asterisk 12 upward we have the new<a href="https://wiki.asterisk.org/wiki/display/AST/Configuring+res_pjsip"> pjsip.conf</a>.</p>
+<p>Asterisk 11 used the old sip.conf however from Asterisk 12 upward we have the new<a href="https://docs.asterisk.org/Configuration/Channel-Drivers/SIP/Configuring-res_pjsip/"> pjsip.conf</a>.</p>
 <p1>Below you can find an example pjsip.conf file with 2 SIP accounts (6001 and 6002) at /etc/asterisk/pjsip.conf. Be aware of the [transport-ws] section where you must enable websocket.</p1>
 <br />
 <p3>[global]</p3>
@@ -137,7 +137,7 @@ dtlscafile=/etc/asterisk/certificate/key/chain.pem<br />
 dtlssetup=actpass
 </p1>
 <h3>http.conf configuration:</h3>
-<p>Configure the <a href="https://wiki.asterisk.org/wiki/display/AST/Asterisk+Builtin+mini-HTTP+Server">built-in http server</a>. Bindport and bindaddr is the port and address for res_http_websocket and chan_sip used for websocket. (Websocket is implemented by the res_http_websocket module int the /ws sub-directory only)</p>
+<p>Configure the <a href="https://docs.asterisk.org/Configuration/WebRTC/Configuring-Asterisk-for-WebRTC-Clients/#configure-asterisks-built-in-http-server">built-in http server</a>. Bindport and bindaddr is the port and address for res_http_websocket and chan_sip used for websocket. (Websocket is implemented by the res_http_websocket module int the /ws sub-directory only)</p>
 <p1>The following changes need to be made on /etc/asterisk/http.conf&nbsp; file:</p1>
 <p1 style="color: #9f2f2c">[general]<br />
 enabled=yes<br />
@@ -177,7 +177,7 @@ WebRTC Server Address:&nbsp; wss://ASTERISK_IP:8089/ws</p1>
 -Secure websocket (WSS)<br />
 You can obtain SSL certificates for free from <a href="https://www.startssl.com/">startssl</a> or <a href="https://letsencrypt.org/">letsencrypt</a> or cheap certificate from <a href="https://www.namecheap.com/">comodo</a>.<br />
 Make sure to apply the certificate for both your web server and asterisk websocket and dtls.<br />
-To configure secure calling in Asterisk, check this<a href="https://wiki.asterisk.org/wiki/display/AST/Secure+Calling+Tutorial"> guide</a>.<br />
+To configure secure calling in Asterisk, check this<a href="https://docs.asterisk.org/Deployment/Secure-Calling/Secure-Calling-Tutorial/"> guide</a>.<br />
 Optionally you might also setup a <a href="https://github.com/coturn/coturn">turn</a> gateway (this can be useful to bypass firewalls and to help for peer to peer calls if you have such requirements). A tutorial can be found <a href="http://danielpocock.com/using-resiprocate-to-connect-asterisk-webrtc">here</a>.</p>
 <h3>Troubleshooting:</h3>
 <p>To be able to see the registration and call details in the CLI: Set the VERBOSE messages to go to the console and turn verbosity to at least 3.
@@ -189,8 +189,8 @@ A few common issue:<br />
 - SIP 488 Not acceptable here response when placing a call to Asterisk: set avpf=yes and make sure to enable at least G.711 (PCMU, PCMA) on the caller/server/called.<br />
 - SIP 400 Bad Request response when registering using WebSocket. Update chan_sip to a newer version.</p>
 <p>This <a href="http://forums.digium.com/viewtopic.php?f=1&amp;t=90167">forum post</a> offers valuable resources for troubleshooting Asterisk WebRTC related issues.</p>
-<p1><a href="https://wiki.asterisk.org/wiki/display/AST/Secure+Calling+Tutorial">Asterisk Secure Calling Guide</a> can help you setup dtls certificates.</p1>
-<p1><a href="https://wiki.asterisk.org/wiki/display/AST/WebRTC+tutorial+using+SIPML5">Asterisk WebRTC tutorial</a></p1>
+<p1><a href="https://docs.asterisk.org/Configuration/WebRTC/Configuring-Asterisk-for-WebRTC-Clients/">Asterisk Secure Calling Guide</a> can help you setup dtls certificates.</p1>
+<p1><a href="https://docs.asterisk.org/Configuration/WebRTC/WebRTC-tutorial-using-SIPML5/">Asterisk WebRTC tutorial</a></p1>
 <h3>Warning:</h3>
 <p>A production capable WebRTC setup depends on the details. With the default settings you might be able to achieve 80% call success ratio, so you might not be aware how broken is your implementation in various conditions like corporate networks where UDP is usually blocked. WebRTC-SIP can be a very tricky topic and your project success will depend on the followings:<br />
 - WebRTC-SIP protocol conversion in Asterisk (to handle all corner cases)<br />

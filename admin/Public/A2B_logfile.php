@@ -55,7 +55,8 @@ getpost_ifset(array (
 $smarty->display('main.tpl');
 
 // #### HELP SECTION
-echo $CC_help_logfile;
+if ($form_action == "list" || $popup_select < 2)
+    echo $CC_help_logfile;
 ?>
 <br>
 <center>

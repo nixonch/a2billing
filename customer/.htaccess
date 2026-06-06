@@ -3,7 +3,7 @@
     FileETag All
     <IfModule mod_headers.c>
 	Header unset Set-Cookie
-	Header set Cache-Control "max-age=0, must-revalidate"
+	Header set Cache-Control "must-revalidate"
     </IfModule>
 </FilesMatch>
 #

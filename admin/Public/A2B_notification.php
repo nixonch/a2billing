@@ -116,7 +116,8 @@ $DBHandle = DbConnect();
 
 
 // #### HEADER SECTION
-$smarty->display('main.tpl');
+if ($form_action == "list" || $popup_select < 2)
+    $smarty->display('main.tpl');
 
 echo $CC_help_notifications;
 $nb_by_page = 15;

@@ -51,10 +51,19 @@ if (!isset($form_action))  $form_action="list"; //ask-add
 if (!isset($action)) $action = $form_action;
 
 if($form_action=="ask-delete" && is_numeric($id)) {
-	$QUERY = "DELETE FROM cc_system_log WHERE id = ".$id;
-	$result_query = @ $DBHandle->Execute($QUERY);
-	$action = $form_action = "list";
-	unset($id);
+    $QUERY = "DELETE FROM cc_system_log WHERE id = ".$id;
+    $result_query = @ $DBHandle->Execute($QUERY);
+    $action = $form_action = "list";
+    unset($id);
+    if ($popup_select==4) {
+?>
+<script type="text/javascript">
+    window.parent.postMessage({action:'refreshInside'},'*');
+    window.parent.postMessage({action:'closeAlert'},'*')
+</script>
+<?php
+	die();
+    }
 }
 
 if ($id!="" || !is_null($id)) {
@@ -67,7 +76,8 @@ $list = $HD_Form -> perform_action($form_action);
 $smarty->display('main.tpl');
 
 // #### HELP SECTION
-echo $CC_help_list_log;
+if ($popup_select!=4)
+    echo $CC_help_list_log;
 
 // #### TOP SECTION PAGE
 $HD_Form -> create_toppage ($form_action);

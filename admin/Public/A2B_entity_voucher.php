@@ -135,7 +135,7 @@ $smarty->display('main.tpl');
 // #### HELP SECTION
 if ($form_action == 'list')
 	echo $CC_help_list_voucher;
-else
+else if ($popup_select!=4)
 	echo $CC_help_create_voucher;
 	
 
@@ -144,21 +144,24 @@ else
 <script language="JavaScript" src="javascript/card.js"></script>
 
 
+<?php
+// #### CREATE SEARCH FORM
+if ($form_action == "list"){
+?>
+
 <div class="toggle_hide2show">
 <center><a href="#" target="_self" class="toggle_menu"><img class="toggle_hide2show" src="<?php echo KICON_PATH; ?>/toggle_hide2show.png" onmouseover="this.style.cursor='hand';" HEIGHT="16"> <font class="fontstyle_002"><?php echo gettext("SEARCH VOUCHERS");?> </font></a></center>
 	<div class="tohide" style="display:none;">
 
 <?php
-// #### CREATE SEARCH FORM
-if ($form_action == "list"){
 	$HD_Form -> create_search_form();
-}
 ?>
 
 	</div>
 </div>
 
 <?php
+}
 
 /********************************* BATCH UPDATE ***********************************/
 if ($form_action == "list" && (!($popup_select>=1))	){

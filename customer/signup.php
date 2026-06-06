@@ -53,7 +53,7 @@ if (false) {
 include ("./form_data/FG_var_signup.inc");
 include ("./lib/customer.smarty.php");
 
-if ((!($A2B->config["signup"]['enable_signup'] && $countryregion['country_name']!='China') && !has_rights(ACX_DISTRIBUTION)) || !has_rights(ACX_DISTRIBUTION)) {
+if (!($A2B->config["signup"]['enable_signup'] && $countryregion['country_name']!='China' && !$_SESSION['card_id']) && !has_rights(ACX_DISTRIBUTION)) {
 	Header ("HTTP/1.0 401 Unauthorized");
 	Header ("Location: PP_error.php?c=accessdenied");
 	die();

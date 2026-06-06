@@ -63,7 +63,8 @@ $smarty->display('main.tpl');
 
 
 // #### HELP SECTION
-echo $CC_help_list_monitoring;
+if ($form_action == "list" || $popup_select < 2)
+    echo $CC_help_list_monitoring;
 
 
 // #### TOP SECTION PAGE

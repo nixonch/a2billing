@@ -61,7 +61,8 @@ $list = $HD_Form->perform_action($form_action);
 $smarty->display('main.tpl');
 
 // #### HELP SECTION
-echo $CC_help_support_list;
+if ($form_action == "list")
+	echo $CC_help_support_list;
 
 if ($form_action == "list") {
 	$HD_Form->create_search_form();

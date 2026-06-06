@@ -158,6 +158,7 @@ $HD_Form -> CV_TEXT_TITLE_ABOVE_TABLE = '';
 $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
 $HD_Form -> FG_LIMITE_DISPLAY = 14;
 
+$HD_Form -> FG_CAPCHA_POPUP = '|col0| >> |col1|';
 $HD_Form -> FG_EDITION = true;
 $HD_Form -> FG_DELETION = true;
 $HD_Form -> FG_ADDITION = true;
@@ -215,7 +216,7 @@ $HD_Form -> AddEditElement (gettext("PLAY_SOUND"),
 	"playsound",
 	'$value',
 	($form_action=='ask-delete')?"INPUT":"DATALIST",
-	"maxlength=50",
+	"maxlength=50 autocomplete=\"off\"",
 	"",
 	gettext("Insert the path and name of sound file"),
 	"list", "", "", "", $soundlist, "%1", "", gettext("Play sound before calling DESTINATION."), NULL, $selectedgreeting);
@@ -224,7 +225,7 @@ $HD_Form -> AddEditElement (gettext("DESTINATION"),
 	    "destination",
 	    '$value',
 	    ($form_action=='ask-delete')?"INPUT":"DATALIST",
-	    "size=50 maxlength=100 style=\"width: 250px;\"",
+	    "size=50 maxlength=100 style=\"width: 250px;\" autocomplete=\"off\"",
 	    "",
 	    "Insert the Destination",
 	    "list" , "", "", "", $destlist , "%1", "", gettext("Enter here the phonenumber or IVR name you wish to send call, or select destination from the drop-down list"), NULL, $selecteddest);
@@ -233,7 +234,7 @@ $HD_Form -> AddEditElement (gettext("CALLEE_SOUND"),
 	"calleesound",
 	'$value',
 	($form_action=='ask-delete')?"INPUT":"DATALIST",
-	"maxlength=50",
+	"maxlength=50 autocomplete=\"off\"",
 	"",
 	gettext("Insert the path and name of sound file"),
 	"list", "", "", "", $soundlist, "%1", "", gettext("Play sound to callee at the moment will answered"), NULL, $selectedcalleesound);

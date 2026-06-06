@@ -173,11 +173,13 @@ function rowOutEffect(object) {
 //--></script>
 
 <?php echo $payment_modules->javascript_validation(); ?>
-
-<br>
 <center>
 <?php
-	if ($A2B->config["epayment_method"]['enable'] && $ACXPAYMENT_HISTORY >0) echo $PAYMENT_METHOD;
+	if ($A2B->config["epayment_method"]['enable'] && $ACXPAYMENT_HISTORY >0 && sizeof($payment_methods)>1)
+	    echo $PAYMENT_METHOD;
+	else
+// #### HELP SECTION
+	    echo $CC_help_empty;
 ?>
 <br>
 

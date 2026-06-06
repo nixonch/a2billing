@@ -64,7 +64,7 @@ $smarty->display('main.tpl');
 // #### HELP SECTION
 if (($form_action == 'ask-add') || ($form_action == 'ask-edit'))
 	echo $CC_help_edit_ratecard;
-else
+else if ($form_action == "list" || $popup_select < 2)
 	echo $CC_help_list_ratecard;
 
 // #### TOP SECTION PAGE

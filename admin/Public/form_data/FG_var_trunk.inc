@@ -33,7 +33,7 @@
 
 
 
-getpost_ifset(array('id', 'trunkcode', 'trunkprefix', 'removeprefix', 'providertech', 'providerip', 'addparameter', 'dialprefixmain', 'failover_trunk', 'id_provider', 'popup_select', 'inuse', 'maxuse', 'status', 'if_max_use', 'cid_handover', 'outbound_cidgroup_id', 'attract',
+getpost_ifset(array('id', 'trunkcode', 'trunkprefix', 'removeprefix', 'providertech', 'providerip', 'addparameter', 'dialprefixmain', 'failover_trunk', 'id_provider', 'inuse', 'maxuse', 'status', 'if_max_use', 'cid_handover', 'outbound_cidgroup_id', 'attract', 'message',
 	'dialprefixa', 'failover_trunka', 'secondusedcarrier',  'startdatea', 'stopdatea', 'billblockseca', 'perioda', 'periodexpirya', 'timelefta', 'maxsecperperioda', 'periodcounta', 'lastcallstoptimea',
 	'dialprefixb', 'failover_trunkb', 'secondusedratecard', 'startdateb', 'stopdateb', 'billblocksecb', 'periodb', 'periodexpiryb', 'timeleftb', 'maxsecperperiodb', 'periodcountb', 'lastcallstoptimeb'));
 
@@ -123,7 +123,7 @@ $HD_Form -> CV_TEXT_TITLE_ABOVE_TABLE = '';
 $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
 
 
-if ($popup_select) {
+if ($popup_select && $popup_select<4) {
 	$HD_Form -> FG_LIMITE_DISPLAY = 10;
 	$HD_Form -> CV_FOLLOWPARAMETERS = "&popup_select=" . $popup_select . "&popup_formname=" . $popup_formname . "&popup_fieldname=" . $popup_fieldname;
 
@@ -139,6 +139,7 @@ if ($popup_select) {
 } else {
 	$HD_Form -> FG_LIMITE_DISPLAY = 20;
 	$HD_Form -> FG_EDITION = true;
+	$HD_Form -> FG_CAPCHA_POPUP = '|col0|';
 	$HD_Form -> FG_DELETION = true;
 	$HD_Form -> FG_ADDITION = true;
 }

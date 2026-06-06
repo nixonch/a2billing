@@ -175,7 +175,7 @@ $PHP_SELF = str_replace('.php','',$_SERVER['PHP_SELF']);
 				$myname.= "[]";
 	?>
 			<INPUT type="text" list="list_<?php echo $myname;?>" name="<?php echo $myname;?>" class="form_input_text" <?php echo $this->FG_TABLE_EDITION[$i][4];?>>
-			<datalist id="list_<?php echo $myname;?>" autocomplete="off">
+			<datalist id="list_<?php echo $myname;?>">
 	<?php  
 			echo ($this->FG_TABLE_ADITION[$i][15]);
 				if (count($select_list)>0){

@@ -77,7 +77,8 @@ $mail = $instance_table->SQLExec($handle, $QUERY);
 
 
 // #### HELP SECTION
-echo $CC_help_list_misc;
+if ($form_action == "list" || $popup_select < 2)
+    echo $CC_help_list_misc;
 
 // Query to get all languages with ids
 $QUERY = "SELECT code, name FROM cc_iso639 ORDER BY code";

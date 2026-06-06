@@ -61,7 +61,7 @@ $list = $HD_Form->perform_action($form_action);
 
 // #### HEADER SECTION
 $smarty->display('main.tpl');
-if ($popup_select) {
+if ($popup_select && $popup_select!=4) {
 ?>
 	<SCRIPT LANGUAGE="javascript">
 	<!-- Begin

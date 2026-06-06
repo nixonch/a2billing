@@ -48,13 +48,12 @@ if (! has_rights (ACX_ADMINISTRATOR)) {
 $HD_Form -> setDBHandler (DbConnect());
 $HD_Form -> init();
 
-$HD_Form -> FG_EDITION_LINK= $_SERVER[PHP_SELF]."?form_action=ask-edit&groupID=$groupID&id=";
-$HD_Form -> FG_DELETION_LINK= $_SERVER[PHP_SELF]."?form_action=ask-delete&groupID=$groupID&id=";
+$HD_Form -> FG_EDITION_LINK= $_SERVER[REDIRECT_URL]."?form_action=ask-edit&groupID=$groupID&id=";
+$HD_Form -> FG_DELETION_LINK= 'url:'.$_SERVER[REDIRECT_URL]."?form_action=ask-delete&groupID=$groupID&popup_select=4&id=";
 
 if ($id!="" || !is_null($id)) {
 	$HD_Form -> FG_EDITION_CLAUSE = str_replace("%id", "$id", $HD_Form -> FG_EDITION_CLAUSE);
 }
-
 
 if (!isset($form_action))  $form_action="list"; //ask-add
 if (!isset($action)) $action = $form_action;
@@ -63,10 +62,7 @@ if ($form_action!="list") {
 	check_demo_mode();
 }
 
-
 $list = $HD_Form -> perform_action($form_action);
-
-
 
 // #### HEADER SECTION
 $smarty->display('main.tpl');
@@ -77,7 +73,7 @@ if($popup_select == "") {
 	else echo $CC_help_admin_list;
 }
 
-if ($popup_select) {
+if ($popup_select && $popup_select!=4) {
 
 ?>
 
@@ -92,15 +88,9 @@ function sendValue(selvalue){
 <?php
 }
 
-
 // #### TOP SECTION PAGE
 $HD_Form -> create_toppage ($form_action);
 
-
 $HD_Form -> create_form ($form_action, $list, $id=null) ;
 
-
-
 $smarty->display('footer.tpl');
-
-

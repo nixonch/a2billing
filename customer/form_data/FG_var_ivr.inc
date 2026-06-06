@@ -61,7 +61,6 @@ $HD_Form -> CV_DISPLAY_LINE_TITLE_ABOVE_TABLE = false;
 $HD_Form -> CV_TEXT_TITLE_ABOVE_TABLE = '';
 $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
 $HD_Form -> FG_LIMITE_DISPLAY = 24;
-$HD_Form -> FG_OTHER_BUTTON1 = false;
 $HD_Form -> FG_VIEW_TABLE_WITDH = '70%';
 
 if (strlen($HD_Form -> FG_TABLE_CLAUSE)>0)
@@ -69,7 +68,7 @@ if (strlen($HD_Form -> FG_TABLE_CLAUSE)>0)
 $HD_Form -> FG_TABLE_CLAUSE.="id_cc_card='".$_SESSION["card_id"]."'";
 
 $HD_Form -> FG_DELETION_CLAUSE = "id='$id' AND id_cc_card='{$_SESSION['card_id']}'";
-
+$HD_Form -> FG_CAPCHA_POPUP = '|col0|';
 $HD_Form -> FG_EDITION = false;
 $HD_Form -> FG_DELETION = true;
 $HD_Form -> FG_ADDITION = false;
@@ -106,7 +105,7 @@ $HD_Form -> AddEditElement (gettext("WAIT FOR DIGITS"),
 					null,null,null,null,null,null,null,null);
 
 $HD_Form -> FieldEditElement ('ivrname, repeats, waitsecsfordigits');
-/**
+/*
 $HD_Form->FG_QUERY_ADITION_HIDDEN_FIELDS = 'id_cc_card';
 $HD_Form->FG_QUERY_ADITION_HIDDEN_VALUE = $_SESSION["card_id"];
 $HD_Form->FG_ADITION_HIDDEN_PARAM		= $HD_Form->FG_EDITION_HIDDEN_PARAM		= 'filterprefix,current_page';
@@ -126,7 +125,7 @@ $HD_Form -> FG_INTRO_TEXT_ADITION = '';
 
 $HD_Form -> FG_BUTTON_EDITION_SRC = $HD_Form -> FG_BUTTON_ADITION_SRC  = Images_Path . "/cormfirmboton.gif";
 $HD_Form -> FG_BUTTON_EDITION_BOTTOM_TEXT = $HD_Form -> FG_BUTTON_ADITION_BOTTOM_TEXT = gettext("Click 'Confirm Data' to continue");
-**/
+*/
 $HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD = $PHP_SELF."?id=";
 $HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT = $PHP_SELF."?id=";
 $HD_Form -> FG_GO_LINK_AFTER_ACTION_DELETE = $PHP_SELF."?id=";

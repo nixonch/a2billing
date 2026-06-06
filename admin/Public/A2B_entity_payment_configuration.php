@@ -62,7 +62,8 @@ $list = $HD_Form -> perform_action($form_action);
 // #### HEADER SECTION
 $smarty->display('main.tpl');
 
-echo $CC_help_list_payment_methods;
+if ($form_action == "list" || $popup_select < 2)
+    echo $CC_help_list_payment_methods;
 
 echo $PAYMENT_METHOD;
 

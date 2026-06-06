@@ -376,7 +376,7 @@ msgstr "info"
 
 #: A2B_phonelist_import.php:275
 msgid "Selected Fields..."
-msgstr "Selectierte Felder..."
+msgstr "Selektierte Felder..."
 
 #: A2B_phonelist_import.php:301
 #, fuzzy
@@ -405,7 +405,7 @@ msgid "Import Phonebook"
 msgstr "Import Telefonbuch"
 
 #: A2B_entity_card.php:77
-msgid "Your personal information has successfully been updated."
+msgid "Personal information has successfully been updated."
 msgstr "Ihre persönlichen Daten wurde erfolgreich aktualisiert."
 
 #: simulator.php:86
@@ -2725,6 +2725,54 @@ msgstr "Tippen Sie für den Rückruf, Ihre Telefonnummer und die Nummer, die Sie
 msgid "Your balance"
 msgstr "Ihr kontostand"
 
+#: lib/customer.help.php:53
+msgid "Credit limit"
+msgstr "Kreditlimit"
+
+#: lib/customer.help.php:65
+msgid "BUY CREDIT"
+msgstr "GUTHABEN KAUFEN"
+
+#: lib/customer.help.php:121
+msgid "All faxes are listed below. Search by month, day or status. Additionally, you can download have been received faxes in pdf format."
+msgstr "Alle Faxe sind unten aufgeführt. Sie können nach Monat, Tag oder Status suchen. Zusätzlich können Sie empfangene Faxe im PDF-Format herunterladen."
+
+#: lib/customer.help.php:135
+msgid "View Rates<br>Rates are subjected to change without notice"
+msgstr "Tarife anzeigen<br>Tarife können ohne Ankündigung geändert werden"
+
+#: lib/customer.help.php:160
+msgid "Callback : Enter your phone number and the phone number you wish to call."
+msgstr "Rückruf: Geben Sie Ihre Telefonnummer und die Telefonnummer ein, die Sie anrufen möchten."
+
+#: lib/customer.help.php:162
+msgid "This screen shows refills and payments made against each account, along with the current credit on each card. The initial amount of credit applied to the card is not included. The amount owing is calculated by subtracting payments from refills."
+msgstr "Diese Seite zeigt Aufladungen und Zahlungen für jedes Konto sowie das aktuelle Guthaben jeder Karte. Das Anfangsguthaben der Karte ist nicht enthalten. Der offene Betrag wird berechnet, indem Zahlungen von Aufladungen abgezogen werden."
+
+#: lib/customer.help.php:164
+msgid "Customers Refill history - The section below allows you to see customers refill"
+msgstr "Aufladeverlauf der Kunden - Im folgenden Bereich können Sie die Aufladungen der Kunden sehen"
+
+#: lib/customer.help.php:166
+msgid "Set the phone number of your recording device and the segment length for audio or video surveillance."
+msgstr "Legen Sie die Telefonnummer Ihres Aufnahmegeräts und die Länge der Abschnitte für die Audio- oder Videoüberwachung fest."
+
+#: lib/customer.help.php:168
+msgid "<b>List of periodic call numbers.</b><br>In the 'LAST ACTIVITY' column, blue marks an idle periodic call, and green marks an active one.<br>Click 'NUMBER' to open call statistics for this number for the current month."
+msgstr "<b>Liste der Nummern für regelmäßige Anrufe.</b><br>In der Spalte 'LETZTE AKTIVITÄT' markiert Blau einen inaktiven regelmäßigen Anruf und Grün einen aktiven.<br>Klicken Sie auf 'NUMMER', um die Anrufstatistik für diese Nummer im aktuellen Monat zu öffnen."
+
+#: lib/customer.help.php:170
+msgid "Set the event schedule for periodic dialing, the pause between events, the number of calls each time, and the maximum call duration limit."
+msgstr "Legen Sie den Zeitplan für regelmäßige Anrufe, die Pause zwischen den Ereignissen, die Anzahl der Anrufe pro Mal und die maximale Anrufdauer fest."
+
+#: lib/customer.help.php:172
+msgid "The system log helps you track all events on your application. Log levels are the Importance Levels for the events - 1 is lowest level and 3 is highest level. 1 is used for Login, Logout and Page Visit. 2 is used for Add, Import, Export. 3 is for Update and Delete."
+msgstr "Das Systemprotokoll hilft Ihnen, alle Ereignisse in Ihrer Anwendung zu verfolgen. Die Protokollstufen zeigen die Wichtigkeit der Ereignisse: 1 ist die niedrigste Stufe und 3 die höchste Stufe. 1 wird für Anmeldung, Abmeldung und Seitenbesuch verwendet. 2 wird für Hinzufügen, Import und Export verwendet. 3 wird für Aktualisieren und Löschen verwendet."
+
+#: lib/customer.help.php:174
+msgid "Create your own voice menus and use them when setting up INCOMING CALLS.<br>Before that, create voice phrases or upload your own in the VOICE GREETINGS section."
+msgstr "Erstellen Sie Ihre eigenen Sprachmenüs und verwenden Sie sie beim Einrichten von EINGEHENDEN ANRUFEN.<br>Erstellen Sie vorher Stimmengrüße oder laden Sie eigene Ansagen im Bereich STIMMENGRÜSSE hoch."
+
 #: A2B_ticket_view.php:58
 msgid "Ticket updated successfully"
 msgstr "Ticket wurde erfolgreich aktualisiert"
@@ -3715,6 +3763,42 @@ msgstr "Import Telefon Liste"
 msgid "LOGOUT"
 msgstr "AUSLOGEN"
 
+#: templates/default/main.tpl:50
+msgid "SURVEILLANCE"
+msgstr "ÜBERWACHUNG"
+
+#: templates/default/main.tpl:51
+msgid "RING-UP"
+msgstr "AUTORUF"
+
+#: templates/default/main.tpl:55
+msgid "CAMPAIGNs"
+msgstr "KAMPAGNEN"
+
+#: templates/default/main.tpl:108
+msgid "EXTENSIONS "
+msgstr "NEBENSTELLEN"
+
+#: templates/default/main.tpl:109
+msgid "Outbound call plan"
+msgstr "Rufplan für ausgehende Anrufe"
+
+#: templates/default/main.tpl:115
+msgid "EXTERNAL LINES"
+msgstr "EXTERNE LEITUNGEN"
+
+#: templates/default/main.tpl:116
+msgid "INCOMING CALLS"
+msgstr "EINGEHENDE ANRUFE"
+
+#: templates/default/main.tpl:119
+msgid "QUEUES"
+msgstr "WARTESCHLANGEN"
+
+#: templates/default/main.tpl:120
+msgid "VIRTUAL FAX"
+msgstr "VIRTUELLES FAX"
+
 #: signup_confirmation.php:46
 msgid "Sorry the confirmation email has been sent already, multi-signup are not authorized! Please wait 2 minutes before making any other signup!"
 msgstr "die Bestätigungs-E-Mail wurde bereits gesendet, Multi-Anmeldung ist nicht gestattet! Bitte warten Sie 2 Minuten, bevor Sie noch einen anmelden!"
@@ -3892,6 +3976,282 @@ msgstr "Der Gutschein sollte eine Nummer sein!"
 #: A2B_entity_voucher.php:121
 msgid "USE VOUCHER"
 msgstr "BENUTZE GUTSCHEIN"
+
+#: A2B_entity_callerid.php:141
+msgid "LIST TYPE"
+msgstr "LISTENTYP"
+
+#: A2B_entity_callerid.php:204 A2B_entity_moneysituation_details.php:68
+msgid "Information has successfully been updated"
+msgstr "Die Informationen wurden erfolgreich aktualisiert"
+
+#: A2B_entity_moneysituation.php:205
+msgid "NB TOTAL INVOICE"
+msgstr "ANZAHL RECHNUNGEN GESAMT"
+
+#: A2B_entity_moneysituation.php:206
+msgid "NB INVOICE WITH ENOUGH PAYMENT "
+msgstr "ANZAHL RECHNUNGEN MIT AUSREICHENDER ZAHLUNG"
+
+#: A2B_entity_moneysituation.php:207
+msgid "NB INVOICE WITH PAID STATUS"
+msgstr "ANZAHL RECHNUNGEN MIT STATUS BEZAHLT"
+
+#: A2B_entity_moneysituation.php:208
+msgid "NB INVOICE WITH UNPAID STATUS"
+msgstr "ANZAHL RECHNUNGEN MIT STATUS UNBEZAHLT"
+
+#: form_data/FG_var_callerid.inc:118 form_data/FG_var_callerid.inc:211
+msgid "D I S A"
+msgstr "D I S A"
+
+#: form_data/FG_var_callerid.inc:119 form_data/FG_var_callerid.inc:221
+msgid "BLACKLIST"
+msgstr "SPERRLISTE"
+
+#: form_data/FG_var_callerid.inc:121
+msgid "PHONE FORWARD"
+msgstr "RUFWEITERLEITUNG"
+
+#: form_data/FG_var_callerid.inc:122
+msgid "VERIFY"
+msgstr "PRÜFEN"
+
+#: form_data/FG_var_callerid.inc:176
+msgid "NEVER"
+msgstr "NIE"
+
+#: form_data/FG_var_callerid.inc:219
+msgid "Direct Inward System Access... for incoming calls from this number"
+msgstr "Direkter Systemzugang für eingehende Anrufe von dieser Nummer"
+
+#: form_data/FG_var_callerid.inc:229
+msgid "Choose 'Yes' if you want to place this CallerID to Black List. This will break any autorization attempts from this CallerID."
+msgstr "Wählen Sie 'Ja', wenn Sie diese CallerID auf die Sperrliste setzen möchten. Dadurch werden alle Autorisierungsversuche von dieser CallerID abgebrochen."
+
+#: form_data/FG_var_callerid.inc:231
+msgid "DESTINATION TO FORWARD"
+msgstr "ZIEL FÜR WEITERLEITUNG"
+
+#: form_data/FG_var_callerid.inc:236
+msgid "Enter the phone"
+msgstr "Telefonnummer eingeben"
+
+#: form_data/FG_var_callerid.inc:237
+msgid "Enter the destination for immediatly dial instead prompt to dial. There are the phonenumber, Queue or IVR name you wish to send call. Or select destination from the drop-down list.<br>Requires \"D I S A\" on and \"BLACKLIST\" off. After one attempt to redirect the call, the call will be dropped."
+msgstr "Geben Sie das Ziel für die direkte Wahl ein, statt eine Eingabeaufforderung zu verwenden. Das kann eine Telefonnummer, eine Warteschlange oder ein IVR-Name sein. Oder wählen Sie ein Ziel aus der Auswahlliste.<br>Erfordert \"D I S A\" ein und \"SPERRLISTE\" aus. Nach einem Weiterleitungsversuch wird der Anruf beendet."
+
+#: form_data/FG_var_callerid.inc:245 form_data/FG_var_callerid.inc:247
+msgid "Choose 'Yes' if you want to callback to this CallerID"
+msgstr "Wählen Sie 'Ja', wenn Sie diese CallerID zurückrufen möchten"
+
+#: form_data/FG_var_callerid.inc:250
+msgid "SAY BALANCE AFTER AUTH"
+msgstr "GUTHABEN NACH AUTORISIERUNG ANSAGEN"
+
+#: form_data/FG_var_callerid.inc:257
+msgid "with the warning threshold"
+msgstr "mit Warnschwelle"
+
+#: form_data/FG_var_callerid.inc:257
+msgid "ALWAYS"
+msgstr "IMMER"
+
+#: form_data/FG_var_callerid.inc:259
+msgid "SAY THE DIALED NUMBER"
+msgstr "GEWÄHLTE NUMMER ANSAGEN"
+
+#: form_data/FG_var_callerid.inc:268
+msgid "SAY RATE BEFORE CALL"
+msgstr "TARIF VOR DEM ANRUF ANSAGEN"
+
+#: form_data/FG_var_callerid.inc:277
+msgid "SAY HIGHEST POSSIBLE DURATION"
+msgstr "MAXIMAL MÖGLICHE DAUER ANSAGEN"
+
+#: form_data/FG_var_callerid.inc:286
+msgid "SAY BALANCE AFTER CALL"
+msgstr "GUTHABEN NACH DEM ANRUF ANSAGEN"
+
+#: form_data/FG_var_callerid.inc:295
+msgid "CONSPIRATION"
+msgstr "CLI-VERBERGUNG"
+
+#: form_data/FG_var_callerid.inc:303
+msgid "Choose 'Yes' if you want hide CLI and replace its in a general manner for calls from this CallerID. Choose 'No' if you want set a veto for replacement CLI for calls from this CallerID. Choose 'Local' to replace this CallerID when calling to countries for which there exist a local number(s) for replacement."
+msgstr "Wählen Sie 'Ja', wenn Sie die CLI für Anrufe von dieser CallerID verbergen und allgemein ersetzen möchten. Wählen Sie 'Nein', wenn Sie den CLI-Ersatz für Anrufe von dieser CallerID verhindern möchten. Wählen Sie 'Lokal', um diese CallerID bei Anrufen in Länder zu ersetzen, für die lokale Ersatznummern vorhanden sind."
+
+#: form_data/FG_var_callerid.inc:304
+msgid "Local"
+msgstr "Lokal"
+
+#: form_data/FG_var_callerid.inc:305
+msgid "If your CallerID number was verified you can use the remaining options..."
+msgstr "Wenn Ihre CallerID-Nummer geprüft wurde, können Sie die weiteren Optionen verwenden."
+
+#: form_data/FG_var_callerid.inc:307
+msgid "LOCAL REPLACE"
+msgstr "LOKALER ERSATZ"
+
+#: form_data/FG_var_callerid.inc:315
+msgid "Present this CallerID, when calls are made to a country relevant to this CallerID."
+msgstr "Diese CallerID anzeigen, wenn Anrufe in ein Land erfolgen, das für diese CallerID relevant ist."
+
+#: form_data/FG_var_callerid.inc:316
+msgid "Settings for general Caller Line Identity (CLI)"
+msgstr "Einstellungen für die allgemeine Rufnummernanzeige (CLI)"
+
+#: form_data/FG_var_callerid.inc:318
+msgid "OTHER REPLACE"
+msgstr "ANDERER ERSATZ"
+
+#: form_data/FG_var_callerid.inc:326
+msgid "Present this CallerID, when calls are made to countries not relevant to this CallerID."
+msgstr "Diese CallerID anzeigen, wenn Anrufe in Länder erfolgen, die für diese CallerID nicht relevant sind."
+
+#: form_data/FG_var_callerid.inc:328
+msgid "REPLACE BY PREFIX"
+msgstr "NACH PRÄFIX ERSETZEN"
+
+#: form_data/FG_var_callerid.inc:335
+msgid "Present this CallerID, when calls are made to countries from listed prefixes. Insert the replaceable prefixes separated by comma, e.g. for UK,IT,RU,UA are '44,39,7,380'."
+msgstr "Diese CallerID anzeigen, wenn Anrufe in Länder mit den aufgeführten Präfixen erfolgen. Geben Sie die ersetzbaren Präfixe durch Kommas getrennt ein, z. B. für UK, IT, RU, UA: '44,39,7,380'."
+
+#: form_data/FG_var_callerid.inc:354
+msgid "You can modify here different properties of your CallerID"
+msgstr "Hier können Sie verschiedene Eigenschaften Ihrer CallerID ändern"
+
+#: form_data/FG_var_moneysituation.inc:96 form_data/FG_var_moneysituation.inc:171
+msgid "CUSTOMER"
+msgstr "KUNDE"
+
+#: form_data/FG_var_moneysituation.inc:98
+msgid "BALANCE"
+msgstr "GUTHABEN"
+
+#: form_data/FG_var_moneysituation.inc:100 form_data/FG_var_moneysituation_details.inc:333
+msgid "MARGIN"
+msgstr "MARGE"
+
+#: form_data/FG_var_moneysituation.inc:102 form_data/FG_var_moneysituation_details.inc:361
+msgid "Payments"
+msgstr "Zahlungen"
+
+#: form_data/FG_var_moneysituation.inc:103
+msgid "TO PAY"
+msgstr "ZU ZAHLEN"
+
+#: form_data/FG_var_moneysituation.inc:117
+msgid "THERE IS NO CARD FOUNDED!"
+msgstr "ES WURDE KEINE KARTE GEFUNDEN!"
+
+#: form_data/FG_var_moneysituation.inc:152
+msgid "Add Refill to this Card"
+msgstr "Aufladung zu dieser Karte hinzufügen"
+
+#: form_data/FG_var_moneysituation_details.inc:22
+msgid "yes"
+msgstr "ja"
+
+#: form_data/FG_var_moneysituation_details.inc:22
+msgid "no"
+msgstr "nein"
+
+#: form_data/FG_var_moneysituation_details.inc:38
+msgid "No Call Plan ID or Group ID are defined"
+msgstr "Keine Anrufplan-ID oder Gruppen-ID ist definiert"
+
+#: form_data/FG_var_moneysituation_details.inc:88 form_data/FG_var_moneysituation_details.inc:95
+msgid "No Group id are defined"
+msgstr "Keine Gruppen-ID ist definiert"
+
+#: form_data/FG_var_moneysituation_details.inc:112
+msgid "CUSTOMER TYPE"
+msgstr "KUNDENTYP"
+
+#: form_data/FG_var_moneysituation_details.inc:254
+msgid "AREA CODE"
+msgstr "ORTSVORWAHL"
+
+#: form_data/FG_var_moneysituation_details.inc:261
+msgid "Set prefix of the city by default (i.e. 30 for Berlin)"
+msgstr "Legen Sie die Standard-Ortsvorwahl fest, z. B. 30 für Berlin"
+
+#: form_data/FG_var_moneysituation_details.inc:263
+msgid "CITY LENGTH"
+msgstr "LÄNGE DER ORTSNUMMER"
+
+#: form_data/FG_var_moneysituation_details.inc:270
+msgid "Set length of city numbers"
+msgstr "Legen Sie die Länge der Ortsnummern fest"
+
+#: form_data/FG_var_moneysituation_details.inc:272
+msgid "REMOVE+ADD PREFIX"
+msgstr "PRÄFIX ENTFERNEN+HINZUFÜGEN"
+
+#: form_data/FG_var_moneysituation_details.inc:279
+msgid "Set for display CallerID on internal phones which prefix you want to remove and then add with comma separated (i.e. \"38044,,38,\")"
+msgstr "Legen Sie für die Anzeige der CallerID auf internen Telefonen fest, welches Präfix entfernt und danach hinzugefügt werden soll, getrennt durch Kommas, z. B. \"38044,,38,\""
+
+#: form_data/FG_var_moneysituation_details.inc:281
+msgid "ADD INTERNATIONAL PREFIX"
+msgstr "INTERNATIONALES PRÄFIX HINZUFÜGEN"
+
+#: form_data/FG_var_moneysituation_details.inc:288
+msgid "Set for display on internal phones which prefix you want see before international CallerID (i.e. \"+\")"
+msgstr "Legen Sie für die Anzeige auf internen Telefonen fest, welches Präfix vor einer internationalen CallerID angezeigt werden soll, z. B. \"+\""
+
+#: form_data/FG_var_moneysituation_details.inc:292
+msgid "RECORD CALL"
+msgstr "ANRUF AUFZEICHNEN"
+
+#: form_data/FG_var_moneysituation_details.inc:298
+msgid "Enable to monitor the call (to record all the conversations) value : YES - NO"
+msgstr "Aktivieren Sie die Anrufüberwachung, um alle Gespräche aufzuzeichnen. Wert: YES - NO"
+
+#: form_data/FG_var_moneysituation_details.inc:299
+msgid "Define if you want to record all the conversations"
+msgstr "Legen Sie fest, ob alle Gespräche aufgezeichnet werden sollen"
+
+#: form_data/FG_var_moneysituation_details.inc:303
+msgid "RECALL DAYS"
+msgstr "RÜCKRUF-TAGE"
+
+#: form_data/FG_var_moneysituation_details.inc:341
+msgid "PAYPAL PAYMENT"
+msgstr "PAYPAL-ZAHLUNG"
+
+#: form_data/FG_var_moneysituation_details.inc:348
+msgid "Apply PayPal payment to this customer"
+msgstr "PayPal-Zahlung für diesen Kunden anwenden"
+
+#: form_data/FG_var_moneysituation_details.inc:367
+msgid "PAYMENT INCL FEE"
+msgstr "ZAHLUNG INKL. GEBÜHR"
+
+#: form_data/FG_var_moneysituation_details.inc:371
+msgid "THERE IS NO PAYMENTS CREATED!"
+msgstr "ES WURDEN KEINE ZAHLUNGEN ERSTELLT!"
+
+#: form_data/FG_var_moneysituation_details.inc:397
+msgid "EXTENSION"
+msgstr "DURCHWAHL"
+
+#: form_data/FG_var_moneysituation_details.inc:398
+msgid "CALLERID NAME"
+msgstr "CALLERID-NAME"
+
+#: form_data/FG_var_moneysituation_details.inc:400
+msgid "HOST"
+msgstr "HOST"
+
+#: form_data/FG_var_moneysituation_details.inc:401
+msgid "REGNAME"
+msgstr "REGISTRIERUNGSNAME"
+
+#: form_data/FG_var_moneysituation_details.inc:402
+msgid "SECRET"
+msgstr "PASSWORT"
 
 #~ msgid "Voicemail message updated!"
 #~ msgstr "Voicemail-Nachricht aktualisiert!"

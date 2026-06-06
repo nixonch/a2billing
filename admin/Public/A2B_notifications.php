@@ -46,7 +46,8 @@ if (!has_rights (ACX_CUSTOMER)) {
 // #### HEADER SECTION
 $smarty->display('main.tpl');
 
-echo $CC_help_mail_notifications;
+if ($form_action == "list" || $popup_select < 2)
+    echo $CC_help_mail_notifications;
 
 ?>
 <DIV ALIGN="CENTER">

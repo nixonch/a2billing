@@ -33,7 +33,7 @@
 
 
 
-getpost_ifset(array('id', 'provider_name', 'creationdate', 'description', 'popup_select'));
+getpost_ifset(array('id', 'provider_name', 'creationdate', 'description'));
 
 $HD_Form = new FormHandler("cc_provider","Provider");
 
@@ -46,7 +46,7 @@ $HD_Form ->FG_LIST_ADDING_BUTTON_IMG1 = Images_Path ."/world_add.png" ;
 
 
 
-if ($popup_select)
+if ($popup_select && $popup_select!=4)
 	$HD_Form -> AddViewElement(gettext("ID"), "id", "15%", "center", "sort");
 $HD_Form -> AddViewElement(gettext("PROVIDER NAME"), "provider_name", "25%", "center", "sort");
 $HD_Form -> AddViewElement(gettext("CREATIONDATE"), "creationdate", "20%", "center", "sort", "19", "", "", "", "", "", "display_dateformat");
@@ -61,7 +61,7 @@ $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
 $HD_Form -> FG_VIEW_TABLE_WITDH = '70%';
 
 
-if ($popup_select) {
+if ($popup_select && $popup_select!=4) {
 	$HD_Form -> FG_LIMITE_DISPLAY = 7;
 	$HD_Form -> CV_FOLLOWPARAMETERS = "&popup_select=" . $popup_select . "&popup_formname=" . $popup_formname . "&popup_fieldname=" . $popup_fieldname;
 
@@ -75,6 +75,7 @@ if ($popup_select) {
 	elseif ($popup_select == 2)
 		$HD_Form -> FG_OTHER_BUTTON1_LINK = "javascript:sendValue('|col0|');";
 } else {
+	$HD_Form -> FG_CAPCHA_POPUP = '|col0|';
 	$HD_Form -> FG_EDITION = true;
 	$HD_Form -> FG_DELETION = true;
 	$HD_Form -> FG_ADDITION = true;
@@ -115,6 +116,5 @@ $HD_Form -> FG_BUTTON_EDITION_BOTTOM_TEXT = $HD_Form -> FG_BUTTON_ADITION_BOTTOM
 $HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
 $HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
 $HD_Form -> FG_GO_LINK_AFTER_ACTION_DELETE = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
-
 
 

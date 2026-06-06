@@ -107,7 +107,8 @@ $cus_list_voucher = $cus_cctarrifval -> Get_list ($HD_Form -> DBHandle);
 // #### HEADER SECTION
 $smarty->display('main.tpl');
 // #### HELP SECTION
-echo $CC_help_generate_voucher;
+if ($form_action == "list" || $popup_select < 2)
+    echo $CC_help_generate_voucher;
 
 ?>
 <div align="center">

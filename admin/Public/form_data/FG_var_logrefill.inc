@@ -63,7 +63,7 @@ $HD_Form -> AddViewElement(gettext("REFILL AMOUNT"), "credit", "20%", "center", 
 $HD_Form -> AddViewElement(gettext("REFILL TYPE"),"refill_type", "19%", "center", "sort", "", "list", $list_refill_type);
 $HD_Form -> AddViewElement(gettext("AGENT"),"diller_id", "14%", "center", "sort", "", "30", "", "", "", "", "linktocustomer_id");
 
-$HD_Form -> FieldViewElement ('cc_logrefill.id, cc_logrefill.card_id, cc_logrefill.date, cc_logrefill.credit, cc_logrefill.refill_type, cc_logrefill.diller_id');
+$HD_Form -> FieldViewElement ('cc_logrefill.id, cc_logrefill.card_id, cc_logrefill.date, cc_logrefill.credit, cc_logrefill.refill_type, cc_logrefill.diller_id, cc_logrefill.id, CONCAT_WS(\' \',cc_card.lastname,cc_card.firstname,CONCAT(\'(\',cc_card.username,\')\'))');
 
 if (!($popup_select>=1))	 $HD_Form -> FG_FILTER_SEARCH_FORM = true;
 $HD_Form -> FG_FILTER_SEARCH_SESSION_NAME = 'refill_cust_selection';
@@ -96,7 +96,7 @@ if (isset($filterprefix)  &&  (strlen($filterprefix)>0)) {
 
 $HD_Form -> FG_ADDITION = true;
 if (has_rights (ACX_MODIFY_REFILLS)) {
-	
+	$HD_Form -> FG_CAPCHA_POPUP = '|col7|';
 	$HD_Form -> FG_EDITION = true;
 	$HD_Form -> FG_DELETION = true;
 	
@@ -191,4 +191,3 @@ if (has_rights (ACX_MODIFY_REFILLS)) {
 	$HD_Form -> FG_GO_LINK_AFTER_ACTION_DELETE = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
 
 }
-

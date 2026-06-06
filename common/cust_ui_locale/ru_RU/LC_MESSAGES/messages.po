@@ -360,10 +360,6 @@ msgstr ""
 msgid "AUTOMATICALY GENERATED COMMISSION!"
 msgstr "АВТОМАТИЧЕСКИ СОЗДАННАЯ КОМИССИЯ!"
 
-#: lib/customer.help.php:159
-msgid "This screen shows refills and payments made against each account, along with the current credit on each card. The initial amount of credit applied to the card is not included. The amount owing is calculated by subtracting payments from refills."
-msgstr "Просматривайте балансы, счета и платежи своих клиентов. В правой колонке можно выбрать информацию о других параметрах, а так же пополнить баланс клиента или вернуть средства.<br/><u>ВНИМАНИЕ</u>! Отмена проведенного перевода средств невозможна!"
-
 #: paypal.php:72
 msgid "Payment for "
 msgstr "Платёж для "
@@ -563,8 +559,8 @@ msgid "Set length of city numbers"
 msgstr "Количество цифр (длина) городского номера (например '7' для Киева)"
 
 #: A2B_entity_card.php:77
-msgid "Your personal information has successfully been updated."
-msgstr "Ваша персональная информация успешно обновлена"
+msgid "Personal information has successfully been updated."
+msgstr "Персональная информация успешно обновлена"
 
 #: simulator.php:86
 msgid "Error card !!!"
@@ -3382,7 +3378,31 @@ msgstr "Назначте 1 цифру на ваши самые использу�
 msgid "Callback : Enter your phone number and the phone number you wish to call."
 msgstr "Вы можете назначить обратный звонок, чтобы не платить за исходящую связь!"
 
+#: lib/customer.help.php:159
+msgid "This screen shows refills and payments made against each account, along with the current credit on each card. The initial amount of credit applied to the card is not included. The amount owing is calculated by subtracting payments from refills."
+msgstr "Просматривайте балансы, счета и платежи своих клиентов. В правой колонке можно выбрать информацию о других параметрах, а так же пополнить баланс клиента или вернуть средства.<br/><u>ВНИМАНИЕ</u>! Отмена проведенного перевода средств невозможна!"
+
+#: lib/customer.help.php:164
+msgid "Customers Refill history - The section below allows you to see customers refill"
+msgstr "История пополнений клиентов - в этом разделе можно просмотреть пополнения клиентов"
+
+#: lib/customer.help.php:166
+msgid "Set the phone number of your recording device and the segment length for audio or video surveillance."
+msgstr "Назначте номер телефона, принадлежащий Вашему записывающему устройству, и частоту нарезки роликов для аудио или видео наблюдения."
+
+#: lib/customer.help.php:168
+msgid "<b>List of periodic call numbers.</b><br>In the 'LAST ACTIVITY' column, blue marks an idle periodic call, and green marks an active one.<br>Click 'NUMBER' to open call statistics for this number for the current month."
+msgstr "<b>Список номеров периодического дозвона.</b><br>В колонке 'ПОСЛЕДНЯЯ АКТИВНОСТЬ' синим цветом обозначается простаивающий дозвон, зелёным - действующий.<br>Нажав на 'НОМЕР', откроется статистика звонков на этот номер за текущий месяц."
+
+#: lib/customer.help.php:170
+msgid "Set the event schedule for periodic dialing, the pause between events, the number of calls each time, and the maximum call duration limit."
+msgstr "Назначте расписание событий дозвона, паузу между событиями, количество звонков каждый раз и ограничение максимальной продолжительности звонка."
+
 #: lib/customer.help.php:172
+msgid "The system log helps you track all events on your application. Log levels are the Importance Levels for the events - 1 is lowest level and 3 is highest level. 1 is used for Login, Logout and Page Visit. 2 is used for Add, Import, Export. 3 is for Update and Delete."
+msgstr "Системный журнал помогает отслеживать все события в приложении. Уровни журнала определяют важность событий: 1 — самый низкий уровень, 3 — самый высокий. 1 используется для входа, выхода и посещения страниц. 2 используется для добавления, импорта и экспорта. 3 используется для обновления и удаления."
+
+#: lib/customer.help.php:174
 msgid "Create your own voice menus and use them when setting up INCOMING CALLS.<br>Before that, create voice phrases or upload your own in the VOICE GREETINGS section."
 msgstr "Создавайте свои собственные голосовые меню и используйте их при настройке ВХОДЯЩИХ ЗВОНКОВ.<br>Перед этим создайте голосовые фразы или загрузите свои в разделе VOICE GREETINGS."
 

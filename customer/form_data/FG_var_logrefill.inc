@@ -1,6 +1,6 @@
 <?php
 
-getpost_ifset(array('id', 'card_id', 'date', 'credit', 'description', 'added_invoice', 'refill_type', 'idcust', 'message', 'filterprefix', 'filterprefix2'));
+getpost_ifset(array('id', 'card_id', 'date', 'credit', 'description', 'added_invoice', 'refill_type', 'idcust', 'filterprefix', 'filterprefix2', 'message'));
 
 if (isset($filterprefix2)) {
     $filterprefix2 = preg_replace("/[^\d]/", '', $filterprefix2);
@@ -58,7 +58,7 @@ $HD_Form -> FG_TABLE_DEFAULT_SENS = "DESC";
 $HD_Form -> AddViewElement(gettext("REFILL DATE"), "date", "17%", "center", "sort", "30", "", "", "", "", "", "display_dateformat");
 if (has_rights(ACX_DISTRIBUTION)) {
 	$HD_Form -> AddViewElement(gettext("PARTNER"), "lastname", "22%", "center", "sort", "", "link2cust", "cc_card LEFT JOIN cc_callerid ON id_cc_card=cc_card.id", "IF(cc_card.id = ".$_SESSION['card_id'].",'',IF(company_name='',CONCAT_WS(' ',IF(status=0,'<del>',''),lastname,CONCAT(firstname,IF(status=0,'</del>',''))),IF(%id<0,CONCAT(IF(status=0,'<del>',''),company_name,IF(status=0,'</del>','')),CONCAT_WS(' ',IF(status=0,'<del>',''),lastname,firstname,CONCAT('(',company_name,')',IF(status=0,'</del>','')))))), cc_card.id, tariff, '$filterprefix2' AS fp, IF('$filterprefix2'='' OR cc_card.id = ".$_SESSION['card_id'].",'',CONCAT('(',IF(phone+0 LIKE '".$addsearch.$filterprefix2."%',phone,cid),')')) AS fn",
-	$req2, "%1 %5", "", "javascript:;\" onClick=\"MM_openBrWindow('A2B_entity_moneysituation_details.php?type=card&form_action=ask-edit&atmenu=card&displayheader=0&popup_select=1&idcust=%2&tariff=%3','','scrollbars=yes,resizable=yes,width=660,height=810,left=600,top=50,screenX=430,screenY=50')\"", gettext("USER DELETED"));
+	$req2, "%1 %5", "", "javascript:;\" onClick=\"alertBase('url:A2B_entity_moneysituation_details?type=card&form_action=ask-edit&atmenu=card&displayheader=0&popup_select=1&idcust=%2&tariff=%3','%1',true,false,'#666666')\"", gettext("USER DELETED"));
 	$QUERY_ADD = "card_id, ";
 }
 $HD_Form -> AddViewElement(gettext("REFILL AMOUNT"), "credit", "15%", "center", "sort","", "", "", "", "", "", "display_refill_money");
@@ -175,8 +175,8 @@ if ($popup_select>=1) {
 //$HD_Form->FG_ADITION_HIDDEN_PARAM = $HD_Form->FG_EDITION_HIDDEN_PARAM = 'popup_select, idcust';
 //$HD_Form->FG_ADITION_HIDDEN_PARAM = $HD_Form->FG_EDITION_HIDDEN_PARAM_VALUE = "$popup_select, $idcust";
 
-$HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD = $_SERVER['PHP_SELF']."?idcust=$card_id&message=success&popup_select=$popup_select&card_id=$card_id&id=";
+	$HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD = $PHP_SELF."?idcust=$card_id&card_id=$card_id&id=";
 
 //	$HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
-	$HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
-	$HD_Form -> FG_GO_LINK_AFTER_ACTION_DELETE = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
+	$HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT = $PHP_SELF."?atmenu=document&stitle=Document&wh=AC&id=";
+	$HD_Form -> FG_GO_LINK_AFTER_ACTION_DELETE = $PHP_SELF."?atmenu=document&stitle=Document&wh=AC&id=";

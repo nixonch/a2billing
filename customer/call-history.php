@@ -879,14 +879,14 @@ if (!($popup_select>=1)) {
         <TR> 
           <TD> <TABLE border=0 cellPadding=0 cellSpacing=0 width="100%">
                 <TR class="bgcolor_008">
-				  <TD width="<?php echo $FG_ACTION_SIZE_COLUMN?>" align="center" class="tableBodyRight" style="PADDING-BOTTOM: 2px; PADDING-LEFT: 2px; PADDING-RIGHT: 2px; PADDING-TOP: 2px"></TD>
+				  <TD width="<?php echo $FG_ACTION_SIZE_COLUMN?>" align="center" class="tableBodyRight" style="padding:2px;"></TD>
 				  
                   <?php 
 					if (is_array($list) && count($list)>0) {
 						
 					foreach ($FG_TABLE_COL as $i => $val) {
 					?>
-	                  <TD width="<?php echo $FG_TABLE_COL[$i][2]?>" align=middle class="tableBody" style="PADDING-BOTTOM: 2px; PADDING-LEFT: 2px; PADDING-RIGHT: 2px; PADDING-TOP: 2px" nowrap> 
+	                  <TD width="<?php echo $FG_TABLE_COL[$i][2]?>" align=middle class="tableBody" style="padding:2px;" nowrap> 
 	                    <center><strong> 
 	                    <?php  if (mb_strtoupper($FG_TABLE_COL[$i][4])=="SORT"){?>
 	                    <a href="<?php  echo $PHP_SELF."?popup_select=$popup_select&s=1&t=0&stitle=$stitle&atmenu=$atmenu&current_page=$current_page&order=".$FG_TABLE_COL[$i][1]."&choose_callowner=$choose_callowner&waitup1=$waitup1&waitup2=$waitup2&waitup1type=$waitup1type&waitup2type=$waitup2type&sens="; if ($sens=="ASC"){echo"DESC";}else{echo"ASC";} 

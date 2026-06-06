@@ -42,7 +42,7 @@ $smarty -> assign("SECONDARY_TITLE", "Balance and Rate Checking Web Service");
 $smarty -> assign("CUSTOMER_INTERFACE_URL", CUSTOMER_INTERFACE_URL);
 $smarty -> assign("MAILTO", SUPPORT_MAILTO);
 $smarty -> assign("ADDRESS", SUPPORT_ADDRESS);
-$smarty -> assign("WEBPHONE", "https://chrome.google.com/webstore/detail/webrtc-sip-phone-with-cli/pofkcckikkdhiieipefhkaelgnbdkcib"); // ссылка на описание телефона
+$smarty -> assign("WEBPHONE", "https://chromewebstore.google.com/detail/webrtc-sip-phone-with-cli/pofkcckikkdhiieipefhkaelgnbdkcib"); // ссылка на описание телефона
 
 $smarty -> display('slidebar.tpl');
 $smarty -> display('apicheckers.tpl');

@@ -33,7 +33,7 @@
 
 
 
-getpost_ifset(array('id', 'tariffgroupname', 'lcrtype', 'removeinterprefix', 'idtariffplan', 'idtariffplan_hidden', 'id_cc_package_offer', 'popup_select'));
+getpost_ifset(array('id', 'tariffgroupname', 'lcrtype', 'removeinterprefix', 'idtariffplan', 'idtariffplan_hidden', 'id_cc_package_offer'));
 
 $HD_Form = new FormHandler("cc_tariffgroup","Call Plan");
 
@@ -77,7 +77,7 @@ $HD_Form -> AddViewElement(gettext("INTER PREFIX"), "removeinterprefix", "15%", 
 if (!$popup_select) {
 	$HD_Form -> FieldViewElement ('id, tariffgroupname, creationdate, lcrtype,id_cc_package_offer, removeinterprefix');
 } else {
-	$HD_Form -> FieldViewElement ('id, tariffgroupname, lcrtype,id_cc_package_offer, removeinterprefix');
+	$HD_Form -> FieldViewElement ('id, tariffgroupname, lcrtype, id_cc_package_offer, removeinterprefix');
 }
 
 
@@ -87,9 +87,9 @@ $HD_Form -> CV_TEXT_TITLE_ABOVE_TABLE = '';
 $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
 
 
-if ($popup_select) {
+if ($popup_select && $popup_select != 4) {
 	$HD_Form -> FG_LIMITE_DISPLAY = 7;
-	$HD_Form -> CV_FOLLOWPARAMETERS = "&popup_select=" . $popup_select . "&popup_formname=" . $popup_formname . "&popup_fieldname=" . $popup_fieldname;
+	$HD_Form -> CV_FOLLOWPARAMETERS = "&popup_formname=" . $popup_formname . "&popup_fieldname=" . $popup_fieldname;
 
 	$HD_Form -> FG_OTHER_BUTTON1 = true;
 	$HD_Form -> FG_OTHER_BUTTON1_ALT = '<font color="red">&lt;select&gt;</font>';
@@ -108,21 +108,21 @@ if ($popup_select) {
 
 
 $HD_Form -> AddEditElement (gettext("NAME"),
-	"tariffgroupname",		
-	'$value',	
-	"INPUT",	
-	"size=40 maxlength=40",	
-	"9",	
+	"tariffgroupname",
+	'$value',
+	"INPUT",
+	"size=40 maxlength=40",
+	"9",
 	gettext("Insert the Call Plan name "),
 	"" , "", "", "", "", "", "", "" );
 
 
 $HD_Form -> AddEditElement (gettext("LC TYPE"),
-	"lcrtype",				
-	'$value',	
-	"SELECT",	
-	"",	
-	"",	
+	"lcrtype",
+	'$value',
+	"SELECT",
+	"",
+	"",
 	"",
 	"list" , "", "", "", $lcrtype_list, "%1", "", "");
 
@@ -139,7 +139,7 @@ $HD_Form -> AddEditElement(gettext("PACKAGE"),
 
 
 $HD_Form -> AddEditElement (gettext("REMOVE INTER PREFIX"),
-	"removeinterprefix",		
+	"removeinterprefix",
 	'0',
 	"RADIOBUTTON",
 	"",	

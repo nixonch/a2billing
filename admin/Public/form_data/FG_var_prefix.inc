@@ -33,7 +33,7 @@
 
 
 
-getpost_ifset(array('id', 'destination','prefix','popup_select','popup_formname','popup_fieldname' ));
+getpost_ifset(array('id', 'destination','prefix','popup_formname','popup_fieldname' ));
 
 $HD_Form = new FormHandler("cc_prefix","prefix");
 
@@ -63,7 +63,7 @@ $HD_Form -> CV_TEXT_TITLE_ABOVE_TABLE = '';
 $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
 
 
-if ($popup_select) {
+if ($popup_select && $popup_select!=4) {
 	$HD_Form -> FG_LIMITE_DISPLAY = 7;
 	$HD_Form -> CV_FOLLOWPARAMETERS = "&popup_select=" . $popup_select . "&popup_formname=" . $popup_formname . "&popup_fieldname=" . $popup_fieldname;
 
@@ -77,6 +77,7 @@ if ($popup_select) {
 		$HD_Form -> FG_OTHER_BUTTON1_LINK = "javascript:sendValue('|col0|');";
 }
 else {
+	$HD_Form -> FG_CAPCHA_POPUP = '|col0|';
 	$HD_Form -> FG_EDITION = true;
 	$HD_Form -> FG_DELETION = true;
 	$HD_Form -> FG_ADDITION = true;

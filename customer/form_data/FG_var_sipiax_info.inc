@@ -134,6 +134,7 @@ $HD_Form -> FG_EDITION_CONDITION = '"|col6|" != ""';
 $HD_Form -> FG_DELETION_CONDITION = $HD_Form -> FG_EDITION_CONDITION;
 //$HD_Form -> FG_DELETION_CONDITION = '"|col6|" != "" && "|col5|" != "{$_SESSION["user_alias"]}"';
 
+$HD_Form -> FG_CAPCHA_POPUP = '|col0| | |col1|';
 $HD_Form -> FG_EDITION = true;
 $HD_Form -> FG_DELETION = true;
 $HD_Form -> FG_ADDITION = false;

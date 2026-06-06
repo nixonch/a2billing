@@ -382,8 +382,8 @@ msgstr ""
 
 #: A2B_entity_card.php:77
 #, fuzzy
-msgid "Your personal information has successfully been updated."
-msgstr "Вашу особисту інформацію успішно оновлено."
+msgid "Personal information has successfully been updated."
+msgstr "Особисту інформацію успішно оновлено."
 
 #: simulator.php:86
 #, fuzzy
