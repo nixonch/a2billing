@@ -188,7 +188,7 @@ $FG_TABLE_ALTERNATE_ROW_COLOR[0]='#CDC9C9';
 $FG_TABLE_ALTERNATE_ROW_COLOR[1]='#EEE9E9';
 ?>
  <br>
-	  <table width="65%" border="0" align="center" cellpadding="0" cellspacing="0">
+	  <table width="50%" border="0" align="center" cellpadding="0" cellspacing="0">
 		
 		<TR> 
           <TD style="border-bottom: medium dotted #FF4444" colspan="2"> <B><font color="red" size="3"><?php echo gettext("Simulator found a rate for your destination");?></font></B></TD>

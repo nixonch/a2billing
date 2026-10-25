@@ -255,7 +255,6 @@ function updatecontent(id_el, record, field_inst, instance)
   document.getElementById(id_el).style.color = "#BC2222";
   return false;
 }
-
 //-->
 </script>
 <FORM action=<?php echo $PHP_SELF?> method=post name="myForm" id="myForm">
@@ -320,10 +319,9 @@ function updatecontent(id_el, record, field_inst, instance)
 					<?php }?>
 					</select>
 				<?php
-				}
-		  		elseif (strtoupper ($this->FG_TABLE_EDITION[$i][3])==strtoupper ("INPUT"))
-				{								
-					if (isset ($this->FG_TABLE_EDITION[$i][15]) && strlen($this->FG_TABLE_EDITION[$i][15])>1){				
+				} elseif (strtoupper ($this->FG_TABLE_EDITION[$i][3])==strtoupper ("INPUT"))
+				{
+					if (isset ($this->FG_TABLE_EDITION[$i][15]) && strlen($this->FG_TABLE_EDITION[$i][15])>1){
 						$list[0][$i] = call_user_func($this->FG_TABLE_EDITION[$i][15], $list[0][$i]);
 					}			
 			  ?>
@@ -334,7 +332,7 @@ function updatecontent(id_el, record, field_inst, instance)
 						 <?php }?> 
 						name=<?php echo $this->FG_TABLE_EDITION[$i][1]?>  <?php echo $this->FG_TABLE_EDITION[$i][4]?> value="<?php if($this->VALID_SQL_REG_EXP){ echo stripslashes($list[0][$i]); }else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]];  }?>"> 
                         <?php 
-				}elseif (strtoupper ($this->FG_TABLE_EDITION[$i][3])==strtoupper ("LABEL"))
+				} elseif (strtoupper ($this->FG_TABLE_EDITION[$i][3])==strtoupper ("LABEL"))
 				{
 					if (isset ($this->FG_TABLE_EDITION[$i][15]) && strlen($this->FG_TABLE_EDITION[$i][15])>1){
 						$list[0][$i] = call_user_func($this->FG_TABLE_EDITION[$i][15], $list[0][$i]);
@@ -342,8 +340,15 @@ function updatecontent(id_el, record, field_inst, instance)
 			  ?>  
                          <?php if($this->VALID_SQL_REG_EXP){ echo stripslashes($list[0][$i]); }else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]];  }?>
                         <?php 
-				}
-				elseif (strtoupper ($this->FG_TABLE_EDITION[$i][3])=="POPUPVALUE") {
+				} elseif (strtoupper ($this->FG_TABLE_EDITION[$i][3])=="POPUPVALUEALERT") {
+			?>
+				<INPUT class="form_enter" name=<?php echo $this->FG_TABLE_EDITION[$i][1]?>  <?php echo $this->FG_TABLE_EDITION[$i][4]?> value="<?php
+					if($this->VALID_SQL_REG_EXP && is_array($list)){
+						echo stripslashes($list[0][$i]);
+					}else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]]; }?>"
+				><a href="javascript:;" onclick="alertBase('url:<?= $this->FG_TABLE_EDITION[$i][12]?>popup_formname=myForm&popup_fieldname=<?php echo $this->FG_TABLE_EDITION[$i][1]?>'<?php echo $this->FG_TABLE_EDITION[$i][13]?>);"><img src="<?php echo Images_Path_Main;?>/icon_arrow_orange.gif" valign="bottom"/></a>
+			 <?php
+				} elseif (strtoupper ($this->FG_TABLE_EDITION[$i][3])=="POPUPVALUE") {
 			?>
 				<INPUT class="form_enter" name=<?php echo $this->FG_TABLE_EDITION[$i][1]?>  <?php echo $this->FG_TABLE_EDITION[$i][4]?> value="<?php
 					if($this->VALID_SQL_REG_EXP && is_array($list)){
@@ -351,7 +356,7 @@ function updatecontent(id_el, record, field_inst, instance)
 					}else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]]; }?>"
 				><a href="#" onclick="window.open('<?php echo $this->FG_TABLE_EDITION[$i][12]?>popup_formname=myForm&popup_fieldname=<?php echo $this->FG_TABLE_EDITION[$i][1]?>' <?php echo $this->FG_TABLE_EDITION[$i][13]?>);"><img src="<?php echo Images_Path_Main;?>/icon_arrow_orange.gif" valign="bottom"/></a>
 			 <?php
-				}elseif (strtoupper ($this -> FG_TABLE_EDITION[$i][3])=="POPUPVALUETIME") {
+				} elseif (strtoupper ($this -> FG_TABLE_EDITION[$i][3])=="POPUPVALUETIME") {
                         ?>
                         <INPUT class="form_enter" name=<?php echo $this->FG_TABLE_EDITION[$i][1]?>  <?php echo $this->FG_TABLE_EDITION[$i][4]?> value="<?php if($this->VALID_SQL_REG_EXP){ echo stripslashes($list[0][$i]); }else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]]; }?>">
                          <a href="#" onclick="window.open('<?php echo $this->FG_TABLE_EDITION[$i][12]?>formname=myForm&fieldname=<?php echo $this->FG_TABLE_EDITION[$i][1]?>' <?php echo $this->FG_TABLE_EDITION[$i][14]?>);"><img src="<?php echo Images_Path_Main;?>/icon_arrow_orange.gif"/></a>

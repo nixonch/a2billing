@@ -121,7 +121,6 @@ if (!($popup_select && $popup_select!=4)) {
     $HD_Form ->FG_LIST_ADDING_BUTTON_IMG1 = Images_Path ."/world_add.png" ;
 }
 
-
 $musiconhold_list = Constants::getMusicOnHold_List();
 $yesno = Constants::getYesNoList();
 
@@ -236,12 +235,14 @@ $HD_Form -> AddEditElement(gettext("LENGTH RANGE TILL"),
 
 $HD_Form -> AddEditElement(gettext("Destination Prefix"),
    "destination",
-   '$value',	
-   "POPUPVALUE",	
-   "size=50 maxlength=80", 
+   '$value',
+   "POPUPVALUEALERT",
+   "size=50 maxlength=80",
    "9",
    "",
-   "" , "", "",	"", "" , "A2B_entity_prefix.php?popup_select=2&", ", 'prefix','width=550,height=340,top=20,left=100,scrollbars=1'", 
+   "", "", "", "", "",
+   "A2B_entity_prefix?popup_select=2&",
+   ", 'Prefix',true,false,'#445760',event.pageX+25,event.pageY-200,'UL',null,null,null,null,null,sendValueCallback",
    gettext("Select the prefix destination corresponding to your prefix rate.").'<br>'.gettext("This is the label that appears against the Call Detail Record."));
 
 

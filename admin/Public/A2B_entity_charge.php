@@ -50,7 +50,7 @@ $HD_Form_c->init();
 
 // To fix internal links due $_SERVER["PHP_SELF"] from parent include that fakes them
 if ($wantinclude == 1) {
-	$HD_Form_c->FG_EDITION_LINK = "url:A2B_entity_charge?form_action=ask-edit&popup_select=4&id=";
+	$HD_Form_c->FG_EDITION_LINK = "A2B_entity_charge?form_action=ask-edit&id=";
 	$HD_Form_c->FG_DELETION_LINK = "url:A2B_entity_charge?form_action=ask-delete&popup_select=4&id=";
 }
 

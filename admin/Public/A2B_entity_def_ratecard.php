@@ -245,7 +245,7 @@ if (!$popup_select) {
 // DISPLAY THE UPDATE MESSAGE
 if (isset ($update_msg) && strlen($update_msg) > 0)
 	echo $update_msg;
-
+/*
 if ($popup_select && $popup_select!=4 && empty($package) && !is_numeric($package) ) {
 ?>
 <SCRIPT LANGUAGE="javascript">
@@ -260,7 +260,6 @@ function sendValue(selvalue){
 
 }
 
-
 if ($popup_select && $popup_select!=4 && is_numeric($package)) {
 $HD_Form-> CV_FOLLOWPARAMETERS .= "&package=".$package;
 ?>
@@ -268,14 +267,13 @@ $HD_Form-> CV_FOLLOWPARAMETERS .= "&package=".$package;
 <!-- Begin
 function sendValue(selvalue){
 	 // redirect browser to the grabbed value (hopefully a URL)
-	window.opener.location.href= <?php echo '"A2B_package_manage_rates.php?id='.$package.'&addrate="'; ?>+selvalue;
+	window.opener.location.href= <?php echo '"A2B_package_manage_rates?id='.$package.'&addrate="'; ?>+selvalue;
 }
 // End -->
 </script>
 <?php
 }
-
-
+*/
 if (!$popup_select) {
 	// #### CREATE SEARCH FORM
 	if ($form_action == "list") {

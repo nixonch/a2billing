@@ -43,7 +43,7 @@ $instance_table = new Table();
 $HD_Form = new FormHandler("cc_trunk",gettext("trunk"));
 
 $HD_Form ->FG_LIST_ADDING_BUTTON1 = true;
-$HD_Form ->FG_LIST_ADDING_BUTTON_LINK1 = "A2B_entity_trunk.php?form_action=ask-add&section=".$_SESSION["menu_section"];
+$HD_Form ->FG_LIST_ADDING_BUTTON_LINK1 = "A2B_entity_trunk?form_action=ask-add&section=".$_SESSION["menu_section"];
 $HD_Form ->FG_LIST_ADDING_BUTTON_ALT1 = $HD_Form ->FG_LIST_ADDING_BUTTON_MSG1 = gettext("Add Trunk");
 $HD_Form ->FG_LIST_ADDING_BUTTON_IMG1 = Images_Path ."/add.png" ;
 
@@ -109,41 +109,49 @@ if ($popup_select) {
 	$HD_Form -> FieldViewElement ("trunkcode, trunkprefix, removeprefix, providertech, providerip, id_provider, secondusedreal, IF(dialprefixa='',0,maxsecperperioda-IF(periodexpirya<now(),0,periodcounta)) left1, IF(dialprefixb='',0,maxsecperperiodb-IF(periodexpiryb<now(),0,periodcountb)) left2, status, inuse, maxuse");
 }
 
-$HD_Form -> FG_FILTER_SEARCH_FORM = true;
-$HD_Form -> FG_FILTER_SEARCH_TOP_TEXT = gettext("Search");
-$HD_Form -> AddSearchElement_C1(gettext("IP/HOST"),'providerip','provideriptype');
-$HD_Form -> FG_FILTER_SEARCH_FORM_SELECT_TEXT = '';
-$HD_Form -> AddSearchElement_Select(gettext("SELECT PROVIDER"), null, null, null, null, null, "id_provider", 0, $provider_list_result);
-$HD_Form -> AddSearchElement_Select(gettext("SELECT STATUS"), null, null, null, null, null, "status", 0, $trunk_actived_list);
-
 $HD_Form -> FG_ACTION_SIZE_COLUMN = '15%';
 $HD_Form -> CV_NO_FIELDS  = gettext("THERE IS NO ".strtoupper($HD_Form->FG_INSTANCE_NAME)." CREATED!");
 $HD_Form -> CV_DISPLAY_LINE_TITLE_ABOVE_TABLE = false;
 $HD_Form -> CV_TEXT_TITLE_ABOVE_TABLE = '';
 $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
 
-
 if ($popup_select && $popup_select<4) {
 	$HD_Form -> FG_LIMITE_DISPLAY = 10;
+	$HD_Form -> FG_VIEW_TABLE_WITDH = '95%';
 	$HD_Form -> CV_FOLLOWPARAMETERS = "&popup_select=" . $popup_select . "&popup_formname=" . $popup_formname . "&popup_fieldname=" . $popup_fieldname;
 
 	$HD_Form -> FG_OTHER_BUTTON1 = true;
 	$HD_Form -> FG_OTHER_BUTTON1_ALT = '<font color="red">&lt;select&gt;</font>';
 	$HD_Form -> FG_OTHER_BUTTON1_IMG = '';
 
-	//echo $popup_select;
 	if ($popup_select == 1)
 		$HD_Form -> FG_OTHER_BUTTON1_LINK = "javascript:sendValue('|param|');";
 	elseif ($popup_select == 2)
 		$HD_Form -> FG_OTHER_BUTTON1_LINK = "javascript:sendValue('|col0|');";
+
+	$HD_Form -> FG_FILTER_APPLY = true;
+	$HD_Form -> FG_FILTERFIELD = 'id_trunk';
+	$HD_Form -> FG_FILTERFIELDNAME = 'id';
+	if (isset($filterprefix)  &&  (strlen($filterprefix)>0)) {
+	    if (strlen($HD_Form -> FG_TABLE_CLAUSE) > 0)	$HD_Form -> FG_TABLE_CLAUSE.=" AND ";
+	    $HD_Form -> FG_TABLE_CLAUSE .= "id_trunk='".$filterprefix."'";
+	}
 } else {
 	$HD_Form -> FG_LIMITE_DISPLAY = 20;
 	$HD_Form -> FG_EDITION = true;
 	$HD_Form -> FG_CAPCHA_POPUP = '|col0|';
 	$HD_Form -> FG_DELETION = true;
 	$HD_Form -> FG_ADDITION = true;
-}
 
+	$HD_Form -> FG_FILTER_SEARCH_FORM = true;
+	$HD_Form -> FG_FILTER_SEARCH_TABLE_WITDH = '50%';
+	$HD_Form -> FG_FILTER_SEARCH_TOP_TEXT = gettext("Search");
+	$HD_Form -> AddSearchElement_C1(gettext("IP/HOST"),'providerip','provideriptype');
+	$HD_Form -> FG_FILTER_SEARCH_FORM_SELECT_TEXT = '';
+	$HD_Form -> AddSearchElement_Select(gettext("SELECT PROVIDER"), null, null, null, null, null, "id_provider", 0, $provider_list_result);
+	$HD_Form -> AddSearchElement_Select(gettext("SELECT STATUS"), null, null, null, null, null, "status", 0, $trunk_actived_list);
+}
+echo $HD_Form -> FG_TABLE_CLAUSE;
 if (isset($form_action) && $form_action=="ask-add"){
 	$def_value_inuse = "value='0'";
 	$def_value_maxuse = "value='-1'";
@@ -577,6 +585,9 @@ $HD_Form -> FieldEditElement ('id_provider, trunkcode, trunkprefix, removeprefix
 	dialprefixa, failover_trunka, secondusedcarrier,  startdatea, stopdatea, billblockseca, perioda, periodexpirya, timelefta, maxsecperperioda, periodcounta, lastcallstoptimea,
 	dialprefixb, failover_trunkb, secondusedratecard, startdateb, stopdateb, billblocksecb, periodb, periodexpiryb, timeleftb, maxsecperperiodb, periodcountb, lastcallstoptimeb');
 
+$HD_Form -> FG_ADITION_HIDDEN_PARAM       = $HD_Form->FG_EDITION_HIDDEN_PARAM       = 'filterprefix,current_page';
+$HD_Form -> FG_ADITION_HIDDEN_PARAM_VALUE = $HD_Form->FG_EDITION_HIDDEN_PARAM_VALUE = $filterprefix.",".$current_page;
+
 $HD_Form -> FG_QUERY_EDITION_HIDDEN_FIELDS = "wrapnexttime";
 $HD_Form -> FG_QUERY_EDITION_HIDDEN_VALUE = date("Y-m-d H:i:s");
 
@@ -590,6 +601,6 @@ $HD_Form -> FG_TEXT_ADITION_CONFIRMATION = gettext("Your new")." ".$HD_Form->FG_
 $HD_Form -> FG_BUTTON_EDITION_SRC = $HD_Form -> FG_BUTTON_ADITION_SRC  = Images_Path . "/cormfirmboton.gif";
 $HD_Form -> FG_BUTTON_EDITION_BOTTOM_TEXT = $HD_Form -> FG_BUTTON_ADITION_BOTTOM_TEXT = 'Fill correctly the fields to add a new '.$HD_Form->FG_INSTANCE_NAME;
 
-//$HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
-$HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
-$HD_Form -> FG_GO_LINK_AFTER_ACTION_DELETE = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
+//$HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&filterprefix=$filterprefix&id=";
+$HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&filterprefix=$filterprefix&id=";
+$HD_Form -> FG_GO_LINK_AFTER_ACTION_DELETE = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&filterprefix=$filterprefix&id=";

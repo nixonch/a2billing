@@ -51,58 +51,78 @@ getpost_ifset(array (
 ));
 
 $HD_Form->setDBHandler(DbConnect());
-
 $HD_Form->init();
 
-if ($id != "" || !is_null($id)) {
-	$HD_Form->FG_EDITION_CLAUSE = str_replace("%id", "$id", $HD_Form->FG_EDITION_CLAUSE);
-}
+$HD_Form->FG_EDITION_LINK = "url:".$_SERVER['PHP_SELF']."?popup_select=4&form_action=ask-edit&atmenu=$atmenu&current_page=$current_page&id=";
 
 if (!isset ($form_action))
 	$form_action = "list"; //ask-add
 if (!isset ($action))
 	$action = $form_action;
 
+if ($message == "editsuccess") {
+?>
+<table width="95%" align="center">
+<tr height="80px">
+<td align="center"><b><?php echo gettext("Information has successfully been updated")?></b></td>
+</tr>
+</table>
+<form runat="server">
+    <div>
+        <input id="button1" onclick="window.parent.postMessage({action:'closeAlert'},'*')" class="form_input_button" type="button" value="" />
+    </div>
+</form>
+<br>
+<br>
+</center>
+<script type="text/javascript">
+    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*');
+    objbutton=document.getElementById('button1');
+    objbutton.focus();
+    timeleft=11;
+    function buttontimer(){
+        timeleft--;
+        if(timeleft==0) {
+                objbutton.click();
+        }
+        objbutton.value = '<?= gettext("Close Window") ?> ('+timeleft+')';
+    }
+    buttontimer();
+    setInterval(function() {buttontimer()}, 1000);
+</script>
+<?php
+} else {
+
+if ($id != "" || !is_null($id)) {
+	$HD_Form->FG_EDITION_CLAUSE = str_replace("%id", "$id", $HD_Form->FG_EDITION_CLAUSE);
+}
+
 $list = $HD_Form->perform_action($form_action);
 
 // #### HEADER SECTION
-$smarty->display('main.tpl');
-
-if ($popup_select) {
-?>
-	<SCRIPT LANGUAGE="javascript">
-	<!-- Begin
-	function sendValue(selvalue) {
-        	window.opener.document.<?php echo $popup_formname ?>.<?php echo $popup_fieldname ?>.value = selvalue;
-		window.close();
-	}
-	// End -->
-	</script>
-<?php
-
-}
+    $smarty->display('main.tpl');
 
 // #### HELP SECTION
-if ($form_action == 'list') {
-	if (!$popup_select)
-		echo $CC_help_trunk_list;
-} else if ($popup_select!=4) {
+    if ($form_action == 'list') {
+	if (!$popup_select)	echo $CC_help_trunk_list;
+    } else if ($popup_select!=4) {
 	echo $CC_help_trunk_edit;
-}
+    }
 
 //echo $CALL_LABS;
 
 //  #### SEARCH SECTION
-if ($form_action == "list") {
-		$HD_Form->create_search_form();
-}
+    if ($form_action == "list") {
+	$HD_Form->create_search_form();
+    }
 
 // #### TOP SECTION PAGE
-$HD_Form->create_toppage($form_action);
+    $HD_Form->create_toppage($form_action);
 
-$HD_Form->create_form($form_action, $list, $id = null);
+    $HD_Form->create_form($form_action, $list, $id = null);
 
 // #### FOOTER SECTION
-if (!$popup_select)
+    if (!$popup_select) {
 	$smarty->display('footer.tpl');
-
+    }
+}

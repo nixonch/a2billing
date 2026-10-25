@@ -15,6 +15,7 @@ getpost_ifset(array('stitle', 'letter', 'current_page', 'popup_select', 'message
 $processed = $this->getProcessed();
 ?>
 <script type="text/JavaScript">
+var refreshProcessed = <?= json_encode($processed, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
 function openURLFilter(theLINK)
 {
 	selInd = document.theFormFilter.choose_list.selectedIndex;
@@ -23,7 +24,32 @@ function openURLFilter(theLINK)
 	this.location.href = theLINK + goURL;
 }
 </script>
-
+<?php
+if (false && !@$processed['popup_select']) {
+?>.
+<script language="JavaScript" src="./javascript/popupResult.js"></script>
+<?php
+}
+if (in_array($processed['popup_select'],[1,2,3])) {
+?>
+<script language="javascript">
+function sendValue(selvalue, othervalue = null) {
+    var params = new URLSearchParams(window.location.search);
+    window.parent.postMessage({
+	action: 'popupResult',
+	payload: {
+	    type: 'sendValue',
+	    formname: params.get('popup_formname'),
+	    fieldname: params.get('popup_fieldname'),
+	    selvalue: selvalue,
+	    othervalue: othervalue
+	}
+    }, '*');
+}
+</script>
+<?php
+}
+?>
 <div style="" align="center">
 <table width="<?php echo $this->FG_VIEW_TABLE_WITDH; ?>" border="0" cellpadding="0" cellspacing="0">
 <?php
@@ -43,7 +69,7 @@ if( !$processed['popup_select'] && ($this->FG_LIST_ADDING_BUTTON1 || $this->FG_L
 if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 ?>
 <script type="text/javascript">
-    window.parent.postMessage({action:'refreshInside'},'*');
+    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*');
     window.parent.postMessage({action:'closeAlert'},'*')
 </script>
 <?php
@@ -144,7 +170,7 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
             	}
              ?>
 			<INPUT type="hidden" name="form_action"	value="<?php echo $this->FG_FILTER_FORM_ACTION ?>">
-            <td class="viewhandler_filter_td1">
+            <td class="viewhandler_filter_td1" nowrap>
 			<?php if ($this -> FG_FILTER_APPLY){ ?>
 
 				<font class="viewhandler_filter_on"><?php echo gettext("FILTER ON ");?> <?php mb_internal_encoding('UTF-8');?><?php echo mb_strtoupper($this->FG_FILTERFIELDNAME)?> :</font>
@@ -404,7 +430,7 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 							}
 							if ($check || $check_eval) {
 							    if (strpos($this->FG_DELETION_LINK,'url:')===0) {
-							?><a href="javascript:;" onClick="alertBase('<?= $this->FG_DELETION_LINK . $list[$ligne_number][$this->FG_NB_TABLE_COL] ?>','<?= $capcha ?>',true,false,'#c33d3c',event.pageX-55,event.pageY-100,'UR')"><img src="<?php echo Images_Path_Main;?>/<?php echo $this->FG_DELETION_IMG?>" border="0" title="<?php echo $this->FG_DELETE_ALT?>" alt="<?php echo $this->FG_DELETE_ALT?>"></a><?php
+							?><a href="javascript:;" onClick="alertBase('<?= $this->FG_DELETION_LINK . $list[$ligne_number][$this->FG_NB_TABLE_COL] ?>','<?= $capcha ?>',true,false,'#c33d3c',event.pageX-55,event.pageY-100,'UR',null,null,null,null,null,refreshInsideCallback)"><img src="<?php echo Images_Path_Main;?>/<?php echo $this->FG_DELETION_IMG?>" border="0" title="<?php echo $this->FG_DELETE_ALT?>" alt="<?php echo $this->FG_DELETE_ALT?>"></a><?php
 							    } else {
 							?><a href="<?php echo $this->FG_DELETION_LINK?><?php echo $list[$ligne_number][$this->FG_NB_TABLE_COL]?>"><img src="<?php echo Images_Path_Main;?>/<?php echo $this->FG_DELETION_IMG?>" border="0" title="<?php echo $this->FG_DELETE_ALT?>" alt="<?php echo $this->FG_DELETE_ALT?>"></a><?php
 							    }
@@ -431,7 +457,7 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 							}
 							if($check || $check_eval){
 							    if (strpos($this->FG_EDITION_LINK,'url:')===0) {
-							?><a href="javascript:;" onClick="alertBase('<?= $this->FG_EDITION_LINK . $list[$ligne_number][$this->FG_NB_TABLE_COL] ?>','<?= $list[$ligne_number][0] ?>',true,false,'#445760',event.pageX-55,null,'UR')"><img src="<?= Images_Path_Main ?>/<?= $this->FG_EDITION_IMG ?>" border="0" title="<?= $this->FG_EDIT_ALT ?>" alt="<?= $this->FG_EDIT_ALT ?>"></a><?php
+							?><a href="javascript:;" onClick="alertBase('<?= $this->FG_EDITION_LINK . $list[$ligne_number][$this->FG_NB_TABLE_COL] ?>','<?= $this->FG_TABLE_COL[0][0]." ".$list[$ligne_number][0] ?>',true,false,'#445760',event.pageX-55,event.pageY-100,'UR',null,null,null,null,null,refreshInsideCallback)"><img src="<?= Images_Path_Main ?>/<?= $this->FG_EDITION_IMG ?>" border="0" title="<?= $this->FG_EDIT_ALT ?>" alt="<?= $this->FG_EDIT_ALT ?>"></a><?php
 							    } else {
 							?><a href="<?php echo $this->FG_EDITION_LINK?><?php echo $list[$ligne_number][$this->FG_NB_TABLE_COL]?>"><img src="<?php echo Images_Path_Main;?>/<?php echo $this->FG_EDITION_IMG?>" border="0" title="<?php echo $this->FG_EDIT_ALT?>" alt="<?php echo $this->FG_EDIT_ALT?>"></a><?php
 							    }
@@ -973,7 +999,7 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
             	}
              ?>
 			<INPUT type="hidden" name="form_action"	value="<?php echo $this->FG_FILTER_FORM_ACTION ?>">
-			<td class="viewhandler_filter_td1">
+			<td class="viewhandler_filter_td1" nowrap>
 			<span >
 			<?php if ($this -> FG_FILTER_APPLY){ ?>
 

@@ -188,6 +188,7 @@
       } while (!feof($this->socket));
 
       $msg = substr($this->_buffer, 0, $pos);
+//write_log(LOGFILE_API_CALLBACK, "POS:".var_export($pos, true)."\r\n".var_export($msg, true)."\r\n");
       $this->_buffer = substr($this->_buffer, $pos+4);
       $msgarr = explode("\r\n", $msg);
 

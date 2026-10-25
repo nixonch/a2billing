@@ -107,16 +107,16 @@ $HD_Form -> AddEditElement (gettext("PHONE"),
 
 
 $HD_Form -> AddEditElement (gettext("ID CARD"),
-			   "id_cc_card",		
-			   "$value",	
-			   "POPUPVALUE",	
-			   "size=30 maxlength=50",	
+			   "id_cc_card",
+			   "$value",
+			   "POPUPVALUEALERT",
+			   "size=30 maxlength=50",
 			   "4",	
 			   gettext("Insert the Id CardNumber"),
-			    "" , "", "", "", "", 				
-				"A2B_entity_card.php?popup_select=1&"
-				, ", 'CardNumberSelection','width=550,height=330,top=20,left=100,scrollbars=1'" ,
-				gettext("Define the card number ID to use."));
+			   "" , "", "", "", "",
+			   "A2B_entity_card?popup_select=1&",
+			   ",'Card Number Selection',true,false,'#445760',event.pageX-220,event.pageY-200,'UR',null,null,null,null,null,sendValueCallback",
+			   gettext("Define the card number ID to use."));
 
 $HD_Form -> FieldEditElement ('cc_speeddial.speeddial, cc_speeddial.name, cc_speeddial.phone, cc_speeddial.id_cc_card');
 

@@ -39,12 +39,12 @@ $HD_Form = new FormHandler("cc_callerid", gettext("CallerID"));
 $HD_Form -> FG_DEBUG = 0;
 
 $HD_Form ->FG_LIST_ADDING_BUTTON1 = true;
-$HD_Form ->FG_LIST_ADDING_BUTTON_LINK1 = "A2B_entity_callerid.php?form_action=ask-add&section=".$_SESSION["menu_section"];
+$HD_Form ->FG_LIST_ADDING_BUTTON_LINK1 = "A2B_entity_callerid?form_action=ask-add&section=".$_SESSION["menu_section"];
 $HD_Form ->FG_LIST_ADDING_BUTTON_ALT1 = $HD_Form ->FG_LIST_ADDING_BUTTON_MSG1 = gettext("Add CallerID");
 $HD_Form ->FG_LIST_ADDING_BUTTON_IMG1 = Images_Path ."/page_white_add.png" ;
 
 $HD_Form -> FG_OTHER_BUTTON3 = true;
-$HD_Form -> FG_OTHER_BUTTON3_LINK = "A2B_entity_logrefill.php?form_action=ask-add&card_id=|col_orig1|";
+$HD_Form -> FG_OTHER_BUTTON3_LINK = "A2B_entity_logrefill?form_action=ask-add&card_id=|col_orig1|";
 $HD_Form -> FG_OTHER_BUTTON3_IMG = Images_Path . "/brick_add.png";
 $HD_Form -> FG_OTHER_BUTTON3_ALT = gettext('ADD REFILL');
 
@@ -56,8 +56,8 @@ $HD_Form -> AddViewElement(gettext("CALLERID"), "cid", "15%", "center", "sort");
 $HD_Form -> AddViewElement(gettext("VERIFY"), "verify", "5%", "center", "SORT");
 $HD_Form -> AddViewElement(gettext("PHONE NUMBER"), "phonenumber", "15%", "center", "sort", "26");
 $HD_Form -> AddViewElement(gettext("CALLBACK"), "callback", "10%", "center", "SORT", "", "list", $yesno);
-$HD_Form -> AddViewElement(gettext("ACCOUNT NUMBER"), "id_cc_card", "12%", "center", "sort", "", "lie_link", "cc_card", "username, id", "id='%id'", "%1", "", "A2B_entity_card.php");
-$HD_Form -> AddViewElement(gettext("CUSTOMER NAME"), "id_cc_card", "20%", "center", "sort", "", "lie_link", "cc_card", "lastname, id, firstname", "id='%id'", "%1 %3", "", "A2B_entity_card.php");
+$HD_Form -> AddViewElement(gettext("ACCOUNT NUMBER"), "id_cc_card", "12%", "center", "sort", "", "lie_link", "cc_card", "username, id", "id='%id'", "%1", "", "A2B_entity_card");
+$HD_Form -> AddViewElement(gettext("CUSTOMER NAME"), "id_cc_card", "20%", "center", "sort", "", "lie_link", "cc_card", "lastname, id, firstname", "id='%id'", "%1 %3", "", "A2B_entity_card");
 $HD_Form -> AddViewElement(gettext("D I S A"), "activated", "10%", "center", "sort", "", "list", $actived_list);
 
 $HD_Form -> FieldViewElement ("cid, IF(verify=0,'".gettext("No")."','<font color=green>".gettext("Yes")."</font>'), phonenumber, callback, id_cc_card, id_cc_card, cc_callerid.activated");
@@ -136,12 +136,12 @@ $HD_Form -> AddEditElement (gettext("VERIFY"),
 $HD_Form -> AddEditElement (gettext("ID CARD"),
 			"id_cc_card",
 			"$value",
-			"POPUPVALUE",
+			"POPUPVALUEALERT",
 			"size=30 maxlength=50",
 			"4",
 			gettext("Insert the Id CardNumber"),
-			"", "", "", "", "", "A2B_entity_card.php?popup_select=1&",
-			", 'CardNumberSelection','width=550,height=580,top=20,left=100,scrollbars=1'",
+			"", "", "", "", "", "A2B_entity_card?popup_select=1&",
+			", 'Card Number Selection',true,false,'#445760',event.pageX+25,event.pageY-200,'UL',null,null,null,null,null,sendValueCallback",
 			gettext("Define the card number ID to use."));
 
 $HD_Form -> AddEditElement (gettext("CALLBACK"),

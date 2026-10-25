@@ -333,61 +333,69 @@ $smarty->display('main.tpl');
 
 
 <!-- ** ** ** ** ** Part for the research ** ** ** ** ** -->
+<script language="javascript">
+var popupCallback = function (payload) {
+    if (!payload.formname || !payload.fieldname) { return false; }
+    var form = document.forms[payload.formname];
+    if (!form) { return false; }
+    var field = form.elements[payload.fieldname];
+    if (!field) { return false; }
+    field.value = payload.selvalue;
+    return true;
+};
+</script>
 <div align="center">
 <FORM METHOD=POST name="myForm" ACTION="<?php echo $PHP_SELF?>?s=1&t=0&order=<?php echo $order?>&sens=<?php echo $sens?>&current_page=<?php echo $current_page?>">
 <INPUT TYPE="hidden" NAME="posted" value=1>
-<INPUT TYPE="hidden" NAME="current_page" value=0>	
-	<TABLE class="bar-status" width="85%" border="0" cellspacing="1" cellpadding="2" align="center">
+<INPUT TYPE="hidden" NAME="current_page" value=0>
+	<TABLE class="bar-status" width="50%" border="0" cellspacing="1" cellpadding="2" align="center">
 		<?php  if ($_SESSION["pr_groupID"]==2 && is_numeric($_SESSION["pr_IDCust"])){ ?>
 		<?php  }else{ ?>
 		<tr>
-			<td align="left" valign="top" class="bgcolor_004">					
+			<td align="left" valign="top" class="bgcolor_004">
 				<font class="fontstyle_003">&nbsp;&nbsp;<?php echo gettext("CUSTOMERS");?></font>
-			</td>				
+			</td>
 			<td class="bgcolor_005" align="left">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
-				<tr>
-				<td class="fontstyle_searchoptions" width="50%" valign="top">
+			    <tr>
+				<td class="fontstyle_searchoptions" width="50%" valign="top" nowrap>
 					<?php echo gettext("Enter the account number");?>: <INPUT TYPE="text" NAME="entercustomer" value="<?php echo $entercustomer?>" class="form_input_text">
-					<a href="#" onclick="window.open('A2B_entity_card.php?popup_select=2&popup_formname=myForm&popup_fieldname=entercustomer' , 'CardNumberSelection','scrollbars=1,width=550,height=330,top=20,left=100,scrollbars=1');"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a>
+					<a href="#" onclick="alertBase('url:A2B_entity_card?popup_select=2&popup_formname=myForm&popup_fieldname=entercustomer','Card Number Selection',true,false,'#445760',null,event.pageY+20,'UR',null,null,null,null,null,sendValueCallback);"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a>
 				</td>
 				<td width="50%">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
-							<td align="left" class="fontstyle_searchoptions"><?php echo gettext("CallPlan");?> :</td>
-							<td align="left" class="fontstyle_searchoptions"><INPUT TYPE="text" NAME="entertariffgroup" value="<?php echo $entertariffgroup?>" size="4" class="form_input_text">&nbsp;<a href="#" onclick="window.open('A2B_entity_tariffgroup.php?popup_select=2&popup_formname=myForm&popup_fieldname=entertariffgroup' , 'CallPlanSelection','scrollbars=1,width=550,height=330,top=20,left=100');"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a></td>
-							<td align="left" class="fontstyle_searchoptions"><?php echo gettext("Provider");?> :
-							<td align="left" class="fontstyle_searchoptions"><INPUT TYPE="text" NAME="enterprovider" value="<?php echo $enterprovider?>" size="4" class="form_input_text">&nbsp;<a href="#" onclick="window.open('A2B_entity_provider.php?popup_select=2&popup_formname=myForm&popup_fieldname=enterprovider' , 'ProviderSelection','scrollbars=1,width=550,height=330,top=20,left=100');"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a></td>
+							<td align="left" class="fontstyle_searchoptions" nowrap><?php echo gettext("CallPlan");?> :</td>
+							<td align="left" class="fontstyle_searchoptions" nowrap><INPUT TYPE="text" NAME="entertariffgroup" value="<?php echo $entertariffgroup?>" size="4" class="form_input_text">&nbsp;<a href="#" onclick="alertBase('url:A2B_entity_tariffgroup?popup_select=2&popup_formname=myForm&popup_fieldname=entertariffgroup','Call Plan Selection',true,false,'#445760',event.pageX+200,event.pageY+20,'UR',null,null,null,null,null,sendValueCallback);"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a></td>
+							<td align="left" class="fontstyle_searchoptions" nowrap><?php echo gettext("Provider");?> :
+							<td align="left" class="fontstyle_searchoptions" nowrap><INPUT TYPE="text" NAME="enterprovider" value="<?php echo $enterprovider?>" size="4" class="form_input_text">&nbsp;<a href="#" onclick="alertBase('url:A2B_entity_provider?popup_select=2&popup_formname=myForm&popup_fieldname=enterprovider','Provider Selection',true,false,'#445760',event.pageX+200,event.pageY+20,'UR',null,null,null,null,null,sendValueCallback);"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a></td>
 						</tr>
 						<tr>
-							<td align="left" class="fontstyle_searchoptions"><?php echo gettext("Trunk");?> :</td>
-							<td align="left" class="fontstyle_searchoptions"><INPUT TYPE="text" NAME="entertrunk" value="<?php echo $entertrunk?>" size="4" class="form_input_text">&nbsp;<a href="#" onclick="window.open('A2B_entity_trunk.php?popup_select=2&popup_formname=myForm&popup_fieldname=entertrunk' , 'TrunkSelection','scrollbars=1,width=550,height=330,top=20,left=100');"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a></td>
-							<td align="left" class="fontstyle_searchoptions"><?php echo gettext("Rate");?> :</td>
-							<td align="left" class="fontstyle_searchoptions"><INPUT TYPE="text" NAME="enterratecard" value="<?php echo $enterratecard?>" size="4" class="form_input_text">&nbsp;<a href="#" onclick="window.open('A2B_entity_def_ratecard.php?popup_select=2&popup_formname=myForm&popup_fieldname=enterratecard' , 'RatecardSelection','scrollbars=1,width=550,height=330,top=20,left=100');"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a></td>
+							<td align="left" class="fontstyle_searchoptions" nowrap><?php echo gettext("Trunk");?> :</td>
+							<td align="left" class="fontstyle_searchoptions" nowrap><INPUT TYPE="text" NAME="entertrunk" value="<?php echo $entertrunk?>" size="4" class="form_input_text">&nbsp;<a href="#" onclick="alertBase('url:A2B_entity_trunk?popup_select=2&popup_formname=myForm&popup_fieldname=entertrunk','Trunk Selection',true,false,'#445760',event.pageX+200,event.pageY+20,'UR',null,null,null,null,null,sendValueCallback);"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a></td>
+							<td align="left" class="fontstyle_searchoptions" nowrap><?php echo gettext("Rate");?> :</td>
+							<td align="left" class="fontstyle_searchoptions" nowrap><INPUT TYPE="text" NAME="enterratecard" value="<?php echo $enterratecard?>" size="4" class="form_input_text">&nbsp;<a href="#" onclick="alertBase('url:A2B_entity_def_ratecard?popup_select=2&popup_formname=myForm&popup_fieldname=enterratecard','Ratecard Selection',true,false,'#445760',event.pageX+200,event.pageY+20,'UR',null,null,null,null,null,sendValueCallback);"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a></td>
 						</tr>
 					</table>
-			      </td>
-				</tr>
-				<tr>
-					<td>
-					&nbsp;
-					</td>
-					<td>
+				</td>
+			    </tr>
+			    <tr>
+				<td>&nbsp;
+				</td>
+				<td>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
-							<td align="left" class="fontstyle_searchoptions"><?php echo gettext("Buy Rate");?> :</td>
-							<td align="left" class="fontstyle_searchoptions"><INPUT TYPE="text" NAME="buyrate" value="<?php echo $buyrate?>" size="8" class="form_input_text"></td>
-							<td align="left" class="fontstyle_searchoptions"><?php echo gettext("Sell Rate");?> :
-							<td align="left" class="fontstyle_searchoptions"><INPUT TYPE="text" NAME="sellrate" value="<?php echo $sellrate?>" size="8" class="form_input_text"></td>
+							<td align="left" class="fontstyle_searchoptions" nowrap><?php echo gettext("Buy Rate");?> :</td>
+							<td align="left" class="fontstyle_searchoptions" nowrap><INPUT TYPE="text" NAME="buyrate" value="<?php echo $buyrate?>" size="8" class="form_input_text"></td>
+							<td align="left" class="fontstyle_searchoptions" nowrap><?php echo gettext("Sell Rate");?> :</td>
+							<td align="left" class="fontstyle_searchoptions" nowrap><INPUT TYPE="text" NAME="sellrate" value="<?php echo $sellrate?>" size="8" class="form_input_text"></td>
 						</tr>
-						
 					</table>
-								
-					</td>
-				</tr>
+				</td>
+			    </tr>
 			</table>
 			</td>
-		</tr>			
+		</tr>
 		<?php  } ?>
 		
 		<tr>
@@ -405,14 +413,14 @@ $smarty->display('main.tpl');
 						else	$selected="";
 						echo '<option value="'.sprintf("%02d",$i)."\"$selected>".sprintf("%02d",$i).'</option>';
 					}
-					?>	
+					?>
 				</select>
 				<select name="fromstatsmonth_sday" class="form_input_select">
 				<?php 	
 					$monthname = array( gettext("January"), gettext("February"),gettext("March"), gettext("April"), gettext("May"), gettext("June"), gettext("July"), gettext("August"), gettext("September"), gettext("October"), gettext("November"), gettext("December"));
-					$year_actual = date("Y");  	
+					$year_actual = date("Y");
 					for ($i=$year_actual;$i >= $year_actual-1;$i--)
-					{		   
+					{
 						if ($year_actual==$i){
 							$monthnumber = date("n")-1; // Month number without lead 0.
 						}else{

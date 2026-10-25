@@ -1468,7 +1468,10 @@ if ($mode == 'standard') {
 	// END
 	$A2B -> debug( DEBUG, $agi, __FILE__, __LINE__, '[HANGUP ALL CALLBACK TRIGGER]');
 //	$agi -> exec('Congestion');
-	$agi -> exec('Busy');
+//	$agi -> exec('Busy', 1);
+//	$agi -> exec('Hangup', 17);
+
+	$agi -> answer();
 	$agi -> hangup();
 
 	$A2B ->credit = 1000;

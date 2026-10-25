@@ -6,7 +6,33 @@ $PHP_SELF = str_replace('.php','',$_SERVER['PHP_SELF']);
 
 <script language="JavaScript" src="./javascript/krutilke.js"></script>
 <script language="JavaScript" src="./javascript/calonlydays.js"></script>
-
+<?php
+if (!@$processed['popup_select']) {
+?>
+<script language="JavaScript" type="text/JavaScript">
+var popupCallback = function (payload) {
+    if (!payload.formname || !payload.fieldname) { return false; }
+    var form = document.forms[payload.formname];
+    if (!form) { return false; }
+    var field = form.elements[payload.fieldname];
+    if (!field) { return false; }
+    field.value = payload.selvalue;
+    if (payload.othervalue !== null && payload.othervalue !== undefined) {
+	if (form.elements.accountcode) {
+	    form.elements.accountcode.value = payload.othervalue;
+	} else if (document.getElementById('tzc')) {
+	    document.getElementById('tzc').innerHTML = payload.othervalue;
+	    if (document.getElementById('dest')) {
+		document.getElementById('dest').disabled = false;
+	    }
+	}
+    }
+    return true;
+};
+</script>
+<?php
+}
+?>
 	<FORM action=<?php echo $PHP_SELF; ?> id="myForm" method="post" name="myForm">
 	
 	<TABLE cellspacing="2" class="addform_table1">
@@ -61,17 +87,26 @@ $PHP_SELF = str_replace('.php','',$_SERVER['PHP_SELF']);
 	?>
                 <?php echo $this->FG_TABLE_ADITION[$i][4]?> 
 	<?php
-		}elseif (strtoupper ($this->FG_TABLE_ADITION[$i][3])=="POPUPVALUE"){
+		} elseif (strtoupper ($this->FG_TABLE_ADITION[$i][3])=="POPUPVALUEALERT"){
 	?>
 		<INPUT class="form_input_text" name=<?php echo $this->FG_TABLE_ADITION[$i][1]?>  <?php echo $this->FG_TABLE_ADITION[$i][4]?> value="<?php
-		
+
+			if($this->VALID_SQL_REG_EXP && is_array($list)){
+				echo stripslashes($list[0][$i]);
+			}else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]]; }?>"
+		><a href="javascript:;" onclick="alertBase('url:<?= $this->FG_TABLE_EDITION[$i][12]?>popup_formname=myForm&popup_fieldname=<?php echo $this->FG_TABLE_ADITION[$i][1]?>'<?php echo $this->FG_TABLE_ADITION[$i][13]?>);"><img src="<?php echo Images_Path_Main;?>/icon_arrow_orange.gif" valign="bottom"/></a>
+	<?php
+		} elseif (strtoupper ($this->FG_TABLE_ADITION[$i][3])=="POPUPVALUE"){
+	?>
+		<INPUT class="form_input_text" name=<?php echo $this->FG_TABLE_ADITION[$i][1]?>  <?php echo $this->FG_TABLE_ADITION[$i][4]?> value="<?php
+
 			if($this->VALID_SQL_REG_EXP && is_array($list)){
 				echo stripslashes($list[0][$i]);
 			}else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]]; }?>"
 		><a href="#" onclick="window.open('<?php echo $this->FG_TABLE_ADITION[$i][12]?>popup_formname=myForm&popup_fieldname=<?php echo $this->FG_TABLE_ADITION[$i][1]?>' <?php echo $this->FG_TABLE_ADITION[$i][13]?>);"><img src="<?php echo Images_Path_Main;?>/icon_arrow_orange.gif" valign="bottom"/></a>
 <!--CAPTCHA IMAGE CODE START HERE-->
 	<?php
-		}elseif (strtoupper ($this->FG_TABLE_ADITION[$i][3])=="CAPTCHAIMAGE")
+		} elseif (strtoupper ($this->FG_TABLE_ADITION[$i][3])=="CAPTCHAIMAGE")
 		{
 	?>
 		<table cellpadding="2" cellspacing="0" border="0" width="100%">

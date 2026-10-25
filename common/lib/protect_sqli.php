@@ -8,41 +8,16 @@ function array_map_recursive( $func, $arr ) {
     }
     return $newArr;
 }
-
-function recursive_filter($arr) {
-    $newArr = array();
-    foreach( $arr as $key => $value ) {
-        if (is_array($value)) {
-            $newArr[ $key ] = recursive_filter( $value );
-        } else {
-            if (filter_var($value, FILTER_SANITIZE_STRING) !== false) {
-                $newArr[ $key ] = $value;
-            } else {
-                $newArr[ $key ] = filter_var($value, FILTER_SANITIZE_STRING);
-            }
-        }
-    }
-    return $newArr;
+/*
+ * Magic quotes existed only on old PHP installations.  Unconditionally
+ * calling stripslashes() corrupts legitimate backslashes on modern PHP.
+ *
+ * This file deliberately does not attempt SQL or HTML sanitization.  SQL
+ * protection belongs to bound parameters and HTML protection belongs to the
+ * output context.
+ */
+if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
+    $_POST   = array_map_recursive('stripslashes', $_POST);
+    $_GET    = array_map_recursive('stripslashes', $_GET);
+    $_COOKIE = array_map_recursive('stripslashes', $_COOKIE);
 }
-
-// Clean up POST, GET, and COOKIES vars.
-$_POST		= array_map_recursive('stripslashes',$_POST);
-$_GET		= array_map_recursive('stripslashes',$_GET);
-$_COOKIE	= array_map_recursive('stripslashes',$_COOKIE);
-/**
-if ( function_exists('mysqli_real_escape_string'))
-{
-    $_POST	= array_map_recursivec($_POST);
-    $_GET	= array_map_recursivec($_GET);
-    $_COOKIE	= array_map_recursivec($_COOKIE);
-}
-else
-{
-    $_POST	= array_map_recursive('addslashes',$_POST);
-    $_GET	= array_map_recursive('addslashes',$_GET);
-    $_COOKIE	= array_map_recursive('addslashes',$_COOKIE);
-}
-**/
-$_POST		= recursive_filter($_POST);
-$_GET		= recursive_filter($_GET);
-$_COOKIE	= recursive_filter($_COOKIE);

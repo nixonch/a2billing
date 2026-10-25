@@ -1,5 +1,5 @@
 <?php
-getpost_ifset(array('id', 'cid', 'outbound_cid_group', 'activated'));
+getpost_ifset(array('id', 'cid', 'outbound_cid_group', 'activated', 'message'));
 
 $HD_Form = new FormHandler("cc_outbound_cid_list", "cid");
 
@@ -10,7 +10,7 @@ $HD_Form -> FG_TABLE_DEFAULT_SENS = "DESC";
 
 
 $HD_Form ->FG_LIST_ADDING_BUTTON1 = true;
-$HD_Form ->FG_LIST_ADDING_BUTTON_LINK1 = "A2B_entity_outbound_cid.php?form_action=ask-add&atmenu=cidgroup&section=".$_SESSION["menu_section"];
+$HD_Form ->FG_LIST_ADDING_BUTTON_LINK1 = "A2B_entity_outbound_cid?form_action=ask-add&atmenu=cidgroup&section=".$_SESSION["menu_section"];
 $HD_Form ->FG_LIST_ADDING_BUTTON_ALT1 = $HD_Form ->FG_LIST_ADDING_BUTTON_MSG1 = gettext("Add CallerID");
 $HD_Form ->FG_LIST_ADDING_BUTTON_IMG1 = Images_Path ."/server_connect.png" ;
 
@@ -24,7 +24,7 @@ $HD_Form -> AddViewElement(gettext("STATUS"), "activated", "15%", "center", "sor
 $HD_Form -> FieldViewElement ('cid, outbound_cid_group, activated');
 
 
-$HD_Form -> CV_NO_FIELDS  = gettext("THERE ARE NO")." ".strtoupper($HD_Form->FG_INSTANCE_NAME)." ".gettext("CREATED!");
+$HD_Form -> CV_NO_FIELDS  = '<span id="main-list">'.gettext("THERE ARE NO")." ".strtoupper($HD_Form->FG_INSTANCE_NAME)." ".gettext("CREATED!").'</span>';
 $HD_Form -> CV_DISPLAY_LINE_TITLE_ABOVE_TABLE = false;
 $HD_Form -> CV_TEXT_TITLE_ABOVE_TABLE = '';
 $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
@@ -32,6 +32,7 @@ $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
 $HD_Form -> FG_ADDITION = true;
 $HD_Form -> FG_EDITION = true;
 $HD_Form -> FG_DELETION = true;
+$HD_Form -> FG_CAPCHA_POPUP = '|col0|';
 $HD_Form -> FG_SPLITABLE_FIELD = 'cid';
 
 
@@ -80,6 +81,9 @@ $HD_Form -> AddEditElement (gettext("ACTIVATED"),
 
 $HD_Form -> FieldEditElement ('cid, outbound_cid_group, activated');
 
+$HD_Form -> FG_EDITION_HIDDEN_PARAM = 'popup_select,filterprefix';
+$HD_Form -> FG_EDITION_HIDDEN_PARAM_VALUE = $popup_select.",".$filterprefix;
+
 
 $HD_Form -> FG_INTRO_TEXT_EDITION = '';
 $HD_Form -> FG_INTRO_TEXT_ASK_DELETION = gettext("If you really want remove this")." ".$HD_Form->FG_INSTANCE_NAME.", ".gettext("click on the delete button.");
@@ -94,9 +98,6 @@ $HD_Form -> FG_BUTTON_EDITION_SRC = $HD_Form -> FG_BUTTON_ADITION_SRC  = Images_
 $HD_Form -> FG_BUTTON_EDITION_BOTTOM_TEXT = $HD_Form -> FG_BUTTON_ADITION_BOTTOM_TEXT = gettext("Click 'Confirm Data' to continue");
 
 
-$HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
-$HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
-$HD_Form -> FG_GO_LINK_AFTER_ACTION_DELETE = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
-
-
-
+$HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD    = $PHP_SELF."?atmenu=document&stitle=Document&wh=AC&id=";
+$HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT   = $PHP_SELF."?atmenu=document&stitle=Document&wh=AC&id=";
+$HD_Form -> FG_GO_LINK_AFTER_ACTION_DELETE = $PHP_SELF."?atmenu=document&stitle=Document&wh=AC&id=";

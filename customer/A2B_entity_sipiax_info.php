@@ -42,7 +42,7 @@ if (!has_rights(ACX_SIP_IAX)) {
 	die();
 }
 
-getpost_ifset(array('atmenu','startnumber','quantity'));
+getpost_ifset(array('atmenu','startnumber','quantity','extcreated'));
 
 if ($atmenu == "") $atmenu = "SIP";
 
@@ -98,7 +98,7 @@ if ($atmenu == "SIP")
 		if (count($extcreated)>0) {
 			$log = new Logger();
 			$log -> insertLog_Update($_SESSION["card_id"], 1, "SIP EXTENSION".(($quantity>1)?"S":"")." ADDED", implode(',', $extcreated), '', $_SERVER['REMOTE_ADDR'], 'A2B_entity_sipiax_info.php','',2);
-			$log = null;
+			unset($log);
 			$_SESSION["last_page"] = "A2B_entity_sipiax_info.php";
 		}
 		if (!USE_REALTIME) {
@@ -115,16 +115,30 @@ if ($atmenu == "SIP")
 				$as->disconnect();
 			} else echo "Error : Manager Connection";
 		}
+		if (count($extcreated)>0) {
+		    $url_forward = $PHP_SELF.'?extcreated='.count($extcreated);
+		    if (!empty($current_page)) {
+			$url_forward .= "?current_page=$current_page";
+		    }
+		    if (!empty($popup_select)) {
+			$url_forward .= ($url_forward?"&":"?")."popup_select=$popup_select";
+		    }
+		    if (!empty($idcust)) {
+			$url_forward .= ($url_forward?"&":"?")."idcust=$idcust";
+		    }
+		    Header ("Location: $url_forward");
+		    die();
+		}
 		continue;
 	}
 	break;
-} while (true);
+    } while (true);
 
 include ("./form_data/FG_var_sipiax_info.inc");
 $HD_Form->setDBHandler(DbConnect());
 $HD_Form->init();
 
-$HD_Form -> FG_EDITION_LINK	= $_SERVER['PHP_SELF']."?form_action=ask-edit&atmenu=$atmenu&id=";
+$HD_Form -> FG_EDITION_LINK	= 'url:'.$PHP_SELF."?popup_select=4&form_action=ask-edit&id=";
 //$HD_Form -> FG_DELETION_LINK	= $_SERVER['PHP_SELF']."?form_action=ask-delete&atmenu=$atmenu&id=";
 
 if (strlen($HD_Form -> FG_EDITION_CLAUSE)>0)
@@ -142,6 +156,40 @@ $list = $HD_Form->perform_action($form_action);
 
 // #### HEADER SECTION
 $smarty->display('main.tpl');
+
+if ($message == "editsuccess") {
+?>
+<center>
+<table width="95%" align="center">
+<tr height="80px">
+<td align="center"><b><?php echo gettext("Information has successfully been updated")?></b></td>
+</tr>
+</table>
+<form runat="server">
+    <div>
+        <input id="button1" onclick="window.parent.postMessage({action:'closeAlert'},'*')" class="form_input_button" type="button" value="" />
+    </div>
+</form>
+</center>
+<br>
+<br>
+<script type="text/javascript">
+    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*');
+    objbutton=document.getElementById('button1');
+    objbutton.focus();
+    timeleft=10;
+    function buttontimer(){
+        timeleft--;
+        if(timeleft==0) {
+                objbutton.click();
+        }
+        objbutton.value = ' <?= gettext("Close Window") ?> ('+timeleft+') ';
+    }
+    buttontimer();
+    setInterval(function() {buttontimer()}, 1000);
+</script>
+<?php
+} else {
 
 // #### HELP SECTION
 if ($popup_select !=4)
@@ -177,7 +225,7 @@ if ($form_action == "list") {
 </center>
 <?php
 }
-if (isset($extcreated)) echo 'You have just created '.count($extcreated).' extensions';
+if (!empty($extcreated) && $extcreated > 0) echo 'You have just created '.$extcreated.' extensions';
 if ($atmenu == "SIP" && $form_action == "list") {
 ?>
 <script src="./javascript/sipiax.js"></script>
@@ -229,3 +277,4 @@ $HD_Form->create_form($form_action, $list, $id = null);
 
 // #### FOOTER SECTION
 $smarty->display('footer.tpl');
+}

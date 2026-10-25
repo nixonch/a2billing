@@ -36,7 +36,11 @@ function getlast($toget) {
 $DBHandle = DbConnect();
 $instance_table = new Table();
 
-if ($method)
+if ($method == 'customer' && (!isset($custid) || !ctype_digit((string)$custid))) {
+	Header("HTTP/1.0 400 Bad Request");
+	exit;
+}
+if ($method && $method != 'customer')
 	$_SESSION['message'] = "";
 $json_list = $destlist = $cidlist = $calleridsArray = $trunksArray = array();
 $id_ringup = false;
@@ -63,6 +67,12 @@ if ($method == 'ask-edit' && isset($id) && is_numeric($id)) {
 				$json_list['sheduleArray'][] = array('weekdays[]'=>$value[0],'timefrom[]'=>$value[1],'timetill[]'=>$value[2],'inputa[]'=>$value[3],'inputb[]'=>$value[4]);
 			}
 		}
+	}
+}
+if (($method == 'ask-edit' && isset($id) && is_numeric($id)) || $method == 'customer') {
+	if ($method == 'customer') {
+		$custid = (int) $custid;
+		$callerids = $dest = '';
 	}
         $QUERYpop = "SELECT cid FROM cc_callerid WHERE id_cc_card=$custid AND blacklist=0 ORDER BY cid";
         $resmax = $DBHandle->Execute($QUERYpop);
@@ -97,6 +107,11 @@ if ($method == 'ask-edit' && isset($id) && is_numeric($id)) {
 		$destlist[] = array($val[0],$val[0]);
         }
 	if ($dest && array_search($dest,array_column($destlist,0))===false) array_unshift($destlist,array($dest,$dest));
+	if ($method == 'customer') {
+		header('Content-Type: application/json; charset=utf-8');
+		echo json_encode(array('destlist'=>$destlist, 'cidlist'=>$cidlist));
+		exit;
+	}
 } elseif ($method == 'upload') {
 	if (isset($id) && is_numeric($id)) $id_ringup = $id;
 	$callerids	= preg_replace('/^,*|[^\d,]|(,)(?=\1)|,*$/','',$callerids);
@@ -445,6 +460,39 @@ function clearMyForm()
     $('#rhead').html('<?php echo gettext("Ring-Up").". ".gettext("New upload");?>.');
     $('#id').remove();
 }
+
+var popupCallback = function (payload) {
+    if (payload.type !== 'sendValue' || payload.formname !== 'myForm' || payload.fieldname !== 'custid') { return false; }
+    var form = document.forms.myForm;
+    var iframe = document.getElementById('alert-iframe');
+    var alertBox = document.getElementById('inline-alert');
+    iframe.ringupSelection = payload;
+    if (form.elements.custid.value == payload.selvalue) {
+	return sendValueCallback(payload);
+    }
+    $.getJSON('CC_ring_up.php', {method: 'customer', custid: payload.selvalue}, function (data) {
+	if (document.getElementById('alert-iframe') !== iframe || iframe.ringupSelection !== payload || alertBox.style.opacity === '0') { return; }
+	if (!sendValueCallback(payload)) { return; }
+	$('#destlist').empty();
+	$.each(data.destlist, function (i, value) {
+	    $('#destlist').append(new Option(value[1], value[0]));
+	});
+	form.elements.dest.value = '';
+	form.elements.callerids.value = '';
+	form.elements.selected_callerids.options.length = 1;
+	var available = form.elements.unselected_callerids;
+	available.options.length = 1;
+	$.each(data.cidlist, function (i, value) {
+	    available.add(new Option(value, value));
+	});
+	window.postMessage({action: 'closeAlert'}, window.location.origin);
+    }).fail(function () {
+	if (document.getElementById('alert-iframe') === iframe && iframe.ringupSelection === payload && alertBox.style.opacity !== '0') {
+	    alert('<?php echo addslashes(gettext("Error loading customer data"));?>');
+	}
+    });
+    return false;
+};
 </script>
 
 <div style="display:none">
@@ -561,7 +609,7 @@ function sendtoupload(form){
          </tr>
          <tr bgcolor="#F2F8FF">
 	   <td style="padding:5px"><?php echo gettext("Customer");?>:</td>
-	   <td><INPUT class="form_enter" id="custid" name="custid" size="30" maxlength="30" value="" readonly /><a href="#" onclick="window.open('A2B_entity_card?popup_select=3&popup_formname=myForm&popup_fieldname=custid', 'CardNumberSelection','width=590,height=550,top=100,left=100,scrollbars=1');"><img src="<?php echo Images_Path_Main;?>/icon_arrow_orange.gif" valign="bottom"/></a></td>
+	   <td><INPUT class="form_enter" id="custid" name="custid" size="30" maxlength="30" value="" readonly /><a href="#" onclick="alertBase('url:A2B_entity_card?popup_select=3&popup_formname=myForm&popup_fieldname=custid','Card Number Selection',true,false,'#445760',event.pageX+25,event.pageY-200,'UL',null,null,null,null,null,popupCallback); return false;"><img src="<?php echo Images_Path_Main;?>/icon_arrow_orange.gif" valign="bottom"/></a></td>
          </tr>
          <tr bgcolor="#E2E2E2">
 	    <td></td>

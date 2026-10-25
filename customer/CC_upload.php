@@ -258,7 +258,7 @@ $smarty->display('main.tpl');
         objbutton.value = '<?php echo gettext("Close Window")?> ('+timeleft+')';
     }
     var updateLink = window.parent.location.protocol + '//' + window.parent.location.host + window.parent.location.pathname + '?play=2';
-    window.parent.postMessage({action:'refreshInside',payload:updateLink},'*')
+    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*')
     buttontimer();
     setInterval(function() {buttontimer()}, 1000);
 </script>

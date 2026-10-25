@@ -194,7 +194,6 @@ if ($_POST['posted']==1){
 	$list_total = $instance_table_graph -> Get_list ($DBHandle, $FG_TABLE_CLAUSE, null, null, null, null, null, null);
 }
 
-
 $nb_record = count($list_total);
 
 if ($nb_record<=$FG_LIMITE_DISPLAY) { 
@@ -203,43 +202,50 @@ if ($nb_record<=$FG_LIMITE_DISPLAY) {
 	$nb_record_max=(intval($nb_record/$FG_LIMITE_DISPLAY)+1);
 }
 
-
 $smarty->display('main.tpl');
-
 ?>
 
-
-
 <!-- ** ** ** ** ** Part for the research ** ** ** ** ** -->
+<script language="javascript">
+var popupCallback = function (payload) {
+    if (!payload.formname || !payload.fieldname) { return false; }
+    var form = document.forms[payload.formname];
+    if (!form) { return false; }
+    var field = form.elements[payload.fieldname];
+    if (!field) { return false; }
+    field.value = payload.selvalue;
+    return true;
+};
+</script>
 	<div align="center">
 	<FORM METHOD=POST name="myForm" ACTION="<?php echo $PHP_SELF?>?s=<?php echo $s?>&t=<?php echo $t?>&order=<?php echo $order?>&sens=<?php echo $sens?>&current_page=<?php echo $current_page?>">
 	<INPUT TYPE="hidden" NAME="posted" value=1>
-		<table class="bar-status" width="80%" border="0" cellspacing="1" cellpadding="2" align="center">
+		<table class="bar-status" width="50%" border="0" cellspacing="1" cellpadding="2" align="center">
 			<tbody>
 			<tr>
-				<td align="left" valign="top"  class="bgcolor_004">					
+				<td align="left" valign="top"  class="bgcolor_004">
 					<font  class="fontstyle_003">&nbsp;&nbsp;<?php echo gettext("CUSTOMERS");?></font>
 				</td>
 			<td class="bgcolor_005" align="left">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
-				<td class="fontstyle_searchoptions" width="50%" valign="top">
+				<td class="fontstyle_searchoptions" width="50%" valign="top" nowrap>
 					<?php echo gettext("Enter the customer ID");?>: <INPUT TYPE="text" NAME="entercustomer" value="<?php echo $entercustomer?>" class="form_input_text">
-					<a href="#" onclick="window.open('A2B_entity_card.php?popup_select=1&popup_formname=myForm&popup_fieldname=entercustomer' , 'CardNumberSelection','scrollbars=1,width=550,height=330,top=20,left=100,scrollbars=1');"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a>
+					<a href="#" onclick="alertBase('url:A2B_entity_card?popup_select=1&popup_formname=myForm&popup_fieldname=entercustomer','Card Number Selection',true,false,'#445760',null,event.pageY+20,'UR',null,null,null,null,null,sendValueCallback);"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a>
 				</td>
 				<td width="50%">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
-							<td align="left" class="fontstyle_searchoptions"><?php echo gettext("CallPlan");?> :</td>
-							<td align="left" class="fontstyle_searchoptions"><INPUT TYPE="text" NAME="entertariffgroup" value="<?php echo $entertariffgroup?>" size="4" class="form_input_text">&nbsp;<a href="#" onclick="window.open('A2B_entity_tariffgroup.php?popup_select=2&popup_formname=myForm&popup_fieldname=entertariffgroup' , 'CallPlanSelection','scrollbars=1,width=550,height=330,top=20,left=100');"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a></td>
-							<td align="left" class="fontstyle_searchoptions"><?php echo gettext("Provider");?> :
-							<td align="left" class="fontstyle_searchoptions"><INPUT TYPE="text" NAME="enterprovider" value="<?php echo $enterprovider?>" size="4" class="form_input_text">&nbsp;<a href="#" onclick="window.open('A2B_entity_provider.php?popup_select=2&popup_formname=myForm&popup_fieldname=enterprovider' , 'ProviderSelection','scrollbars=1,width=550,height=330,top=20,left=100');"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a></td>
+							<td align="left" class="fontstyle_searchoptions" nowrap><?php echo gettext("CallPlan");?> :</td>
+							<td align="left" class="fontstyle_searchoptions" nowrap><INPUT TYPE="text" NAME="entertariffgroup" value="<?php echo $entertariffgroup?>" size="4" class="form_input_text">&nbsp;<a href="#" onclick="alertBase('url:A2B_entity_tariffgroup?popup_select=2&popup_formname=myForm&popup_fieldname=entertariffgroup','Call Plan Selection',true,false,'#445760',event.pageX+200,event.pageY+20,'UR',null,null,null,null,null,sendValueCallback);"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a></td>
+							<td align="left" class="fontstyle_searchoptions" nowrap><?php echo gettext("Provider");?> :</td>
+							<td align="left" class="fontstyle_searchoptions" nowrap><INPUT TYPE="text" NAME="enterprovider" value="<?php echo $enterprovider?>" size="4" class="form_input_text">&nbsp;<a href="#" onclick="alertBase('url:A2B_entity_provider?popup_select=2&popup_formname=myForm&popup_fieldname=enterprovider','Provider Selection',true,false,'#445760',event.pageX+200,event.pageY+20,'UR',null,null,null,null,null,sendValueCallback);"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a></td>
 						</tr>
 						<tr>
-							<td align="left" class="fontstyle_searchoptions"><?php echo gettext("Trunk");?> :</td>
-							<td align="left" class="fontstyle_searchoptions"><INPUT TYPE="text" NAME="entertrunk" value="<?php echo $entertrunk?>" size="4" class="form_input_text">&nbsp;<a href="#" onclick="window.open('A2B_entity_trunk.php?popup_select=2&popup_formname=myForm&popup_fieldname=entertrunk' , 'TrunkSelection','scrollbars=1,width=550,height=330,top=20,left=100');"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a></td>
-							<td align="left" class="fontstyle_searchoptions"><?php echo gettext("Rate");?> :</td>
-							<td align="left" class="fontstyle_searchoptions"><INPUT TYPE="text" NAME="enterratecard" value="<?php echo $enterratecard?>" size="4" class="form_input_text">&nbsp;<a href="#" onclick="window.open('A2B_entity_def_ratecard.php?popup_select=2&popup_formname=myForm&popup_fieldname=enterratecard' , 'RatecardSelection','scrollbars=1,width=550,height=330,top=20,left=100');"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a></td>
+							<td align="left" class="fontstyle_searchoptions" nowrap><?php echo gettext("Trunk");?> :</td>
+							<td align="left" class="fontstyle_searchoptions" nowrap><INPUT TYPE="text" NAME="entertrunk" value="<?php echo $entertrunk?>" size="4" class="form_input_text">&nbsp;<a href="#" onclick="alertBase('url:A2B_entity_trunk?popup_select=2&popup_formname=myForm&popup_fieldname=entertrunk','Trunk Selection',true,false,'#445760',event.pageX+200,event.pageY+20,'UR',null,null,null,null,null,sendValueCallback);"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a></td>
+							<td align="left" class="fontstyle_searchoptions" nowrap><?php echo gettext("Rate");?> :</td>
+							<td align="left" class="fontstyle_searchoptions" nowrap><INPUT TYPE="text" NAME="enterratecard" value="<?php echo $enterratecard?>" size="4" class="form_input_text">&nbsp;<a href="#" onclick="alertBase('url:A2B_entity_def_ratecard?popup_select=2&popup_formname=myForm&popup_fieldname=enterratecard','Ratecard Selection',true,false,'#445760',event.pageX+200,event.pageY+20,'UR',null,null,null,null,null,sendValueCallback);"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a></td>
 						</tr>
 					</table>
 				</tr>
@@ -247,21 +253,21 @@ $smarty->display('main.tpl');
 			</td>
 			</tr>
 			<tr>
-        		<td align="left" class="bgcolor_002">					
+			<td align="left" class="bgcolor_002">
 					<font class="fontstyle_003">&nbsp;&nbsp;<?php echo gettext("SELECT DAY");?></font>
 				</td>
-      			<td align="left" class="bgcolor_003">
+			<td align="left" class="bgcolor_003">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0" >
 					<tr><td class="fontstyle_searchoptions">
-	  				<?php echo gettext("From");?> : <select name="fromstatsday_sday" class="form_input_select">
+					<?php echo gettext("From");?> : <select name="fromstatsday_sday" class="form_input_select">
 					<?php  
 						for ($i=1;$i<=31;$i++){
 							if ($fromstatsday_sday==sprintf("%02d",$i)){$selected="selected";}else{$selected="";}
 							echo '<option value="'.sprintf("%02d",$i)."\"$selected>".sprintf("%02d",$i).'</option>';
 						}
-					?>					
+					?>
 					</select>
-				 	<select name="fromstatsmonth_sday" class="form_input_select">
+					<select name="fromstatsmonth_sday" class="form_input_select">
 					<?php 	
 						$monthname = array( gettext("January"), gettext("February"),gettext("March"), gettext("April"), gettext("May"), gettext("June"), gettext("July"), gettext("August"), gettext("September"), gettext("October"), gettext("November"), gettext("December"));
 						$year_actual = date("Y");  	
@@ -271,32 +277,32 @@ $smarty->display('main.tpl');
 								$monthnumber = date("n")-1; // Month number without lead 0.
 							}else{
 								$monthnumber=11;
-							}		   
-						   	for ($j=$monthnumber;$j>=0;$j--){	
+							}
+							for ($j=$monthnumber;$j>=0;$j--){	
 								$month_formated = sprintf("%02d",$j+1);
 								if ($fromstatsmonth_sday=="$i-$month_formated") $selected="selected";
 								else $selected="";
-								echo "<OPTION value=\"$i-$month_formated\" $selected> $monthname[$j]-$i </option>";				
+								echo "<OPTION value=\"$i-$month_formated\" $selected> $monthname[$j]-$i </option>";
 							}
-						}								
-					?>										
+						}
+					?>
 					</select>
 					</td><td class="fontstyle_searchoptions">&nbsp;&nbsp;
 					<?php echo gettext("Number of days to compare");?> :
-				 	<select name="days_compare" class="form_input_select">
+					<select name="days_compare" class="form_input_select">
 					<option value="4" <?php if ($days_compare=="4"){ echo "selected";}?>>- 4 <?php echo gettext("days");?></option>
 					<option value="3" <?php if ($days_compare=="3"){ echo "selected";}?>>- 3 <?php echo gettext("days");?></option>
 					<option value="2" <?php if (($days_compare=="2")|| !isset($days_compare)){ echo "selected";}?>>- 2 <?php echo gettext("days");?></option>
 					<option value="1" <?php if ($days_compare=="1"){ echo "selected";}?>>- 1 <?php echo gettext("days");?></option>
 					</select>
 					</td></tr></table>
-	  			</td>
-    		</tr>	
+				</td>
+		</tr>	
 			
 			<tr>
-				<td class="bgcolor_004" align="left">			
+				<td class="bgcolor_004" align="left">
 					<font  class="fontstyle_003">&nbsp;&nbsp;<?php echo gettext("CALLEDNUMBER");?></font>
-				</td>				
+				</td>
 				<td class="bgcolor_005" align="left" >
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr><td class="fontstyle_searchoptions">&nbsp;&nbsp;<INPUT TYPE="text" class="form_input_text" NAME="dst" value="<?php echo $dst?>"></td>
@@ -305,7 +311,7 @@ $smarty->display('main.tpl');
 				<td  align="center" class="fontstyle_searchoptions"><input type="radio" NAME="dsttype" value="3" <?php if($dsttype==3){?>checked<?php }?>><?php echo gettext("Contains");?></td>
 				<td  align="center" class="fontstyle_searchoptions"><input type="radio" NAME="dsttype" value="4" <?php if($dsttype==4){?>checked<?php }?>><?php echo gettext("Ends with");?></td>
 				</tr></table></td>
-			</tr>			
+			</tr>
 			<tr>
 				<td align="left" class="bgcolor_002">					
 					<font class="fontstyle_003">&nbsp;&nbsp;<?php echo gettext("SOURCE");?></font>

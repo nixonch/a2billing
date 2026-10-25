@@ -2,7 +2,7 @@
  * Base function to show an inline alert.
  *
  * Positioning:
- * posX / posY define the lower right corner of the alert box.  
+ * posX / posY define the lower right corner of the alert box.
  * If both are null, the alert is automatically centered in the viewport.
  *
  * Parameters:
@@ -14,12 +14,12 @@
  * @param {number|null}   posX                    X coordinate for positioning the alert.
  * @param {number|null}   posY                    Y coordinate for positioning the alert.
  * @param {string|null}   corner                  Corner to anchor the alert to ('UL', 'UR', 'BL', 'BR', null for centering).
- * @param {string}        refreshId
  * @param {number|null}   autoHideSeconds         Optional timeout to auto-close the alert.
  * @param {string|null}   mainButtonLabel         Caption for the primary button (default: "Schliessen").
  * @param {function|null} mainButtonCallback      Callback executed after closing via the primary button.
  * @param {string|null}   secondaryButtonLabel    Optional caption for a secondary button.
  * @param {function|null} secondaryButtonCallback Callback executed after clicking the secondary button.
+ * @param {function|null} popupResultCallback
  *
  * Example 1 (simple usage with positioning):
  *     alertBase(
@@ -66,12 +66,12 @@ function alertBase(
     posX = null,
     posY = null,
     corner = null,
-    refreshId = 'main-list',
     autoHideSeconds = null,
     mainButtonLabel = null,
     mainButtonCallback = null,
     secondaryButtonLabel = null,
-    secondaryButtonCallback = null
+    secondaryButtonCallback = null,
+    popupResultCallback = null
 )
 {
 	var initialPositionSetted = false;
@@ -89,8 +89,8 @@ function alertBase(
 		'src="' + contentUrl.replace(/"/g, '&quot;') + '" ' +
 		'id="alert-iframe" ' +
 		'scrolling="auto" ' +
-		'loading="lazy"' +
-		'></iframe>';
+		'loading="eager"' +
+		'></iframe>';// '
 	}
 	function clamp(value, min, max) {
 	    if (value < min) return min;
@@ -117,32 +117,36 @@ function alertBase(
 	    var boxHeight = alertBox.offsetHeight;
 	    var viewportWidth  = document.documentElement.clientWidth  || window.innerWidth;
 	    var viewportHeight = document.documentElement.clientHeight || window.innerHeight;
+	    var hasPosX = (posX !== null && posX !== undefined);
+	    var hasPosY = (posY !== null && posY !== undefined);
+	    var centerLeft = window.pageXOffset + Math.round((viewportWidth  - boxWidth)  / 2);
+	    var centerTop  = window.pageYOffset + Math.round((viewportHeight - boxHeight) / 2);
 	    if (corner) {
 		switch(corner) {
 		    case 'UL':
-			alertAnchorPageLeft = posX || 0;
-			alertAnchorPageTop  = posY ?? window.pageYOffset + Math.round((viewportHeight - boxHeight) / 2);
+			alertAnchorPageLeft = hasPosX ? posX : centerLeft;
+			alertAnchorPageTop  = hasPosY ? posY : centerTop;
 			break;
 		    case 'UR':
-			alertAnchorPageLeft = (posX || viewportWidth) - boxWidth;
-			alertAnchorPageTop  = posY ?? window.pageYOffset + Math.round((viewportHeight - boxHeight) / 2);
+			alertAnchorPageLeft = hasPosX ? posX - boxWidth : centerLeft;
+			alertAnchorPageTop  = hasPosY ? posY : centerTop;
 			break;
 		    case 'BL':
-			alertAnchorPageLeft = posX || 0;
-			alertAnchorPageTop  = (posY || viewportHeight) - boxHeight;
+			alertAnchorPageLeft = hasPosX ? posX : centerLeft;
+			alertAnchorPageTop  = hasPosY ? posY - boxHeight : centerTop;
 			break;
 		    case 'BR':
-			alertAnchorPageLeft = (posX || viewportWidth) - boxWidth;
-			alertAnchorPageTop  = (posY || viewportHeight) - boxHeight;
+			alertAnchorPageLeft = hasPosX ? posX - boxWidth : centerLeft;
+			alertAnchorPageTop  = hasPosY ? posY - boxHeight : centerTop;
 			break;
 		    default:
-			alertAnchorPageLeft = window.pageXOffset + Math.round((viewportWidth  - boxWidth)  / 2);
-			alertAnchorPageTop  = window.pageYOffset + Math.round((viewportHeight - boxHeight) / 2);
+			alertAnchorPageLeft = centerLeft;
+			alertAnchorPageTop  = centerTop;
 			break;
 		}
 	    } else {
-		alertAnchorPageLeft = window.pageXOffset + Math.round((viewportWidth  - boxWidth)  / 2);
-		alertAnchorPageTop  = window.pageYOffset + Math.round((viewportHeight - boxHeight) / 2);
+		alertAnchorPageLeft = centerLeft;
+		alertAnchorPageTop  = centerTop;
 	    }
 	    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 	    if (alertAnchorPageTop + boxHeight > scrollTop + viewportHeight) {
@@ -252,7 +256,7 @@ function alertBase(
 		    var html = doc.documentElement;
 		    var contentWidth = Math.min(Math.max(body.scrollWidth, html.scrollWidth), viewportWidth);
 		    var contentHeight = Math.min(Math.max(body.scrollHeight, html.scrollHeight), viewportHeight - 39);
-		    iframe.style.height = contentHeight + 'px';
+		    iframe.style.height = contentHeight +  1 + 'px';
 		    alertBox.style.width = contentWidth + 30 + 'px';
 		    iframe.style.width = '100%';
 		    if (initialPositionSetted) {
@@ -367,6 +371,7 @@ function alertBase(
 		switch (e.data?.action) {
 		    case 'closeAlert': closeAlert(); break;
 		    case 'refreshInside':
+			var refreshId = 'main-list';
 			var id = e.data.id ?? null;
 			var className = e.data.class ?? null;
 			var link = e.data.payload ?? location.href;
@@ -396,6 +401,20 @@ function alertBase(
 				}
 				if (newPart && oldPart) { oldPart.innerHTML = newPart.innerHTML; }
 			    });
+			break;
+		    case 'popupResult':
+			var popupPayload = e.data.payload ?? {};
+			var shouldClose = true;
+			if (typeof popupResultCallback === 'function') {
+			    try {
+				shouldClose = (popupResultCallback(popupPayload, e) !== false);
+			    } catch (err) {
+				shouldClose = false;
+			    }
+			}
+			if (shouldClose) {
+			    closeAlert();
+			}
 			break;
 		}
 	    };

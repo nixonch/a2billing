@@ -52,12 +52,15 @@ if (has_rights(ACX_DISTRIBUTION) && $popup_select==1 && (!isset($form_action) ||
 	$HD_Form = new FormHandler("cc_callerid LEFT JOIN cc_card AS t2 ON t2.id=id_cc_card", gettext("CallerID"));
 	$HD_Form -> FG_TABLE_CLAUSE = "t2.id = $idcust AND t2.id_diller = {$_SESSION['card_id']}".$listclause;
 	$HD_Form -> FG_TABLE_ID = 'cc_callerid.id';
+	$HD_Form -> FG_VIEW_TABLE_WITDH = '95%';
 } elseif (!isset($form_action) || $form_action=="list") {
 	$HD_Form = new FormHandler("cc_callerid", gettext("CallerID"));
 	$HD_Form -> FG_TABLE_CLAUSE .= "id_cc_card = ".$_SESSION['card_id'].$listclause;
+	$HD_Form -> FG_VIEW_TABLE_WITDH = '50%';
 } else {
 	$HD_Form = new FormHandler("cc_callerid", "CallerID");
 	$HD_Form -> FG_TABLE_CLAUSE .= "id_cc_card = ".$idcard.$listclause;
+	$HD_Form -> FG_VIEW_TABLE_WITDH = '95%';
 }
 
 $HD_Form -> FG_DEBUG = 0;
@@ -130,7 +133,6 @@ $HD_Form -> CV_DISPLAY_LINE_TITLE_ABOVE_TABLE = false;
 $HD_Form -> CV_TEXT_TITLE_ABOVE_TABLE = '';
 $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
 $HD_Form -> FG_LIMITE_DISPLAY = 20;
-$HD_Form -> FG_VIEW_TABLE_WITDH = '90%';
 
 //$HD_Form -> FG_DELETION_CONDITION = '"|col4|" == "<font color=red>'.gettext('No').'</font>"';
 
@@ -349,7 +351,6 @@ if (isset($filterprefix)  &&  (strlen($filterprefix)>0)) {
     $HD_Form -> FG_TABLE_CLAUSE.="cid like '$filterprefix%'";
 }
 
-$HD_Form -> CV_FOLLOWPARAMETERS = "&popup_select=$popup_select&idcust=$idcust&displayheader=0";
 
 $HD_Form -> FG_INTRO_TEXT_EDITION= gettext("You can modify here different properties of your CallerID");
 $HD_Form -> FG_INTRO_TEXT_ASK_DELETION = gettext("If you really want remove this")." ".$HD_Form->FG_INSTANCE_NAME.", ".gettext("click on the delete button.");
@@ -364,6 +365,6 @@ $HD_Form -> FG_TEXT_ADITION_CONFIRMATION = gettext("Your new")." ".$HD_Form->FG_
 $HD_Form -> FG_BUTTON_EDITION_SRC = $HD_Form -> FG_BUTTON_ADITION_SRC  = Images_Path."/cormfirmboton.gif";
 $HD_Form -> FG_BUTTON_EDITION_BOTTOM_TEXT = $HD_Form -> FG_BUTTON_ADITION_BOTTOM_TEXT = gettext("Made your change to edit this callerid.");
 
-$HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD 	= $PHP_SELF."?atmenu=document&stitle=Document&wh=AC&popup_select=$popup_select&idcust=$idcust&id=";
-$HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT	= $PHP_SELF."?atmenu=document&stitle=Document&wh=AC&idcust=$idcust&id=";
-$HD_Form -> FG_GO_LINK_AFTER_ACTION_DELETE	= $PHP_SELF."?atmenu=document&stitle=Document&wh=AC&idcust=$idcust&id=";
+//$HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD 	= $PHP_SELF."?atmenu=document&stitle=Document&wh=AC&idcust=$idcust&id=";
+$HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT	= $PHP_SELF."?displayheader=0&idcust=$idcust&id=";
+$HD_Form -> FG_GO_LINK_AFTER_ACTION_DELETE	= $PHP_SELF."?displayheader=0&idcust=$idcust&id=";

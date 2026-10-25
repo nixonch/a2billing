@@ -42,33 +42,29 @@
 				</div>
 			</li>
 		</ul>
-
 	</div>
-	
-{/if}
 
-{if ($popupwindow == 0)}
-<div id="left-sidebar">
-<div id="leftmenu-top">
-<div id="leftmenu-down">
-<div id="leftmenu-middle">
+	<div id="left-sidebar">
+	<div id="leftmenu-top">
+	<div id="leftmenu-down">
+	<div id="leftmenu-middle">
 
-<ul id="nav">
-  
-  	{if ($ACXCUSTOMER > 0) }
-  	<div class="toggle_menu"><li>
+	<ul id="nav">
+
+{if ($ACXCUSTOMER > 0) }
+	<div class="toggle_menu"><li>
 	<a href="javascript:;" class="toggle_menu" target="_self"> <div> <div id="menutitlebutton"> <img id="img1"
-	{if ($section == "1")}
+    {if ($section == "1")}
 	src="templates/{$SKIN_NAME}/images/minus.gif"
-	{else}
+    {else}
 	src="templates/{$SKIN_NAME}/images/plus.gif"
-	{/if} onmouseover="this.style.cursor='hand';" ></div> <div id="menutitlesection"><strong>{php} echo gettext("CUSTOMERS");{/php}</strong></div></div></a></li></div>
+    {/if} onmouseover="this.style.cursor='hand';" ></div> <div id="menutitlesection"><strong>{php} echo gettext("CUSTOMERS");{/php}</strong></div></div></a></li></div>
 		<div class="tohide"
-	{if ($section =="1")}
+    {if ($section =="1")}
 		style="">
-	{else}
+    {else}
 	style="display:none;">
-	{/if}
+    {/if}
 	<ul>
 		<li><ul>
 				<li><a href="A2B_entity_card.php?section=1">{php} echo gettext("Add :: Search");{/php}</a></li>
@@ -87,7 +83,7 @@
 		</ul></li>
 	</ul>
 	</div>
-	{/if}
+{/if}
 <!--
 	{if ($ACXADMINISTRATOR  > 0)}
 	<div class="toggle_menu"><li>
@@ -597,7 +593,7 @@
 </div>
 
 <div id="main-content">
-	<div id="inside">
+	<div class="inside">
 <br/>
 {else}
 <div>

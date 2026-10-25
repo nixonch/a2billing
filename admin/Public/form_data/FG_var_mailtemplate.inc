@@ -118,7 +118,7 @@ if (($popup_select>=1)) {
 	$HD_Form -> FG_OTHER_BUTTON1_IMG = '';
 
 	if ($popup_select==1) {
-		$HD_Form -> FG_OTHER_BUTTON1_LINK = "javascript:sendValue('|col0|');";
+		$HD_Form -> FG_OTHER_BUTTON1_LINK = "javascript:selectMailTemplate('|col0|');";
 	}
 } else {	
 	$HD_Form -> FG_LIST_ADDING_BUTTON1 = true;

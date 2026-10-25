@@ -72,6 +72,7 @@ $HD_Form -> CV_DISPLAY_LINE_TITLE_ABOVE_TABLE = false;
 $HD_Form -> CV_TEXT_TITLE_ABOVE_TABLE = '';
 $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
 $HD_Form -> FG_LIMITE_DISPLAY = 20;
+$HD_Form -> FG_VIEW_TABLE_WITDH = '50%';
 if (strlen($HD_Form -> FG_TABLE_CLAUSE)>0) $HD_Form -> FG_TABLE_CLAUSE.=" AND";
 $HD_Form -> FG_TABLE_CLAUSE.=" (refill_type != 2 OR credit >= 0 OR card_id >= 0)"; // не показывать отрицательные бонусы клиентам
 

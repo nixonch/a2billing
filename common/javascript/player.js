@@ -104,6 +104,7 @@ function openURL(theLINK, emptytextAlert, emptynameAlert, playOrParams)
 	    return false;
 	}
 
+    // 1) Базовые параметры из формы
     var params = new URLSearchParams();
 	params.set('langlocale', langlocale);
 	params.set('voicename', voicename);
@@ -112,13 +113,17 @@ function openURL(theLINK, emptytextAlert, emptynameAlert, playOrParams)
 	params.set('greetname', greetname);
 	params.set('greettext', greettext);
 
+    // 2) Совместимость: 4-й аргумент может быть числом play или объектом params
     if (playOrParams !== undefined && playOrParams !== null) {
         if (typeof playOrParams === 'object') {
+            // произвольные параметры
             Object.keys(playOrParams).forEach(function(key) {
                 var val = playOrParams[key];
 
+                // пропускаем null/undefined, остальные приводим к строке
                 if (val === undefined || val === null) { return; }
 
+                // если массив — добавим несколько одинаковых ключей: key=a&key=b
                 if (Array.isArray(val)) {
                     val.forEach(function(item) {
                         if (item === undefined || item === null) { return; }
@@ -129,6 +134,7 @@ function openURL(theLINK, emptytextAlert, emptynameAlert, playOrParams)
                 }
             });
         } else {
+            // старый режим: play как число/строка
             params.set('play', String(playOrParams));
         }
     }
@@ -157,14 +163,18 @@ function openURLAjax(theLINK, emptytextAlert, emptynameAlert, play, refreshTarge
         return false;
     }
 
+    // 1) Базовый URL: PHP_SELF (или любой theLINK)
     var url = new URL(theLINK, window.location.href);
 
+    // 2) Берём параметры текущей страницы (form_action, current_page, order, sens, id, ...)
     var merged = new URLSearchParams(window.location.search);
 
+    // 3) Если theLINK уже содержит query-параметры — тоже учитываем
     for (const [k, v] of url.searchParams.entries()) {
 	merged.set(k, v);
     }
 
+    // 4) Добавляем/перезаписываем параметры
     merged.set('langlocale', langlocale);
     merged.set('voicename', voicename);
     merged.set('gender', gender);
@@ -173,6 +183,7 @@ function openURLAjax(theLINK, emptytextAlert, emptynameAlert, play, refreshTarge
     merged.set('greetname', greetname);
     merged.set('greettext', greettext);
 
+    // 5) Финальный URL
     url.search = merged.toString();
     var link = url.toString();
 
@@ -198,6 +209,7 @@ function openURLAjax(theLINK, emptytextAlert, emptynameAlert, play, refreshTarge
                 newPart = tmp.querySelector(`.${className}`);
                 if (newPart) { oldPart = document.querySelector(`.${className}`); }
             } else {
+                // дефолт: пытаемся обновить main-content, иначе ничего не трогаем
                 newPart = tmp.querySelector(`#main-content`);
                 if (newPart) { oldPart = document.getElementById('main-content'); }
             }
@@ -207,7 +219,9 @@ function openURLAjax(theLINK, emptytextAlert, emptynameAlert, play, refreshTarge
             }
         })
         .catch(err => {
+            // при необходимости заменить на другую систему логирования
             console.error('openURLAjax fetch failed', err);
         });
+    // важно: не даём форме сабмититься
     return false;
 }

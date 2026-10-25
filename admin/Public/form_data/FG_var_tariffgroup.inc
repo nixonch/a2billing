@@ -33,7 +33,7 @@
 
 
 
-getpost_ifset(array('id', 'tariffgroupname', 'lcrtype', 'removeinterprefix', 'idtariffplan', 'idtariffplan_hidden', 'id_cc_package_offer'));
+getpost_ifset(array('id', 'tariffgroupname', 'lcrtype', 'removeinterprefix', 'idtariffplan', 'idtariffplan_hidden', 'id_cc_package_offer', 'message'));
 
 $HD_Form = new FormHandler("cc_tariffgroup","Call Plan");
 
@@ -70,7 +70,7 @@ $inter_prefix_list_short["1"] = array( gettext("Remove prefix"), "1");
 $HD_Form -> AddViewElement(gettext("ID"), "id", "5%", "center", "sort");
 $HD_Form -> AddViewElement(gettext("NAME"), "tariffgroupname", "20%", "center", "sort");
 if (!$popup_select) $HD_Form -> AddViewElement(gettext("CREATIONDATE"), "creationdate", "20%", "center", "sort", "19", "", "", "", "", "", "display_dateformat");
-$HD_Form -> AddViewElement(gettext("LC TYPE"), "lcrtype", "15%", "center", "sort", "", "list", $lcrtype_list_short);
+$HD_Form -> AddViewElement(gettext("LC TYPE"), "lcrtype", "15%", "center\" nowrap \"", "sort", "", "list", $lcrtype_list_short);
 $HD_Form -> AddViewElement(gettext("PACKAGE"), "id_cc_package_offer", "11%", "center", "sort", "15", "lie", "cc_package_offer", "label", "id='%id'", "%1");
 $HD_Form -> AddViewElement(gettext("INTER PREFIX"), "removeinterprefix", "15%", "center", "sort", "", "list", $inter_prefix_list_short);
 
@@ -80,14 +80,13 @@ if (!$popup_select) {
 	$HD_Form -> FieldViewElement ('id, tariffgroupname, lcrtype, id_cc_package_offer, removeinterprefix');
 }
 
-
 $HD_Form -> CV_NO_FIELDS  = gettext("THERE IS NO")." ".strtoupper($HD_Form->FG_INSTANCE_NAME)." ".gettext("CREATED!");  
 $HD_Form -> CV_DISPLAY_LINE_TITLE_ABOVE_TABLE = false;
 $HD_Form -> CV_TEXT_TITLE_ABOVE_TABLE = '';
 $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
 
-
 if ($popup_select && $popup_select != 4) {
+	$HD_Form->FG_VIEW_TABLE_WITDH = '90%';
 	$HD_Form -> FG_LIMITE_DISPLAY = 7;
 	$HD_Form -> CV_FOLLOWPARAMETERS = "&popup_formname=" . $popup_formname . "&popup_fieldname=" . $popup_fieldname;
 
@@ -105,7 +104,6 @@ if ($popup_select && $popup_select != 4) {
 	$HD_Form -> FG_DELETION = true;
 	$HD_Form -> FG_ADDITION = true;
 }
-
 
 $HD_Form -> AddEditElement (gettext("NAME"),
 	"tariffgroupname",
@@ -175,6 +173,9 @@ if ($numrow>0){
 
 $HD_Form -> FieldEditElement ('tariffgroupname, lcrtype, id_cc_package_offer, removeinterprefix');
 
+$HD_Form -> FG_EDITION_HIDDEN_PARAM = 'popup_select,filterprefix';
+$HD_Form -> FG_EDITION_HIDDEN_PARAM_VALUE = $popup_select.",".$filterprefix;
+
 
 $HD_Form -> FG_INTRO_TEXT_EDITION= '';
 $HD_Form -> FG_INTRO_TEXT_ASK_DELETION = gettext("If you really want remove this")." ".$HD_Form->FG_INSTANCE_NAME.", ".gettext("click on the delete button.");
@@ -191,7 +192,3 @@ $HD_Form -> FG_BUTTON_EDITION_BOTTOM_TEXT = $HD_Form -> FG_BUTTON_ADITION_BOTTOM
 $HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
 $HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
 $HD_Form -> FG_GO_LINK_AFTER_ACTION_DELETE = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
-
-
-
-

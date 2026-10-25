@@ -198,8 +198,10 @@ foreach ($show_list as $i => $value) {
 			$FG_COL_QUERY_FIELD = $FG_COL_QUERY_FIELD .", CONCAT_WS(' ',lastname,firstname,IF(company_name='','',CONCAT('(',company_name,')'))) customer";
 			$HD_Form->FG_CAPCHA_POPUP .= "| |col$index|";
 		} elseif ($value=='timezone') {
+			$popup_timezone_column = $index;
 			$FG_COL_QUERY_FIELD = $FG_COL_QUERY_FIELD .", IF(CONCAT(id_timezone+0)=id_timezone,@@global.time_zone,SUBSTRING_INDEX(id_timezone,';',-1)) timezone";
 		} elseif ($value=='username') {
+			$popup_username_column = $index;
 			$FG_COL_QUERY_FIELD .= ', '.$value;
 			$HD_Form->FG_CAPCHA_POPUP = "|col$index| " . $HD_Form -> FG_CAPCHA_POPUP;
 		} else {
@@ -222,50 +224,51 @@ $HD_Form -> CV_TEXT_TITLE_ABOVE_TABLE = '';
 $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
 $HD_Form -> FG_LIMITE_DISPLAY = 20;
 
-
 // Code here for adding the fields in the Export File
 $HD_Form -> FieldExportElement(CARD_EXPORT_FIELD_LIST);
 if (!($popup_select>=1)) $HD_Form -> FG_EXPORT_CSV = true;
 if (!($popup_select>=1)) $HD_Form -> FG_EXPORT_XML = true;
 $HD_Form -> FG_EXPORT_SESSION_VAR = "pr_export_entity_card";
 
-if (($popup_select>=1))	$HD_Form ->FG_LIMITE_DISPLAY = 10;
+if ($popup_select>=1) {
+    $HD_Form->FG_LIMITE_DISPLAY = 10;
+    $HD_Form->FG_VIEW_TABLE_WITDH = '90%';
+} else {
+// Search form
+    $HD_Form -> FG_FILTER_SEARCH_FORM = true;
 
+    $HD_Form -> FG_FILTER_SEARCH_TOP_TEXT = gettext('Define specific criteria to search for cards created.');
+    $HD_Form -> FG_FILTER_SEARCH_1_TIME = true;
+    $HD_Form -> FG_FILTER_SEARCH_1_TIME_TEXT = gettext('CREATION DATE');
+
+    $HD_Form -> FG_FILTER_SEARCH_1_TIME_BIS = true;
+    $HD_Form -> FG_FILTER_SEARCH_1_TIME_TEXT_BIS = gettext('FIRST USE DATE');
+    $HD_Form -> FG_FILTER_SEARCH_1_TIME_FIELD_BIS = 'firstusedate';
+
+    $HD_Form -> AddSearchElement_C1(gettext("ACCOUNT NUMBER"), 'username','usernametype');
+    $HD_Form -> AddSearchElement_C1(gettext("EMAIL"), 'email','emailtype');
+    $HD_Form -> AddSearchElement_C1(gettext("LASTNAME"),'lastname','lastnametype');
+    $HD_Form -> AddSearchElement_C1(gettext("LOGIN"),'useralias','useraliastype');
+    $HD_Form -> AddSearchElement_C1(gettext("MACADDRESS"),'mac_addr','macaddresstype');
+    $HD_Form -> AddSearchElement_C2(gettext("CUSTOMER ID"),'id1','id1type','id2','id2type','id');
+    $HD_Form -> AddSearchElement_C2(gettext("SERIAL"),'serial1','serial1type','serial2','serial2type','serial');
+    $HD_Form -> AddSearchElement_C2(gettext("CREDIT"),'credit1','credit1type','credit2','credit2type','credit');
+    $HD_Form -> AddSearchElement_C2(gettext("INUSE"),'inuse1','inuse1type','inuse2','inuse2type','inuse');
+
+    $HD_Form -> FG_FILTER_SEARCH_FORM_SELECT_TEXT = '';
+    $HD_Form -> AddSearchElement_Select(gettext("SELECT SERIE"),"cc_card_seria","id, name", "", "name", "ASC", "id_seria");
+    $HD_Form -> AddSearchElement_Select(gettext("SELECT LANGUAGE"), null, null, null, null, null, "language", 0, $language_list_r);
+    $HD_Form -> AddSearchElement_Select(gettext("SELECT TARIFF"), "cc_tariffgroup", "id, tariffgroupname", "", "tariffgroupname", "ASC", "tariff");
+    $HD_Form -> AddSearchElement_Select(gettext("SELECT STATUS"), null, null, null, null,null , "status", 0, $cardstatus_list_r);
+    $HD_Form -> AddSearchElement_Select(gettext("SELECT ACCESS"), null, null, null, null, null, "simultaccess", 0, $simultaccess_list_r);
+    $HD_Form -> AddSearchElement_Select(gettext("SELECT GROUP"), "cc_card_group", "id, name", "", "name", "ASC", "id_group");
+    $HD_Form -> AddSearchElement_Select(gettext("SELECT CURRENCY"), null, null, null, null, null, "currency", 0, $currency_list_r);
+    $HD_Form -> AddSearchElement_Select(gettext("SELECT LANGUAGE"), null, null, null, null, null, "language", 0, $language_list_r);
+    $HD_Form -> AddSearchElement_Select(gettext("SELECT PAYMENT TYPE"), null, null, null, null, null, "typepaid", 0, $typepaid_list_r);
+}
 
 $HD_Form -> CV_FOLLOWPARAMETERS= "&popup_select=".$popup_select."&popup_formname=".$popup_formname."&popup_fieldname=".$popup_fieldname;
 
-// Search form
-if (!($popup_select>=1))	 $HD_Form -> FG_FILTER_SEARCH_FORM = true;
-
-$HD_Form -> FG_FILTER_SEARCH_TOP_TEXT = gettext('Define specific criteria to search for cards created.');
-$HD_Form -> FG_FILTER_SEARCH_1_TIME = true;
-$HD_Form -> FG_FILTER_SEARCH_1_TIME_TEXT = gettext('CREATION DATE');
-
-$HD_Form -> FG_FILTER_SEARCH_1_TIME_BIS = true;
-$HD_Form -> FG_FILTER_SEARCH_1_TIME_TEXT_BIS = gettext('FIRST USE DATE');
-$HD_Form -> FG_FILTER_SEARCH_1_TIME_FIELD_BIS = 'firstusedate';
-
-
-$HD_Form -> AddSearchElement_C1(gettext("ACCOUNT NUMBER"), 'username','usernametype');
-$HD_Form -> AddSearchElement_C1(gettext("EMAIL"), 'email','emailtype');
-$HD_Form -> AddSearchElement_C1(gettext("LASTNAME"),'lastname','lastnametype');
-$HD_Form -> AddSearchElement_C1(gettext("LOGIN"),'useralias','useraliastype');
-$HD_Form -> AddSearchElement_C1(gettext("MACADDRESS"),'mac_addr','macaddresstype');
-$HD_Form -> AddSearchElement_C2(gettext("CUSTOMER ID"),'id1','id1type','id2','id2type','id');
-$HD_Form -> AddSearchElement_C2(gettext("SERIAL"),'serial1','serial1type','serial2','serial2type','serial');
-$HD_Form -> AddSearchElement_C2(gettext("CREDIT"),'credit1','credit1type','credit2','credit2type','credit');
-$HD_Form -> AddSearchElement_C2(gettext("INUSE"),'inuse1','inuse1type','inuse2','inuse2type','inuse');
-
-$HD_Form -> FG_FILTER_SEARCH_FORM_SELECT_TEXT = '';
-$HD_Form -> AddSearchElement_Select(gettext("SELECT SERIE"),"cc_card_seria","id, name", "", "name", "ASC", "id_seria");
-$HD_Form -> AddSearchElement_Select(gettext("SELECT LANGUAGE"), null, null, null, null, null, "language", 0, $language_list_r);
-$HD_Form -> AddSearchElement_Select(gettext("SELECT TARIFF"), "cc_tariffgroup", "id, tariffgroupname", "", "tariffgroupname", "ASC", "tariff");
-$HD_Form -> AddSearchElement_Select(gettext("SELECT STATUS"), null, null, null, null,null , "status", 0, $cardstatus_list_r);
-$HD_Form -> AddSearchElement_Select(gettext("SELECT ACCESS"), null, null, null, null, null, "simultaccess", 0, $simultaccess_list_r);
-$HD_Form -> AddSearchElement_Select(gettext("SELECT GROUP"), "cc_card_group", "id, name", "", "name", "ASC", "id_group");
-$HD_Form -> AddSearchElement_Select(gettext("SELECT CURRENCY"), null, null, null, null, null, "currency", 0, $currency_list_r);
-$HD_Form -> AddSearchElement_Select(gettext("SELECT LANGUAGE"), null, null, null, null, null, "language", 0, $language_list_r);
-$HD_Form -> AddSearchElement_Select(gettext("SELECT PAYMENT TYPE"), null, null, null, null, null, "typepaid", 0, $typepaid_list_r);
 
 if ($popup_select && $popup_select<4) {
 	$HD_Form -> FG_OTHER_BUTTON1 = true;
@@ -273,11 +276,11 @@ if ($popup_select && $popup_select<4) {
 	$HD_Form -> FG_OTHER_BUTTON1_IMG = '';
 
 	if ($popup_select==1) {
-		$HD_Form -> FG_OTHER_BUTTON1_LINK = "javascript:sendValue('|param|', '|col1|');";
+		$HD_Form -> FG_OTHER_BUTTON1_LINK = "javascript:sendValue('|param|', '|col_orig{$popup_username_column}|');";
 	} else if ($popup_select==2) {
-		$HD_Form -> FG_OTHER_BUTTON1_LINK = "javascript:sendValue('|col1|');";
+		$HD_Form -> FG_OTHER_BUTTON1_LINK = "javascript:sendValue('|col_orig{$popup_username_column}|');";
 	} else if ($popup_select==3) {
-		$HD_Form -> FG_OTHER_BUTTON1_LINK = "javascript:sendValue('|param|', '|col5|');";
+		$HD_Form -> FG_OTHER_BUTTON1_LINK = "javascript:sendValue('|param|', '|col_orig{$popup_timezone_column}|');";
 	}
 
 } else {
@@ -431,13 +434,13 @@ if (has_rights (ACX_MODIFY_CUSTOMERS) && (!($popup_select>=1) || $popup_select==
 	$HD_Form -> AddEditElement (gettext("DILLER CARD ID"),
 				    "id_diller",
 				    '',
-				    "POPUPVALUE",
+				    "POPUPVALUEALERT",
 				    "readonly size=30 maxlength=50".$diller_default,
 				    "4",
 				    gettext("Insert the Id CardNumber"),
 				    "", "", "", "", "",
-				    "A2B_entity_card.php?popup_select=1&id=$id&",
-				    ", 'CardNumberSelection','width=590,height=550,top=100,left=100,scrollbars=1'",
+				    "A2B_entity_card?popup_select=1&id=$id&",
+				    ",'Card Number Selection',true,false,'#445760',event.pageX+25,event.pageY-200,'UL',null,null,null,null,null,sendValueCallback",
 				    gettext("Insert the card ID."));
 
 	$HD_Form -> AddEditElement (gettext("LAST NAME"),

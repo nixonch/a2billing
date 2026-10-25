@@ -33,7 +33,7 @@
 
 
 
-getpost_ifset(array('id', 'cbe'));
+getpost_ifset(array('id', 'cbe', 'message'));
 
 $atmenu = ($atmenu=='IAX')?$atmenu:'SIP';
 if (!isset($form_action) || $form_action=="list"){
@@ -252,14 +252,16 @@ $field_list_edit = 'regexten, name, secret, callerid, avpf, nat, encryption, war
 
 $HD_Form -> FieldEditElement ($field_list_edit);
 
-$HD_Form -> FG_ADITION_HIDDEN_PARAM		= $HD_Form -> FG_EDITION_HIDDEN_PARAM		= 'filterprefix, cbe';
-$HD_Form -> FG_ADITION_HIDDEN_PARAM_VALUE	= $HD_Form -> FG_EDITION_HIDDEN_PARAM_VALUE	= $filterprefix.",".$cbe;
+$HD_Form->FG_ADITION_HIDDEN_PARAM	= $HD_Form->FG_EDITION_HIDDEN_PARAM	  = "popup_select, filterprefix, cbe";
+$HD_Form->FG_ADITION_HIDDEN_PARAM_VALUE = $HD_Form->FG_EDITION_HIDDEN_PARAM_VALUE = "$popup_select, $filterprefix, $cbe";
+
 
 $HD_Form -> FG_FILTER_APPLY = false;
 $HD_Form -> FG_FILTERFIELD = 'name';
 $HD_Form -> FG_FILTERFIELDNAME = gettext('NAME');
 $HD_Form -> FG_FILTER_FORM_ACTION = 'list';
 
+//$HD_Form -> CV_FOLLOWPARAMETERS = "&popup_select=$popup_select&displayheader=0";
 
 if (isset($filterprefix)  &&  (strlen($filterprefix)>0)){
 	if (strlen($HD_Form -> FG_TABLE_CLAUSE)>0) $HD_Form -> FG_TABLE_CLAUSE.=" AND ";
@@ -277,6 +279,6 @@ $HD_Form -> FG_BUTTON_EDITION_BOTTOM_TEXT = $HD_Form -> FG_BUTTON_ADITION_BOTTOM
 
 $HD_Form->FG_ADDITIONAL_FUNCTION_AFTER_DELETE = $HD_Form->FG_ADDITIONAL_FUNCTION_AFTER_EDITION = 'processing_sipiax_generate';
 
-//$HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD = $_SERVER['PHP_SELF']."?atmenu=$atmenu&stitle=Document&wh=AC&id=";
-$HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT = $_SERVER['PHP_SELF']."?atmenu=$atmenu&stitle=Document&wh=AC&id=";
-$HD_Form -> FG_GO_LINK_AFTER_ACTION_DELETE = $_SERVER['PHP_SELF']."?atmenu=$atmenu&stitle=Document&wh=AC&id=";
+//$HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD = $PHP_SELF."?atmenu=$atmenu&stitle=Document&wh=AC&id=";
+$HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT	= $PHP_SELF."?atmenu=$atmenu&stitle=Document&wh=AC&id=";
+$HD_Form -> FG_GO_LINK_AFTER_ACTION_DELETE	= $PHP_SELF."?atmenu=$atmenu&stitle=Document&wh=AC&id=";

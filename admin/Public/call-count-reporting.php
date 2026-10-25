@@ -140,7 +140,7 @@ if ($terminatecauseid=="ANSWER") {
 $instance_table = new Table($FG_TABLE_NAME, $FG_COL_QUERY);
 
 if (!$nodisplay) {
-	$list = $instance_table -> Get_list ($DBHandle, $FG_TABLE_CLAUSE, $order, $sens, null, null,$inputtopvar , 0,$SQL_GROUP);	
+	$list = $instance_table -> Get_list ($DBHandle, $FG_TABLE_CLAUSE, $order, $sens, null, null,$inputtopvar , 0,$SQL_GROUP);
 }
 
 
@@ -152,17 +152,18 @@ $smarty->display('main.tpl');
 	<center>
 	<FORM METHOD=POST name="myForm" ACTION="<?php echo $PHP_SELF?>?s=1&t=0&order=<?php echo $order?>&sens=<?php echo $sens?>&current_page=<?php echo $current_page?>">
 	<INPUT TYPE="hidden" NAME="posted" value=1>
-	<INPUT TYPE="hidden" NAME="current_page" value=0>	
-		<table class="bar-status" width="85%" border="0" cellspacing="1" cellpadding="2" align="center">
-			
-			<tr>
-        		<td align="left" class="bgcolor_002">
-					<font class="fontstyle_003">&nbsp;&nbsp;<?php echo gettext("DATE");?></font>
+	<INPUT TYPE="hidden" NAME="current_page" value=0>
+		<table class="bar-status" width="40%" border="0" cellspacing="1" cellpadding="2" align="center">
+		<tbody>
+		    <tr>
+			<td align="left" class="bgcolor_002" width="20%">
+				<font class="fontstyle_003">&nbsp;&nbsp;<?php echo gettext("DATE");?></font>
 			</td>
-      			<td align="left" class="bgcolor_003" width="650">
-					<table width="100%" border="0" cellspacing="0" cellpadding="0" >
-					<tr><td class="fontstyle_searchoptions">
-	  				<input type="checkbox" name="fromday" value="true" <?php  if ($fromday){ ?>checked<?php }?>> <?php echo gettext("From");?> :
+			<td align="left" class="bgcolor_003" width="650">
+			    <table width="100%" border="0" cellspacing="0" cellpadding="0" >
+			    <tr>
+				<td class="fontstyle_searchoptions" nowrap>
+					<input type="checkbox" name="fromday" value="true" <?php  if ($fromday){ ?>checked<?php }?>> <?php echo gettext("From");?> :
 					<select name="fromstatsday_sday" class="form_input_select">
 						<?php  
 						for ($i=1;$i<=31;$i++) {
@@ -170,28 +171,29 @@ $smarty->display('main.tpl');
 							else	$selected="";
 							echo '<option value="'.sprintf("%02d",$i)."\"$selected>".sprintf("%02d",$i).'</option>';
 						}
-						?>	
+						?>
 					</select>
-				 	<select name="fromstatsmonth_sday" class="form_input_select">
+					<select name="fromstatsmonth_sday" class="form_input_select">
 					<?php 	
 						$monthname = array( gettext("January"), gettext("February"),gettext("March"), gettext("April"), gettext("May"), gettext("June"), gettext("July"), gettext("August"), gettext("September"), gettext("October"), gettext("November"), gettext("December"));
-						$year_actual = date("Y");  	
-						for ($i=$year_actual;$i >= $year_actual-1;$i--) {		   
+						$year_actual = date("Y");
+						for ($i=$year_actual;$i >= $year_actual-1;$i--) {
 							if ($year_actual==$i) {
 								$monthnumber = date("n")-1; // Month number without lead 0.
 							} else {
 								$monthnumber=11;
-							}		   
-							for ($j=$monthnumber;$j>=0;$j--) {	
+							}
+							for ($j=$monthnumber;$j>=0;$j--) {
 								$month_formated = sprintf("%02d",$j+1);
 								if ($fromstatsmonth_sday=="$i-$month_formated") $selected="selected";
 								else $selected="";
-								echo "<OPTION value=\"$i-$month_formated\" $selected> $monthname[$j]-$i </option>";				
+								echo "<OPTION value=\"$i-$month_formated\" $selected> $monthname[$j]-$i </option>";
 							}
 						}
 					?>
 					</select>
-					</td><td class="fontstyle_searchoptions">&nbsp;&nbsp;
+				</td>
+				<td class="fontstyle_searchoptions" nowrap>&nbsp;&nbsp;
 					<input type="checkbox" name="today" value="true" <?php  if ($today){ ?>checked<?php }?>> <?php echo gettext("To");?>  :
 					<select name="tostatsday_sday" class="form_input_select">
 					<?php  
@@ -199,11 +201,11 @@ $smarty->display('main.tpl');
 							if ($tostatsday_sday==sprintf("%02d",$i)){$selected="selected";}else{$selected="";}
 							echo '<option value="'.sprintf("%02d",$i)."\"$selected>".sprintf("%02d",$i).'</option>';
 						}
-					?>						
+					?>
 					</select>
-				 	<select name="tostatsmonth_sday" class="form_input_select">
+					<select name="tostatsmonth_sday" class="form_input_select">
 					<?php 	$year_actual = date("Y");  	
-						for ($i=$year_actual;$i >= $year_actual-1;$i--) {		   
+						for ($i=$year_actual;$i >= $year_actual-1;$i--) {
 							if ($year_actual==$i) {
 								$monthnumber = date("n")-1; // Month number without lead 0.
 							} else {
@@ -213,17 +215,19 @@ $smarty->display('main.tpl');
 								$month_formated = sprintf("%02d",$j+1);
 							   	if ($tostatsmonth_sday=="$i-$month_formated") $selected="selected";
 								else	$selected="";
-								echo "<OPTION value=\"$i-$month_formated\" $selected> $monthname[$j]-$i </option>";				
+								echo "<OPTION value=\"$i-$month_formated\" $selected> $monthname[$j]-$i </option>";
 							}
 						}
 					?>
 					</select>
-					</td></tr></table>
-	  			</td>
-    		</tr>
-		<tr>
-			<TD class="bgcolor_004" align="left">
-				<font class="fontstyle_003">&nbsp;&nbsp;<?php echo strtoupper(gettext("Number in Result"));?></font>
+				</td>
+			    </tr>
+			    </table>
+			</td>
+		    </tr>
+		    <tr>
+			<TD class="bgcolor_004" align="left" nowrap>
+				<font class="fontstyle_003">&nbsp;&nbsp;<?php echo strtoupper(gettext("Number in Result"));?>&nbsp;&nbsp;</font>
 			</TD>
 			<td class="bgcolor_005" align="left" >
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -245,9 +249,9 @@ $smarty->display('main.tpl');
 					</td>
 				</tr></table>
 			</TD>
-		 </tr>
+		    </tr>
 			<!-- Select Option : to show just the Answered Calls or all calls, Result type, currencies... -->
-			<tr>
+		    <tr>
 			  <td class="bgcolor_002" align="left" ><font class="fontstyle_003">&nbsp;&nbsp;<?php echo gettext("OPTIONS");?></font></td>
 			  <td class="bgcolor_003" align="center" >
 			  <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -277,7 +281,7 @@ $smarty->display('main.tpl');
 					</td>
 				</tr>
 				<tr class="bgcolor_005">
-					<td  class="fontstyle_searchoptions">
+					<td  class="fontstyle_searchoptions" nowrap>
 						<?php echo gettext("GROUP BY DAY");?> : 
 				   </td>
 				   <td  class="fontstyle_searchoptions">
@@ -322,12 +326,13 @@ $smarty->display('main.tpl');
 			  </tr>
 			<!-- Select Option : to show just the Answered Calls or all calls, Result type, currencies... -->
 			<tr>
-        		<td class="bgcolor_004" align="left" > </td>
+			<td class="bgcolor_004" align="left" > </td>
 				<td class="bgcolor_005" align="center" >
 					<input type="image"  name="image16" align="top" border="0" src="<?php echo Images_Path;?>/button-search.gif" />
-	  			</td>
-    		</tr>
-		</tbody></table>
+				</td>
+		    </tr>
+		</tbody>
+		</table>
 	</FORM>
 </center>
 <br><br>

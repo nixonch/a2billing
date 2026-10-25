@@ -3,6 +3,7 @@ RewriteEngine On
 RewriteBase /
 
 # To externally redirect /dir/foo.php to /dir/foo/
+#RewriteCond %{THE_REQUEST} \s(\S+)((\.php)*/*|/*) [NC]
 RewriteCond %{REQUEST_METHOD} !=POST
 RewriteCond %{THE_REQUEST} \s(\S+)(\.php)+/*
 RewriteRule ^ %1 [R=301,L]

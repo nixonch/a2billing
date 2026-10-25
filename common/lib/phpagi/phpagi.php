@@ -633,7 +633,7 @@
     */
     public function set_callerid($cid)
     {
-//$this->Verbose("=================SET CALLERID $cid");
+//$this->Verbose("=================SET CALLERID ".str_replace('"', '\"', $cid));
       return $this->evaluate("SET CALLERID $cid");
     }
 

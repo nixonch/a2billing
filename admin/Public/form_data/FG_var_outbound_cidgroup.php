@@ -1,6 +1,6 @@
 <?php
 
-getpost_ifset(array('id', 'didgroupname'));
+getpost_ifset(array('id', 'didgroupname', 'message'));
 
 $HD_Form = new FormHandler("cc_outbound_cid_group","Outbound CID Group");
 
@@ -38,7 +38,7 @@ $HD_Form -> AddViewElement(gettext("CREATION DATE"), "creationdate", "20%", "cen
 $HD_Form -> FieldViewElement ('id, group_name, creationdate');
 
 
-$HD_Form -> CV_NO_FIELDS  = gettext("THERE IS NO ".strtoupper($HD_Form->FG_INSTANCE_NAME)." CREATED!");
+$HD_Form -> CV_NO_FIELDS  = '<span id="main-list">'.gettext("THERE IS NO ".strtoupper($HD_Form->FG_INSTANCE_NAME)." CREATED!").'</span>';
 $HD_Form -> CV_DISPLAY_LINE_TITLE_ABOVE_TABLE = false;
 $HD_Form -> CV_TEXT_TITLE_ABOVE_TABLE = '';
 $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
@@ -46,6 +46,7 @@ $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
 $HD_Form -> FG_EDITION = true;
 $HD_Form -> FG_DELETION = true;
 $HD_Form -> FG_ADDITION = true;
+$HD_Form -> FG_CAPCHA_POPUP = '|col1|';
 
 $HD_Form -> AddEditElement (gettext("CIDGROUPNAME"),
 	"group_name",
@@ -58,6 +59,9 @@ $HD_Form -> AddEditElement (gettext("CIDGROUPNAME"),
 
 
 $HD_Form -> FieldEditElement ('group_name');
+
+$HD_Form -> FG_EDITION_HIDDEN_PARAM = 'popup_select,filterprefix';
+$HD_Form -> FG_EDITION_HIDDEN_PARAM_VALUE = $popup_select.",".$filterprefix;
 
 
 $HD_Form -> FG_INTRO_TEXT_EDITION= gettext("Modify the properties of the DID Group");

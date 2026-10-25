@@ -132,7 +132,7 @@ class Table {
 	/*
 	 * ExecuteQuery
 	 */
-	public function ExecuteQuery ($DBHandle, $QUERY, $cache = 0)
+	public function ExecuteQuery ($DBHandle, $QUERY, $cache = 0, $params = false)
 	{
 		global $A2B;
 		
@@ -150,10 +150,14 @@ class Table {
 		
 		if ($this -> debug_st) echo $this->start_message_debug.$QUERY.$this->end_message_debug;
 		if ($cache > 0) {
-			$res = $DBHandle -> CacheExecute($cache, $QUERY);
+			$res = ($params === false)
+				? $DBHandle -> CacheExecute($cache, $QUERY)
+				: $DBHandle -> CacheExecute($cache, $QUERY, $params);
 		} else {
 			$start = $this->getTime();
-			$res = $DBHandle -> Execute($QUERY);
+			$res = ($params === false)
+				? $DBHandle -> Execute($QUERY)
+				: $DBHandle -> Execute($QUERY, $params);
 			$this->query_handler->queryCount += 1;
 			$this->logQuery($QUERY, $start);
 		}
@@ -187,9 +191,9 @@ class Table {
 	// If $select is not supplied then function check numrows
 	// so expect a SELECT query.
 
-	public function SQLExec ($DBHandle, $QUERY, $select = 1, $cache = 0)
+	public function SQLExec ($DBHandle, $QUERY, $select = 1, $cache = 0, $params = false)
 	{
-		$res = $this -> ExecuteQuery ($DBHandle, $QUERY, $cache);
+		$res = $this -> ExecuteQuery ($DBHandle, $QUERY, $cache, $params);
 		if (!$res) return false;
 
 		if ($select) {
@@ -208,7 +212,7 @@ class Table {
 	}
 
 
-	public function Get_list ($DBHandle, $clause = NULL, $order = NULL, $sens = NULL, $field_order_letter = NULL, $letters = NULL, $limite = NULL, $current_record = NULL, $sql_group= NULL, $cache = 0)
+	public function Get_list ($DBHandle, $clause = NULL, $order = NULL, $sens = NULL, $field_order_letter = NULL, $letters = NULL, $limite = NULL, $current_record = NULL, $sql_group= NULL, $cache = 0, $params = false)
 	{
 		$sql = 'SELECT '.$this -> fields.' FROM '.trim($this -> table);
 		$sql_clause='';
@@ -252,7 +256,7 @@ class Table {
 			$QUERY = str_replace("%LIMIT%", $sql_limit, $QUERY);
 		}
 
-		$res = $this -> ExecuteQuery ($DBHandle, $QUERY, $cache);
+		$res = $this -> ExecuteQuery ($DBHandle, $QUERY, $cache, $params);
 		if (!$res) return false;
 		
 		$num = $res -> RecordCount();
@@ -299,7 +303,7 @@ class Table {
 	}
 
 
-	public function Add_table ($DBHandle, $value, $func_fields = null, $func_table = null, $id_name = null, $subquery = false, $priority = null) {
+	public function Add_table ($DBHandle, $value, $func_fields = null, $func_table = null, $id_name = null, $subquery = false, $priority = null, $params = false) {
 		if ($func_fields!="") {
 			$this -> fields = $func_fields;
 		}
@@ -313,7 +317,7 @@ class Table {
 			$QUERY = "INSERT ".$priority." INTO ".$this -> table." (".$this -> fields.") values (".trim ($value).")";
 		}
 
-		$res = $this -> ExecuteQuery ($DBHandle, $QUERY, 0);
+		$res = $this -> ExecuteQuery ($DBHandle, $QUERY, 0, $params);
 		if (!$res) return false;
 
 		// Fix that , make PEAR complaint
@@ -348,14 +352,14 @@ class Table {
 	}
 
 
-	public function Update_table ($DBHandle, $param_update, $clause, $func_table = null)
+	public function Update_table ($DBHandle, $param_update, $clause, $func_table = null, $params = false)
 	{
 		
 		if ($func_table !="")
 			$this -> table = $func_table;
 		
 		$QUERY = "UPDATE ".$this -> table." SET ".trim ($param_update)." WHERE ".trim ($clause);
-		$res = $this -> ExecuteQuery ($DBHandle, $QUERY, 0);
+		$res = $this -> ExecuteQuery ($DBHandle, $QUERY, 0, $params);
         
         return ($res);
 	}
@@ -428,5 +432,3 @@ class Table {
 	}
 
 };
-
-

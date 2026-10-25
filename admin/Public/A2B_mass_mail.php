@@ -195,10 +195,16 @@ if(!isset($submit)) {
 
 <SCRIPT LANGUAGE="javascript">
 <!-- Begin
-var win= null;
 function loadtmpl(){
-	//test si win est encore ouvert et close ou refresh
-    win=MM_openBrWindow('A2B_entity_mailtemplate.php?popup_select=1','','scrollbars=yes,resizable=yes,width=700,height=500');
+    alertBase('url:A2B_entity_mailtemplate.php?popup_select=1','Mail Template Selection',true,false,'#445760',null,null,null,null,null,null,null,null,function(payload){
+        if (payload.type !== 'mailTemplate' || !payload.data) { return false; }
+        var data = payload.data;
+        document.getElementById('msg_mail').value = data.messagetext;
+        document.getElementById('from').value = data.fromemail;
+        document.getElementById('fromname').value = data.fromname;
+        document.getElementById('subject').value = data.subject;
+        return true;
+    });
 }
 // End -->
 

@@ -199,13 +199,13 @@ foreach ($values as $val) {
 $HD_Form -> AddEditElement (gettext("ID CARD"),
 						    "id_cc_card",
 						    '',
-						    "POPUPVALUE",
+						    "POPUPVALUEALERT",
 						    "readonly size=30 maxlength=50",
 						    "4",
 						    gettext("Insert the Id CardNumber"),
 						    "", "", "", "", "",
-						    "A2B_entity_card.php?popup_select=1&",
-						    ", 'CardNumberSelection','width=590,height=550,top=100,left=100,scrollbars=1'",
+						    "A2B_entity_card?popup_select=1&",
+						    ", 'Card Number Selection',true,false,'#445760',event.pageX+25,event.pageY-200,'UL',null,null,null,null,null,sendValueCallback",
 						    gettext("Insert the card ID."));
 
 $HD_Form -> AddEditElement (gettext("EXTERNAL"),

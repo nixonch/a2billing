@@ -13,6 +13,14 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: review_webrtc.php
+#, php-format
+msgid "Request not completed: too many attempts in a short time. Try again in %d second."
+msgid_plural "Request not completed: too many attempts in a short time. Try again in %d seconds."
+msgstr[0] "Request not completed: too many attempts in a short time. Try again in %d second."
+msgstr[1] "Request not completed: too many attempts in a short time. Try again in %d seconds."
 
 #: A2B_notification.php:76
 msgid "Your notification settings has successfully been updated."

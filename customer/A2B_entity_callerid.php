@@ -55,7 +55,7 @@ if (is_numeric($idcust) && $idcust != $_SESSION['card_id'] && (array_search($for
 
 if (!has_rights(ACX_CALLER_ID) || !$result_security) {
 	Header ("HTTP/1.0 401 Unauthorized");
-	Header ("Location: PP_error.php?c=accessdenied");
+	Header ("Location: PP_error?c=accessdenied");
 	die();
 }
 
@@ -69,7 +69,7 @@ if (strlen($add_callerid)>0) {
 		$result = $instance_sub_table -> Table_count ($HD_Form -> DBHandle, $clause_limit);
 	} else {
 		Header ("HTTP/1.0 401 Unauthorized");
-		Header ("Location: PP_error.php?c=accessdenied");
+		Header ("Location: PP_error?c=accessdenied");
 		die();
 	}
 // CHECK IF THE AMOUNT OF CALLERID IS LESS THAN THE LIMIT
@@ -78,18 +78,31 @@ if (strlen($add_callerid)>0) {
 		$result = $instance_sub_table -> SQLExec ($HD_Form -> DBHandle, $QUERY, 0);
 		$log = new Logger();
 		$log -> insertLog_Update($_SESSION["card_id"], 2, "СALLERID IS ADDED", $add_callerid, 'cc_callerid', $_SERVER['REMOTE_ADDR'], 'A2B_entity_callerid.php', '', 2);
-		$log = null;
+		unset($log);
 		$_SESSION["last_page"] = "A2B_entity_callerid.php";
+		$url_forward = '';
+		if (!empty($current_page)) {
+		    $url_forward .= "?current_page=$current_page";
+		}
+		if (!empty($popup_select)) {
+		    $url_forward .= ($url_forward?"&":"?")."popup_select=$popup_select";
+		}
+		if (!empty($idcust)) {
+		    $url_forward .= ($url_forward?"&":"?")."idcust=$idcust";
+		}
+		$url_forward = $PHP_SELF.$url_forward;
+		Header ("Location: $url_forward");
+		die();
 	}
 }
 
 $HD_Form -> init();
 
 if ($idcust) {
-    $HD_Form -> FG_EDITION_LINK  = $_SERVER['PHP_SELF']."?form_action=ask-edit&popup_select=$popup_select&idcust=$idcust&id=";
-    $HD_Form -> FG_DELETION_LINK = $_SERVER['PHP_SELF']."?form_action=ask-delete&popup_select=$popup_select&idcust=$idcust&id=";
+    $HD_Form -> FG_EDITION_LINK  = $PHP_SELF."?form_action=ask-edit&popup_select=$popup_select&idcust=$idcust&id=";
+    $HD_Form -> FG_DELETION_LINK = $PHP_SELF."?form_action=ask-delete&popup_select=$popup_select&idcust=$idcust&id=";
 } else {
-    $HD_Form -> FG_EDITION_LINK  = "url:".$_SERVER['PHP_SELF']."?form_action=ask-edit&popup_select=4&id=";
+    $HD_Form -> FG_EDITION_LINK  = "url:".$PHP_SELF."?form_action=ask-edit&popup_select=4&id=";
 }
 
 // My Code for Where Cluase
@@ -121,22 +134,15 @@ if (has_rights(ACX_DISTRIBUTION) && is_numeric($idcust) /*&& ($popup_select>=1)*
 	$resmax = $instance_table_card -> SQLExec ($HD_Form -> DBHandle, $QUERY, 1);
 	if ($resmax) {
 	    $backLink = '';
-
 	    if (
 		isset($form_action)
-		&& ($form_action == 'ask-edit' || $form_action == 'edit')
+		&& (in_array($form_action, ['ask-edit', 'ask-delete']))
 		&& !empty($_SERVER['HTTP_REFERER'])
 	    ) {
-		$refHost = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
-		$currentHost = parse_url('http://' . $_SERVER['HTTP_HOST'], PHP_URL_HOST);
-
-		if ($refHost === $currentHost) {
-		    $backUrl = htmlspecialchars($_SERVER['HTTP_REFERER'], ENT_QUOTES, 'UTF-8');
-
-		    $backLink = '<a href="' . $backUrl . '" '
-			. 'style="position:absolute; left:10px; top:0; text-decoration:none; font-size:18px;" '
-			. 'title="Back">&#8592;</a>';
-		}
+		$backLink = '<button type="button" '
+			    . 'onclick="window.history.back();" '
+			    . 'style="position:absolute; left:10px; top:0; border:0; background:none; cursor:pointer; font-size:18px; padding:0;" '
+			    . 'title="' . htmlspecialchars(gettext('Back'), ENT_QUOTES, 'UTF-8') . '">&#8592;</button>';
 	    }
 	    echo '<div style="position:relative; width:100%; text-align:center;">'
 		. $backLink
@@ -151,7 +157,7 @@ if (has_rights(ACX_DISTRIBUTION) && is_numeric($idcust) /*&& ($popup_select>=1)*
 	} else exit();
 } else $phonenumber = "";
 
-if ($form_action == "list" && ($message!=='success' || is_numeric($idcust))) {
+if ($form_action == "list" && (!in_array($message, ['success','editsuccess']) || is_numeric($idcust))) {
 ?>
 <center>
 <table style="width:40%;min-width:200px" border="0" align="center" cellpadding="0" cellspacing="1">
@@ -185,9 +191,10 @@ if ($form_action == "list" && ($message!=='success' || is_numeric($idcust))) {
 
 ?>
 	   <table width="40%" align="center" border="0" class="bgcolor_006">
-		<form name="theForm" action="<?php  $_SERVER["PHP_SELF"]?>">
-		<input name="popup_select" type=hidden value="<?php echo $popup_select?>">
-		<input name="idcust" type=hidden value="<?php echo $idcust?>">
+		<form name="theForm" action="<?= $PHP_SELF ?>">
+		<input name="current_page" type=hidden value="<?= $current_page ?>">
+		<input name="popup_select" type=hidden value="<?= $popup_select ?>">
+		<input name="idcust" type=hidden value="<?= $idcust ?>">
 		<tr class="bgcolor_001" >
 
 		<td align="center" valign="top" nowrap>
@@ -234,7 +241,7 @@ if (!is_numeric($idcust) && $message == "editsuccess") {
 <br>
 </center>
 <script type="text/javascript">
-    window.parent.postMessage({action:'refreshInside'},'*');
+    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*');
     objbutton=document.getElementById('button1');
     objbutton.focus();
     timeleft=11;

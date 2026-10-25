@@ -14,6 +14,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: templates/default/index.tpl:57
 msgid "User"
@@ -70,6 +71,13 @@ msgstr "Bitte geben Sie Ihre gültige E-Mail-Adresse an"
 #: review_webrtc.php
 msgid "Service temporally not available. Try again later."
 msgstr "Service steht temporär leider nicht zur Verfügung.<br>Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut."
+
+#: review_webrtc.php
+#, php-format
+msgid "Request not completed: too many attempts in a short time. Try again in %d second."
+msgid_plural "Request not completed: too many attempts in a short time. Try again in %d seconds."
+msgstr[0] "Anfrage nicht ausgeführt: zu viele Versuche in kurzer Zeit. Bitte versuchen Sie es in %d Sekunde erneut."
+msgstr[1] "Anfrage nicht ausgeführt: zu viele Versuche in kurzer Zeit. Bitte versuchen Sie es in %d Sekunden erneut."
 
 #: review_webrtc.php
 msgid "Your information was successfully received."
@@ -3287,6 +3295,10 @@ msgstr "Entfernen Sie, wenn Sie eine andere AnruferID benutzen wollen."
 #: A2B_entity_callerid.php:119
 msgid "Max CallerId"
 msgstr "Max AnruferID"
+
+#: A2B_entity_callerid.php:145
+msgid "Back"
+msgstr "Zurück"
 
 #: checkout_payment.php:200
 #, fuzzy

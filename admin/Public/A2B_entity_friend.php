@@ -50,6 +50,8 @@ getpost_ifset(array('upd_callerid', 'upd_context', 'batchupdate', 'check', 'type
 $HD_Form -> setDBHandler (DbConnect());
 $HD_Form -> init();
 
+$HD_Form -> FG_EDITION_LINK	= $_SERVER['PHP_SELF']."?form_action=ask-edit&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&filterprefix2=$filterprefix2&id=";
+$HD_Form -> FG_DELETION_LINK	= "url:".$_SERVER['PHP_SELF']."?popup_select=4&form_action=ask-delete&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&filterprefix2=$filterprefix2&id=";
 
 // CHECK IF REQUEST OF BATCH UPDATE
 if ($batchupdate == 1 && is_array($check)) {
@@ -165,11 +167,8 @@ if ((isset($id_cc_card) && is_numeric($id_cc_card)) && ($form_action == "add_sip
 	$HD_Form->_vars = array_merge((array)$_GET, (array)$_POST);
 }
 
-$HD_Form -> FG_EDITION_LINK	= $_SERVER['PHP_SELF']."?form_action=ask-edit&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&filterprefix2=$filterprefix2&id=";
-$HD_Form -> FG_DELETION_LINK	= "url:".$_SERVER['PHP_SELF']."?popup_select=4&form_action=ask-delete&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&filterprefix2=$filterprefix2&id=";
-
 if ($id!="" || !is_null($id)) {
-	$HD_Form -> FG_EDITION_CLAUSE = str_replace("%id", "$id", $HD_Form -> FG_EDITION_CLAUSE);	
+	$HD_Form -> FG_EDITION_CLAUSE = str_replace("%id", "$id", $HD_Form -> FG_EDITION_CLAUSE);
 }
 
 
@@ -205,23 +204,23 @@ $smarty->display('main.tpl');
 
 // #### HELP SECTION
 if ($form_action=='list') {
-	
+
 	echo $CC_help_sipfriend_list;
-	
+
 	if(!USE_REALTIME) {
 	?>
-		  <table width="<?php echo $HD_Form -> FG_HTML_TABLE_WIDTH?>" border="0" align="center" cellpadding="0" cellspacing="0" >	  
+		  <table width="<?php echo $HD_Form -> FG_HTML_TABLE_WIDTH?>" border="0" align="center" cellpadding="0" cellspacing="0" >
 			<TR><TD  align="center"> <?php echo gettext("Link to Generate on SIP/IAX Friends")?> &nbsp;:&nbsp;
 			</TD></TR>
-			<TR><TD  align="center"> 
+			<TR><TD  align="center">
 			<b><?php echo gettext("Realtime not active, you have to use the conf file for your system"); ?></b>
 			</TD></TR>
 			<TR><FORM NAME="sipfriend">
-				<td height="31" style="padding-left: 5px; padding-right: 3px;" align="center" >			
+				<td height="31" style="padding-left: 5px; padding-right: 3px;" align="center" >
 				<b>
-				SIP : <input class="form_input_button"  TYPE="button" VALUE=" <?php echo gettext("GENERATE ADDITIONAL_A2BILLING_SIP.CONF"); ?> " 
+				SIP : <input class="form_input_button"  TYPE="button" VALUE=" <?php echo gettext("GENERATE ADDITIONAL_A2BILLING_SIP.CONF"); ?> "
 				onClick="self.location.href='./CC_generate_friend_file.php?atmenu=sipfriend';">
-				IAX : <input class="form_input_button"  TYPE="button" VALUE=" <?php echo gettext("GENERATE ADDITIONAL_A2BILLING_IAX.CONF"); ?> " 
+				IAX : <input class="form_input_button"  TYPE="button" VALUE=" <?php echo gettext("GENERATE ADDITIONAL_A2BILLING_IAX.CONF"); ?> "
 				onClick="self.location.href='./CC_generate_friend_file.php?atmenu=iaxfriend';">
 				</b></td></FORM>
 			</TR>
@@ -232,13 +231,8 @@ if ($form_action=='list') {
 		<center><a href="<?php  echo "CC_generate_friend_file.php?action=reload";?>"><img src="<?php echo Images_Path;?>/icon_refresh.gif"/>
 			<?php echo gettext("Reload Asterisk"); ?></a>
 		</center>
-	<?php 
+	<?php
 	}
-} else if ($popup_select < 2) {
-	echo $CC_help_sipfriend_edit;
-}
-
-if ($form_action=='list') {
 ?>
 <div align="center">
 <table width="40%" border="0" align="center" cellpadding="0" cellspacing="1">
@@ -252,12 +246,12 @@ if ($form_action=='list') {
 			   <select name="atmenu" id="col_configtype" onChange="window.document.form1.elements['PMChange'].value='Change';window.document.form1.submit();">
 				 <option value="iax" <?php if($atmenu == "iax")echo "selected"?>><?php echo gettext("IAX")?></option>
 				 <option value="sip" <?php if($atmenu == "sip")echo "selected"?>><?php echo gettext("SIP")?></option>
-			   </select> 
+			   </select>
 			  <input name="PMChange" type="hidden" id="PMChange">
-			                                      
+
 			</td>
 		  </tr>
-		  </form>  
+		  </form>
 	  </table></td>
 	</tr>
 </table>
@@ -303,7 +297,7 @@ if ($form_action=='list') {
 			<td align="right" class="bgcolor_001"></td>
 		 	<td align="right"  class="bgcolor_001">
 				<input class="form_input_button"  value=" <?php echo gettext("BATCH UPDATE VOIP SETTINGS");?>  " type="submit">
-        	</td>
+		</td>
 		</tr>
 		</form>
 		</table>
@@ -313,6 +307,8 @@ if ($form_action=='list') {
 <!-- ** ** ** ** ** Part for the Update ** ** ** ** ** -->
 
 <?php
+} else if ($popup_select < 2) {
+	echo $CC_help_sipfriend_edit;
 }
 
 // #### TOP SECTION PAGE

@@ -73,53 +73,53 @@ $HD_Form->create_toppage($form_action);
 
 <FORM METHOD=POST name="myForm" ACTION="<?php echo $PHP_SELF?>?s=1&t=0&order=<?php echo $order?>&sens=<?php echo $sens?>&current_page=<?php echo $current_page?>">
 	<INPUT TYPE="hidden" NAME="posted" value=1>
-	<INPUT TYPE="hidden" NAME="current_page" value=0>	
+	<INPUT TYPE="hidden" NAME="current_page" value=0>
 		<table class="bar-status" width="85%" border="0" cellspacing="1" cellpadding="2" align="center">
 			<tbody>
 			<?php  if ($_SESSION["pr_groupID"]==2 && is_numeric($_SESSION["pr_IDCust"])){ ?>
 			<?php  }else{ ?>
 			<tr>
-				<td align="left" valign="top" class="bgcolor_004">					
+				<td align="left" valign="top" class="bgcolor_004">
 					<font class="fontstyle_003">&nbsp;&nbsp;<?php echo gettext("CUSTOMERS");?></font>
-				</td>				
+				</td>
 				<td class="bgcolor_005" align="left">
 				<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr>
 					<td class="fontstyle_searchoptions" >
 					<INPUT TYPE="text" NAME="id_cc_card" value="<?php echo $id_cc_card?>" class="form_input_text">
-					<a href="#" onclick="window.open('A2B_entity_card.php?popup_select=1&popup_formname=myForm&popup_fieldname=id_cc_card' , 'CardNumberSelection','width=550,height=330,top=20,left=100,scrollbars=1');"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a>
-					</td>					
+					<a href="#" onclick="alertBase('url:A2B_entity_card?popup_select=1&popup_formname=myForm&popup_fieldname=id_cc_card','Card Number Selection',true,false,'#445760',null,event.pageY+20,'UR',null,null,null,null,null,sendValueCallback);"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a>
+					</td>
 				</tr></table></td>
-			</tr>			
+			</tr>
 			<?php  } ?>
 			<tr>
-        		<td class="bgcolor_004" align="left">
+			<td class="bgcolor_004" align="left">
 
 					<input type="radio" name="Period" value="Month" <?php  if (($Period=="Month") || !isset($Period)){ ?>checked="checked" <?php  } ?>> 
 					<font class="fontstyle_003"><?php echo gettext("SELECT MONTH");?></font>
 				</td>
-      			<td class="bgcolor_003" align="left">
+			<td class="bgcolor_003" align="left">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr><td class="fontstyle_searchoptions">
-	  				<input type="checkbox" name="frommonth" value="true" <?php  if ($frommonth){ ?>checked<?php }?>>
+					<input type="checkbox" name="frommonth" value="true" <?php  if ($frommonth){ ?>checked<?php }?>>
 					<?php echo gettext("From");?> : <select name="fromstatsmonth" class="form_input_select">
 					<?php
 						$monthname = array( gettext("January"), gettext("February"),gettext("March"), gettext("April"), gettext("May"), gettext("June"), gettext("July"), gettext("August"), gettext("September"), gettext("October"), gettext("November"), gettext("December"));
-						$year_actual = date("Y");  	
+						$year_actual = date("Y");
 						for ($i=$year_actual;$i >= $year_actual-1;$i--)
-						{		   
+						{
 						   if ($year_actual==$i){
 							$monthnumber = date("n")-1; // Month number without lead 0.
 						   }else{
 							$monthnumber=11;
-						   }		   
-						   for ($j=$monthnumber;$j>=0;$j--){	
+						   }
+						   for ($j=$monthnumber;$j>=0;$j--){
 							$month_formated = sprintf("%02d",$j+1);
-				   			if ($fromstatsmonth=="$i-$month_formated")	$selected="selected";
+							if ($fromstatsmonth=="$i-$month_formated")	$selected="selected";
 							else $selected="";
-							echo "<OPTION value=\"$i-$month_formated\" $selected> $monthname[$j]-$i </option>";				
+							echo "<OPTION value=\"$i-$month_formated\" $selected> $monthname[$j]-$i </option>";
 						   }
 						}
-					?>		
+					?> 
 					</select>
 					</td><td  class="fontstyle_searchoptions">&nbsp;&nbsp;
 					<input type="checkbox" name="tomonth" value="true" <?php  if ($tomonth){ ?>checked<?php }?>> 

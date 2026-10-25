@@ -118,7 +118,7 @@ $HD_Form -> CV_NO_FIELDS  = gettext("THERE IS NO CARD FOUNDED!");
 $HD_Form -> CV_DISPLAY_LINE_TITLE_ABOVE_TABLE = false;
 $HD_Form -> CV_TEXT_TITLE_ABOVE_TABLE = '';
 $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
-$HD_Form -> FG_VIEW_TABLE_WITDH = '80%';
+$HD_Form -> FG_VIEW_TABLE_WITDH = '69%';
 
 
 $HD_Form -> FG_EDITION = false;
@@ -144,7 +144,7 @@ if (has_rights (ACX_DISTRIBUTION) && !($popup_select>=1)) {
 	$HD_Form -> FG_OTHER_BUTTON2_LINK= "javascript:;\" onClick=\"alertBase('url:A2B_entity_callerid?form_action=list&displayheader=0&popup_select=1&idcust=|param|','|col0|',true,false,'#445760',event.pageX-55,event.pageY-15,'UR')";
 	$HD_Form -> FG_OTHER_BUTTON3_LINK= "javascript:;\" onClick=\"alertBase('url:didivr?popup_select=1&choose_callowner=4&id=|param|','|col0|',true,false,'#445760',event.pageX-78,event.pageY-15,'UR')";
 	$HD_Form -> FG_OTHER_BUTTON4_LINK= "javascript:;\" onClick=\"alertBase('url:call-history?popup_select=1&choose_callowner=4&id=|param|','|col0|',true,false,'#445760',event.pageX-78,event.pageY-15,'UR')";
-	$HD_Form -> FG_OTHER_BUTTON5_LINK= "javascript:;\" onClick=\"alertBase('url:A2B_entity_logrefill?form_action=ask-add&popup_select=1&popup_formname=myForm&card_id=|param|&displayheader=0','|col0|',true,true,'info',event.pageX-100,event.pageY+15,'UR'"./*,'main-content'*/")\" style=\"height:12.8px";
+	$HD_Form -> FG_OTHER_BUTTON5_LINK= "javascript:;\" onClick=\"alertBase('url:A2B_entity_logrefill?form_action=ask-add&popup_select=1&popup_formname=myForm&card_id=|param|&displayheader=0','|col0|',true,true,'info',event.pageX-100,event.pageY+15,'UR',null,null,null,null,null,refreshInsideCallback"./*,'main-content'*/")\" style=\"height:12.8px";
 	$HD_Form -> FG_OTHER_BUTTON1_ALT = '<font color="red">'.gettext('EXT').'</font>';
 	$HD_Form -> FG_OTHER_BUTTON2_ALT = '<font color="red">'.gettext('CID').'</font>';
 	$HD_Form -> FG_OTHER_BUTTON3_ALT = '<font color="red">'.gettext('DID').'</font>';

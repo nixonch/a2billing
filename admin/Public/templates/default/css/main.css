@@ -7,7 +7,8 @@
 	min-width: 1000px;
 	margin: 0px auto;
 	}
-#page-wrap #inside {
+#page-wrap #inside,
+#main-content .inside {
 	padding-bottom: 0px;
 	margin: 10px auto;
 }
@@ -18,7 +19,7 @@
 	background: url(../images/grid-bg.png);
 }
 	
-#main-content #inside {
+#main-content .inside {
 	background: url(../images/baseline-bg.png);
 }
 	
@@ -45,7 +46,7 @@
 
 .msg_info , .msg_success , .msg_warning , .msg_error  {
     border: 1px solid;
-    margin:10px 10px 10px 0px;
+    margin:10px 0px 10px 0px;
     padding:15px 10px 20px 50px;
     background-repeat: no-repeat;
     background-position: 10px center;
@@ -460,7 +461,7 @@ SPAN.errorText {
 }
 
 .callhistory_maintable{
-	width: 60%;
+	width: 50%;
 	border: 0px none transparent;
 	border-spacing: 0px;
 	padding: 2px;
@@ -964,7 +965,6 @@ input:focus{
 	padding-bottom: 2px;
 	margin-left: auto;
 	border-left: 0px;
-	width: 90%;
 	margin-right: auto;
 	padding-top: 2px;
 	border-bottom: 0px;
@@ -1454,8 +1454,8 @@ div.pscroll {
 }
 
 div.scroll {
-	height: 100px;
-	width: 560px;
+	height: 105px;
+	width: 530px;
 	overflow: auto;
 	margin-left: auto;
 	margin-right: auto;	

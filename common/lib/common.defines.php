@@ -76,6 +76,7 @@ define ("API_LOGFILE", isset($A2B->config['webui']['api_logfile'])?$A2B->config[
 define ("ADMIN_EMAIL", isset($A2B->config["global"]['admin_email'])?$A2B->config["global"]['admin_email']:null);
 define ("IPSTACK_API_KEY", isset($A2B->config['global']['ipstack_api_key'])?$A2B->config['global']['ipstack_api_key']:null);
 define ("D7_API_TOKEN", isset($A2B->config['global']['d7_api_token'])?$A2B->config['global']['d7_api_token']:null);
+define ("D7_API_TOKEN_V0", isset($A2B->config['global']['d7_api_token_v0'])?$A2B->config['global']['d7_api_token_v0']:null);
 
 // BUDDY ASTERISK FILES
 define ("BUDDY_SIP_FILE", isset($A2B->config['webui']['buddy_sip_file'])?$A2B->config['webui']['buddy_sip_file']:null);

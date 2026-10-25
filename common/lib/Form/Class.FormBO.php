@@ -308,7 +308,6 @@ class FormBO {
 			    }
 			}
 		    }
-
 		    $client = new GuzzleHttp\Client([	'base_uri' => "https://api.d7networks.com",
 							'connect_timeout' => 3.0,
 							'timeout' => 3.0,

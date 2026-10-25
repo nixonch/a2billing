@@ -7,7 +7,7 @@ if ($this->FG_FILTER_SEARCH_FORM) {
 <!-- ** ** ** ** ** Part for the research - ** ** ** ** ** -->
 	<center>
 		<b><?php echo $this -> FG_FILTER_SEARCH_TOP_TEXT?></b>
-		<table class="searchhandler_table1">
+		<table class="searchhandler_table1" width="<?= $this->FG_FILTER_SEARCH_TABLE_WITDH ?>">
 		<FORM METHOD=POST ACTION="<?php echo $PHP_SELF?>?s=<?php echo $processed['s']?>&t=<?php echo $processed['t']?>&order=<?php echo $processed['order']?>&sens=<?php echo $processed['sens']?>&current_page=<?php echo $processed['current_page']?>">
 		<INPUT TYPE="hidden" NAME="posted_search" value="1">
 		<INPUT TYPE="hidden" NAME="current_page" value="0">

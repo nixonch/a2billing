@@ -108,6 +108,9 @@ $HD_Form -> AddEditElement (gettext("PHONE"),
 
 $HD_Form -> FieldEditElement ('speeddial, name, phone');
 
+$HD_Form -> FG_EDITION_HIDDEN_PARAM = 'popup_select,filterprefix';
+$HD_Form -> FG_EDITION_HIDDEN_PARAM_VALUE = $popup_select.",".$filterprefix;
+
 
 if (isset($filterprefix)  &&  (strlen($filterprefix)>0)) {
 	if (strlen($HD_Form -> FG_TABLE_CLAUSE)>0) $HD_Form -> FG_TABLE_CLAUSE.=" AND ";
@@ -129,6 +132,7 @@ $HD_Form -> FG_BUTTON_EDITION_BOTTOM_TEXT = $HD_Form -> FG_BUTTON_ADITION_BOTTOM
 
 
 $HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
-$HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
+// Popup edits report success only after the update result has been checked.
+$HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT = $popup_select == 4 ? null : $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
 $HD_Form -> FG_GO_LINK_AFTER_ACTION_DELETE = $_SERVER['PHP_SELF']."?atmenu=document&stitle=Document&wh=AC&id=";
 

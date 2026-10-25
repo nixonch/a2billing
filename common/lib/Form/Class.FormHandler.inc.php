@@ -47,6 +47,7 @@ class FormHandler
 
 	var $CV_CURRENT_PAGE = 0;
 
+	var $FG_FILTER_SEARCH_TABLE_WITDH = '90%';
 	var $FG_VIEW_TABLE_WITDH = '100%';
 	var $FG_ACTION_SIZE_COLUMN = '25%';
 	/**
@@ -199,7 +200,7 @@ class FormHandler
 	var $FG_FILTERTYPE = 'INPUT'; // INPUT :: SELECT :: POPUPVALUE
 	var $FG_FILTERFIELD = '';
 	var $FG_FILTERFIELDNAME = '';	
-	var $FG_FILTERPOPUP = array('CC_entity_card.php?popup_select=1&', ", 'CardNumberSelection','width=550,height=350,top=20,left=100'");
+	var $FG_FILTERPOPUP = array('CC_entity_card?popup_select=1&', ", 'CardNumberSelection','width=550,height=350,top=20,left=100'");
 
 	// SECOND FILTER
 	var $FG_FILTER_APPLY2 = false;

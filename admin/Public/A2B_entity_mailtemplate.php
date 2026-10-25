@@ -61,14 +61,11 @@ if ($popup_select) {
 ?>
 <SCRIPT LANGUAGE="javascript">
 <!-- Begin
-function sendValue(selvalue){
+function selectMailTemplate(selvalue){
 	$.getJSON("A2B_entity_mailtemplate.php", { id: ""+ selvalue, action: "load" },
 	function(data){
-		window.opener.document.getElementById('msg_mail').value = data.messagetext;
-		window.opener.document.getElementById('from').value = data.fromemail;
-		window.opener.document.getElementById('fromname').value = data.fromname;
-		window.opener.document.getElementById('subject').value = data.subject;
-		window.close();
+		if (!data) { return; }
+		window.parent.postMessage({action:'popupResult',payload:{type:'mailTemplate',data:data}},window.location.origin);
 	});
 }
 // End -->

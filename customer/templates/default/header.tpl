@@ -9,19 +9,21 @@
 
     <link href="templates/{$SKIN_NAME}/css/main.css" rel="stylesheet" type="text/css">
     <link href="templates/{$SKIN_NAME}/css/menu.css" rel="stylesheet" type="text/css">
-    {if LANGUAGE == "farsi" }
+{if LANGUAGE == "farsi" }
         <link href="templates/{$SKIN_NAME}/css/right2left.css" rel="stylesheet" type="text/css">
-    {/if}
-    
-	<!--[if lt IE 7]>
-		<link rel="stylesheet" type="text/css" href="templates/{$SKIN_NAME}/css/style-ie.css" />
-	<![endif]-->
+{/if}
+<!--[if lt IE 7]>
+	<link rel="stylesheet" type="text/css" href="templates/{$SKIN_NAME}/css/style-ie.css" />
+<![endif]-->
 	<link href="templates/{$SKIN_NAME}/css/style-def.css" rel="stylesheet" type="text/css">
 	<link href="templates/{$SKIN_NAME}/css/invoice.css" rel="stylesheet" type="text/css">
 	<link href="templates/{$SKIN_NAME}/css/receipt.css" rel="stylesheet" type="text/css">
-	{if ($popupwindow != 0)}
-		<link href="templates/{$SKIN_NAME}/css/popup.css" rel="stylesheet" type="text/css">
- 	{/if}
+{if ($popupwindow != 0)}
+	<link href="templates/{$SKIN_NAME}/css/popup.css" rel="stylesheet" type="text/css">
+{else}
+	<script type="text/javascript" src="./javascript/popupResult.js"></script>
+	<script src="./javascript/alertBase.js"></script>
+{/if}
 	<script type="text/javascript">
 	    var IMAGE_PATH = "templates/{$SKIN_NAME}/images/";
 	</script>
@@ -31,7 +33,6 @@
 	<script src="./javascript/jquery/handler_jquery.js"></script>
 	<script src="./javascript/misc.js"></script>
 </HEAD>
-
 <BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
 
 <div id="page-wrap">

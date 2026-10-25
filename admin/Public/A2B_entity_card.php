@@ -49,7 +49,7 @@ if (! has_rights (ACX_CUSTOMER)) {
 $HD_Form -> setDBHandler (DbConnect());
 $HD_Form -> init();
 
-$HD_Form -> FG_EDITION_LINK		 = $_SERVER['PHP_SELF']."?form_action=ask-edit&current_page=$current_page&filterprefix=$filterprefix&id=";
+$HD_Form -> FG_EDITION_LINK	       = $_SERVER['PHP_SELF']."?form_action=ask-edit&current_page=$current_page&filterprefix=$filterprefix&id=";
 $HD_Form -> FG_DELETION_LINK	= "url:".$_SERVER['PHP_SELF']."?form_action=ask-delete&current_page=$current_page&filterprefix=$filterprefix&popup_select=4&id=";
 
 /********************************* BATCH UPDATE ***********************************/
@@ -160,38 +160,14 @@ $list = $HD_Form -> perform_action($form_action);
 $smarty->display('main.tpl');
 
 
-
-if ($popup_select==1) {
-?>
-<SCRIPT LANGUAGE="javascript">
-<!-- Begin
-function sendValue(selvalue, othervalue){
-        window.opener.document.<?php echo $popup_formname ?>.<?php echo $popup_fieldname ?>.value = selvalue;
-        if(othervalue && window.opener.document.<?php echo $popup_formname ?>.accountcode){
-                window.opener.document.<?php echo $popup_formname ?>.accountcode.value = othervalue;
-        } else if(othervalue && window.opener.document.getElementById('tzc')){
-                window.opener.document.getElementById('tzc').innerHTML = othervalue;
-		window.opener.document.getElementById('dest').disabled = false;
-        }
-        window.close();
-}
-
-// End -->
-</SCRIPT>
-<?php
-}
-
-
-// #### HELP SECTION
 if ($form_action=='list' && !($popup_select>=1)) {
+// #### HELP SECTION
 	echo $CC_help_list_customer;
 ?>
 <script language="JavaScript" src="javascript/card.js"></script>
-
 <div class="toggle_hide2show">
 <center><a href="#" target="_self" class="toggle_menu"><img class="toggle_hide2show" src="<?php echo KICON_PATH; ?>/toggle_hide2show.png" onmouseover="this.style.cursor='hand';" HEIGHT="16"> <font class="fontstyle_002"><?php echo gettext("SEARCH CUSTOMERS");?> </font></a><?php if(!empty($_SESSION['entity_card_selection'])){ ?>&nbsp;(<font style="color:#EE6564;" > <?php echo gettext("search activated"); ?> </font> ) <?php } ?> </center>
 	<div class="tohide" style="display:none;">
-
 <?php
 // #### CREATE SEARCH FORM
 if ($form_action == "list") {

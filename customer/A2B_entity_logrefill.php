@@ -189,7 +189,7 @@ if ($message == "addsuccess") {
     </div>
 </form>
 <script type="text/javascript">
-    window.parent.postMessage({action:'refreshInside'},'*');
+    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*');
     objbutton=document.getElementById('button1');
     objbutton.focus();
     timeleft=10;

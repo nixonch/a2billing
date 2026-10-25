@@ -258,11 +258,14 @@ function cleanInput($input) {
 }
 
 /*
- * function sanitize_data
+ * Legacy input normalizer.
+ *
+ * Do not use this function as a SQL-injection boundary.  Existing A2Billing
+ * pages still expect its historical escaping, so it is intentionally kept
+ * for backwards compatibility while new code binds SQL parameters through
+ * ADOdb instead.
  */
 function sanitize_data($input) {
-	global $DBHandle;
-
 	if (is_array($input)) {
 		foreach ($input as $var => $val) {
 			$output[$var] = sanitize_data($val);
@@ -305,7 +308,6 @@ function sanitize_data($input) {
 //		$input  = stripslashes($input);
 		$input  = cleanInput($input);
 		$output = addslashes($input);
-//		$output = mysqli_real_escape_string( $DBHandle->_connectionID, $input );
 	}
 
 	return $output;
@@ -361,6 +363,152 @@ function getpost_ifset($test_vars) {
 			}
 		}
 	}
+}
+
+/*
+ * Return one scalar POST/GET value without applying SQL or HTML escaping.
+ *
+ * POST takes precedence over GET, matching getpost_ifset().  $is_set tells
+ * the caller whether the parameter was supplied.  NULL means that a supplied
+ * value was not scalar or exceeded the requested character limit.
+ *
+ * SQL values returned by this function must always be passed separately to
+ * ADOdb Execute($sql, $params).  HTML output must be escaped at render time.
+ */
+function a2b_getpost_scalar($name, &$is_set, $max_length = null, $trim = true) {
+	$is_set = false;
+
+	if (array_key_exists($name, $_POST)) {
+		$value = $_POST[$name];
+		$is_set = true;
+	} elseif (array_key_exists($name, $_GET)) {
+		$value = $_GET[$name];
+		$is_set = true;
+	} else {
+		return '';
+	}
+
+	if (!is_scalar($value) && $value !== null) {
+		return null;
+	}
+
+	$value = (string) $value;
+	if ($value !== '' && preg_match('//u', $value) !== 1) {
+		return null;
+	}
+	if ($trim) {
+		$value = trim($value);
+	}
+
+	if ($max_length !== null && a2b_text_length($value) > $max_length) {
+		return null;
+	}
+
+	return $value;
+}
+
+function a2b_text_length($value) {
+	if (function_exists('mb_strlen')) {
+		$length = mb_strlen($value, 'UTF-8');
+		if ($length !== false) {
+			return $length;
+		}
+	}
+
+	return strlen($value);
+}
+
+function a2b_truncate_text($value, $max_length) {
+	$value = (string) $value;
+	if (a2b_text_length($value) <= $max_length) {
+		return $value;
+	}
+
+	if (function_exists('mb_substr')) {
+		return mb_substr($value, 0, $max_length, 'UTF-8');
+	}
+	$characters = preg_split('//u', $value, -1, PREG_SPLIT_NO_EMPTY);
+	if (is_array($characters)) {
+		return implode('', array_slice($characters, 0, $max_length));
+	}
+
+	return substr($value, 0, $max_length);
+}
+
+function a2b_uuid_v4() {
+	$data = false;
+	if (function_exists('random_bytes')) {
+		try {
+			$data = random_bytes(16);
+		} catch (\Exception $e) {
+			$data = false;
+		}
+	}
+	if ($data === false && function_exists('openssl_random_pseudo_bytes')) {
+		$data = openssl_random_pseudo_bytes(16);
+	}
+	if (!is_string($data) || strlen($data) !== 16) {
+		$hex = md5(uniqid(mt_rand(), true));
+		return substr($hex, 0, 8).'-'.substr($hex, 8, 4).'-4'.substr($hex, 13, 3).'-a'.substr($hex, 17, 3).'-'.substr($hex, 20, 12);
+	}
+
+	$data[6] = chr((ord($data[6]) & 0x0f) | 0x40);
+	$data[8] = chr((ord($data[8]) & 0x3f) | 0x80);
+	$hex = bin2hex($data);
+
+	return substr($hex, 0, 8).'-'.substr($hex, 8, 4).'-'.substr($hex, 12, 4).'-'.substr($hex, 16, 4).'-'.substr($hex, 20, 12);
+}
+
+/*
+ * Atomically count requests in a window that starts with the first request.
+ * Returns TRUE when allowed, FALSE when limited and NULL on a database error.
+ */
+function a2b_rate_limit_check($DBHandle, $scope, $key, $limit, $window_seconds, &$retry_after) {
+	$retry_after = 0;
+	$scope = (string) $scope;
+	$key = (string) $key;
+	$limit = (int) $limit;
+	$window_seconds = (int) $window_seconds;
+	$retention_seconds = 86400;
+
+	if (!preg_match('/^[a-z0-9_:-]{1,40}$/D', $scope) || $key === '' || $limit < 1 || $window_seconds < 1) {
+		return null;
+	}
+
+	$key_hash = hash('sha256', $scope."\0".$key);
+	$table = new Table('cc_rate_limit', "hits, window_start, UNIX_TIMESTAMP()");
+	$query = "INSERT INTO cc_rate_limit (scope, key_hash, window_start, hits, expires_at) " .
+		 "VALUES (?, ?, UNIX_TIMESTAMP(), 1, UNIX_TIMESTAMP() + ? + ?) " .
+		 "ON DUPLICATE KEY UPDATE " .
+		 "hits=IF(window_start + ? <= UNIX_TIMESTAMP(), 1, hits + 1), " .
+		 "expires_at=IF(window_start + ? <= UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + ? + ?, window_start + ? + ?), " .
+		 "window_start=IF(window_start + ? <= UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), window_start)";
+	$params = array($scope, $key_hash, $window_seconds, $retention_seconds,
+		$window_seconds, $window_seconds, $window_seconds, $retention_seconds,
+		$window_seconds, $retention_seconds, $window_seconds);
+	$result = $table -> ExecuteQuery($DBHandle, $query, 0, $params);
+	if (!$result) {
+		return null;
+	}
+
+	$result = $table -> Get_list($DBHandle, "scope = ? AND key_hash = ?", null, null, null, null, 1, 0, null, 0, array($scope, $key_hash));
+	if (!$result) {
+		return null;
+	}
+
+	$hits = (int) $result[0][0];
+	$window_start = (int) $result[0][1];
+	$database_time = (int) $result[0][2];
+	if ($scope === 'endpoint_ip' && mt_rand(1, 100) === 1) {
+		$table -> ExecuteQuery($DBHandle, "DELETE FROM cc_rate_limit WHERE expires_at < UNIX_TIMESTAMP() ORDER BY expires_at LIMIT 100", 0);
+	}
+
+	if ($hits <= $limit) {
+		return true;
+	}
+
+	$retry_after = max(1, $window_start + $window_seconds - $database_time);
+	return false;
 }
 
 /*
@@ -586,7 +734,7 @@ function linkonfaxfile_customer($value) {
  * function linkdelete_cdr
  */
 function linkdelete_cdr($value) {
-	echo "<a href=\"javascript:;\" onClick=\"alertBase('url:A2B_entity_call?form_action=ask-delete&popup_select=4&id=" . $value . "',null,true,false,'#445760',event.pageX-20,event.pageY-100,'UR')\">";
+	echo "<a href=\"javascript:;\" onClick=\"alertBase('url:A2B_entity_call?form_action=ask-delete&popup_select=4&id=" . $value . "',null,true,false,'#445760',event.pageX-20,event.pageY-100,'UR',null,null,null,null,null,refreshInsideCallback)\">";
 	echo '<img src="' . Images_Path . '/delete.png"/></a>';
 }
 

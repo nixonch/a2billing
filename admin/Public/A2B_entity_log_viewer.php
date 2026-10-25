@@ -58,7 +58,7 @@ if($form_action=="ask-delete" && is_numeric($id)) {
     if ($popup_select==4) {
 ?>
 <script type="text/javascript">
-    window.parent.postMessage({action:'refreshInside'},'*');
+    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*');
     window.parent.postMessage({action:'closeAlert'},'*')
 </script>
 <?php
@@ -108,28 +108,28 @@ if($form_action=="list"){
 </table>
 <FORM METHOD=POST name="myForm" ACTION="<?php echo $PHP_SELF?>?s=1&t=0&order=<?php echo $order?>&sens=<?php echo $sens?>&current_page=<?php echo $current_page?>">
 	<INPUT TYPE="hidden" NAME="posted" value=1>
-	<INPUT TYPE="hidden" NAME="current_page" value=0>	
+	<INPUT TYPE="hidden" NAME="current_page" value=0>
 		<table class="bar-status" width="70%" border="0" cellspacing="1" cellpadding="2" align="center">
 			<tbody>
 			<?php  if ($_SESSION["pr_groupID"]==2 && is_numeric($_SESSION["pr_IDCust"])){ ?>
 			<?php  }else{ ?>
 			<tr>
-				<td align="left" valign="top" class="bgcolor_004">					
+				<td align="left" valign="top" class="bgcolor_004">
 					<font class="fontstyle_003">&nbsp;&nbsp;<?php echo gettext(($atmenu == '2')?'CUSTOMER':'ADMIN');?></font>
-				</td>				
+				</td>
 				<td class="bgcolor_005" align="left">
 				<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr>
 					<td class="fontstyle_searchoptions" width="5%" nowrap>
-						&nbsp;ID:&nbsp;<INPUT TYPE="text" NAME="enteradmin" value="<?php echo $enteradmin?>" class="form_input_text"><a href="#"
+						&nbsp;ID:&nbsp;<INPUT TYPE="text" NAME="enteradmin" value="<?php echo $enteradmin?>" class="form_input_text"><a href="javascript:;"
 					    <?php if ($atmenu == "2") {?>
-						onclick="window.open('A2B_entity_card.php?popup_select=1&popup_formname=myForm&popup_fieldname=enteradmin' , 'CardNumberSelection','width=550,height=520,top=20,left=100,scrollbars=1');"
+						onclick="alertBase('url:A2B_entity_card?popup_select=1&popup_formname=myForm&popup_fieldname=enteradmin','Card Number Selection',true,false,'#445760',null,event.pageY+20,'UR',null,null,null,null,null,sendValueCallback);"
 					    <?php }else{ ?>
 						onclick="window.open('A2B_entity_user.php?popup_select=1&popup_formname=myForm&popup_fieldname=enteradmin' , 'AdminSelection','width=550,height=330,top=20,left=100,scrollbars=1');"
 					    <?php } ?>
 						><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a>
-					</td>					
+					</td>
 				</tr></table></td>
-			</tr>			
+			</tr>
 			<?php  }?>
 			<tr>
         		<td class="bgcolor_002" align="left">
@@ -144,7 +144,7 @@ if($form_action=="list"){
 					<?php echo gettext("From");?> : <select name="fromstatsmonth" class="form_input_select">
 					<?php
 						$monthname = array( gettext("January"), gettext("February"),gettext("March"), gettext("April"), gettext("May"), gettext("June"), gettext("July"), gettext("August"), gettext("September"), gettext("October"), gettext("November"), gettext("December"));
-						$year_actual = date("Y");  	
+						$year_actual = date("Y");
 						for ($i=$year_actual;$i >= $year_actual-1;$i--)
 						{		   
 						   if ($year_actual==$i){

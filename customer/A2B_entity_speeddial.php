@@ -48,6 +48,7 @@ getpost_ifset(array ('destination',	'choose_speeddial',	'name'));
 
 $HD_Form->setDBHandler(DbConnect());
 $HD_Form->init();
+$HD_Form->FG_EDITION_LINK = "url:".$PHP_SELF."?form_action=ask-edit&popup_select=4&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&order=$order&sens=$sens&id=";
 
 // ADD SPEED DIAL
 if (strlen($destination) > 0 && is_numeric($choose_speeddial)) {
@@ -59,6 +60,18 @@ if (strlen($destination) > 0 && is_numeric($choose_speeddial)) {
 	$QUERY = "INSERT INTO cc_speeddial (id_cc_card, phone, name, speeddial) VALUES ('" . $_SESSION["card_id"] . "', '" . $destination . "', '" . $name . "', '" . $choose_speeddial . "')";
 	
 	$result = $instance_sub_table->SQLExec($HD_Form->DBHandle, $QUERY, 0);
+	if ($result) {
+		// Reload the list without replaying the assignment on refresh.
+		$processed = $HD_Form->getProcessed();
+		$list_params = array('form_action' => 'list');
+		foreach (array('current_page', 'order', 'sens', 'filterprefix', 'atmenu', 'stitle', 'section', 'popup_select', 'popup_formname', 'popup_fieldname') as $param) {
+			if (isset($processed[$param])) {
+				$list_params[$param] = $processed[$param];
+			}
+		}
+		Header("Location: " . $PHP_SELF . "?" . http_build_query($list_params));
+		die();
+	}
 }
 
 if ($id != "" || !is_null($id)) {
@@ -75,6 +88,39 @@ $list = $HD_Form->perform_action($form_action);
 
 // #### HEADER SECTION
 $smarty->display('main.tpl');
+
+if ($popup_select == 4 && $form_action == 'edit' && $HD_Form->VALID_SQL_REG_EXP && $HD_Form->RESULT_QUERY) {
+?>
+<table width="95%" align="center">
+<tr height="80px">
+<td align="center"><b><?php echo gettext("Information has successfully been updated"); ?></b></td>
+</tr>
+</table>
+<div align="center">
+    <input id="speeddial-close" class="form_input_button" type="button" value="<?php echo htmlspecialchars(gettext("Close Window"), ENT_QUOTES, 'UTF-8'); ?>" onclick="window.parent.postMessage({action:'closeAlert'},'*');">
+</div>
+<script type="text/javascript">
+(function () {
+    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*');
+    var button = document.getElementById('speeddial-close');
+    var label = <?php echo json_encode(gettext("Close Window"), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
+    var seconds = 10;
+    button.focus();
+    button.value = label + ' (' + seconds + ')';
+    var timer = setInterval(function () {
+        seconds--;
+        button.value = label + ' (' + seconds + ')';
+        if (seconds <= 0) {
+            clearInterval(timer);
+            button.click();
+        }
+    }, 1000);
+}());
+</script>
+<?php
+    $smarty->display('footer.tpl');
+    exit;
+}
 
 // #### HELP SECTION
 if ($form_action == 'list') {
@@ -126,7 +172,15 @@ if ($form_action == "list") {
 // #### TOP SECTION PAGE
 $HD_Form -> create_toppage ($form_action);
 
+// The shared view only provides this refresh target for a nonempty list.
+$empty_speeddial_list = $form_action == 'list' && empty($list);
+if ($empty_speeddial_list) {
+	echo '<div id="main-list">';
+}
 $HD_Form -> create_form ($form_action, $list, $id=null) ;
+if ($empty_speeddial_list) {
+	echo '</div>';
+}
 
 // #### FOOTER SECTION
 $smarty->display('footer.tpl');

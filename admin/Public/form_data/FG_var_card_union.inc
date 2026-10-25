@@ -6,11 +6,9 @@ $HD_Form = new FormHandler("cc_card_concat", gettext("Unions"));
 
 $HD_Form -> FG_DEBUG = 0;
 $HD_Form -> FG_TABLE_ID="concat_card_id";
-//$HD_Form -> FG_TABLE_DEFAULT_ORDER = "concat_id DESC, rmanager";
-$HD_Form -> FG_TABLE_DEFAULT_ORDER = "concat_id";
+$HD_Form -> FG_TABLE_DEFAULT_ORDER = "concat_id DESC, root_manager";
 $HD_Form -> FG_TABLE_DEFAULT_SENS = "DESC";
 $HD_Form -> FG_ACTION_SIZE_COLUMN = '';
-$HD_Form -> FG_VIEW_TABLE_WITDH = '80%';
 
 $addpost = '';
 if (isset($filterprefix)  &&  (strlen($filterprefix)>0)){
@@ -34,16 +32,15 @@ $yesno = Constants::getYesNoList();
 
 $HD_Form -> AddViewElement(gettext("UNION"), "concat_id", "", "center", "sort");
 $HD_Form -> AddViewElement(gettext("MEMBER ACCOUNT"), "concat_card_id", "", "center", "sort", "", "lie_link", "cc_card", "username, id", "id='%id'", "%1", "", "A2B_entity_card.php");
-$HD_Form -> AddViewElement(gettext("MEMBER NAME"), "concat_card_id", "", "center\" nowrap \"", "sort", "", "lie_link", "cc_card", "lastname, id, firstname, IF(company_name='','',CONCAT('<br/>(',company_name,')'))", "id='%id'", "%1 %3 %4", "", "A2B_card_info.php");
-//$HD_Form -> AddViewElement(gettext("ROOT CONTROL"), "rmanager", "", "center", "SORT");
-//$HD_Form -> AddViewElement(gettext("ADMINISTER VoIP & DID INSIDE THE UNION"), "foreignvoipconf", "", "center", "SORT", "", "list", $yesno);
+$HD_Form -> AddViewElement(gettext("MEMBER NAME"), "concat_card_id", "", "center\" nowrap \"", "sort", "", "lie_link", "cc_card", "lastname, id, firstname, IF(company_name='','',CONCAT(IF(LENGTH(CONCAT(lastname,firstname))=0,'','<br/>('),company_name,IF(LENGTH(CONCAT(lastname,firstname))=0,'',')')))", "id='%id'", "%1 %3 %4", "", "A2B_card_info.php");
+$HD_Form -> AddViewElement(gettext("ROOT CONTROL"), "rmanager", "", "center", "SORT");
+$HD_Form -> AddViewElement(gettext("ADMINISTER VoIP & DID INSIDE THE UNION"), "foreignvoipconf", "", "center", "SORT", "", "list", $yesno);
 $HD_Form -> AddViewElement(gettext("ACCESS TO UNION'S LOGS"), "foreignlogs", "", "center", "SORT", "", "list", $yesno);
 $HD_Form -> AddViewElement(gettext("OPEN LOGS"), "mylogs", "", "center", "SORT", "", "list", $yesno);
 $HD_Form -> AddViewElement(gettext("ACCESS TO UNION'S RECORDS"), "foreignrecords", "", "center", "SORT", "", "list", $yesno);
 $HD_Form -> AddViewElement(gettext("OPEN RECORDS"), "myrecords", "", "center", "SORT", "", "list", $yesno);
 
-//$HD_Form -> FieldViewElement ("concat_id, concat_card_id, concat_card_id, IF(root_manager=0,'".gettext("No")."','<font color=green>".gettext("Yes")."</font>') rmanager, foreignvoipconf, foreignlogs, mylogs, foreignrecords, myrecords");
-$HD_Form -> FieldViewElement ("concat_id, concat_card_id, concat_card_id, foreignlogs, mylogs, foreignrecords, myrecords");
+$HD_Form -> FieldViewElement ("concat_id, concat_card_id, concat_card_id, IF(root_manager=0,'".gettext("No")."','<font color=green>".gettext("Yes")."</font>') rmanager, foreignvoipconf, foreignlogs, mylogs, foreignrecords, myrecords");
 
 $HD_Form -> CV_NO_FIELDS = gettext("THERE ARE NO UNIONS CREATED!");
 $HD_Form -> CV_DISPLAY_LINE_TITLE_ABOVE_TABLE = false;
@@ -78,14 +75,14 @@ $HD_Form -> AddEditElement (gettext("UNION"),
 $HD_Form -> AddEditElement (gettext("ID CARD"),
 			"concat_card_id",
 			"",
-			"POPUPVALUE",
+			"POPUPVALUEALERT",
 			"readonly size=25 maxlength=25",
 			"4",
 			gettext("Insert the Id CardNumber"),
-			"", "", "", "", "", "A2B_entity_card.php?popup_select=1&",
-			", 'CardNumberSelection','width=550,height=580,top=20,left=100,scrollbars=1'",
+			"", "", "", "", "", "A2B_entity_card?popup_select=1&",
+			", 'Card Number Selection',true,false,'#445760',event.pageX-195,event.pageY-200,'UR',null,null,null,null,null,sendValueCallback",
 			gettext("Define the card number ID of this Member"));
-/**
+
 $HD_Form -> AddEditElement (gettext("ROOT CONTROL"),
 			"root_manager",
 			"$value",
@@ -103,7 +100,7 @@ $HD_Form -> AddEditElement (gettext("ADMINISTER VoIP & DID INSIDE THE UNION"),
 			"",
 			"",
 			"", "", "", gettext("Yes").":1, - ".gettext("No").":0");
-**/
+
 $HD_Form -> AddEditElement (gettext("ACCESS TO UNION'S LOGS"),
 			"foreignlogs",
 			"$value",
@@ -144,8 +141,7 @@ $HD_Form -> AddEditElement (gettext("OPEN RECORDS"),
 			"", "", "", gettext("Yes").":1, - ".gettext("No").":0", "", "", "",
 			gettext("Define is other members have access to records of the Memeber"));
 
-//$HD_Form -> FieldEditElement ('concat_id, concat_card_id, root_manager, foreignvoipconf, foreignlogs, mylogs, foreignrecords, myrecords');
-$HD_Form -> FieldEditElement ('concat_id, concat_card_id, foreignlogs, mylogs, foreignrecords, myrecords');
+$HD_Form -> FieldEditElement ('concat_id, concat_card_id, root_manager, foreignvoipconf, foreignlogs, mylogs, foreignrecords, myrecords');
 $HD_Form -> FG_EDITION_CLAUSE = " concat_card_id='%id'";
 
 $HD_Form->FG_ADITION_HIDDEN_PARAM		= $HD_Form->FG_EDITION_HIDDEN_PARAM		= 'filterprefix,current_page';
