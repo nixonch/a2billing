@@ -6,9 +6,6 @@
 	<title>{$CCMAINTITLE}</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link href="templates/{$SKIN_NAME}/css/main.css" rel="stylesheet" type="text/css">
-<!--[if lt IE 7]>
-	<link rel="stylesheet" type="text/css" href="templates/{$SKIN_NAME}/css/style-ie.css" />
-<![endif]-->
 	<link href="templates/{$SKIN_NAME}/css/menu.css" rel="stylesheet" type="text/css">
 	<link href="templates/{$SKIN_NAME}/css/style-def.css" rel="stylesheet" type="text/css">
 	<link href="templates/{$SKIN_NAME}/css/invoice.css" rel="stylesheet" type="text/css">
@@ -31,9 +28,6 @@
 	<script type="text/javascript" src="./javascript/jquery/jquery.wysiwyg.js"></script>
 	<script type="text/javascript" src="./javascript/jquery/jquery.simplemodal.js"></script>
 	<script type="text/javascript" src="./javascript/jquery/osx.js"></script>
-<!--[if IE]>
-	<script type="text/javascript" src="./javascript/jquery/excanvas.pack.js"></script>
-<![endif]-->
 	<script type="text/javascript" src="./javascript/jquery/jquery.flot.pack.js"></script>
 	<script type="text/javascript" src="./javascript/misc.js"></script>
 </HEAD>

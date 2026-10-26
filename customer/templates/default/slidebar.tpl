@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 {php} header('X-Frame-Options: SAMEORIGIN'); {/php}
-<html class="no-js" lang="en">
+<html lang="en">
 <head>
     <link rel="shortcut icon" href="{$FAVICONPATH}"/>
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
