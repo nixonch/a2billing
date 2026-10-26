@@ -18,6 +18,18 @@ msgstr ""
 "X-Poedit-Country: GREECE\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 
+#: Public/templates/default/index.tpl:38
+msgid "Login"
+msgstr "Όνομα χρήστη"
+
+#: Public/templates/default/index.tpl:43
+msgid "Keep me signed in"
+msgstr "Να παραμείνω συνδεδεμένος"
+
+#: Public/templates/default/index.tpl:63
+msgid "You must enter an user and a password!"
+msgstr "Πρέπει να εισαγάγετε όνομα χρήστη και κωδικό πρόσβασης!"
+
 #: lib/Class.Realtime.php:96
 msgid "Could not open buddy file"
 msgstr "Αδυναμία ανοίγματος αρχείου κολλητών"

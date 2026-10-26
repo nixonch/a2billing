@@ -338,6 +338,7 @@ if ($security_verify == false) {
 }
 
 $newkey = securitykey(EPAYMENT_TRANSACTION_KEY, $transaction_data[0][8]."^".$transactionID."^".$transaction_data[0][2]."^".$transaction_data[0][1]."^".$item_id."^".$item_type);
+write_log(LOGFILE_EPAYMENT, basename(__FILE__).' line:'.__LINE__." ---- EPAYMENT_TRANSACTION_KEY=".EPAYMENT_TRANSACTION_KEY."/".$transaction_data[0][8]."^".$transactionID."^".$transaction_data[0][2]."^".$transaction_data[0][1]."^".$item_id."^".$item_type);
 if($newkey == $key) {
 	write_log(LOGFILE_EPAYMENT, basename(__FILE__).' line:'.__LINE__." ----------- Transaction Key Verified ------------");
 } else {

@@ -9,9 +9,6 @@
     <link rel="stylesheet" href="templates/default/css/left-nav-style.css" type="text/css"/>
     <link rel="stylesheet" href="templates/default/css/index.css" type="text/css"/>
     <script>
-if(!CSS.supports("display:flex")) {
-	location.replace("index1");
-}
 	var emptyemail = "{php} echo gettext("You have to enter a valid email address!"){/php}";
 	var emptylogin = "{php} echo gettext("AUTHENTICATION REFUSED :<br>please check your login/password!");{/php}";
 	var noservice = "{php} echo gettext("Service temporally not available.<br>Try again later.");{/php}";
@@ -26,16 +23,15 @@ if(!CSS.supports("display:flex")) {
     <li><h4>Main</h4></li>
     <li><a href="{$CUSTOMER_INTERFACE_URL}">Sign-in/up</a></li>
     <li><a href="{$CUSTOMER_INTERFACE_URL}terms">Terms & Conditions</a></li>
-    <li><a href="{$CUSTOMER_INTERFACE_URL}policy">Privacy Policy</a></li>
     <li><h4>Knowledge base</h4></li>
     <li><a href="{$CUSTOMER_INTERFACE_URL}AsteriskWebRTC">WebRTC setup in Asterisk</a></li>
     <li><a href="{$CUSTOMER_INTERFACE_URL}APICheckers"">Own Checking Web Service</a></li>
     <li><a href="{$CUSTOMER_INTERFACE_URL}how-to-CRM">Integration with CRM</a></li>
 </ul>
 </nav>
-{/if}
 <aside class="ads_right">
 </aside>
+{/if}
 <div class="container" onClick="if ($('#navi-toggle').prop('checked') && event.target.tagName!='A') document.getElementById('navi-toggle').checked=false">
   <div class="frame laud">
     <div class="nav">

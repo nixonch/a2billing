@@ -38,11 +38,15 @@ include ("lib/customer.defines.php");
 include ("lib/customer.module.access.php");
 include ("lib/customer.smarty.php");
 
-$smarty -> assign("SECONDARY_TITLE", "Integration WebRTC SIP Phone with CRM");
+$smarty -> assign("SECONDARY_TITLE", "Integration AiPhone with CRM");
 $smarty -> assign("CUSTOMER_INTERFACE_URL", CUSTOMER_INTERFACE_URL);
 $smarty -> assign("MAILTO", SUPPORT_MAILTO);
 $smarty -> assign("ADDRESS", SUPPORT_ADDRESS);
-$smarty -> assign("WEBPHONE", "https://chromewebstore.google.com/detail/webrtc-sip-phone-with-cli/pofkcckikkdhiieipefhkaelgnbdkcib"); // ссылка на описание телефона
+$aiphone_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : '');
+$aiphone_utm_source = rawurlencode(trim((string) parse_url('http://' . $aiphone_host, PHP_URL_HOST), '[]'));
+$aiphone_page = pathinfo(isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : 'how-to-CRM.php', PATHINFO_FILENAME);
+$aiphone_utm_campaign = rawurlencode('a2billing_customer_' . strtolower($aiphone_page));
+$smarty -> assign("WEBPHONE", "https://chromewebstore.google.com/detail/pofkcckikkdhiieipefhkaelgnbdkcib?utm_source=" . $aiphone_utm_source . "&amp;utm_medium=referral&amp;utm_campaign=" . $aiphone_utm_campaign); // ссылка на описание телефона
 
 $smarty -> display('slidebar.tpl');
 $smarty -> display('how-to-CRM.tpl');

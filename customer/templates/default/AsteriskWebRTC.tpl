@@ -166,11 +166,12 @@ RTP ports: UDP 10000 - 20000<br />
 (Re)Start Asterisk.<br />
 At this moment you should be able to make calls between a WebRTC and a SIP client.</p>
 <h3>Configure WebRTC client:</h3>
-<p>You can use any WebRTC SIP client with Asterisk. Just set it&rsquo;s websocket SIP address to point to your asterisk. With <a href="{$WEBPHONE}">WebRTC SIP Phone</a>, you will need the following configuration:</p>
+<div style="display: flow-root;">
+<img alt="WebRTC AiPhone" src="templates/{$SKIN_NAME}/images/phonesetup.png" style="float: right; width: calc(350px + 2rem); max-width: 100%; box-sizing: border-box; height: auto; padding: .5rem 1rem;"/>
+<p>You can use any WebRTC SIP client with Asterisk. Just set it&rsquo;s websocket SIP address to point to your asterisk. With <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">WebRTC AiPhone</a>, you will need the following configuration:</p>
 <p1>Authorization name:&nbsp; SIP_REGNAME<br>
 Password: YOUR_SIP_PASSWORD<br>
 WebRTC Server Address:&nbsp; wss://ASTERISK_IP:8089/ws</p1>
-<p style="text-align: center;"><img alt="WebRTC SIP Phone" src="templates/{$SKIN_NAME}/images/phonesetup.png" style="text-align:center"/></p>
 <h3>Extra configuration:</h3>
 <p>To be able to make calls also from Chrome, you need:<br />
 -Secure webserver to host your web client files (HTTPS)<br />
@@ -179,6 +180,7 @@ You can obtain SSL certificates for free from <a href="https://www.startssl.com/
 Make sure to apply the certificate for both your web server and asterisk websocket and dtls.<br />
 To configure secure calling in Asterisk, check this<a href="https://docs.asterisk.org/Deployment/Secure-Calling/Secure-Calling-Tutorial/"> guide</a>.<br />
 Optionally you might also setup a <a href="https://github.com/coturn/coturn">turn</a> gateway (this can be useful to bypass firewalls and to help for peer to peer calls if you have such requirements). A tutorial can be found <a href="http://danielpocock.com/using-resiprocate-to-connect-asterisk-webrtc">here</a>.</p>
+</div>
 <h3>Troubleshooting:</h3>
 <p>To be able to see the registration and call details in the CLI: Set the VERBOSE messages to go to the console and turn verbosity to at least 3.
 If you have any kind of issues during your asterisk setup, check the logs (/var/log/asterisk) by opening the verbose file with nano or other editor.
@@ -202,6 +204,6 @@ A few common issue:<br />
 - media tunneling over HTTP port 80 (as this is the only port which we can expect to be available from all networks), but still preferring UDP whenever possible<br />
 - peer to peer media routing whenever possible (and failback to server or TURN assisted relay)<br />
 - codec conversion: the most important <a href="http://stackoverflow.com/questions/37186859/codec-used-in-a-webrtc-stream">codec's in WebRTC</a> are OPUS and G.711 while your SIP peers might require other codec such as G.729 or GSM. Make sure that your server can handle this automatically.</p>
-<p>Common WebRTC SIP clients such as SIPML5, SIP.js doesn&rsquo;t take too much care on these details leaving this configuration tasks up to the users. If you are not an expert in WebRTC-SIP client, then we recommend a solution such as the <a href="{$WEBPHONE}">WebRTC SIP Phone extension</a> for Web Browser which is fine-tuned for Asterisk out of the box. Otherwise make sure to test your implementation in various conditions, from behind various routers/NAT&rsquo;s and different firewall configurations.</p>
+<p>Common WebRTC SIP clients such as SIPML5, SIP.js doesn&rsquo;t take too much care on these details leaving this configuration tasks up to the users. If you are not an expert in WebRTC-SIP client, then we recommend a solution such as the <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">AiPhone extension</a> for Web Browser which is fine-tuned for Asterisk out of the box. Otherwise make sure to test your implementation in various conditions, from behind various routers/NAT&rsquo;s and different firewall configurations.</p>
 {php}}{/php}
 </main>

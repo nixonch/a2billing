@@ -48,7 +48,7 @@ class PhpQuickProfiler {
 	-------------------------------------------*/
 	
 	public function gatherConsoleData() {
-		$logs = Console::getLogs();
+		$logs = (new Console())->getLogs();
 		if($logs['console']) {
 			foreach($logs['console'] as $key => $log) {
 				if($log['type'] == 'log') {

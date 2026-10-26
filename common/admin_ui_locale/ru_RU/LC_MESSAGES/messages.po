@@ -15,6 +15,18 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: Public/templates/default/index.tpl:38
+msgid "Login"
+msgstr "Логин"
+
+#: Public/templates/default/index.tpl:43
+msgid "Keep me signed in"
+msgstr "Помнить меня"
+
+#: Public/templates/default/index.tpl:63
+msgid "You must enter an user and a password!"
+msgstr "Введите логин и пароль!"
+
 #: lib/Class.A2Billing.php
 msgid "Speaker"
 msgstr "Собеседник"
@@ -11911,7 +11923,7 @@ msgstr "Отказано в аутентификации, пожалуйста �
 
 #: Public/templates/default/index.tpl:93
 msgid "INACTIVE ACCOUNT, Please activate your account!"
-msgstr "НЕАКТИВНАЯ УЧ.ЗАПИСЬ, Пожалуйста свяжитесь с администратором!"
+msgstr "НЕАКТИВНАЯ УЧЁТНАЯ ЗАПИСЬ, пожалуйста, активируйте свою учётную запись!"
 
 #: Public/templates/default/index.tpl:95
 msgid "BLOCKED ACCOUNT, Please contact the administrator!"

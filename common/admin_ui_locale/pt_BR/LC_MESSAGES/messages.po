@@ -23,6 +23,18 @@ msgstr ""
 "X-Poedit-Country: BRAZIL\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
+#: Public/templates/default/index.tpl:38
+msgid "Login"
+msgstr "Usuário"
+
+#: Public/templates/default/index.tpl:43
+msgid "Keep me signed in"
+msgstr "Manter-me conectado"
+
+#: Public/templates/default/index.tpl:63
+msgid "You must enter an user and a password!"
+msgstr "Você deve informar um usuário e uma senha!"
+
 #: lib/Class.Realtime.php:96
 msgid "Could not open buddy file"
 msgstr "Não foi possível abrir o arquivo de contatos"

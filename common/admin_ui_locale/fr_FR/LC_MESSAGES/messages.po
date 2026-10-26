@@ -12,9 +12,21 @@ msgstr ""
 "Last-Translator: Arnold <arnoldkamba@live.fr>\n"
 "Language-Team: ARESKI <areski@gmail.com>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "###Project-Id-Version: A2Billing Admin : 1.4\n"
+
+#: Public/templates/default/index.tpl:38
+msgid "Login"
+msgstr "Identifiant"
+
+#: Public/templates/default/index.tpl:43
+msgid "Keep me signed in"
+msgstr "Rester connecté"
+
+#: Public/templates/default/index.tpl:63
+msgid "You must enter an user and a password!"
+msgstr "Vous devez saisir un identifiant et un mot de passe !"
 
 #: lib/Class.Realtime.php:96
 msgid "Could not open buddy file"
@@ -2812,7 +2824,7 @@ msgstr "NOM"
 #: Public/A2B_data_archiving.php:176 Public/A2B_admin_info.php:79
 #: Public/A2B_agent_info.php:77
 msgid "LOGIN"
-msgstr ""
+msgstr "CONNEXION"
 
 #: Public/A2B_mass_mail.php:86 Public/form_data/FG_var_card.inc:236
 #: Public/A2B_data_archiving.php:177
@@ -11514,15 +11526,15 @@ msgstr "Mot de Passe"
 
 #: Public/templates/default/index.tpl:91
 msgid "AUTHENTICATION REFUSED, please check your user/password!"
-msgstr ""
+msgstr "AUTHENTIFICATION REFUSÉE, veuillez vérifier votre identifiant et votre mot de passe !"
 
 #: Public/templates/default/index.tpl:93
 msgid "INACTIVE ACCOUNT, Please activate your account!"
-msgstr ""
+msgstr "COMPTE INACTIF, veuillez activer votre compte !"
 
 #: Public/templates/default/index.tpl:95
 msgid "BLOCKED ACCOUNT, Please contact the administrator!"
-msgstr ""
+msgstr "COMPTE BLOQUÉ, veuillez contacter l'administrateur !"
 
 #: Public/A2B_currencies.php:90
 msgid "THE CURRENCY LIST IS BASED FROM YAHOO FINANCE"

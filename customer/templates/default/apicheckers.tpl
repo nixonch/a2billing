@@ -5,11 +5,11 @@
 </select>
 {php} if (LANGUAGE=="russian" || LANGUAGE=="ukrainian") { {/php}
 <h1>Настройка собственного веб-сервиса проверки баланса и стоимости звонка</h1>
-<p>Если вы используете расширение <a href="{$WEBPHONE}">WebRTC SIP Phone</a> для Chrome совместно с вашим сервером, скорее всего вам захочется видеть некоторую дополнительную информацию в раскрытом окне <a href="{$WEBPHONE}">расширения</a>. На данный момент реализованы запросы на заполнение верхней информационной строки (текущий баланс) и бегущей строки над полем набора номера (стоимость звонка). Создав несложный механизм ответов на запросы, вы получите качественный скачок в предоставлении своих услуг.</p>
-<p>Чтобы включить запросы, раскройте <a href="{$WEBPHONE}">расширение</a> и перейдите в <em>Control Panel &gt; Edit Account</em>, затем в строке «<em>Link to custom balance and rate checkers</em>» введите URL-адрес своей веб-службы проверок.<br>
+<p>Если вы используете расширение <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">AiPhone</a> для Chrome совместно с вашим сервером, скорее всего вам захочется видеть некоторую дополнительную информацию в раскрытом окне <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">расширения</a>. На данный момент реализованы запросы на заполнение верхней информационной строки (текущий баланс) и бегущей строки над полем набора номера (стоимость звонка). Создав несложный механизм ответов на запросы, вы получите качественный скачок в предоставлении своих услуг.</p>
+<p>Чтобы включить запросы, раскройте <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">расширение</a> и перейдите в <em>Control Panel &gt; Edit Account</em>, затем в строке «<em>Link to custom balance and rate checkers</em>» введите URL-адрес своей веб-службы проверок.<br>
 Пример URL-адреса для запроса данных:</p>
 <p1 style="color: #bf4f4c">https://my.web.com/request.php</p1>
-<p1>На данный момент <a href="{$WEBPHONE}">расширение</a> передаёт запросы методом POST.</p1><br>
+<p1>На данный момент <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">расширение</a> передаёт запросы методом POST.</p1><br>
 <p>Для получения ответа <u><b>о текущем балансе</b></u> в запрос вкладываются такие данные:</p>
 <p1 style="color: #bf4f4c">u=&#123;Authorization name&#125;<br>
 p=&#123;Password&#125;<br>
@@ -35,8 +35,8 @@ t=&#123;Number&#125;</p1>
 {php}}else{{/php}
 <h1>Setting Up Your Own Web Service to Check the Balance and Call Rates</h1>
 <p>For some providers balance check service is already hardcoded in the app. For those providers that are not covered or if you want to override the hardcoded setup you need to set up your own web service.<p>
-<p>Also, if you are using <a href="{$WEBPHONE}">WebRTC SIP Phone</a> extension for the Chrome browser together with your own server, most likely you will want to see some additional information in the expanded <a href="{$WEBPHONE}">Extension</a> window. Requests for filling in the top information line (current balance) and a creeping line above the dialing field (call rate) have been implemented. By creating a simple mechanism for responding to requests, you will receive a qualitative leap in the provision of your services.</p>
-<p>To enable requests, please, expand the <a href="{$WEBPHONE}">Extension</a> and go to <em>Control Panel &gt; Edit Account</em>, then in the <em>«Link to custom balance and rate checkers»</em> line enter the URL of your check web service.<br>
+<p>Also, if you are using <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">AiPhone</a> extension for the Chrome browser together with your own server, most likely you will want to see some additional information in the expanded <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">Extension</a> window. Requests for filling in the top information line (current balance) and a creeping line above the dialing field (call rate) have been implemented. By creating a simple mechanism for responding to requests, you will receive a qualitative leap in the provision of your services.</p>
+<p>To enable requests, please, expand the <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">Extension</a> and go to <em>Control Panel &gt; Edit Account</em>, then in the <em>«Link to custom balance and rate checkers»</em> line enter the URL of your check web service.<br>
 Example URL for web callback might be:</p>
 <p1 style="color: #bf4f4c">https://my.web.com/request.php</p1>
 <p1>Only supported method is POST at the moment.</p1><br>

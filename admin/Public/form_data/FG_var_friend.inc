@@ -622,6 +622,11 @@ $HD_Form -> AddEditElement (gettext("SETVAR"),
 						   gettext("Insert the setvar"),
 						   "", "", "", "", "", "", "NO-NULL" );
 
+$aiphone_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : '');
+$aiphone_utm_source = rawurlencode(trim((string) parse_url('http://' . $aiphone_host, PHP_URL_HOST), '[]'));
+$aiphone_page = pathinfo(isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : 'A2B_entity_friend.php', PATHINFO_FILENAME);
+$aiphone_utm_campaign = rawurlencode('a2billing_admin_' . strtolower($aiphone_page));
+
 $HD_Form -> AddEditElement (gettext("AVPF"),
 						   "avpf",
 						   $avpf,
@@ -629,7 +634,7 @@ $HD_Form -> AddEditElement (gettext("AVPF"),
 						   "",
 						   "",
 						   "",
-						    "list", "", "", "", $values_list['avpf'], "%1", "NO-NULL", gettext("Inter-operability with media streams using the AVPF RTP profile. Typically used for WebRTC technology (e.g. <a href=\"https://chrome.google.com/webstore/detail/webrtc-sip-phone-with-cli/pofkcckikkdhiieipefhkaelgnbdkcib\">WebRTC SIP Phone</a> for web browser)."));
+							    "list", "", "", "", $values_list['avpf'], "%1", "NO-NULL", sprintf(gettext("Inter-operability with media streams using the AVPF RTP profile. Typically used for WebRTC technology (e.g. <a href=\"https://chromewebstore.google.com/detail/pofkcckikkdhiieipefhkaelgnbdkcib?utm_source=%s&amp;utm_medium=referral&amp;utm_campaign=%s\" target=\"_blank\" rel=\"noopener noreferrer\">AiPhone</a> for web browser)."), $aiphone_utm_source, $aiphone_utm_campaign));
 
 $HD_Form -> AddEditElement (gettext("FORCE_AVP"),
 						   "force_avp",

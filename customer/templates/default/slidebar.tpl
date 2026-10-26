@@ -17,7 +17,6 @@
     <li><h4>Main</h4></li>
     <li><a href="{$CUSTOMER_INTERFACE_URL}/">Sign-in/up</a></li>
     <li><a href="{$CUSTOMER_INTERFACE_URL}terms">Terms & Conditions</a></li>
-    <li><a href="{$CUSTOMER_INTERFACE_URL}policy">Privacy Policy</a></li>
     <li><h4>Knowledge base</h4></li>
     <li><a href="{$CUSTOMER_INTERFACE_URL}AsteriskWebRTC">WebRTC setup in Asterisk</a></li>
     <li><a href="{$CUSTOMER_INTERFACE_URL}APICheckers">Own Checking Web Service</a></li>

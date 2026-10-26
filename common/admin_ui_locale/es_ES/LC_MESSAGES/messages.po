@@ -15,6 +15,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: Public/templates/default/index.tpl:38
+msgid "Login"
+msgstr "Usuario"
+
+#: Public/templates/default/index.tpl:43
+msgid "Keep me signed in"
+msgstr "Mantener la sesión iniciada"
+
+#: Public/templates/default/index.tpl:63
+msgid "You must enter an user and a password!"
+msgstr "Debe introducir un usuario y una contraseña."
+
 #: lib/Class.Realtime.php:96
 msgid "Could not open buddy file"
 msgstr "No se pudo abrir el archivo"
@@ -11443,7 +11455,7 @@ msgstr "Cuenta inactiva, Por favor active su cuenta!"
 
 #: Public/templates/default/index.tpl:95
 msgid "BLOCKED ACCOUNT, Please contact the administrator!"
-msgstr "CUENTA BLOQUEDAS, Por favor comuníquese con el administrador"
+msgstr "CUENTA BLOQUEADA, comuníquese con el administrador."
 
 #: Public/A2B_currencies.php:90
 msgid "THE CURRENCY LIST IS BASED FROM YAHOO FINANCE"

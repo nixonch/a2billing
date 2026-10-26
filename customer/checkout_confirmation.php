@@ -104,27 +104,17 @@ switch($getcur)
 }
 $paycur = $currencies_list[$getcur][2];
 $vat_amount= $amount*$vat/100;
-$amount_paypal = ($amount+$vat_amount+$paypalfixfee)/0.946;   // Ukr/Rus
-//$amount_paypal = ($amount+$vat_amount+$paypalfixfee)/0.953; // Isr
-//$amount_paypal = ($amount+$vat_amount+$paypalfixfee)/0.956; // Tha
-//$amount_webmoney = ($amount+$vat_amount)/0.95;
+$amount_paypal = ($amount+$vat_amount+$paypalfixfee)/0.946;      // 0.946 / 0.953 / 0.956
 switch ($payment) {
     case "paypal":
-	$mc_fee = round(($amount_paypal)*0.054,2)+$paypalfixfee; // Ukr/Rus
-//	$mc_fee = round(($amount_paypal)*0.047,2)+$paypalfixfee; // Isr
-//	$mc_fee = round(($amount_paypal)*0.044,2)+$paypalfixfee; // Tha
+	$mc_fee = round(($amount_paypal)*0.054,2)+$paypalfixfee; // 0.054 / 0.047 / 0.044
 	break;
     default:
 	$mc_fee = 0;
 }
-//$mc_fee = (strcasecmp("paypal",$payment)==0)?round(($amount_paypal)*0.039,2)+$paypalfixfee:0; //Isr
-//$mc_fee = (strcasecmp("paypal",$payment)==0)?round(($amount_paypal)*0.044,2)+$paypalfixfee:0; //Tha
-//$mc_fee = (strcasecmp("webmoney",$payment)==0)?round(($amount_webmoney)*0.05,2):0;
-//$mc_fee = 0;
 $total_amount = $amount+$vat_amount+$mc_fee;
 
 $paymentTable = new Table();
-//$time_stamp = date("Y-m-d H:i:s");
 $time_stamp = time();
 $amount_string = sprintf("%.3F", $total_amount);
 
@@ -144,6 +134,7 @@ if (mb_strtoupper($payment)=='PLUGNPAY') {
 $transaction_no = $paymentTable->Add_table ($HD_Form -> DBHandle, $QUERY_VALUES, $QUERY_FIELDS, 'cc_epayment_log', 'id');
 
 $key = securitykey(EPAYMENT_TRANSACTION_KEY, $time_stamp."^".$transaction_no."^".$amount_string."^".$_SESSION["card_id"]."^".$item_id."^".$item_type);
+write_log(LOGFILE_EPAYMENT, basename(__FILE__).' line:'.__LINE__." ---- EPAYMENT_TRANSACTION_KEY=".EPAYMENT_TRANSACTION_KEY."/".$time_stamp."^".$transaction_no."^".$amount_string."^".$_SESSION["card_id"]."^".$item_id."^".$item_type);
 if (empty($transaction_no)) {
 	exit(gettext("No Transaction ID found"));
 }

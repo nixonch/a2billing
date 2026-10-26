@@ -15,6 +15,18 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: Public/templates/default/index.tpl:38
+msgid "Login"
+msgstr "Utilizator"
+
+#: Public/templates/default/index.tpl:43
+msgid "Keep me signed in"
+msgstr "Păstrează-mă conectat"
+
+#: Public/templates/default/index.tpl:63
+msgid "You must enter an user and a password!"
+msgstr "Introduceți un nume de utilizator și o parolă!"
+
 #: lib/Class.Realtime.php:96
 msgid "Could not open buddy file"
 msgstr "NU am reusit sa deshid fisierul de configurare"
@@ -11527,21 +11539,20 @@ msgid "User"
 msgstr "Utilizare"
 
 #: Public/templates/default/index.tpl:62
-#, fuzzy
 msgid "Password"
-msgstr "Parola veche"
+msgstr "Parolă"
 
 #: Public/templates/default/index.tpl:91
 msgid "AUTHENTICATION REFUSED, please check your user/password!"
-msgstr ""
+msgstr "AUTENTIFICARE REFUZATĂ, verificați numele de utilizator și parola!"
 
 #: Public/templates/default/index.tpl:93
 msgid "INACTIVE ACCOUNT, Please activate your account!"
-msgstr ""
+msgstr "CONT INACTIV, activați-vă contul!"
 
 #: Public/templates/default/index.tpl:95
 msgid "BLOCKED ACCOUNT, Please contact the administrator!"
-msgstr ""
+msgstr "CONT BLOCAT, contactați administratorul!"
 
 #: Public/A2B_currencies.php:90
 msgid "THE CURRENCY LIST IS BASED FROM YAHOO FINANCE"

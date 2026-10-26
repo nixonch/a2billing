@@ -1572,23 +1572,27 @@ class A2Billing {
 		$res_dtmf = $agi->get_data("{$this->username}/rand".$num, 1, 1);
 		$dtmf = (string)$res_dtmf["result"];
 		if ($dtmf == $num) {
+			$this -> debug( DEBUG, $agi, __FILE__, __LINE__, "[ \033[1;34m".$this->CallerID." Needed - ".$num.", Pressed - ".$dtmf." Before answer... \33[0m ]");
 			sleep(1);
 			$agi-> stream_file("queue-periodic-announce", "#");
 			return 0;
 		}
 		if ((empty($dtmf) || $dtmf < 0) && $agi -> channel_status('',true) != AST_STATE_DOWN) {
 		    if ($this -> G_startime == 0) {
+			$this -> debug( DEBUG, $agi, __FILE__, __LINE__, "[ \033[1;34m".$this->CallerID." Answered... \33[0m ]");
 			$agi -> answer();
 			$this -> G_startime = time();
 		    }
 		    $res_dtmf = $agi->get_data('silence/1', 9000, 1);
 		    $dtmf = (string)$res_dtmf["result"];
 		    if ($dtmf == $num) {
+			$this -> debug( DEBUG, $agi, __FILE__, __LINE__, "[ \033[1;34m".$this->CallerID." Needed - ".$num.", Pressed - ".$dtmf.", Time ".(time()-$this->G_startime)."\33[0m ]");
 			if (time()-$this->G_startime > 3)
 				return 1;
 			return 0;
 		    }
 		}
+		$this -> debug( DEBUG, $agi, __FILE__, __LINE__, "[ \033[1;34m".$this->CallerID." Needed - ".$num.", Pressed - ".$dtmf."\33[0m ]");
 		return 0;
 	}
 
@@ -3889,8 +3893,8 @@ $this -> debug( ERROR, $agi, __FILE__, __LINE__, "FAXRESOLUTION: ".$faxresolutio
 		if ($this->agiconfig['auto_setcallerid']==1) {
 			if ( strlen($this->agiconfig['force_callerid']) >=1 ) {
 				$this -> CID_handover = $this -> agiconfig['force_callerid'];
+				$this -> debug( DEBUG, $agi, __FILE__, __LINE__, "[EXEC SetCallerID : ".$this->CID_handover."]");
 				$agi -> set_callerid($this -> CID_handover);
-				$this -> debug( DEBUG, $agi, __FILE__, __LINE__, "[EXEC SetCallerID : ".$this->agiconfig['force_callerid']."]");
 			} elseif ( strlen($this->CallerID) >=1 ) {
 				$this -> debug( DEBUG, $agi, __FILE__, __LINE__, "[REQUESTED SetCallerID : ".$this->CallerID."]");
 
@@ -3905,8 +3909,8 @@ $this -> debug( ERROR, $agi, __FILE__, __LINE__, "FAXRESOLUTION: ".$faxresolutio
 
 				if (strlen($cid_sanitized)>0) {
 					$this -> CID_handover = $cid_sanitized;
-					$agi -> set_callerid($cid_sanitized);
 					$this -> debug( DEBUG, $agi, __FILE__, __LINE__, "[EXEC SetCallerID : ".$cid_sanitized."]");
+					$agi -> set_callerid($cid_sanitized);
 				} else {
 					$this -> debug( DEBUG, $agi, __FILE__, __LINE__, "[CANNOT SetCallerID : cid_san is empty]");
 				}
@@ -3922,6 +3926,7 @@ $this -> debug( ERROR, $agi, __FILE__, __LINE__, "FAXRESOLUTION: ".$faxresolutio
 
 			if ( strlen($res_dtmf ["result"]) > 0 && is_numeric($res_dtmf ["result"]) ) {
 				$this -> CID_handover = $res_dtmf ["result"];
+				$this -> debug( DEBUG, $agi, __FILE__, __LINE__, "[EXEC SetCallerID : ".$this->CID_handover."]");
 				$agi->set_callerid($this -> CID_handover);
 			}
 		}

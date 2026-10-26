@@ -454,10 +454,12 @@ if ($mode == 'sms') {
 					}
 					$QUERY = "UPDATE cc_callback_spool SET num_attempt='0', entry_time=now(), `next_attempt_time`=ADDDATE( CURRENT_TIMESTAMP, INTERVAL $sec_wait_before_callback SECOND ) WHERE id={$result[0][0]}";
 					$A2B -> DBHandle -> Execute($QUERY);
+					$A2B -> debug( ERROR, $agi, __FILE__, __LINE__, "===========================UPDATE============   Attempt of double number insert detected =====================> ".$A2B->CallerID);
 					$agi -> exec('HangUp', 29);
 					write_log(LOGFILE_API_CALLBACK, " ==========UPDATE======== Attempt of double number insert detected =====================> ".$A2B->CallerID);
 					exit(0);
 				} else {
+					$A2B -> debug( ERROR, $agi, __FILE__, __LINE__, "===========================CANCEL============   Attempt of double number insert detected =====================> ".$A2B->CallerID);
 					$agi -> exec('HangUp', 29);
 					write_log(LOGFILE_API_CALLBACK, " ==========CANCEL======== Attempt of double number insert detected =====================> ".$A2B->CallerID);
 					exit(0);
@@ -1898,6 +1900,7 @@ $A2B -> debug( ERROR, $agi, __FILE__, __LINE__, "\033[1;32m============INSERT===
 					$A2B -> current_language = $agi -> get_variable('CHANNEL(language)', true);
 					if ($result[0][38] && $result[0][38]!="-1") {
 						sleep(1); 
+// Если вы зонили нам, то нажмите 1, если нет, приносим свои извинения за этот звонок.
 						$res_dtmf = $agi->get_data($result[0][38], 10000, 1);
 						$dtmf = (string)$res_dtmf["result"];
 						if ($result[0][39]!==NULL && strpos((string)$result[0][39], $dtmf)===false) {

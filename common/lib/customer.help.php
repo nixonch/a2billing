@@ -164,10 +164,13 @@ if (SHOW_HELP) {
 	$CC_help_view_refill = create_help(gettext("Customers Refill history - The section below allows you to see customers refill"),$credit_cur,$limit_cur);
 
 	$CC_help_surveillance = create_help(gettext("Set the phone number of your recording device and the segment length for audio or video surveillance."),$credit_cur,$limit_cur);
+//	$CC_help_surveillance = create_help("Назначте номер телефона, принадлежащий Вашему записывающему устройству, и частоту нарезки роликов для аудио или видео наблюдения.",$credit_cur,$limit_cur);
 
 	$CC_help_ringuplist = create_help(gettext("<b>List of periodic call numbers.</b><br>In the 'LAST ACTIVITY' column, blue marks an idle periodic call, and green marks an active one.<br>Click 'NUMBER' to open call statistics for this number for the current month."),$credit_cur,$limit_cur);
+//	$CC_help_ringuplist = create_help("<b>Список номеров периодического дозвона.</b><br>В колонке 'ПОСЛЕДНЯЯ АКТИВНОСТЬ' синим цветом обозначается простаивающий дозвон, зелёным - действующий.<br>Нажав на 'НОМЕР', откроется статистика звонков на этот номер за текущий месяц.",$credit_cur,$limit_cur);
 
 	$CC_help_ringupedit = create_help(gettext("Set the event schedule for periodic dialing, the pause between events, the number of calls each time, and the maximum call duration limit."),$credit_cur,$limit_cur);
+//	$CC_help_ringupedit = create_help("Назначте расписание событий дозвона, паузу между событиями, количество звонков каждый раз и ограничение максимальной продолжительности звонка.",$credit_cur,$limit_cur);
 
 	$CC_help_log_viewer_info = create_help(gettext("The system log helps you track all events on your application. Log levels are the Importance Levels for the events - 1 is lowest level and 3 is highest level. 1 is used for Login, Logout and Page Visit. 2 is used for Add, Import, Export. 3 is for Update and Delete."),$credit_cur,$limit_cur);
 

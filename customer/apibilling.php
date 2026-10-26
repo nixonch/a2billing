@@ -194,6 +194,12 @@ global $A2B;
     $instance_table = new Table();
     $A2B->set_instance_table($instance_table);
 
+//    $cookie = (isset($_COOKIE['SIPSESSION']) && $_COOKIE['SIPSESSION']) ? $_COOKIE['SIPSESSION'] : '';
+//    if ($cookie) {
+//	$QUERY = "UPDATE cc_feedback SET operation='getExt', extension='$accountnumber' WHERE cookie LIKE '$cookie' ORDER BY `id` DESC LIMIT 1";
+//	$instance_table->SQLExec($A2B->DBHandle, $QUERY, 0);
+//    }
+
     if ($password=='')
 	$QUERY = "SELECT cc.username, cc.credit, cc.status, cc.id, cc.currency, sb.id, avpf, sb.allow FROM cc_card cc LEFT JOIN cc_sip_buddies sb ON cc.id=id_cc_card WHERE name LIKE '$accountnumber' AND ipaddr LIKE '".$_SERVER['REMOTE_ADDR']."' LIMIT 1";
     else

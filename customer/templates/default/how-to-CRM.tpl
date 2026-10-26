@@ -4,9 +4,9 @@
     <option value="russian" {php} if(LANGUAGE=="russian" || LANGUAGE=="ukrainian") echo "selected";{/php} >Русский</option>
 </select>
 {php} if (LANGUAGE=="russian" || LANGUAGE=="ukrainian") { {/php}
-<h1>Интеграция WebRTC SIP Phone с вашей CRM</h1>
-<p>Для интеграции с CRM вы можете использовать способность <a href="{$WEBPHONE}">расширения</a> посылать предопределенные заголовки в HTTP запросе методом HEAD в момент ответа на входящий звонок. Эти заголовки задаются двумя способами...</p>
-<p><b>1-й способ</b> — с помощью 2-х настроек прямо в <a href="{$WEBPHONE}">расширении</a>.</p>
+<h1>Интеграция AiPhone с вашей CRM</h1>
+<p>Для интеграции с CRM вы можете использовать способность <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">расширения</a> посылать предопределенные заголовки в HTTP запросе методом HEAD в момент ответа на входящий звонок. Эти заголовки задаются двумя способами...</p>
+<p><b>1-й способ</b> — с помощью 2-х настроек прямо в <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">расширении</a>.</p>
 <p1><ul style="margin:auto">
 <li><em>Message to send on answer</em> — здесь впишите требуемые заголовки, например:<br>
 <text style="color:#9f2f2c">Message: Call\r\nCallerID: $&#123;CALLERNUM&#125;</text><br>
@@ -33,9 +33,9 @@ Accept-Encoding: gzip, deflate, br
 <p3 style="color:#0f2b4e;text-indent:-3rem;word-break:break-all">Accept-Language: uk,ru;q=0.9,en;q=0.8,ru-RU;q=0.7,en-US;q=0.6,he-IL;q=0.5,he;q=0.4</p3></b></li></ul></p1>
 <br><p1>Ваши вопросы и пожелания, пожалуйста, направляйте по адресу <a href="mailto:{$MAILTO}">{$MAILTO}</a></p1>
 {php}}else{{/php}
-<h1>Integration of WebRTC SIP Phone with your CRM</h1>
-<p>To integrate with CRM, you can use the <a href="{$WEBPHONE}">Extension's</a> built-in function to send predefined headers in an HTTP request using the HEAD method when answering an incoming call. These headers are set in two ways ...</p>
-<p><b>1st method</b> — using two settings directly in the <a href="{$WEBPHONE}">Extension</a>.</p>
+<h1>Integration of AiPhone with your CRM</h1>
+<p>To integrate with CRM, you can use the <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">Extension's</a> built-in function to send predefined headers in an HTTP request using the HEAD method when answering an incoming call. These headers are set in two ways ...</p>
+<p><b>1st method</b> — using two settings directly in the <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">Extension</a>.</p>
 <p1><ul style="margin:auto">
 <li><em>Message to send on answer</em> — here you need to specify the required headers, for example:<br>
 <text style="color:#9f2f2c">Message: Call\r\nCallerID: $&#123;CALLERNUM&#125;</text><br>
