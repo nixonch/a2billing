@@ -4,7 +4,7 @@
 {php}}else{{/php}
 <h1>Terms &amp; conditions</h1>
 <h3>The {$CCMAINTITLE} Subscriber Agreement</h3>
-<p>{$CCMAINTITLE}{if (false)} Ltd, trading as {$CCMAINTITLE},{/if} provides VoIP services to customers in accordance with the terms and conditions set forth in this agreement.</p>
+<p>{$CCMAINTITLE} provides VoIP services to customers in accordance with the terms and conditions set forth in this agreement.</p>
 <p>By registering for, activating, making use of, or by paying for {$CCMAINTITLE}’s site or services you acknowledge having read and agreed to these terms, and you represent that there is no legal impediment to your entering or being bound by this agreement.</p>
 <h3>Billing, Pricing and Charges</h3>
 <p>Usage of {$CCMAINTITLE}’s services will be charged according to the current price list as made available on the {$CCMAINTITLE} site. Changes to our pricing shall become effective immediately upon posting to the site.</p>

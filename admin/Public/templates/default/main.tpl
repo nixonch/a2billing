@@ -433,32 +433,6 @@
 	</div>
 	{/if}
 
-	{if ($ACXPREDICTIVEDIALER  > 0)}
-	<div class="toggle_menu"><li>
-	<a href="javascript:;" class="toggle_menu" target="_self"> <div> <div id="menutitlebutton"> <img id="img15"
-	{if ($section == "15")}
-	src="templates/{$SKIN_NAME}/images/minus.gif"
-	{else}
-	src="templates/{$SKIN_NAME}/images/plus.gif"
-	{/if} onmouseover="this.style.cursor='hand';" ></div> <div id="menutitlesection"><strong>{php} echo gettext("CAMPAIGNS");{/php}</strong></div></div></a></li></div>
-		<div class="tohide"
-	{if ($section =="15")}
-		style="">
-	{else}
-		style="display:none;">
-	{/if}
-		<ul>
-			<li><ul>
-				<li><a href="A2B_entity_campaign.php?section=15">{php} echo gettext("Add");{/php}</a></li>
-				<li><a href="A2B_entity_campaign_config.php?section=15">{php} echo gettext("Config");{/php}</a></li>
-				<li><a href="A2B_entity_phonebook.php?section=15">{php} echo gettext("Phone Book");{/php}</a></li>
-				<li><a href="A2B_entity_phonenumber.php?section=15">»» {php} echo gettext("Add Number");{/php}</a></li>
-				<li><a href="A2B_phonelist_import.php?section=15">»» {php} echo gettext("Import");{/php}</a></li>
-			</ul></li>
-		</ul>
-	</div>
-	{/if}
-
 	
 	{if ($ACXMAINTENANCE  > 0)}
 	<div class="toggle_menu"><li>

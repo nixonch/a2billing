@@ -6,7 +6,6 @@
 	<title>{php}echo basename($_SESSION["last_page"],".php"){/php} | {$CCMAINTITLE}</title>
 	<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-
     <link href="templates/{$SKIN_NAME}/css/main.css" rel="stylesheet" type="text/css">
     <link href="templates/{$SKIN_NAME}/css/menu.css" rel="stylesheet" type="text/css">
 {if LANGUAGE == "farsi" }
@@ -31,6 +30,5 @@
 	<script src="./javascript/misc.js"></script>
 </HEAD>
 <BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
-
 <div id="page-wrap">
 	<div id="inside">
