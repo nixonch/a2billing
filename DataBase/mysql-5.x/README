@@ -1,0 +1,36 @@
+Historical MySQL installation sources
+====================================
+
+This directory retains upstream schemas, versioned migrations and prefix
+datasets for MySQL 5.x. install-db.sh records the old 1.4.0 -> 1.9.5 chain.
+These historical files do not reconstruct the current release and must not
+be imported into an A2Billing 3.0 (nixonch) database.
+
+The canonical A2Billing 3.0 (nixonch) schema and initial data are maintained directly in
+../mysql-8.x/a2billing-install.sql. Installation instructions are in
+../mysql-8.x/INFO.
+
+Maintainer-only export and validation
+------------------------------------
+
+build-install.py normalizes or validates the canonical SQL using a separate
+test MySQL 8.0 server. End users do not need this tool, Python or the historical
+files. Do not use the production server.
+
+From mysql-5.x/, run:
+
+    python3 build-install.py --socket=/path/to/test/mysql.sock
+    python3 build-install.py --socket=/path/to/test/mysql.sock --check
+
+Add --mysql=/path/to/mysql and --mysqldump=/path/to/mysqldump if clients are
+outside PATH. --user overrides the default root account. MYSQL_PWD can supply
+a password if required.
+
+By default, the tool imports the canonical SQL into a uniquely named temporary
+a2b_install_build_* database, exports final definitions and seed data, and
+drops only that database. --check compares the normalized SQL without writing.
+Use the same MySQL 8.0 version for byte-for-byte checks.
+
+--from-database=a2b_NAME can export an existing test database with version 3.0 (nixonch);
+that database is read without modification and is not dropped. It must contain
+only installation schema and seed data, never production or test activity.

@@ -150,6 +150,12 @@
   </div>
   <div class="frameback laud lgrad"></div>
 </div>
+<footer class="login-legal">
+  <div>A2Billing is software licensed under the <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL 3</a>.</div>
+  <div>Copyright (C) 2004-2011 - <a href="http://www.star2billing.com/" target="_blank" rel="noopener noreferrer">Star2billing S.L.</a></div>
+  <div>Version <strong>{php} echo htmlspecialchars(A2BILLING_VERSION, ENT_QUOTES, 'UTF-8'); {/php}</strong> &middot; <a href="https://github.com/nixonch/a2billing" target="_blank" rel="noopener noreferrer">GitHub</a></div>
+  <div>No warranty. Redistribution permitted under the license.</div>
+</footer>
 <div class="footer_icons">
 {if (false)}<div style="color: #BD2A15; font-size: 11px; text-align:center;">{$COPYRIGHT}</div>{/if}
 {php}
@@ -162,17 +168,20 @@
     $show_logo = '';
     for ($index = 0; $index < sizeof($payment_methods); $index++) {
 	if ($payment_methods[$index][0] == "MODULE_PAYMENT_PAYPAL_BASIC_STATUS") {
-	    $show_logo .= '<a href="https://www.paypal.com/en/mrb/pal=PGSJEXAEXKTBU" target="_blank"><img src="' . KICON_PATH . '/payments_paypal.gif" alt="Paypal"/></a>' . ' &nbsp; ';
+	    $show_logo .= '<a href="https://www.paypal.com/en/mrb/pal=PGSJEXAEXKTBU" target="_blank"><img src="' . KICON_PATH . '/payments_paypal.gif" width="120" alt="Paypal"/></a>' . ' &nbsp; ';
 	} elseif ($payment_methods[$index][0] == "MODULE_PAYMENT_MONEYBOOKERS_STATUS") {
-	    $show_logo .= '<a href="https://www.moneybookers.com/app/?rid=811621" target="_blank"><img src="' . KICON_PATH . '/moneybookers.gif" alt="Moneybookers"/></a>' . ' &nbsp; ';
+	    $show_logo .= '<a href="https://www.moneybookers.com/app/?rid=811621" target="_blank"><img src="' . KICON_PATH . '/moneybookers.gif" width="88" alt="Moneybookers"/></a>' . ' &nbsp; ';
 	} elseif ($payment_methods[$index][0] == "MODULE_PAYMENT_PLUGNPAY_STATUS") {
-	    $show_logo .= '<a href="http://www.plugnpay.com/" target="_blank"><img src="' . KICON_PATH . '/plugnpay.png" alt="plugnpay.com"/></a>' . ' &nbsp; ';
+	    $show_logo .= '<a href="http://www.plugnpay.com/" target="_blank"><img src="' . KICON_PATH . '/plugnpay.png" width="110" alt="plugnpay.com"/></a>' . ' &nbsp; ';
 	} elseif ($payment_methods[$index][0] == "MODULE_PAYMENT_WM_STATUS") {
-	    $show_logo .= '<a href="http://www.web.money/" target="_blank"><img src="' . KICON_PATH . '/webmoney_virified.png" alt="WebMoney"/></a>' . ' &nbsp; ' . '<a href="https://passport.web.money/asp/certview.asp?wmid='.$wmid[0][0].'" target="_blank"><img src="' . KICON_PATH . '/v_blue_on_transp_en.png" alt="Check the seller\'s WMID" border="0" /></a>';
+	    $show_logo .= '<a href="http://www.web.money/" target="_blank"><img src="' . KICON_PATH . '/webmoney_virified.png" width="88" alt="WebMoney"/></a>' . ' &nbsp; ' . '<a href="https://passport.web.money/asp/certview.asp?wmid='.$wmid[0][0].'" target="_blank"><img src="' . KICON_PATH . '/v_blue_on_transp_en.png" width="88" alt="Check the seller\'s WMID" border="0" /></a>';
 	}
     }
 
-//    $show_logo .= ' <a href="http://www.gnu.org/licenses/agpl.html" target="_blank"><img src="' . KICON_PATH . '/agplv3-155x51.png" alt="AGPLv3"/></a> &nbsp; ';
+    $show_logo .= ' <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer"><img src="images/agplv3-88x31.png" width="88" height="31" alt="AGPL 3"/></a> &nbsp; ';
+    $aiphone_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : '');
+    $aiphone_utm_source = rawurlencode(trim((string) parse_url('http://' . $aiphone_host, PHP_URL_HOST), '[]'));
+    $show_logo .= '<a href="https://chromewebstore.google.com/detail/pofkcckikkdhiieipefhkaelgnbdkcib?utm_source=' . $aiphone_utm_source . '&amp;utm_medium=referral&amp;utm_campaign=a2billing_customer_login" target="_blank" rel="noopener noreferrer"><img src="images/aiphone-88x31.svg" width="88" height="31" alt="AiPhone"/></a>';
     echo $show_logo;
 {/php}
 </div>

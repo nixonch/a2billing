@@ -7,9 +7,9 @@
     }
   },
   "require": {
-    "php": ">=5.3.0",
+    "php": ">=5.6.0",
     "adodb/adodb-php": "dev-master",
-    "smarty/smarty": "^4.*",
+    "smarty/smarty": "^3.1.38",
     "guzzlehttp/guzzle": "^6.3",
     "google/cloud-speech": "^0.24.0",
     "google/cloud-storage": "^1.12",

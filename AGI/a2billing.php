@@ -37,6 +37,14 @@ if (function_exists('pcntl_signal')) {
 	pcntl_signal(SIGHUP, SIG_IGN);
 }
 
+require_once dirname(__FILE__) . '/lib/version.php';
+$agi_version = 'A2Billing - Version ' . A2BILLING_VERSION;
+
+if ($argc > 1 && ($argv[1] == '--version' || $argv[1] == '-v')) {
+	echo "$agi_version\n";
+	exit;
+}
+
 error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
 
 require_once (dirname(__FILE__)."/lib/vendor/autoload.php");
@@ -50,12 +58,6 @@ include (dirname(__FILE__)."/lib/interface/constants.php");
 
 $charge_callback = 0;
 $G_startime = time();
-$agi_version = "A2Billing - Version 1.9.4 (Cuprum)";
-
-if ($argc > 1 && ($argv[1] == '--version' || $argv[1] == '-v')) {
-	echo "$agi_version\n";
-	exit;
-}
 
 
 /********** 	 CREATE THE AGI INSTANCE + ANSWER THE CALL		**********/

@@ -46,6 +46,12 @@
     </div>
     <div class="frameback laud lgrad"></div>
 </div>
+<div class="login-badges">
+    <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer" title="GNU Affero General Public License version 3">
+        <img src="images/agplv3-88x31.png" width="88" height="31" alt="AGPL 3">
+    </a>
+    <a class="aiphone-badge" href="{$WEBPHONE|escape:'html'}" target="_blank" rel="noopener noreferrer" title="AiPhone for web browser">AiPhone</a>
+</div>
 <div>
     <a id="refresh" role="button" tabindex="0" aria-label="Toggle background" onclick="opback()">
         <svg class="refreshicon" xmlns="http://www.w3.org/2000/svg" width="25px" height="25px" viewBox="0 0 322.447 322.447" aria-hidden="true">

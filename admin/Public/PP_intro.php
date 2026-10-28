@@ -42,6 +42,10 @@ if (!$ACXACCESS) {
 	die();
 }
 
+$aiphone_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : '');
+$aiphone_utm_source = rawurlencode(trim((string) parse_url('http://' . $aiphone_host, PHP_URL_HOST), '[]'));
+$aiphone_promo_url = "https://chromewebstore.google.com/detail/pofkcckikkdhiieipefhkaelgnbdkcib?utm_source=" . $aiphone_utm_source . "&utm_medium=referral&utm_campaign=a2billing_admin_pp_intro";
+
 $smarty->display('main.tpl');
 
 $balance = $sms_count = 'N/A';
@@ -89,19 +93,21 @@ if (D7_API_TOKEN) {
     gap: 15px;
 }
 .middle-row {
-    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
 }
 .block-3 {
-    display: inline-block;
+    flex: 0 0 400px;
+    max-width: 100%;
 }
 .center-layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
     display: flex;
-    justify-content: center;
-    pointer-events: none;
+    flex: 1;
+    min-width: 0;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
 }
 .block-4 {
     width: auto;
@@ -109,12 +115,28 @@ if (D7_API_TOKEN) {
     pointer-events: auto;
     text-align: center;
 }
-.bottom-row {
-    display: flex;
-    justify-content: center;
+.aiphone-promo {
+    display: block;
+    width: 400px;
+    max-width: 100%;
+    margin-top: 10px;
+}
+.aiphone-promo img {
+    display: block;
+    width: 100%;
+    height: auto;
 }
 .block-5 {
+    width: max-content;
     max-width: 100%;
+}
+.block-5 .scroll {
+    width: auto;
+    overflow-x: auto;
+}
+.block-5 pre {
+    white-space: pre;
+    overflow-wrap: normal;
 }
 </style>
 <center>
@@ -122,31 +144,34 @@ if (D7_API_TOKEN) {
     <div class="top-row">
         <div class="cell"><img src="images/logo/a2billing.png"></div>
         <div class="cell">
-	    For information and documentation on A2Billing, <br> please visit <a href="http://www.a2billing.org" target="_blank">http://www.a2billing.org</a><br><br>
-	    For Commercial Installations, Hosted Systems, Customisation and Commercial support, please visit <a href="http://www.star2billing.com" target="_blank">http://www.star2billing.com</a><br><br>
-	    For VoIP termination, please visit <a href="http://www.call-labs.com" target="_blank">http://www.call-labs.com</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	    <?php echo '<a href="http://www.call-labs.com/" target="_blank"><img src="'.Images_Path.'/call-labs.com.png" alt="call-labs" style="margin-bottom:-3px"/></a>'; ?>
+	    <strong>A2Billing <?php echo htmlspecialchars(A2BILLING_VERSION, ENT_QUOTES, 'UTF-8'); ?> &mdash; modified version</strong><br>
+	    A2Billing is software licensed under the <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL 3</a>.<br>
+	    Copyright (C) 2004-2011 - Star2billing S.L. <a href="http://www.star2billing.com/" target="_blank" rel="noopener noreferrer">http://www.star2billing.com/</a><br>
+	    No warranty. Redistribution permitted under the license.<br>
+	    <a href="https://github.com/nixonch/a2billing" target="_blank" rel="noopener noreferrer">Source code on GitHub</a><br><br>
+	    Installation, configuration and support for this version are provided directly by nixonch.
+	    For assistance with this version and its custom features, please <a href="https://customer.sipde.net/review_webrtc" target="_blank" rel="noopener noreferrer">contact the maintainer</a>.
 	</div>
     </div>
     <div class="middle-row">
         <div class="cell block-3">
-	    <u><a href="https://d7networks.com" target="_blank">D7Networks SMS API</a></u><br/><small><b>Balance: <?php echo $balance;?><br/>SMS count: <?php echo $sms_count;?><b></small>
-	</div>
-	<div class="center-layer">
-	    <div class="cell block-4">
-		<b><i>A2Billing is licensed under <a href="http://www.fsf.org/licensing/licenses/agpl-3.0.html" target="_blank">AGPL 3</a>.</i></b>
-		<br><a href="http://www.fsf.org/licensing/licenses/agpl-3.0.html" target="_blank"><img src="images/agplv3-88x31.png"></a>
-	    </div>
-	</div>
-    </div>
-    <div class="bottom-row">
-        <div class="cell block-5">
-	    <div class="scroll">
-		<pre>
-		    <?php echo (file_get_contents("../lib/COPYING")); ?>
-		</pre>
-	    </div>
-	</div>
+<?php if (D7_API_TOKEN) {?>
+            <u><a href="https://d7networks.com" target="_blank">D7Networks SMS API</a></u><br/><small><b>Balance: <?php echo $balance;?><br/>SMS count: <?php echo $sms_count;?></b></small>
+<?php }?>
+            <a class="aiphone-promo" href="<?php echo htmlspecialchars($aiphone_promo_url, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer">
+                <img src="images/aiphone-marquee-promo-1400x560-white-20261008-v4.png" width="400" height="160" alt="AiPhone — Your SIP, Your mobile. Click2Call + Conferencing">
+            </a>
+        </div>
+        <div class="center-layer">
+            <div class="cell block-4">
+                <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer"><img src="images/agplv3-88x31.png" width="88" height="31" alt="AGPL 3"></a>
+            </div>
+            <div class="cell block-5">
+                <div class="scroll">
+                    <pre><?php echo htmlspecialchars(file_get_contents(dirname(__FILE__) . '/../../COPYING'), ENT_QUOTES, 'UTF-8'); ?></pre>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <br>

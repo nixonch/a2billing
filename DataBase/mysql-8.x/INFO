@@ -1,0 +1,27 @@
+A2Billing 3.0 (nixonch): MySQL 8.x installation
+===============================================
+
+Run the commands from the project root. The database must be empty.
+
+1. Set the database name, application username and password in
+   DataBase/mysql-8.x/a2billing-createdb-user.sql, then run as a MySQL administrator:
+
+   mysql -u root -p < DataBase/mysql-8.x/a2billing-createdb-user.sql
+
+2. Run the installer:
+
+   bash DataBase/mysql-8.x/install-db.sh
+
+   Enter the database name, hostname, MySQL administrator username and password.
+
+3. Copy a2billing.conf to /etc/a2billing.conf and configure its [database] section:
+
+   [database]
+   hostname = localhost
+   port = 3306
+   user = a2billinguser
+   password = YOUR_PASSWORD
+   dbname = mya2billing
+   dbtype = mysql
+
+   Use the database name, application username and password chosen in step 1.

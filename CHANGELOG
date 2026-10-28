@@ -1,4 +1,13 @@
 
+3.0 (nixonch)
+-------------
+
+2026-10-29
+
+- Unified the application and database release version.
+- Consolidated the MySQL 8.x installation into final table definitions and
+  initial data, with no post-install migration chain.
+
 To see the latest change please refer to : 
 http://www.asterisk2billing.org/cgi-bin/trac.cgi/log/trunk
 

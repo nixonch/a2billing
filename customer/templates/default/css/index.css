@@ -106,6 +106,30 @@ aside ins.adsbygoogle > :first-child {
   white-space: nowrap;
 }
 
+.login-legal {
+  position: fixed;
+  left: 10px;
+  bottom: 10px;
+  max-width: calc(100% - 20px);
+  font-size: 11px;
+  line-height: 1.35;
+  color: #233c54;
+}
+
+.login-legal a {
+  color: #1059FF;
+}
+
+@media screen and (max-width: 900px) {
+  .login-legal {
+    bottom: 75px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    text-align: center;
+  }
+}
+
 .opback {opacity:0}
 .opback:hover, .opback:focus-within {
     opacity: 1;
@@ -155,7 +179,7 @@ aside ins.adsbygoogle > :first-child {
       top: 50%;
       transform: translate(-50%, -50%);
     }
-    .footer_icons {
+    .footer_icons, .login-legal {
       z-index: 4;
     }
 }
@@ -164,7 +188,7 @@ aside ins.adsbygoogle > :first-child {
     .laud {
       transform: translate(-50%, -5%);
     }
-    .footer_icons {
+    .footer_icons, .login-legal {
       z-index: 2;
     }
 }

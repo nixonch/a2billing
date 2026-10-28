@@ -39,6 +39,10 @@ getpost_ifset(array (
 	'error'
 ));
 
+$aiphone_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : '');
+$aiphone_utm_source = rawurlencode(trim((string) parse_url('http://' . $aiphone_host, PHP_URL_HOST), '[]'));
+$smarty->assign("WEBPHONE", "https://chromewebstore.google.com/detail/pofkcckikkdhiieipefhkaelgnbdkcib?utm_source=" . $aiphone_utm_source . "&utm_medium=referral&utm_campaign=a2billing_admin_login");
+
 $smarty -> assign("error", $error);
 $smarty -> display('index.tpl');
 

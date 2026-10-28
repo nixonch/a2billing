@@ -12,6 +12,12 @@ services, consultancy and support is available.
 
 see http://www.star2billing.com/ for more details
 
+This repository contains A2Billing 3.0 (nixonch), an extensively modified
+version of A2Billing.
+Installation, configuration and support for this version are provided directly
+by nixonch. For assistance with this version and its custom features, please
+`contact the maintainer <https://customer.sipde.net/review_webrtc>`_.
+
 
 Info
 ----
@@ -27,10 +33,10 @@ Info
     - http://www.asterisk2billing.org/cgi-bin/trac.cgi/wiki/A2Billing-1-4-Installation (CentOS)
 
 * Latest development version
-    https://github.com/Star2Billing/a2billing
+    https://github.com/nixonch/a2billing
 
 * Reporting Bugs
-    http://www.asterisk2billing.org/cgi-bin/trac.cgi/report
+    https://customer.sipde.net/review_webrtc
 
 
 Support

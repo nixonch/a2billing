@@ -118,7 +118,7 @@ main {
 .footer_icons {
   order: 1;
   height: 100vh;
-  flex-basis: 390px;
+  flex-basis: max-content;
   flex-shrink: 168000;
   display: flex;
   flex-direction: column;

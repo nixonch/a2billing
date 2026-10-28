@@ -55,6 +55,47 @@ body {
   user-select: none;
 }
 
+.login-badges {
+  position: absolute;
+  top: calc(50% + 216px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 16px;
+}
+
+.login-badges img {
+  display: block;
+}
+
+.aiphone-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 88px;
+  height: 31px;
+  border: 2px solid #1059FF;
+  border-radius: 4px;
+  background: transparent;
+  color: #1059FF;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.aiphone-badge:hover, .aiphone-badge:focus {
+  border-color: #0F4FE6;
+  color: #0F4FE6;
+}
+
+@media screen and (max-height: 439px) {
+  .login-badges {
+    top: 436px;
+  }
+}
+
 .opback {opacity:0}
 .opback:hover, .opback:focus-within {
     opacity: 1;
