@@ -15,6 +15,10 @@
 <p>Refunds will only be made for orders within 90 days of completion. No refunds of less than 3&#128; will be made against each order. Refunds are subject to an administration fee of the greater of 10% or 1&#128;.</p>
 <p>You agree that {$CCMAINTITLE} can expire any credit that remains unused for a rolling period of 365 days. Such expiration renders the balance non-refundable.</p>
 <p>Customers are limited to a single active subscription to any one destination within a billing period. We reserve the right to cancel subscriptions and accounts without refunding unused minutes where we suspect users have created multiple accounts to circumvent this limit.</p>
+{if (!empty($A2Bconfig.webcustomerui.google_adsense_client_id) && !empty($A2Bconfig.webcustomerui.google_adsense_article_slot))}
+<ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="{$A2Bconfig.webcustomerui.google_adsense_client_id|escape:'html'}" data-ad-slot="{$A2Bconfig.webcustomerui.google_adsense_article_slot|escape:'html'}"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+{/if}
 <h3>Measuring Usage</h3>
 <p>You agree that {$CCMAINTITLE}’s records are conclusive evidence of your use of the site and service. Furthermore, you acknowledge that these records will be used to calculate charges incurred.</p>
 <p>You agree to be held fully responsible for all use of and fees related to your account, and accept full liability and responsibility for the actions of anyone who uses the site or service via your account, whether authorised or unauthorised, except when unauthorised use is solely attributed to an act or omission on the part of {$CCMAINTITLE}.</p>
@@ -30,6 +34,10 @@
 <p>If a call has been previously made from a telephone or account registered on our website no free credit will be given.</p>
 <p>Destinations included in the free test call promotion will be totally at the discretion of {$CCMAINTITLE}. Not all destinations will be included in the promotion and can change at anytime without notice.</p>
 <p>Credit will expire 60 days from account creation if it has not been used. Your free call will be removed if you add credit before making your free call.</p>
+{if (!empty($A2Bconfig.webcustomerui.google_adsense_client_id) && !empty($A2Bconfig.webcustomerui.google_adsense_article_slot))}
+<ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="{$A2Bconfig.webcustomerui.google_adsense_client_id|escape:'html'}" data-ad-slot="{$A2Bconfig.webcustomerui.google_adsense_article_slot|escape:'html'}"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+{/if}
 <h3>Unlimited Calling Plan</h3>
 <p>For customers purchasing an unlimited calling plan the following terms apply:</p>
 <p>The billing cycle starts on 1st of month and runs for a complete month.</p>
@@ -45,6 +53,10 @@
 <p>{$CCMAINTITLE}, in its sole discretion, may terminate your Service without advance notice if it believes you have violated the aforementioned restrictions, or if you act in a manner that is threatening, obscene, harassing, or abusive to {$CCMAINTITLE} personnel. {$CCMAINTITLE} may pass along fees or costs that it incurs from authorities, government agencies, carriers, or other partners in regards to the use of services.</p>
 <p>You are liable for any and all use of the Service by any person using the Service provided to you and agree to indemnify and hold harmless {$CCMAINTITLE} against any and all liability for any such use. If {$CCMAINTITLE}, in its sole discretion, believes that you have violated the aforementioned restrictions, {$CCMAINTITLE} may forward personally identifiable information to the appropriate authorities for investigation and prosecution and you hereby consent to such forwarding.</p>
 <p>You are expressly prohibited from any use of the Service or any other action that, in {$CCMAINTITLE}’s sole discretion, is deemed to present a risk to the network integrity or security of {$CCMAINTITLE} or its vendors, whether directly or indirectly. {$CCMAINTITLE}, in its sole discretion, may terminate your Service without advance notice if it determines your actions could cause a network disruption or security breach.</p>
+{if (!empty($A2Bconfig.webcustomerui.google_adsense_client_id) && !empty($A2Bconfig.webcustomerui.google_adsense_article_slot))}
+<ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="{$A2Bconfig.webcustomerui.google_adsense_client_id|escape:'html'}" data-ad-slot="{$A2Bconfig.webcustomerui.google_adsense_article_slot|escape:'html'}"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+{/if}
 <h3>Term of and Changes to This Agreement</h3>
 <p>The terms of this agreement shall come into effect immediately upon appearing on the {$CCMAINTITLE} website, as indicated by the time-stamp at the foot of this document. {$CCMAINTITLE} may terminate this agreement at any time for any breach of these terms or any applicable policy as posted on the {$CCMAINTITLE} website. No reimbursement for any fees charged in connection with {$CCMAINTITLE}’s services shall be issued for such a termination.</p>
 <p>Any provision of this agreement relating to term, payment, liability, indemnification, governing law, or confidentiality shall survive termination or expiration.</p>
@@ -58,6 +70,10 @@
 <p>{$CCMAINTITLE} will not be responsible to you for any delay, failure in performance, loss, or damage due to fire, explosion, power blackout, earthquake, volcanic action, flood, the weather elements, strike, embargo, labour disputes, civil or military authority, war, acts of God, acts or omissions of carriers or suppliers, acts of regulatory or governmental agencies, or other causes beyond our reasonable control.</p>
 <h3>Porting</h3>
 <p>Availability for porting phone numbers to or from {$CCMAINTITLE}, and any administrative and processing fees incurred for the porting, depend on a number’s country and current network provider. Please provide details of the number(s) you wish to port to or away from {$CCMAINTITLE} to <a href="mailto:{$MAILTO}">{$MAILTO}</a> and we will advise you of any costs involved.</p>
-<br>
+<br><p1>This agreement was last updated: <strong>2024-05-08 10:03 UTC</strong></p1><br>
+{if (!empty($A2Bconfig.webcustomerui.google_adsense_client_id) && !empty($A2Bconfig.webcustomerui.google_adsense_article_slot))}
+<ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="{$A2Bconfig.webcustomerui.google_adsense_client_id|escape:'html'}" data-ad-slot="{$A2Bconfig.webcustomerui.google_adsense_article_slot|escape:'html'}"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+{/if}
 {php}}{/php}
 </main>

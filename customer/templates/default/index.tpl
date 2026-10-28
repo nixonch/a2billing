@@ -3,6 +3,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+{if (!empty($A2Bconfig.global.customer_ui_url))}
+    <link rel="canonical" href="{$A2Bconfig.global.customer_ui_url|escape:'html'}"/>
+{/if}
     <link rel="shortcut icon" href="{$FAVICONPATH}"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>{$SECONDARY_TITLE} | {$CCMAINTITLE}</title>
@@ -23,6 +26,12 @@
     <li><h4>Main</h4></li>
     <li><a href="{$CUSTOMER_INTERFACE_URL}">Sign-in/up</a></li>
     <li><a href="{$CUSTOMER_INTERFACE_URL}terms">Terms & Conditions</a></li>
+{if (is_file("{$smarty.current_dir}/policy.tpl"))}
+    <li><a href="{$CUSTOMER_INTERFACE_URL}policy">Privacy Policy</a></li>
+{/if}
+{if (is_file("{$smarty.current_dir}/review_webrtc.tpl"))}
+    <li><a href="{$CUSTOMER_INTERFACE_URL}review_webrtc">Write me</a></li>
+{/if}
     <li><h4>Knowledge base</h4></li>
     <li><a href="{$CUSTOMER_INTERFACE_URL}AsteriskWebRTC">WebRTC setup in Asterisk</a></li>
     <li><a href="{$CUSTOMER_INTERFACE_URL}APICheckers"">Own Checking Web Service</a></li>
@@ -30,6 +39,16 @@
 </ul>
 </nav>
 <aside class="ads_right">
+{if (!empty($A2Bconfig.webcustomerui.google_cse_id))}
+    <script async src="https://cse.google.com/cse.js?cx={$A2Bconfig.webcustomerui.google_cse_id|escape:'url'}"></script><div class="gcse-search"></div>
+    <div style="padding:.3em"></div>
+{/if}
+{if (!empty($A2Bconfig.webcustomerui.google_adsense_client_id) && !empty($A2Bconfig.webcustomerui.google_adsense_login_slot))}
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={$A2Bconfig.webcustomerui.google_adsense_client_id|escape:'url'}" crossorigin="anonymous"></script>
+    <!-- Vertical_Signin_Page -->
+    <ins class="adsbygoogle" style="display:block" data-ad-client="{$A2Bconfig.webcustomerui.google_adsense_client_id|escape:'html'}" data-ad-slot="{$A2Bconfig.webcustomerui.google_adsense_login_slot|escape:'html'}" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+{/if}
 </aside>
 {/if}
 <div class="container" onClick="if ($('#navi-toggle').prop('checked') && event.target.tagName!='A') document.getElementById('navi-toggle').checked=false">
@@ -200,6 +219,17 @@ function closeCookieScript() {
 }
 </script>
 {php}}{/php}
+{if (!empty($A2Bconfig.webcustomerui.google_ga4_id))}
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={$A2Bconfig.webcustomerui.google_ga4_id|escape:'url'}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '{$A2Bconfig.webcustomerui.google_ga4_id|escape:'javascript'}');
+</script>
+<!-- /Google Analytics -->
+{/if}
 <script src="./javascript/jquery/jquery-1.7.2.min.js"></script>
 <script src="./javascript/index.js"></script>
 {if ($error >= 5)}

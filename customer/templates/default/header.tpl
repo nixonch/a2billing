@@ -6,6 +6,17 @@
 	<title>{php}echo basename($_SESSION["last_page"],".php"){/php} | {$CCMAINTITLE}</title>
 	<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+{if (!empty($A2Bconfig.webcustomerui.google_ga4_id))}
+<!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={$A2Bconfig.webcustomerui.google_ga4_id|escape:'url'}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '{$A2Bconfig.webcustomerui.google_ga4_id|escape:'javascript'}');
+    </script>
+<!-- /Google Analytics -->
+{/if}
     <link href="templates/{$SKIN_NAME}/css/main.css" rel="stylesheet" type="text/css">
     <link href="templates/{$SKIN_NAME}/css/menu.css" rel="stylesheet" type="text/css">
 {if LANGUAGE == "farsi" }

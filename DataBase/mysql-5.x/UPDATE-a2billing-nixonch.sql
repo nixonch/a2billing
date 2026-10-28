@@ -845,6 +845,50 @@ call a2b_trf_check;
 
 drop procedure if exists a2b_trf_check;
 
+-- Google integrations in customer templates. Empty identifiers disable their blocks.
+-- Keep configured values when this update is run again.
+INSERT INTO cc_config (config_title, config_key, config_value, config_description, config_valuetype, config_listvalues, config_group_title)
+SELECT 'Google Analytics 4 ID', 'google_ga4_id', '', 'GA4 measurement ID (e.g. G-XG19QQ243S). Leave empty to disable Google Analytics.', 0, NULL, 'webcustomerui'
+FROM DUAL
+WHERE NOT EXISTS (
+    SELECT 1 FROM cc_config WHERE config_key='google_ga4_id' AND config_group_title='webcustomerui'
+);
+
+INSERT INTO cc_config (config_title, config_key, config_value, config_description, config_valuetype, config_listvalues, config_group_title)
+SELECT 'Google AdSense client ID', 'google_adsense_client_id', '', 'AdSense client ID (e.g. ca-pub-3831618686142206). Ads require this ID and the corresponding slot ID. Leave empty to disable AdSense.', 0, NULL, 'webcustomerui'
+FROM DUAL
+WHERE NOT EXISTS (
+    SELECT 1 FROM cc_config WHERE config_key='google_adsense_client_id' AND config_group_title='webcustomerui'
+);
+
+INSERT INTO cc_config (config_title, config_key, config_value, config_description, config_valuetype, config_listvalues, config_group_title)
+SELECT 'Google AdSense login slot ID', 'google_adsense_login_slot', '', 'AdSense slot ID for the sign-in page sidebar (e.g. 9932511633). Requires google_adsense_client_id. Leave empty to hide this ad.', 0, NULL, 'webcustomerui'
+FROM DUAL
+WHERE NOT EXISTS (
+    SELECT 1 FROM cc_config WHERE config_key='google_adsense_login_slot' AND config_group_title='webcustomerui'
+);
+
+INSERT INTO cc_config (config_title, config_key, config_value, config_description, config_valuetype, config_listvalues, config_group_title)
+SELECT 'Google AdSense sidebar slot ID', 'google_adsense_sidebar_slot', '', 'AdSense slot ID for public page sidebars (e.g. 6683420397). Requires google_adsense_client_id. Leave empty to hide these ads.', 0, NULL, 'webcustomerui'
+FROM DUAL
+WHERE NOT EXISTS (
+    SELECT 1 FROM cc_config WHERE config_key='google_adsense_sidebar_slot' AND config_group_title='webcustomerui'
+);
+
+INSERT INTO cc_config (config_title, config_key, config_value, config_description, config_valuetype, config_listvalues, config_group_title)
+SELECT 'Google AdSense article slot ID', 'google_adsense_article_slot', '', 'AdSense in-article slot ID, including the feedback page (e.g. 5295414584). Requires google_adsense_client_id. Leave empty to hide these ads.', 0, NULL, 'webcustomerui'
+FROM DUAL
+WHERE NOT EXISTS (
+    SELECT 1 FROM cc_config WHERE config_key='google_adsense_article_slot' AND config_group_title='webcustomerui'
+);
+
+INSERT INTO cc_config (config_title, config_key, config_value, config_description, config_valuetype, config_listvalues, config_group_title)
+SELECT 'Google Programmable Search ID', 'google_cse_id', '', 'Programmable Search Engine ID used as cx (e.g. 0440f90a85788865d). Leave empty to disable Google search.', 0, NULL, 'webcustomerui'
+FROM DUAL
+WHERE NOT EXISTS (
+    SELECT 1 FROM cc_config WHERE config_key='google_cse_id' AND config_group_title='webcustomerui'
+);
+
 delimiter //
 
 create procedure a2b_trf_check()

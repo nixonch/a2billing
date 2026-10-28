@@ -17,6 +17,10 @@
 <br>
 <p1>3. Extra:</p1>
 <p1>A decent WebRTC implementation should also implement <a href="https://tools.ietf.org/html/rfc5389">STUN</a> and <a href="https://tools.ietf.org/html/rfc5766">TURN</a>, add secure transport (SSL certificate) and optimize WebRTC handling. This can make the difference between barely &ldquo;working&rdquo; and &ldquo;always working&rdquo; implementations.</p1>
+{if (!empty($A2Bconfig.webcustomerui.google_adsense_client_id) && !empty($A2Bconfig.webcustomerui.google_adsense_article_slot))}
+<ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="{$A2Bconfig.webcustomerui.google_adsense_client_id|escape:'html'}" data-ad-slot="{$A2Bconfig.webcustomerui.google_adsense_article_slot|escape:'html'}"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+{/if}
 <h3>Asterisk:</h3>
 <p><a href="https://www.asterisk.org/">Asterisk</a> supports WebSocket and WebRTC since version 11. This guide is focusing mostly on WebRTC configuration for Asterisk v.13. (If you are using an older Asterisk, we strongly recommend to upgrade, because there was a lot of development in the recent months on WebRTC to make it more stable and complete implementation). This guide also applies for A2Billing, FreePBX and other Asterisk clones such as Elastix and PIAF). For old Asterisk versions you might consider <a href="https://github.com/sipml5/sipml5/tree/master/asterisk">these patches</a>.</p>
 <br />
@@ -42,6 +46,10 @@
 <p>As a ready to use package you can use Asterisk Now. V.13 which can be downloaded from<strong> <a href="https://www.asterisk.org/downloads/asterisknow">here</a>.</strong></p>
 <p1>A public static IP address is highly recommended to avoid NAT related issues. Otherwise make sure that your Asterisk is configured properly (private/public IP, port forwarding, NAT handling).</p1>
 <p1>Your Asterisk root directory will be located at /etc/asterisk.</p1>
+{if (!empty($A2Bconfig.webcustomerui.google_adsense_client_id) && !empty($A2Bconfig.webcustomerui.google_adsense_article_slot))}
+<ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="{$A2Bconfig.webcustomerui.google_adsense_client_id|escape:'html'}" data-ad-slot="{$A2Bconfig.webcustomerui.google_adsense_article_slot|escape:'html'}"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+{/if}
 <h3>SIP:</h3>
 <p>Asterisk 11 used the old sip.conf however from Asterisk 12 upward we have the new<a href="https://docs.asterisk.org/Configuration/Channel-Drivers/SIP/Configuring-res_pjsip/"> pjsip.conf</a>.</p>
 <p1>Below you can find an example pjsip.conf file with 2 SIP accounts (6001 and 6002) at /etc/asterisk/pjsip.conf. Be aware of the [transport-ws] section where you must enable websocket.</p1>
@@ -87,6 +95,10 @@
 <p3>password=6002</p3>
 <p3>username=6002</p3>
 <p3 style="-webkit-margin-before:1em">[6002](aor-single-reg)</p3>
+{if (!empty($A2Bconfig.webcustomerui.google_adsense_client_id) && !empty($A2Bconfig.webcustomerui.google_adsense_article_slot))}
+<ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="{$A2Bconfig.webcustomerui.google_adsense_client_id|escape:'html'}" data-ad-slot="{$A2Bconfig.webcustomerui.google_adsense_article_slot|escape:'html'}"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+{/if}
 <h3>Dialplan:</h3>
 <p>A simple plan to be able to make calls from WebRTC to SIP assigning the 6666 number to the 6001 account in /etc/asterisk/extensions.conf:</p>
 <p3>[internal]</p3>
@@ -136,6 +148,10 @@ dtlsprivatekey=/etc/asterisk/certificate/privkey.pem<br />
 dtlscafile=/etc/asterisk/certificate/key/chain.pem<br />
 dtlssetup=actpass
 </p1>
+{if (!empty($A2Bconfig.webcustomerui.google_adsense_client_id) && !empty($A2Bconfig.webcustomerui.google_adsense_article_slot))}
+<ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="{$A2Bconfig.webcustomerui.google_adsense_client_id|escape:'html'}" data-ad-slot="{$A2Bconfig.webcustomerui.google_adsense_article_slot|escape:'html'}"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+{/if}
 <h3>http.conf configuration:</h3>
 <p>Configure the <a href="https://docs.asterisk.org/Configuration/WebRTC/Configuring-Asterisk-for-WebRTC-Clients/#configure-asterisks-built-in-http-server">built-in http server</a>. Bindport and bindaddr is the port and address for res_http_websocket and chan_sip used for websocket. (Websocket is implemented by the res_http_websocket module int the /ws sub-directory only)</p>
 <p1>The following changes need to be made on /etc/asterisk/http.conf&nbsp; file:</p1>
@@ -181,6 +197,10 @@ Make sure to apply the certificate for both your web server and asterisk websock
 To configure secure calling in Asterisk, check this<a href="https://docs.asterisk.org/Deployment/Secure-Calling/Secure-Calling-Tutorial/"> guide</a>.<br />
 Optionally you might also setup a <a href="https://github.com/coturn/coturn">turn</a> gateway (this can be useful to bypass firewalls and to help for peer to peer calls if you have such requirements). A tutorial can be found <a href="http://danielpocock.com/using-resiprocate-to-connect-asterisk-webrtc">here</a>.</p>
 </div>
+{if (!empty($A2Bconfig.webcustomerui.google_adsense_client_id) && !empty($A2Bconfig.webcustomerui.google_adsense_article_slot))}
+<ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="{$A2Bconfig.webcustomerui.google_adsense_client_id|escape:'html'}" data-ad-slot="{$A2Bconfig.webcustomerui.google_adsense_article_slot|escape:'html'}"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+{/if}
 <h3>Troubleshooting:</h3>
 <p>To be able to see the registration and call details in the CLI: Set the VERBOSE messages to go to the console and turn verbosity to at least 3.
 If you have any kind of issues during your asterisk setup, check the logs (/var/log/asterisk) by opening the verbose file with nano or other editor.
@@ -206,4 +226,8 @@ A few common issue:<br />
 - codec conversion: the most important <a href="http://stackoverflow.com/questions/37186859/codec-used-in-a-webrtc-stream">codec's in WebRTC</a> are OPUS and G.711 while your SIP peers might require other codec such as G.729 or GSM. Make sure that your server can handle this automatically.</p>
 <p>Common WebRTC SIP clients such as SIPML5, SIP.js doesn&rsquo;t take too much care on these details leaving this configuration tasks up to the users. If you are not an expert in WebRTC-SIP client, then we recommend a solution such as the <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">AiPhone extension</a> for Web Browser which is fine-tuned for Asterisk out of the box. Otherwise make sure to test your implementation in various conditions, from behind various routers/NAT&rsquo;s and different firewall configurations.</p>
 {php}}{/php}
+{if (!empty($A2Bconfig.webcustomerui.google_adsense_client_id) && !empty($A2Bconfig.webcustomerui.google_adsense_article_slot))}
+<ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="{$A2Bconfig.webcustomerui.google_adsense_client_id|escape:'html'}" data-ad-slot="{$A2Bconfig.webcustomerui.google_adsense_article_slot|escape:'html'}"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+{/if}
 </main>

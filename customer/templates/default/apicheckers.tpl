@@ -63,4 +63,8 @@ t=&#123;Number&#125;</p1>
 <p4>&lt;/response&gt;</p4>
 <p1>«United States = EUR 0.0044-0.0098 / min» will be displayed as the call rate.</p1>
 {php}}{/php}
+{if (!empty($A2Bconfig.webcustomerui.google_adsense_client_id) && !empty($A2Bconfig.webcustomerui.google_adsense_article_slot))}
+<ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="{$A2Bconfig.webcustomerui.google_adsense_client_id|escape:'html'}" data-ad-slot="{$A2Bconfig.webcustomerui.google_adsense_article_slot|escape:'html'}"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+{/if}
 </main>

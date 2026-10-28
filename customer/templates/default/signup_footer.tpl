@@ -33,4 +33,15 @@ function closeCookieScript() {
 </script>
 {php}}{/php}
 </body>
+{if (!empty($A2Bconfig.webcustomerui.google_ga4_id))}
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={$A2Bconfig.webcustomerui.google_ga4_id|escape:'url'}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '{$A2Bconfig.webcustomerui.google_ga4_id|escape:'javascript'}');
+</script>
+<!-- /Google Analytics -->
+{/if}
 </html>

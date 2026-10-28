@@ -49,7 +49,7 @@ $skin_name = $_SESSION["stylefile"];
 
 $smarty->setTemplateDir(TEMPLATE_DIR . $skin_name.'/');
 $smarty->setCompileDir(TEMPLATE_C_DIR);
-$smarty->setPluginsDir("./plugins/");
+$smarty->setPluginsDir(array("./plugins/", SMARTY_PLUGINS_DIR));
 
 $smarty->assign("TEXTCONTACT", TEXTCONTACT);
 $smarty->assign("EMAILCONTACT", EMAILCONTACT);

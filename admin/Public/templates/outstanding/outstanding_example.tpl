@@ -37,17 +37,17 @@ Period from <STRONG>{$invoice->cover_call_startdate}</STRONG> to <STRONG>{$invoi
 	
 		{section name=inner loop=$item}
 			<tr>
-		    	<td>{ $item[inner].designation }</td>		    	
-		    	<td align="right">{ $item[inner].nbcalls }</td>
-		    	<td align="right">{math equation="temps/60" temps=$item[inner].calltime format="%d"}:{ $item[inner].calltime%60 }</td>
-		    	<td align="right">{ $item[inner].price } {$invoice->invoice_currency}</td>
+			<td>{$item[inner].designation}</td>
+			<td align="right">{$item[inner].nbcalls}</td>
+			<td align="right">{math equation="temps/60" temps=$item[inner].calltime format="%d"}:{($item[inner].calltime%60)|string_format:"%02d"}</td>
+			<td align="right">{$item[inner].price} {$invoice->invoice_currency}</td>
 			</tr>
-			{assign var=sectiontotal value=`$sectiontotal+$item[inner].price*$item[inner].quantity`}
+			{assign var=sectiontotal value=$sectiontotal+$item[inner].price*$item[inner].quantity}
 		{/section}
 		</table>
 		<table width="100%"><tr>
 			<td><h3>Subtotal</h3></td>
-			<td align=right>{$sectiontotal}{ $invoice->invoice_currency }</td>
+			<td align=right>{$sectiontotal} {$invoice->invoice_currency}</td>
 		</tr></table>
 {elseif $key == 'Subscription fee'}
 	<h2>Subscription</h2>
@@ -63,19 +63,19 @@ Period from <STRONG>{$invoice->cover_call_startdate}</STRONG> to <STRONG>{$invoi
 
 	{section name=inner loop=$item}
 		<tr>
-	    	<td>{ $item[inner].designation }<small>{ $item[inner].sub_designation }</small></td>		    	
-	    	<td align="right">{ $item[inner].start_date }</td>
-	    	<td align="right">{ $item[inner].end_date }</td>
-	    	<td align="right">{ $item[inner].price } { $invoice->invoice_currency }</td>
-	    	<td align="right">{ $item[inner].quantity }</td>
-	    	<td align="right">{ $item[inner].price*$item[inner].quantity } { $invoice->invoice_currency }</td>
+		<td>{$item[inner].designation}<small>{$item[inner].sub_designation}</small></td>
+		<td align="right">{$item[inner].start_date}</td>
+		<td align="right">{$item[inner].end_date}</td>
+		<td align="right">{$item[inner].price} {$invoice->invoice_currency}</td>
+		<td align="right">{$item[inner].quantity}</td>
+		<td align="right">{$item[inner].price*$item[inner].quantity} {$invoice->invoice_currency}</td>
 		</tr>
-		{assign var=sectiontotal value=`$sectiontotal+$item[inner].price*$item[inner].quantity`}
+		{assign var=sectiontotal value=$sectiontotal+$item[inner].price*$item[inner].quantity}
 	{/section}
 	</table>
 	<table width="100%"><tr>
 		<td><h3>Subtotal</h3></td>
-		<td align=right>{$sectiontotal} { $invoice->invoice_currency }</td>
+		<td align=right>{$sectiontotal} {$invoice->invoice_currency}</td>
 	</tr></table>
 {else}
 	<h2>{$key}</h2>			
@@ -89,17 +89,17 @@ Period from <STRONG>{$invoice->cover_call_startdate}</STRONG> to <STRONG>{$invoi
 
 	{section name=inner loop=$item}
 		<tr>
-	    	<td>{ $item[inner].designation }<small>{ $item[inner].sub_designation }</small></td>		    	
-	    	<td align="right">{ $item[inner].price } { $invoice->invoice_currency }</td>
-	    	<td align="right">{ $item[inner].quantity }</td>
-	    	<td align="right">{ $item[inner].price*$item[inner].quantity } { $invoice->invoice_currency }</td>
+		<td>{$item[inner].designation}<small>{$item[inner].sub_designation}</small></td>
+		<td align="right">{$item[inner].price} {$invoice->invoice_currency}</td>
+		<td align="right">{$item[inner].quantity}</td>
+		<td align="right">{$item[inner].price*$item[inner].quantity} {$invoice->invoice_currency}</td>
 		</tr>
-		{assign var=sectiontotal value=`$sectiontotal+$item[inner].price*$item[inner].quantity`}
+		{assign var=sectiontotal value=$sectiontotal+$item[inner].price*$item[inner].quantity}
 	{/section}
 	</table>
 	<table width="100%"><tr>
 		<td><h3>Subtotal</h3></td>
-		<td align=right>{$sectiontotal} { $invoice->invoice_currency }</td>
+		<td align=right>{$sectiontotal} {$invoice->invoice_currency}</td>
 	</tr></table>
 {/if}
 {/foreach}<br><br>

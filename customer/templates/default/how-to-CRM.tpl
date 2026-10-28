@@ -62,4 +62,8 @@ Accept-Encoding: gzip, deflate, br
 <p3 style="color:#0f2b4e;text-indent:-3rem">Accept-Language: uk,ru;q=0.9,en;q=0.8,ru-RU;q=0.7,en-US;q=0.6,he-IL;q=0.5,he;q=0.4</p3></b></li></ul></p1>
 <br><p1>Please, send your questions and wishes to <a href="mailto:{$MAILTO}">{$MAILTO}</a></p1>
 {php}}{/php}
+{if (!empty($A2Bconfig.webcustomerui.google_adsense_client_id) && !empty($A2Bconfig.webcustomerui.google_adsense_article_slot))}
+<ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="{$A2Bconfig.webcustomerui.google_adsense_client_id|escape:'html'}" data-ad-slot="{$A2Bconfig.webcustomerui.google_adsense_article_slot|escape:'html'}"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+{/if}
 </main>
