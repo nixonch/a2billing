@@ -60,7 +60,7 @@ class FlagCache {
 	global $_gFlagCache;
 	require_once('jpgraph_flags.php');
 	if( $_gFlagCache[$aSize] === null ) {
-	    $_gFlagCache[$aSize] =& new FlagImages($aSize);
+	    $_gFlagCache[$aSize] = new FlagImages($aSize);
 	}
 	$f =& $_gFlagCache[$aSize];
 	$idx = $f->GetIdxByName($aName,$aFullName);
@@ -475,6 +475,3 @@ class PlotMark {
 	$this->title->Stroke($img,$x,$y);			
     }
 } // Class
-
-
-?>

@@ -106,6 +106,10 @@ class Table {
 		$this -> fields 	= $liste_fields;
 		$this -> mytopg 	= new MytoPg(0); // debug level 0 logs only >30ms CPU hogs
 		
+		// Legacy callers pass null for unused foreign-key arrays.
+		if ($fk_Tables === null) $fk_Tables = array();
+		if ($fk_Fields === null) $fk_Fields = array();
+
 		if (count($fk_Fields) > 0 && count($fk_Tables) == count($fk_Fields)) {
 			$this -> FK_TABLES = $fk_Tables;
 			$this -> FK_EDITION_CLAUSE = $fk_Fields;

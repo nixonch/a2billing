@@ -60,7 +60,8 @@ if (($download == "file") && $file) {
 	if (strpos($file, '/') !== false) {
 	    if (substr_count($file,'/') > 1) exit();
 	    $path_parts = pathinfo($file);
-	    if (strlen($path_parts['dirname'])>3 || !ereg("[^0-9_\.]",$path_parts['dirname'])) exit();
+	    // Preserve POSIX ereg() handling of backslashes and NUL bytes.
+	    if (strlen($path_parts['dirname'])>3 || !preg_match('/^[0-9_.\x5c]*[^0-9_.\x5c\x00]/', $path_parts['dirname'])) exit();
 	    $diraudio = DIR_STORE_AUDIO."/".$path_parts['dirname']."/";
 	    $return = scandir($diraudio);
 	    if ($return!==false) {

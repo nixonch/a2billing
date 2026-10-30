@@ -437,7 +437,7 @@ class RateEngine
 					$startday 			= $result_packages[$idx_pack]["startday"];
 					$id_cc_package_offer= $result_packages[$idx_pack][0];
 
-					$A2B -> debug("[ID PACKAGE  TO APPLY=$id_cc_package_offer - packagetype=$packagetype]");
+					$A2B -> debug( DEBUG, $agi, __FILE__, __LINE__, "[ID PACKAGE  TO APPLY=$id_cc_package_offer - packagetype=$packagetype]");
 					switch($packagetype) {
 						// 0 : UNLIMITED PACKAGE
 						//IF PACKAGE IS "UNLIMITED" SO WE DON'T NEED TO CALCULATE THE USED TIMES

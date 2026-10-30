@@ -444,17 +444,17 @@ class RadarGraph extends Graph {
 	    JpGraphError::Raise("Illegal scale for spiderplot ($axtype). Must be \"lin\" or \"log\"");
 	}
 	if( $axtype=="lin" ) {
-	    $this->yscale = & new LinearScale($ymin,$ymax);
-	    $this->yscale->ticks = & new RadarLinearTicks();
+	    $this->yscale = new LinearScale($ymin,$ymax);
+	    $this->yscale->ticks = new RadarLinearTicks();
 	    $this->yscale->ticks->SupressMinorTickMarks();
 	}
 	elseif( $axtype=="log" ) {
-	    $this->yscale = & new LogScale($ymin,$ymax);
-	    $this->yscale->ticks = & new RadarLogTicks();
+	    $this->yscale = new LogScale($ymin,$ymax);
+	    $this->yscale->ticks = new RadarLogTicks();
 	}
 		
-	$this->axis = & new RadarAxis($this->img,$this->yscale);
-	$this->grid = & new RadarGrid();		
+	$this->axis = new RadarAxis($this->img,$this->yscale);
+	$this->grid = new RadarGrid();
     }
 
     function SetSize($aSize) {
@@ -614,4 +614,3 @@ class RadarGraph extends Graph {
 } // Class
 
 /* EOF */
-?>
