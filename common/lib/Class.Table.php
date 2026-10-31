@@ -96,6 +96,7 @@ class Table {
 	public $FK_ID_VALUE 		= 0;
 
 	public $query_handler		= null;
+	public $mytopg;
 
 	/* CONSTRUCTOR */
 	public function __construct ($table = null, $liste_fields = null,  $fk_Tables = [], $fk_Fields = [], $id_Value = null, $fk_del_upd = true, $table_count = null)
@@ -218,7 +219,26 @@ class Table {
 
 	public function Get_list ($DBHandle, $clause = NULL, $order = NULL, $sens = NULL, $field_order_letter = NULL, $letters = NULL, $limite = NULL, $current_record = NULL, $sql_group= NULL, $cache = 0, $params = false)
 	{
-		$sql = 'SELECT '.$this -> fields.' FROM '.trim($this -> table);
+		$QUERY = $this->Get_list_query($clause, $order, $sens, $field_order_letter, $letters, $limite, $current_record, $sql_group);
+		$res = $this -> ExecuteQuery ($DBHandle, $QUERY, $cache, $params);
+		if (!$res) return false;
+
+		$num = $res -> RecordCount();
+		if ($num==0) {
+			return 0;
+		}
+
+		for( $i=0 ; $i<$num ; $i++ ) {
+			$row [] =$res -> fetchRow();
+		}
+
+		return ($row);
+	}
+
+	// Use the same SQL assembly for the page and its unpaginated count.
+	public function Get_list_query ($clause = NULL, $order = NULL, $sens = NULL, $field_order_letter = NULL, $letters = NULL, $limite = NULL, $current_record = NULL, $sql_group = NULL, $table = NULL)
+	{
+		$sql = 'SELECT '.$this -> fields.' FROM '.trim(is_null($table) ? $this->table : $table);
 		$sql_clause='';
 		if ($clause!='') {
 			$sql_clause=' WHERE '.$clause;
@@ -260,19 +280,35 @@ class Table {
 			$QUERY = str_replace("%LIMIT%", $sql_limit, $QUERY);
 		}
 
-		$res = $this -> ExecuteQuery ($DBHandle, $QUERY, $cache, $params);
-		if (!$res) return false;
-		
-		$num = $res -> RecordCount();
-		if ($num==0) {
-			return 0;
-		}
+		return $QUERY;
+	}
 
-		for( $i=0 ; $i<$num ; $i++ ) {
-			$row [] =$res -> fetchRow();
+	// Count result rows, not source rows: retain DISTINCT, GROUP BY, HAVING,
+	// JOINs and UNIONs, including grouping supplied separately by FormHandler.
+	public function Get_list_count ($DBHandle, $clause = NULL, $sql_group = NULL, $cache = 0, $params = false, $order = NULL, $sens = NULL)
+	{
+		$table = (is_null($this->table_count) || trim($this->table_count) === '') ? $this->table : $this->table_count;
+		// Preserve ordering too: %ORDER% can occur inside a subquery with a
+		// literal LIMIT, whose selected rows affect outer filters and totals.
+		$sql = $this->Get_list_query($clause, $order, $sens, NULL, NULL, NULL, NULL, $sql_group, $table);
+		$res = $this->ExecuteQuery($DBHandle, 'SELECT COUNT(*) FROM ('.$sql.') AS a2b_list_count', $cache, $params);
+		if (!$res) {
+			// A valid SELECT can expose duplicate column names (e.g. joined IDs),
+			// which MySQL forbids in a derived table. Count that exact result instead
+			// of renaming aliases that HAVING/GROUP BY may depend on.
+			if (DB_TYPE == 'postgres' || $DBHandle->ErrorNo() != 1060) return false;
+			$res = $this->ExecuteQuery($DBHandle, $sql, $cache, $params);
+			if (!$res) return false;
+			$count = $res->RecordCount();
+			$res->Close();
+			if ($count < 0) return false;
+			$this->errstr = '';
+			return $count;
 		}
-		
-		return ($row);
+		$row = $res->fetchRow();
+		$res->Close();
+		if ($row === false || !isset($row[0]) || !is_numeric($row[0])) return false;
+		return $row[0];
 	}
 
 

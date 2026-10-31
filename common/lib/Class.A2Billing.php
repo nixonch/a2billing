@@ -3630,7 +3630,7 @@ $this -> debug( ERROR, $agi, __FILE__, __LINE__, "FAXRESOLUTION: ".$faxresolutio
 	public function MDP( $chrs = 10 )
 	{
 		$pwd = "";
-		 mt_srand ((double) microtime() * 1000000);
+		 mt_srand ((float) microtime() * 1000000);
 		 while (strlen($pwd) < $chrs)
 		 {
 			$chr = chr(mt_rand (0,255));

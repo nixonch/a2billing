@@ -28,6 +28,7 @@
 */
 
 class MytoPg {
+	public $DEBUG;
     // These regexes match the MySQL idioms that we need to rewrite
 	public $mytopg = array(
 		// The first pass matches only trivial deletions and re-writes

@@ -19,6 +19,9 @@ class PhpQuickProfiler {
 	
 	public $output = array();
 	public $config = '';
+	public $startTime;
+	public $db = '';
+	public $master_db = '';
 	
 	public function __construct($startTime, $config = '/pqp/') {
 		$this->startTime = $startTime;
@@ -118,14 +121,17 @@ class PhpQuickProfiler {
 	----------------------------------------------------------*/
 	
 	function attemptToExplainQuery($query) {
+		$query['explain'] = false;
+		$rs = false;
 		try {
 			$sql = 'EXPLAIN '.$query['sql'];
 			$rs = $this->db->query($sql);
 		}
 		catch(Exception $e) {}
-		if($rs) {
+		if($rs instanceof mysqli_result) {
 			$row = mysqli_fetch_array($rs, MYSQLI_ASSOC);
 			$query['explain'] = $row;
+			mysqli_free_result($rs);
 		}
 		return $query;
 	}
@@ -145,7 +151,7 @@ class PhpQuickProfiler {
 	     HELPER FUNCTIONS TO FORMAT DATA
 	-------------------------------------------*/
 	
-	function getMicroTime() {
+	public static function getMicroTime() {
 		$time = microtime();
 		$time = explode(' ', $time);
 		return $time[1] + $time[0];

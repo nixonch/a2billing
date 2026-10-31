@@ -63,7 +63,8 @@ class FormHandler
 	var $FG_TABLE_NAME="";
 	
 	/**
-    * Sets the table name used for count.
+    * Optional equivalent FROM source for count; must expose the same fields,
+    * filter/group aliases and result multiplicity as FG_TABLE_NAME.
     * @public	-	@type string
     */	 
 	var $FG_TABLE_NAME_COUNT="";
@@ -942,8 +943,8 @@ class FormHandler
      * @public
 	 * @ $displayname , SQL or array to fill select and the name of select box
      */
-	function AddSearchElement_Select($displayname, $table = null, $fields = null, $clause = null,
-			$order = null ,$sens = null , $select_name, $sql_type = 1, $array_content = null,$search_table=null){
+	function AddSearchElement_Select($displayname, $table, $fields, $clause,
+			$order, $sens, $select_name, $sql_type = 1, $array_content = null,$search_table=null){
 			
 		$cur = count($this->FG_FILTER_SEARCH_FORM_SELECT);
 		
@@ -1274,11 +1275,7 @@ class FormHandler
 			}
 			
 			if ( $form_action == "list" ) {
-				$sql_calc_found_rows = '';
-				if (DB_TYPE != "postgres") {
-					$sql_calc_found_rows = 'SQL_CALC_FOUND_ROWS';
-				}
-				$instance_table = new Table($this -> FG_TABLE_NAME, "$sql_calc_found_rows ".$this -> FG_COL_QUERY, null, null, null, true, $this -> FG_TABLE_NAME_COUNT);
+				$instance_table = new Table($this -> FG_TABLE_NAME, $this -> FG_COL_QUERY, null, null, null, true, $this -> FG_TABLE_NAME_COUNT);
 				
 				$this->prepare_list_subselection($form_action);
 	
@@ -1298,11 +1295,12 @@ class FormHandler
 				$list = $instance_table -> Get_list ($this -> DBHandle, $this -> FG_TABLE_CLAUSE, $this->FG_ORDER, $this->FG_SENS, null, null,
 													 $this -> FG_LIMITE_DISPLAY, $this -> CV_CURRENT_PAGE * $this -> FG_LIMITE_DISPLAY, $this -> SQL_GROUP);
 				if ($this->FG_DEBUG == 3) echo "<br>Clause : ".$this -> FG_TABLE_CLAUSE;
-				if (DB_TYPE == "postgres") {
-					$this -> FG_NB_RECORD = $instance_table -> Table_count ($this -> DBHandle, $this -> FG_TABLE_CLAUSE);
-				} else {
-					$res_count = $instance_table -> SQLExec($this->DBHandle, "SELECT FOUND_ROWS() as count", 1);
-					$this -> FG_NB_RECORD = $res_count[0][0];
+				$this->FG_NB_RECORD = false;
+				$this->FG_NB_RECORD_MAX = false;
+				if ($list === false) return false;
+				$this->FG_NB_RECORD = $instance_table->Get_list_count($this->DBHandle, $this->FG_TABLE_CLAUSE, $this->SQL_GROUP, 0, false, $this->FG_ORDER, $this->FG_SENS);
+				if ($this->FG_NB_RECORD === false) {
+					return false;
 				}
 				
 				if ($this->FG_DEBUG >= 1) var_dump ($list);

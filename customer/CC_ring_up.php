@@ -134,7 +134,7 @@ if ($method == 'ask-edit' && isset($id) && is_numeric($id)) {
 	    $calleridsArray = array_filter(explode(",",$callerids),'incidarray');
 	    $callerids = implode(',',$calleridsArray);
 	}
-	$QUERY = "SELECT GROUP_CONCAT(id_trunk) FROM cc_trunk WHERE (id_cust=$custid OR id_cust=0". ((is_array($result_query) && $result_query[0][0])?" OR id_trunk IN ({$result_query[0][0]})":"") .") AND id_trunk IN ($trunks) GROUP BY status DESC";
+	$QUERY = "SELECT GROUP_CONCAT(id_trunk) FROM cc_trunk WHERE (id_cust=$custid OR id_cust=0". ((is_array($result_query) && $result_query[0][0])?" OR id_trunk IN ({$result_query[0][0]})":"") .") AND id_trunk IN ($trunks) GROUP BY status ORDER BY status DESC";
 	$result_query = $instance_table -> SQLExec ($DBHandle, $QUERY);
 	$trunks = is_array($result_query)?$result_query[0][0]:"";
 /*

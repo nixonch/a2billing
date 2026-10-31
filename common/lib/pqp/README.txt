@@ -56,9 +56,19 @@ CREATE TABLE `Posts` (
   PRIMARY KEY  (`PostId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 
-- In index.php, uncomment out the second include, which includes the database class.
-- In index.php, uncomment out the function sampleDatabaseData().
+- Enable PHP's mysqli extension. MySqlDatabase uses mysqli and returns a
+  mysqli_result for row-producing queries, or true for successful writes.
+- In index.php, uncomment the second include (classes/MySqlDatabase.php).
+- In sampleDatabaseData(), remove the /* ... */ around the sample body;
+  init() already calls this method. Database profiling stays opt-in.
 - In the sampleDatabaseData(), supply your database host, username, password, and database name.
+- Set the profiler's $config path to the served pqp/ directory. Pass the wrapper
+  to $profiler->display($db) (the example destructor already does this).
+- On MySQL 8, use a supported PHP/mysqlnd with caching_sha2_password support.
+  PHP 5.6's mysqlnd is not suitable for that authentication method. First test
+  with a separate account; do not switch live credentials as part of activation.
+  Use a Unix socket on the same host. A remote connection requires separately
+  configured TLS or RSA support; this minimal example has no TLS settings API.
 
 Given those steps, database logging will be enabled. If you would like to transition this to your own database class,
 open /classes/MySqlDatabase.php and note the following:
@@ -67,12 +77,20 @@ open /classes/MySqlDatabase.php and note the following:
 - When a query is run, the following is executed:
 
 $start = $this->getTime();
-$rs = mysql_query($sql, $this->conn);
+$rs = mysqli_query($this->conn, $sql);
 $this->queryCount += 1;
 $this->logQuery($sql, $start);
 
 - Everything in /classes/MySqlDatabase.php under the section comment "Debugging"
 must be available for the above snippet to work.
+
+The bundled profiler's EXPLAIN reader expects mysqli_result. An ADOdb wrapper
+must adapt its result type explicitly instead of passing an ADORecordSet to
+mysqli_fetch_array(). Keep queryCount, queries (sql/time in milliseconds),
+query() and getReadableTime() when integrating a different wrapper. EXPLAIN
+failures (including statements unsupported by MySQL 5.5 EXPLAIN) leave the
+original query log visible. The example logs failed queries before throwing
+Exception, including when modern mysqli exception reporting is enabled.
 
 ####################################
 4. Using Smarty instead of PHP echos

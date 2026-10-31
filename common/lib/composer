@@ -1,0 +1,10 @@
+#!/bin/sh
+set -eu
+
+# Resolve symlinks so this launcher can also be placed on PATH.
+composer_path=$(readlink -f -- "$0")
+composer_dir=$(dirname -- "$composer_path")
+
+# Old cURL sends Connection: keep-alive over HTTP/2, causing HTTP 400.
+# Select PHP's HTTPS stream transport for this process; TLS stays enabled.
+exec php -d disable_functions=curl_multi_exec "$composer_dir/composer.phar" "$@"

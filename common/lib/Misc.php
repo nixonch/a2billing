@@ -861,7 +861,7 @@ function MDP_STRING($chrs = LEN_CARDNUMBER)
 {
 	do {
 	    $pwd = "";
-	    mt_srand((double) microtime() * 1000000);
+	    mt_srand((float) microtime() * 1000000);
 	    while (strlen($pwd) < $chrs) {
 		$chr = chr(mt_rand(0, 255));
 		if (preg_match("/^[0-9a-z]$/i", $chr))
@@ -990,7 +990,7 @@ function gen_card_with_alias($table = "cc_card, cc_voucher", $api = 0, $length_c
  * function 
  gen_friends
  */
-function gen_friends($card_id, $start, $quantity, $min, $max, $DBHandle = null, &$A2B, $language = false, $api = 0)
+function gen_friends($card_id, $start, $quantity, $min, $max, $DBHandle, &$A2B, $language = false, $api = 0)
 {
 	if (!isset($DBHandle)) {
 		$DBHandle = DbConnect();

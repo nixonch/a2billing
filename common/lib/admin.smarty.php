@@ -31,8 +31,6 @@
  * 
 **/
 
-//use Factory\SmartyFactory;
-
 error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
 
 define( 'FULL_PATH', dirname(__FILE__) . '/' );

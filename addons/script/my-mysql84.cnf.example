@@ -1,0 +1,68 @@
+# MySQL 8.4 example derived from the supplied addons/script/my.cnf.
+# This file is NOT installed automatically. Review paths, resources and time
+# zone tables on a separate instance before applying it; see
+# maintenance-notes/mysql8-compatibility.txt (local report). Do not use it for MySQL 5.x.
+
+[client]
+port	= 3306
+socket	= /var/run/mysqld/mysql.sock
+
+[mysqld_safe]
+socket	= /var/run/mysqld/mysql.sock
+nice	= 0
+
+[mysqld]
+user            = mysql
+pid-file        = /var/run/mysqld/mysql.pid
+socket          = /var/run/mysqld/mysql.sock
+port            = 3306
+basedir         = /usr/local/mysql
+datadir         = /var/lib/mysql
+tmpdir          = /tmp
+lc-messages-dir = /usr/local/mysql/share
+
+skip-external-locking
+skip-stack-trace
+
+bind-address    = 127.0.0.1
+
+# Requires loaded MySQL time zone tables, as in the original configuration.
+default-time-zone      = 'Europe/Kiev'
+default-storage-engine = innodb
+
+# Keep the existing three-byte UTF-8 semantics; utf8mb4 is a separate change.
+init-connect         = "SET NAMES utf8mb3"
+character-set-server = utf8mb3
+collation-server     = utf8mb3_general_ci
+
+# Preserve permissive grouping, legacy zero dates and non-strict writes.
+sql_mode             = "ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
+
+key_buffer_size        = 32M
+max_allowed_packet     = 16M
+thread_stack           = 192K
+thread_cache_size      = 16
+myisam-recover-options = BACKUP
+table_open_cache       = 128
+
+# Ten days, replacing expire_logs_days = 10.
+binlog_expire_logs_seconds = 864000
+max_binlog_size            = 100M
+# MySQL 8.4 enables binlogging by default. Review disk capacity and the desired
+# log_bin/server_id/backup policy on the target server before rollout.
+# Authentication uses MySQL 8.4's default caching_sha2_password.
+
+[mysqldump]
+quick
+quote-names
+max_allowed_packet = 16M
+
+[mysql]
+# faster start of mysql but no tab completition
+#no-auto-rehash
+
+[isamchk]
+key_buffer         = 16M
+
+# Review additional configuration files and persisted mysqld-auto.cnf values
+# on the target instance; they can override the settings above.

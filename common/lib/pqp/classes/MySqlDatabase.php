@@ -34,7 +34,23 @@ class MySqlDatabase {
 	}
 	
 	function connect($new = false) {
-		$this->conn = mysql_connect($this->host, $this->user, $this->password, $new);
+		if (!$new && $this->conn) return;
+		$host = $this->host;
+		$port = ini_get('mysqli.default_port');
+		$socket = ini_get('mysqli.default_socket');
+		// Preserve the legacy host:port and host:/socket constructor syntax.
+		if (preg_match('/^(.+):([0-9]+)$/', $host, $parts)) {
+			$host = $parts[1];
+			$port = (int)$parts[2];
+		} elseif (preg_match('#^(.*):(/.*)$#', $host, $parts)) {
+			$host = $parts[1] === '' ? 'localhost' : $parts[1];
+			$socket = $parts[2];
+		}
+		try {
+			$this->conn = mysqli_connect($host, $this->user, $this->password, null, (int)$port, $socket);
+		} catch (mysqli_sql_exception $e) {
+			throw new Exception('We\'re working on a few connection issues.');
+		}
 		if(!$this->conn) {
 			throw new Exception('We\'re working on a few connection issues.');
 		}
@@ -43,8 +59,13 @@ class MySqlDatabase {
 	function changeDatabase($database) {
 		$this->database = $database;
 		if($this->conn) {
-			if(!mysql_select_db($database, $this->conn)) {
-				throw new CustomException('We\'re working on a few connection issues.');
+			try {
+				$selected = mysqli_select_db($this->conn, $database);
+			} catch (mysqli_sql_exception $e) {
+				$selected = false;
+			}
+			if(!$selected) {
+				throw new Exception('We\'re working on a few connection issues.');
 			}
 		}
 	}
@@ -61,7 +82,11 @@ class MySqlDatabase {
 	function query($sql) {
 		if(!$this->conn) $this->lazyLoadConnection();
 		$start = $this->getTime();
-		$rs = mysql_query($sql, $this->conn);
+		try {
+			$rs = mysqli_query($this->conn, $sql);
+		} catch (mysqli_sql_exception $e) {
+			$rs = false;
+		}
 		$this->queryCount += 1;
 		$this->logQuery($sql, $start);
 		if(!$rs) {
@@ -107,7 +132,7 @@ class MySqlDatabase {
 	}
 	
 	function __destruct()  {
-		@mysql_close($this->conn);
+		if ($this->conn instanceof mysqli) mysqli_close($this->conn);
 	}
 	
 }

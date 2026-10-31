@@ -89,7 +89,7 @@ function Service_Get_Rates($activation_code)
 		return array('400', ' ERROR - AUTHENTICATE CODE');
 	}
 	
-	$QUERY = "SELECT SQL_CALC_FOUND_ROWS dialprefix, destination, MIN(rateinitial) as rateinitial FROM cc_callplan_lcr WHERE tariffgroup_id = '220' ".
+	$QUERY = "SELECT dialprefix, destination, MIN(rateinitial) as rateinitial FROM cc_callplan_lcr WHERE tariffgroup_id = '220' ".
 	         "GROUP BY dialprefix ORDER BY destination ASC LIMIT 0,50000";
 	
 	$res = $DBHandle -> Execute($QUERY);

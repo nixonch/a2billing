@@ -32,7 +32,7 @@ class Console {
 	     LOG MEMORY USAGE OF VARIABLE OR ENTIRE SCRIPT
 	-----------------------------------------------------*/
 	
-	public function logMemory($object = false, $name = 'PHP') {
+	public static function logMemory($object = false, $name = 'PHP') {
 		$memory = memory_get_usage();
 		if($object) $memory = strlen(serialize($object));
 		$logItem = array(
@@ -49,7 +49,7 @@ class Console {
 	     LOG A PHP EXCEPTION OBJECT
 	------------------------------------*/
 	
-	public function logError($exception, $message) {
+	public static function logError($exception, $message) {
 		$logItem = array(
 			"data" => $message,
 			"type" => 'error',
@@ -64,7 +64,7 @@ class Console {
 	     POINT IN TIME SPEED SNAPSHOT
 	-------------------------------------*/
 	
-	public function logSpeed($name = 'Point in Time') {
+	public static function logSpeed($name = 'Point in Time') {
 		$obj= new PhpQuickProfiler(0);
 		$logItem = array(
 			"data" => $obj->getMicroTime(),
@@ -79,7 +79,7 @@ class Console {
 	     SET DEFAULTS & RETURN LOGS
 	------------------------------------*/
 	
-	public function getLogs() {
+	public static function getLogs() {
 		if(!$GLOBALS['debugger_logs']['memoryCount']) $GLOBALS['debugger_logs']['memoryCount'] = 0;
 		if(!$GLOBALS['debugger_logs']['logCount']) $GLOBALS['debugger_logs']['logCount'] = 0;
 		if(!$GLOBALS['debugger_logs']['speedCount']) $GLOBALS['debugger_logs']['speedCount'] = 0;
