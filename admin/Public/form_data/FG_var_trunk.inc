@@ -585,8 +585,10 @@ $HD_Form -> FieldEditElement ('id_provider, trunkcode, trunkprefix, removeprefix
 	dialprefixa, failover_trunka, secondusedcarrier,  startdatea, stopdatea, billblockseca, perioda, periodexpirya, timelefta, maxsecperperioda, periodcounta, lastcallstoptimea,
 	dialprefixb, failover_trunkb, secondusedratecard, startdateb, stopdateb, billblocksecb, periodb, periodexpiryb, timeleftb, maxsecperperiodb, periodcountb, lastcallstoptimeb');
 
-$HD_Form -> FG_ADITION_HIDDEN_PARAM       = $HD_Form->FG_EDITION_HIDDEN_PARAM       = 'filterprefix,current_page';
-$HD_Form -> FG_ADITION_HIDDEN_PARAM_VALUE = $HD_Form->FG_EDITION_HIDDEN_PARAM_VALUE = $filterprefix.",".$current_page;
+$HD_Form -> FG_ADITION_HIDDEN_PARAM = 'filterprefix,current_page';
+$HD_Form -> FG_ADITION_HIDDEN_PARAM_VALUE = $filterprefix.",".$current_page;
+$HD_Form -> FG_EDITION_HIDDEN_PARAM = 'filterprefix,popup_select';
+$HD_Form -> FG_EDITION_HIDDEN_PARAM_VALUE = $filterprefix.",".$popup_select;
 
 $HD_Form -> FG_QUERY_EDITION_HIDDEN_FIELDS = "wrapnexttime";
 $HD_Form -> FG_QUERY_EDITION_HIDDEN_VALUE = date("Y-m-d H:i:s");
