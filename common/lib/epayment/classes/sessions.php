@@ -1,5 +1,7 @@
 <?php
 
+// PHP 3 fallback only. Native sessions are required on supported PHP versions.
+if (!function_exists('session_start')) {
 
   $SID = '';
 
@@ -508,4 +510,5 @@
   }
 
   register_shutdown_function('session_close');
+}
 ?>

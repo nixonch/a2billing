@@ -158,7 +158,7 @@ $smarty->display('main.tpl');
 			  </th>
 			</tr> 
 			
-			<?php foreach ($items as $item){ ?>
+			<?php foreach ((is_array($items) ? $items : array()) as $item){ ?>
 			<tr style="vertical-align:top;" >
 				<td>
 					<?php echo $item->getDate(); ?>
@@ -184,7 +184,7 @@ $smarty->display('main.tpl');
     	 	</tr>	 
     	<?php
 		$totalprice = 0;
-    	foreach ($items as $item){  
+        foreach ((is_array($items) ? $items : array()) as $item){
     	 	$totalprice = $totalprice + $item->getPrice();
     	 } 
     	

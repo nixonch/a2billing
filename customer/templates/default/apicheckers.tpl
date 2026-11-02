@@ -1,9 +1,9 @@
 <main role="main">
 <select name="ui_language" id="ui_language" class="lang_select">
-    <option value="english" {php} if(LANGUAGE=="english") echo "selected";{/php} >English</option>
-    <option value="russian" {php} if(LANGUAGE=="russian" || LANGUAGE=="ukrainian") echo "selected";{/php} >Русский</option>
+    <option value="english" {if $smarty.const.LANGUAGE=="english"}selected{/if} >English</option>
+    <option value="russian" {if $smarty.const.LANGUAGE=="russian" || $smarty.const.LANGUAGE=="ukrainian"}selected{/if} >Русский</option>
 </select>
-{php} if (LANGUAGE=="russian" || LANGUAGE=="ukrainian") { {/php}
+{if $smarty.const.LANGUAGE=="russian" || $smarty.const.LANGUAGE=="ukrainian"}
 <h1>Настройка собственного веб-сервиса проверки баланса и стоимости звонка</h1>
 <p>Если вы используете расширение <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">AiPhone</a> для Chrome совместно с вашим сервером, скорее всего вам захочется видеть некоторую дополнительную информацию в раскрытом окне <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">расширения</a>. На данный момент реализованы запросы на заполнение верхней информационной строки (текущий баланс) и бегущей строки над полем набора номера (стоимость звонка). Создав несложный механизм ответов на запросы, вы получите качественный скачок в предоставлении своих услуг.</p>
 <p>Чтобы включить запросы, раскройте <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">расширение</a> и перейдите в <em>Control Panel &gt; Edit Account</em>, затем в строке «<em>Link to custom balance and rate checkers</em>» введите URL-адрес своей веб-службы проверок.<br>
@@ -32,7 +32,7 @@ t=&#123;Number&#125;</p1>
 <p6>&lt;callRateString&gt;United States = EUR 0.0044-0.0098 / min&lt;/callRateString&gt;</p6></p4>
 <p4>&lt;/response&gt;</p4>
 <p1>«United States = EUR 0.0044-0.0098 / min» будет показано в качестве информации о стоимости звонка.</p1>
-{php}}else{{/php}
+{else}
 <h1>Setting Up Your Own Web Service to Check the Balance and Call Rates</h1>
 <p>For some providers balance check service is already hardcoded in the app. For those providers that are not covered or if you want to override the hardcoded setup you need to set up your own web service.<p>
 <p>Also, if you are using <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">AiPhone</a> extension for the Chrome browser together with your own server, most likely you will want to see some additional information in the expanded <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">Extension</a> window. Requests for filling in the top information line (current balance) and a creeping line above the dialing field (call rate) have been implemented. By creating a simple mechanism for responding to requests, you will receive a qualitative leap in the provision of your services.</p>
@@ -62,7 +62,7 @@ t=&#123;Number&#125;</p1>
 <p6>&lt;callRateString&gt;United States = EUR 0.0044-0.0098 / min&lt;/callRateString&gt;</p6></p4>
 <p4>&lt;/response&gt;</p4>
 <p1>«United States = EUR 0.0044-0.0098 / min» will be displayed as the call rate.</p1>
-{php}}{/php}
+{/if}
 {if (!empty($A2Bconfig.webcustomerui.google_adsense_client_id) && !empty($A2Bconfig.webcustomerui.google_adsense_article_slot))}
 <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="{$A2Bconfig.webcustomerui.google_adsense_client_id|escape:'html'}" data-ad-slot="{$A2Bconfig.webcustomerui.google_adsense_article_slot|escape:'html'}"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>

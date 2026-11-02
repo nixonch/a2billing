@@ -100,7 +100,7 @@ if (strlen($callPlan_idlist) == 0) {
 $call_table = new Table("cc_tariffgroup", "tariffgroupname,id");
 $callPlan_list = $call_table->Get_list($HD_Form->DBHandle, "id in ($callPlan_idlist)", "FIELD(id,".$callPlan_idlist.")", "ASC");
 
-if (!is_array($callPlan_list) && count($callPlan_list) <= 0) {
+if (!is_array($callPlan_list) || count($callPlan_list) <= 0) {
 	exit (gettext("No Call Plan id are defined"));
 }
 $flag = true;
@@ -121,7 +121,7 @@ if (strlen($group_idlist) == 0) {
 $call_table = new Table("cc_card_group", "name,id");
 $group_list = $call_table->Get_list($HD_Form->DBHandle, "id in ($group_idlist)", "FIELD(id,".$group_idlist.")", "ASC");
 
-if (!is_array($group_list) && count($group_list) <= 0) {
+if (!is_array($group_list) || count($group_list) <= 0) {
 	exit (gettext("No Group id are defined"));
 }
 $flag = true;

@@ -61,7 +61,7 @@ Class Notification {
 	private $link_type;
 	private $link_id;
 	
-	function __construct($id, $date, $key, $priority, $from_type, $from_id, $link_id = null, $link_type = null, $new){
+	function __construct($id, $date, $key, $priority, $from_type, $from_id, $link_id, $link_type, $new){
 		$this->id = $id;
 		$this->date = $date;
 		$this->priority = $priority;

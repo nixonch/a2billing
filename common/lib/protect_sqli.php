@@ -16,7 +16,7 @@ function array_map_recursive( $func, $arr ) {
  * protection belongs to bound parameters and HTML protection belongs to the
  * output context.
  */
-if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
+if (PHP_VERSION_ID < 50400 && function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
     $_POST   = array_map_recursive('stripslashes', $_POST);
     $_GET    = array_map_recursive('stripslashes', $_GET);
     $_COOKIE = array_map_recursive('stripslashes', $_COOKIE);

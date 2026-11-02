@@ -55,7 +55,7 @@ $my_max_file_size = (int) MY_MAX_FILE_SIZE_IMPORT;
 $instance_table_tariffname = new Table("cc_didgroup", "id, didgroupname");
 $FG_TABLE_CLAUSE = "";
 $list_tariffname = $instance_table_tariffname  -> Get_list ($DBHandle, $FG_TABLE_CLAUSE, "didgroupname", "ASC", null, null, null, null);
-$nb_tariffname = count($list_tariffname);
+$nb_tariffname = (is_array($list_tariffname) ? count($list_tariffname) : 0);
 $instance_table_country = new Table("cc_country", "id, countryname");
 $list_countryname = $instance_table_country  -> Get_list ($DBHandle, $FG_TABLE_CLAUSE, "countryname", "ASC", null, null, null, null);
 $nb_countryname = count($list_countryname);
@@ -244,7 +244,7 @@ function moveSourceDown()
 								<option value=''><?php echo gettext("Choose a DIDGroup");?></option>
 
 								<?php
-								 foreach ($list_tariffname as $recordset){
+								 foreach ((is_array($list_tariffname) ? $list_tariffname : array()) as $recordset){
 								?>
 									<option class=input value='<?php  echo $recordset[0]?>-:-<?php  echo $recordset[1]?>' <?php if ($recordset[0]==$didgroup) echo "selected";?>><?php echo $recordset[1]?></option>
 								<?php 	 }

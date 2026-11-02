@@ -2,7 +2,7 @@
 
 class Constants
 {
-	public function reverse_array($arr) {
+	public static function reverse_array($arr) {
 		$reverted_arr = array();
 		foreach ($arr as $ind => $val_arr) {
 			$reverted_arr[$ind] = array($val_arr[1], $val_arr[0]);

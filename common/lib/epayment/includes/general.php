@@ -1,6 +1,7 @@
 <?php
 
 include_once (dirname(__FILE__)."/sessions.php");
+require_once dirname(dirname(__DIR__)) . '/DateFormat.php';
 
 ////
 // Stop from parsing any further PHP code
@@ -556,7 +557,7 @@ include_once (dirname(__FILE__)."/sessions.php");
     $minute = (int)substr($raw_date, 14, 2);
     $second = (int)substr($raw_date, 17, 2);
 
-    return strftime(DATE_FORMAT_LONG, mktime($hour,$minute,$second,$month,$day,$year));
+    return a2b_strftime(DATE_FORMAT_LONG, mktime($hour,$minute,$second,$month,$day,$year));
   }
 
 ////
@@ -582,7 +583,7 @@ include_once (dirname(__FILE__)."/sessions.php");
 
 ////
 // Parse search string into indivual objects
-  function tep_parse_search_string($search_str = '', &$objects) {
+  function tep_parse_search_string($search_str, &$objects) {
     $search_str = trim(strtolower($search_str));
 
 // Break up $search_str on whitespace; quoted string will be reconstructed later
@@ -1198,7 +1199,7 @@ include_once (dirname(__FILE__)."/sessions.php");
     static $seeded;
 
     if (!isset($seeded)) {
-      mt_srand((double)microtime()*1000000);
+      mt_srand((int)((float)microtime()*1000000));
       $seeded = true;
     }
 

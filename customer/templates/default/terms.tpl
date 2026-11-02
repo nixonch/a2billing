@@ -1,7 +1,7 @@
 <main role="main">
-{php} if (false && (LANGUAGE=="russian" || LANGUAGE=="ukrainian")) { {/php}
+{if false && ($smarty.const.LANGUAGE=="russian" || $smarty.const.LANGUAGE=="ukrainian")}
 
-{php}}else{{/php}
+{else}
 <h1>Terms &amp; conditions</h1>
 <h3>The {$CCMAINTITLE} Subscriber Agreement</h3>
 <p>{$CCMAINTITLE} provides VoIP services to customers in accordance with the terms and conditions set forth in this agreement.</p>
@@ -75,5 +75,5 @@
 <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="{$A2Bconfig.webcustomerui.google_adsense_client_id|escape:'html'}" data-ad-slot="{$A2Bconfig.webcustomerui.google_adsense_article_slot|escape:'html'}"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 {/if}
-{php}}{/php}
+{/if}
 </main>

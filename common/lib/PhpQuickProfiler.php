@@ -18,6 +18,7 @@
 class PhpQuickProfiler {
 	
 	public $output;
+	public $startTime;
 	public $config = '';
 	public $installed = true;
 	public $modedebug = PHP_QUICK_PROFILER;

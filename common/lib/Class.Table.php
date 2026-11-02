@@ -46,7 +46,9 @@
 
 include (dirname(__FILE__)."/Class.MytoPg.php");
 
-$ADODB_CACHE_DIR = '/tmp';
+if (empty($ADODB_CACHE_DIR)) {
+    $ADODB_CACHE_DIR = sys_get_temp_dir();
+}
 
 class Query_trace {
 

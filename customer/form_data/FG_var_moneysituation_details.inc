@@ -34,7 +34,7 @@ $tariff_table = new Table("cc_card", "tariff, id_group");
 $tariff_list = $tariff_table->Get_list($HD_Form->DBHandle, "id='$idcust'");
 
 //echo "1.<br>".var_export($tariff_list,true)."<br>";
-if (!is_array($tariff_list) && count($tariff_list) <= 0) {
+if (!is_array($tariff_list) || count($tariff_list) <= 0) {
 	exit (gettext("No Call Plan ID or Group ID are defined"));
 }
 $callPlan_idlistArr = explode(',',$callPlan_idlist);
@@ -52,11 +52,11 @@ $call_table = new Table("cc_tariffgroup", "tariffgroupname,id");
 $callPlan_list = $call_table->Get_list($HD_Form->DBHandle, "id IN ($callPlan_idlist)", "FIELD(id,".$callPlan_idlist.")", "ASC");
 
 //echo "4.<br>".var_export($callPlan_list,true)."<br>";
-if (!is_array($callPlan_list) && count($callPlan_list) <= 0) {
+if (!is_array($callPlan_list) || count($callPlan_list) <= 0) {
         exit (gettext("No Call Plan id are defined"));
 }
 $flag = true;
-$callPlan_count = count($callPlan_list);
+$callPlan_count = (is_array($callPlan_list) ? count($callPlan_list) : 0);
 if ($tariff != "" || !is_null($tariff)) {
         for ($i = 0; $i < $callPlan_count; $i++) {
                 if ($callPlan_list[$i][1] == trim($tariff, "\'")) {
@@ -91,7 +91,7 @@ $group_table = new Table("cc_card_group", "name,id");
 $group_list = $group_table->Get_list($HD_Form->DBHandle, "id IN ($group_idlist)", "FIELD(id,".$group_idlist.")", "ASC");
 
 //echo "4.<br>".var_export($callPlan_list,true)."<br>";
-if (!is_array($callPlan_list) && count($callPlan_list) <= 0) {
+if (!is_array($group_list) || count($group_list) <= 0) {
         exit (gettext("No Group id are defined"));
 }
 $flag = true;
@@ -357,6 +357,10 @@ $HD_Form -> FG_GO_LINK_AFTER_ACTION_EDIT = $PHP_SELF."?idcust=$idcust";
 
 } else {
 
+    if (!isset($type) || !in_array($type, array('payment', 'invoice', 'sipiax'), true)) {
+        http_response_code(400);
+        exit(gettext('Invalid detail type'));
+    }
     if ($type == 'payment') {
 	$HD_Form = new FormHandler("cc_logpayment as t2 LEFT JOIN cc_card ON cc_card.id=t2.card_id ", gettext("Payments"));
 	$HD_Form->FG_LIMITE_DISPLAY = 24;

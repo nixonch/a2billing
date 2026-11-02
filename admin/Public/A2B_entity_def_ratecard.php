@@ -287,7 +287,7 @@ if ($form_action == "list" && !$popup_select) {
 	$instance_table = new Table("cc_tariffplan", "id, tariffname");
 	$FG_TABLE_CLAUSE = "";
 	$list_tariffname = $instance_table->Get_list($HD_Form->DBHandle, $FG_TABLE_CLAUSE, "tariffname", "ASC", null, null, null, null);
-	$nb_tariffname = count($list_tariffname);
+	$nb_tariffname = (is_array($list_tariffname) ? count($list_tariffname) : 0);
 
 	$instance_table = new Table("cc_trunk", "id_trunk, trunkcode, providerip");
 	$FG_TABLE_CLAUSE = "";
@@ -297,7 +297,7 @@ if ($form_action == "list" && !$popup_select) {
 	$instance_table = new Table("cc_outbound_cid_group", "id, group_name");
 	$FG_TABLE_CLAUSE = "";
 	$list_cid_group = $instance_table->Get_list($HD_Form->DBHandle, $FG_TABLE_CLAUSE, "group_name", "ASC", null, null, null, null);
-	$nb_cid_group = count($list_cid_group);
+	$nb_cid_group = (is_array($list_cid_group) ? count($list_cid_group) : 0);
 	
 	
 	// disable Batch update if LCR Export
@@ -348,7 +348,7 @@ if ($form_action == "list" && !$popup_select) {
 			  <font class="fontstyle_009">	2) <?php echo gettext("RATECARD");?> :</font>
 				<select NAME="upd_idtariffplan" size="1" class="form_enter" >
 					<?php					 
-				  	 foreach ($list_tariffname as $recordset){ 						 
+                            foreach ((is_array($list_tariffname) ? $list_tariffname : array()) as $recordset){
 					?>
 						<option class=input value='<?php echo $recordset[0]?>'  <?php if ($upd_idtariffplan==$recordset[0]) echo 'selected="selected"'?>><?php echo $recordset[1]?></option>
 					<?php 	 }
@@ -366,7 +366,7 @@ if ($form_action == "list" && !$popup_select) {
 				<select NAME="upd_id_outbound_cidgroup" size="1" class="form_enter" >
 					<OPTION  value="-1" selected><?php echo gettext("NOT DEFINED");?></OPTION>
 					<?php					 
-				  	 foreach ($list_cid_group as $recordset){ 						 
+                            foreach ((is_array($list_cid_group) ? $list_cid_group : array()) as $recordset){
 					?>
 						<option class=input value='<?php echo $recordset[0]?>'  <?php if ($upd_id_outbound_cidgroup==$recordset[0]) echo 'selected="selected"'?>><?php echo $recordset[1]?></option>
 					<?php 	 }

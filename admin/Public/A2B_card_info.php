@@ -438,7 +438,7 @@ echo Display_Login_Button ($DBHandle, $id);
         $callerid_clause = "id_cc_card  = ".$id;
         $callerid_result = $callerid_table -> Get_list($DBHandle, $callerid_clause, 0);
         $callerid = $callerid_result[0];
-        if(sizeof($callerid_result)>0 && $callerid_result[0]!=null) {
+        if((is_array($callerid_result) ? sizeof($callerid_result) : 0)>0 && $callerid_result[0]!=null) {
         ?>
 	      <table width="100%" class="editform_table1">
 		<tr>
@@ -485,7 +485,7 @@ echo Display_Login_Button ($DBHandle, $id);
 		$speeddial_clause = "id_cc_card  = ".$id;
 		$speeddial_result = $speeddial_table -> Get_list($DBHandle, $speeddial_clause, 0);
 		$speeddial = $speeddial_result[0];
-		if(sizeof($speeddial_result)>0 && $speeddial_result[0]!=null) {
+		if((is_array($speeddial_result) ? sizeof($speeddial_result) : 0)>0 && $speeddial_result[0]!=null) {
 		?>
 		<table width="100%" class="editform_table1">
 		   <tr>
@@ -541,7 +541,7 @@ echo Display_Login_Button ($DBHandle, $id);
 		$sip_buddies_clause = "id_cc_card  = ".$id;
 		$sip_buddies_result = $sip_buddies_table -> Get_list($DBHandle, $sip_buddies_clause, 0);
 		$sip_buddies = $sip_buddies_result[0];
-		if(sizeof($sip_buddies_result)>0 && $sip_buddies_result[0]!=null) {
+		if((is_array($sip_buddies_result) ? sizeof($sip_buddies_result) : 0)>0 && $sip_buddies_result[0]!=null) {
 		?>
 		<table width="100%" class="editform_table1">
 		   <tr>
@@ -587,7 +587,7 @@ echo Display_Login_Button ($DBHandle, $id);
 		$iax_buddies_clause = "id_cc_card  = ".$id;
 		$iax_buddies_result = $iax_buddies_table -> Get_list($DBHandle, $iax_buddies_clause, 0);
 		$iax_buddies = $iax_buddies_result[0];
-		if(sizeof($iax_buddies_result)>0 && $iax_buddies_result[0]!=null) {
+		if((is_array($iax_buddies_result) ? sizeof($iax_buddies_result) : 0)>0 && $iax_buddies_result[0]!=null) {
 		?>
 		<table width="100%" class="editform_table1">
 		   <tr>
@@ -644,7 +644,7 @@ echo Display_Login_Button ($DBHandle, $id);
 $subscription_table = new Table('cc_card_subscription,cc_subscription_service','cc_card_subscription.id,id_cc_card,startdate,product_name,fee');
 $subscription_clause = "id_cc_card = ".$id." AND cc_card_subscription.id_subscription_fee = cc_subscription_service.id";
 $subscription_result = $subscription_table -> Get_list($DBHandle, $subscription_clause, 'startdate', 'DESC', NULL, NULL, 10, 0);
-if(sizeof($subscription_result)>0 && $subscription_result[0]!=null) {
+if((is_array($subscription_result) ? sizeof($subscription_result) : 0)>0 && $subscription_result[0]!=null) {
 ?>
 <table class="toppage_maintable">
 	<tr>
@@ -717,7 +717,7 @@ if(sizeof($subscription_result)>0 && $subscription_result[0]!=null) {
 $payment_table = new Table('cc_logpayment','*');
 $payment_clause = "card_id = ".$id;
 $payment_result = $payment_table -> Get_list($DBHandle, $payment_clause, 'date', 'DESC', NULL, NULL, 10, 0);
-if(sizeof($payment_result)>0 && $payment_result[0]!=null) {
+if((is_array($payment_result) ? sizeof($payment_result) : 0)>0 && $payment_result[0]!=null) {
 ?>
 <table class="toppage_maintable">
 	<tr>
@@ -787,7 +787,7 @@ $refill_table = new Table('cc_logrefill','*');
 $refill_clause = "card_id = ".$id;
 $refill_result = $refill_table -> Get_list($DBHandle, $refill_clause, 'date', 'DESC', NULL, NULL, 10, 0);
 
-if (sizeof($refill_result)>0 && $refill_result[0]!=null) {
+if ((is_array($refill_result) ? sizeof($refill_result) : 0)>0 && $refill_result[0]!=null) {
 ?>
 <table class="toppage_maintable">
 	<tr>
@@ -942,7 +942,7 @@ $did_destination_table = new Table('cc_did_destination,cc_did ','*');
 $did_destination_clause = " cc_did_destination.id_cc_did = cc_did.id and cc_did_destination.id_cc_card  = ".$id;
 $did_destination_result = $did_destination_table -> Get_list($DBHandle, $did_destination_clause, 0);
 $did_destination = $did_destination_result[0];
-if(sizeof($did_destination_result)>0 && $did_destination_result[0]!=null) {
+if((is_array($did_destination_result) ? sizeof($did_destination_result) : 0)>0 && $did_destination_result[0]!=null) {
 ?>
 <table class="toppage_maintable">
 	<tr>
@@ -1000,7 +1000,7 @@ if(sizeof($did_destination_result)>0 && $did_destination_result[0]!=null) {
 }
 ?>
 <?php 
-if ( (sizeof($payment_result)>0 && $payment_result[0]!=null) || 
+if ( ((is_array($payment_result) ? sizeof($payment_result) : 0)>0 && $payment_result[0]!=null) ||
         (sizeof($call_result)>0 && $call_result[0]!=null) ||
         (sizeof($refill_result)>0 && $refill_result[0]!=null) ) {
 ?>

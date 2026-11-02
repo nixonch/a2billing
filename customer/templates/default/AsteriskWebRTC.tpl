@@ -1,7 +1,7 @@
 <main role="main">
-{php} if (false && (LANGUAGE=="russian" || LANGUAGE=="ukrainian")) { {/php}
+{if false && ($smarty.const.LANGUAGE=="russian" || $smarty.const.LANGUAGE=="ukrainian")}
 
-{php}}else{{/php}
+{else}
 <h1>Asterisk WebRTC</h1>
 <h3>About</h3>
 <p>In this guide you will find detailed instructions about WebRTC setup for Asterisk 13 or higher.</p>
@@ -225,7 +225,7 @@ A few common issue:<br />
 - peer to peer media routing whenever possible (and failback to server or TURN assisted relay)<br />
 - codec conversion: the most important <a href="http://stackoverflow.com/questions/37186859/codec-used-in-a-webrtc-stream">codec's in WebRTC</a> are OPUS and G.711 while your SIP peers might require other codec such as G.729 or GSM. Make sure that your server can handle this automatically.</p>
 <p>Common WebRTC SIP clients such as SIPML5, SIP.js doesn&rsquo;t take too much care on these details leaving this configuration tasks up to the users. If you are not an expert in WebRTC-SIP client, then we recommend a solution such as the <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">AiPhone extension</a> for Web Browser which is fine-tuned for Asterisk out of the box. Otherwise make sure to test your implementation in various conditions, from behind various routers/NAT&rsquo;s and different firewall configurations.</p>
-{php}}{/php}
+{/if}
 {if (!empty($A2Bconfig.webcustomerui.google_adsense_client_id) && !empty($A2Bconfig.webcustomerui.google_adsense_article_slot))}
 <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="{$A2Bconfig.webcustomerui.google_adsense_client_id|escape:'html'}" data-ad-slot="{$A2Bconfig.webcustomerui.google_adsense_article_slot|escape:'html'}"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>

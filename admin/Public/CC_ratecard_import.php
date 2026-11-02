@@ -52,7 +52,7 @@ $my_max_file_size = (int) MY_MAX_FILE_SIZE_IMPORT;
 $instance_table_tariffname = new Table("cc_tariffplan", "id, tariffname");
 $FG_TABLE_CLAUSE = "";
 $list_tariffname = $instance_table_tariffname->Get_list($DBHandle, $FG_TABLE_CLAUSE, "tariffname", "ASC", null, null, null, null);
-$nb_tariffname = count($list_tariffname);
+$nb_tariffname = (is_array($list_tariffname) ? count($list_tariffname) : 0);
 
 // GET TRUNK LIST
 $instance_table_trunk = new Table("cc_trunk", "id_trunk, trunkcode");
@@ -231,7 +231,7 @@ echo $CC_help_import_ratecard;
 				  <select NAME="tariffplan" size="1"  style="width=250" class="form_input_select">
 								<option value=''><?php echo gettext("Choose a ratecard");?></option>
 								<?php
-								 foreach ($list_tariffname as $recordset){
+								 foreach ((is_array($list_tariffname) ? $list_tariffname : array()) as $recordset){
 								?>
 									<option class=input value='<?php  echo $recordset[0]?>-:-<?php  echo $recordset[1]?>'<?php if ($recordset[0]==$tariffplan) echo " selected";?>><?php echo $recordset[1]?></option>
 								<?php }?>

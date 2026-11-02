@@ -49,7 +49,7 @@ getpost_ifset(array('download', 'file'));
 $diraudio = DIR_STORE_AUDIO . "/" . $_SESSION["pr_login"] . "/";
 
 $soundlist = array();
-$return = scandir($diraudio);
+$return = is_dir($diraudio) && is_readable($diraudio) ? scandir($diraudio) : false;
 if ($return!==false) {
         foreach ($return as $val) {
             if (is_file($diraudio.$val) && $val != 'tempplay.wav') {
@@ -292,7 +292,7 @@ if (!isset ($action_release) || $action_release == "confirm_release" || $action_
 	$instance_table = new Table($HD_Form->FG_TABLE_NAME, $HD_Form->FG_COL_QUERY);
 	$instance_table_phonenumberdid = new Table($HD_Form->FG_TABLE_NAME, $HD_Form->FG_COL_QUERY);
 	$list_phonenumberdid = $instance_table_phonenumberdid->Get_list($HD_Form->DBHandle, $HD_Form->FG_TABLE_CLAUSE, $order, $sens, null, null, $limite, $current_record);
-	$nb_record = count($list_phonenumberdid);
+	$nb_record = (is_array($list_phonenumberdid) ? count($list_phonenumberdid) : 0);
 
 	$nb_record = $instance_table->Table_count($HD_Form->DBHandle, $HD_Form->FG_TABLE_CLAUSE);
 
@@ -309,7 +309,7 @@ if (!isset ($action_release) || $action_release == "confirm_release" || $action_
 	$instance_table_country = new Table("cc_country, cc_did", "cc_country.id, countryname");
 	$FG_TABLE_CLAUSE = "id_cc_country=cc_country.id and cc_did.reserved=0 group by cc_country.id, countryname ";
 	$list_country = $instance_table_country->Get_list($HD_Form->DBHandle, $FG_TABLE_CLAUSE, "countryname", "ASC", null, null, null, null);
-	$nb_country = count($list_country);
+	$nb_country = (is_array($list_country) ? count($list_country) : 0);
 
 	if (!isset ($new_did_page) || ($new_did_page == "")) {
 		$new_did_page = 0;
@@ -437,7 +437,7 @@ function CheckCountry(Source){
 				<select NAME="choose_country" size="1" class="form_input_select"  onChange="JavaScript:CheckCountry('select');">
 					<option value=''><?php echo gettext("Select Country");?></option>
 					<?php
-				  	 foreach ($list_country as $recordset){
+                            foreach ((is_array($list_country) ? $list_country : array()) as $recordset){
 					?>
 						<option class=input value='<?php echo $recordset[0]?>' <?php if ($choose_country==$recordset[0]) echo 'selected'; ?>><?php echo $recordset[1]?></option>
 					<?php 	 }
@@ -452,7 +452,7 @@ function CheckCountry(Source){
 					<option value=''><?php echo gettext("Select Virtual Phone Number");?></option>
 
 					<?php
-				  	foreach ($list_did as $recordset){
+                            foreach ((is_array($list_did) ? $list_did : array()) as $recordset){
 				  	// fixrate, connection_charge, selling_rate, aleg_retail_connect_charge, aleg_retail_cost_min
 					$price_annoucement = gettext("Monthly:").$recordset[2].' '.BASE_CURRENCY;
 					if ($recordset[3]>0)

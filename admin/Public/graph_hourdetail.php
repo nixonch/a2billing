@@ -33,9 +33,8 @@
 
 
 include_once (dirname(__FILE__) . "/../lib/admin.defines.php");
-include_once (dirname(__FILE__) . "/jpgraph_lib/jpgraph.php");
-include_once (dirname(__FILE__) . "/jpgraph_lib/jpgraph_line.php");
-include_once (dirname(__FILE__) . "/jpgraph_lib/jpgraph_bar.php");
+require_once dirname(__FILE__) . '/../lib/JpGraph.php';
+\mitoteam\jpgraph\MtJpGraph::load(array('line', 'bar'));
 include_once (dirname(__FILE__) . "/../lib/admin.module.access.php");
 
 if (!has_rights(ACX_CALL_REPORT)) {
@@ -162,6 +161,10 @@ elseif (strpos($date_clause, 'AND') > 0) {
 }
 
 $list_total = $instance_table_graph->Get_list($DBHandle, $FG_TABLE_CLAUSE, 't1.starttime', 'ASC', null, null, null, null);
+if ($list_total === 0 || $list_total === array()) {
+    a2b_jpgraph_no_data(750, $typegraph === 'fluctuation' ? 450 : 800);
+    exit;
+}
 
 /**************************************/
 
@@ -199,7 +202,7 @@ for ($i = 1; $i <= $nbcall; $i++) {
 	//if ($i==10) break;
 }
 
-for ($k = 0; $k <= count($mycall_minsec_start); $k++) {
+for ($k = 1; $k <= count($mycall_minsec_start); $k++) {
 
 	if (is_numeric($fluctuation[$mycall_minsec_start[$k][0]])) {
 		$fluctuation[$mycall_minsec_start[$k][0]]++;
@@ -219,7 +222,7 @@ $maxload = 1;
 $load = 0;
 foreach($fluctuation as $key => $value) {
 	//echo "<br>$key => $val\n";  
-	$load = $load + $val;
+	$load = $load + $value;
 	if (is_numeric($key))
 		$fluctuation_load[substr($key, 0, 2) . ':' . substr($key, 2, 2)] = $load;
 	//echo "<br>:: ".$load;

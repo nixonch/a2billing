@@ -48,7 +48,7 @@ foreach ($_POST as $vkey => $Value) {
 
 write_log(LOGFILE_EPAYMENT, basename(__FILE__) . ' line:' . __LINE__ . "$log");
 
-if ($payment_status != "Completed" || $txn_type != "subscr_payment") {
+if (!isset($payment_status, $txn_type) || $payment_status != "Completed" || $txn_type != "subscr_payment") {
 	die();
 }
 

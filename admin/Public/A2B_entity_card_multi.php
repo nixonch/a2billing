@@ -234,7 +234,7 @@ if ($form_action == "list" || $popup_select < 2)
 $instance_table_tariff = new Table("cc_tariffgroup", "id, tariffgroupname");
 $FG_TABLE_CLAUSE = "";
 $list_tariff = $instance_table_tariff->Get_list($HD_Form->DBHandle, $FG_TABLE_CLAUSE, "tariffgroupname", "ASC", null, null, null, null);
-$nb_tariff = count($list_tariff);
+$nb_tariff = (is_array($list_tariff) ? count($list_tariff) : 0);
 $instance_table_group = new Table("cc_card_group", " id, name ");
 $list_group = $instance_table_group->Get_list($HD_Form->DBHandle, $FG_TABLE_CLAUSE, "name", "ASC", null, null, null, null);
 
@@ -316,7 +316,7 @@ $list_language = Constants::getLanguagesList();
 	?> : 
 	<select NAME="choose_tariff" size="1" class="form_input_select" >
 		<option value=''><?php echo gettext("Choose a Call Plan");?></option>
-	<?php foreach ($list_tariff as $recordset){ ?>
+	<?php foreach ((is_array($list_tariff) ? $list_tariff : array()) as $recordset){ ?>
 		<option class=input value='<?php echo $recordset[0]?>' <?php if($recordset[0]==$choose_tariff) echo "selected"; ?> ><?php echo $recordset[1]?>&nbsp;</option>
 	<?php } ?>
 	</select>
@@ -447,7 +447,7 @@ $list_language = Constants::getLanguagesList();
 	<?php echo gettext("Serie");?> :
 	<select NAME="id_seria" size="1" class="form_input_select" >
 	<option value=''><?php echo gettext("Choose a Series");?>&nbsp;</option>
-	<?php foreach ($list_seria as $recordset){ ?>
+	<?php foreach ((is_array($list_seria) ? $list_seria : array()) as $recordset){ ?>
 	<option class=input value='<?php echo $recordset[0]?>'  <?php if($recordset[0]==$id_seria) echo "selected"; ?>  ><?php echo $recordset[1]?>&nbsp;</option>
 	<?php } ?>
 	</select>
@@ -459,7 +459,7 @@ $list_language = Constants::getLanguagesList();
 	?> : 
 	<select NAME="id_didgroup" size="1" class="form_input_select" >
 	<option value='0'><?php echo gettext("Choose a DID Group");?>&nbsp;</option>
-	<?php foreach ($list_didgroup as $recordset){ ?>
+	<?php foreach ((is_array($list_didgroup) ? $list_didgroup : array()) as $recordset){ ?>
 		<option class=input value='<?php echo $recordset[0]?>' <?php if($recordset[0]==$id_didgroup) echo "selected"; ?> ><?php echo $recordset[1]?>&nbsp;</option>
 	<?php } ?>
 	</select>

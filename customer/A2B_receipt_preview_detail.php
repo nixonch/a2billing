@@ -73,7 +73,7 @@ function loadDetailledItems($startdate,$begin=null,$nb=null) {
 	if(!empty($startdate)) $clause_charge .= " AND creationdate >= '$startdate'";
 	$clause_charge .=" AND  creationdate < NOW() AND charged_status = 1";
 	$return_charges = $charge_table->Get_list($DBHandle, $clause_charge);
-	foreach ($return_charges as $charge) {
+	foreach ((is_array($return_charges) ? $return_charges : array()) as $charge) {
 		$item = new ReceiptItem(null, gettext("CHARGE :").$charge['description'], $charge['creationdate'], $charge['amount'], 'CHARGE');
 		$result[]= $item;
 	}

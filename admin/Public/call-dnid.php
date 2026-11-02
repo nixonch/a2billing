@@ -47,9 +47,9 @@ getpost_ifset(array('customer','sellrate','buyrate','entercustomer', 'enterprovi
 
 
 
-if (($_GET[download]=="file") && $_GET[file] ) {
+if (($_GET['download']=="file") && $_GET['file'] ) {
 	
-	$value_de=base64_decode($_GET[file]);
+	$value_de=base64_decode($_GET['file']);
 	$dl_full = MONITOR_PATH."/".$value_de;
 	$dl_name=$value_de;
 
@@ -835,7 +835,7 @@ foreach ($list_total_day as $data){
 	$totalbuycost+=$data[4];
 }
 $max_fail=0;
-foreach ($asr_cic_list1 as $asr_cic_data){	
+foreach ((is_array($asr_cic_list1) ? $asr_cic_list1 : array()) as $asr_cic_data){
 	$totalsuccess+=$asr_cic_data[1];
 	$totalfail+=$asr_cic_data[2];
 }

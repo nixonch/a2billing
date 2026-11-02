@@ -11,7 +11,7 @@ class moneybookers {
 		$this->code = 'moneybookers';
 		$this->title = MODULE_PAYMENT_MONEYBOOKERS_TEXT_TITLE;
 		$this->description = MODULE_PAYMENT_MONEYBOOKERS_TEXT_DESCRIPTION;
-		$this->sort_order = MODULE_PAYMENT_MONEYBOOKERS_SORT_ORDER;
+		$this->sort_order = defined('MODULE_PAYMENT_MONEYBOOKERS_SORT_ORDER') ? MODULE_PAYMENT_MONEYBOOKERS_SORT_ORDER : 0;
 		$this->enabled = ((MODULE_PAYMENT_MONEYBOOKERS_STATUS == 'True') ? true : false);
 		// $this->enabled = true;
 

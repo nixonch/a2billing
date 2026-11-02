@@ -49,6 +49,7 @@ getpost_ifset(array('date','id','action','price','description','vat','idc'));
 
 if (empty($id)) {
 	Header ("Location: A2B_entity_invoice.php?atmenu=payment&section=13");
+    exit;
 }
 
 $error_msg ='';
@@ -148,14 +149,14 @@ $smarty->display('main.tpl');
 	</tr>
 	<tr>
 		<td>
-		 <?php if($invoice->getStatusDisplay()==0) $color="color:#5FA631;";
+		 <?php if($invoice->getStatus()==0) $color="color:#5FA631;";
 		 	   else $color="color:#EE6564;"    ?>
 		 <font style="font-weight:bold;" ><?php echo gettext("STATUS : "); ?></font> <font style="<?php echo $color; ?>" >  <?php echo $invoice->getStatusDisplay($invoice->getStatus());  ?> </font>
 		 </td>
 	</tr>
 	<tr>
 		<td colspan="2">
-		<?php if($invoice->getPaidStatusDisplay()==0) $color="color:#EE6564;";
+		<?php if($invoice->getPaidStatus()==0) $color="color:#EE6564;";
 		 	   else $color="color:#5FA631;"    ?>
 		 <font style="font-weight:bold;" ><?php echo gettext("PAID STATUS : "); ?></font> <font style="<?php echo $color; ?>" > <?php echo $invoice->getPaidStatusDisplay($invoice->getPaidStatus());  ?> </font>
 

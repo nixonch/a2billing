@@ -73,7 +73,7 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
     window.parent.postMessage({action:'closeAlert'},'*')
 </script>
 <?php
-} else if ((count($list)>0) && is_array($list)){
+} else if (is_array($list) && count($list)>0){
 	$ligne_number=0;
 ?>
 
@@ -256,8 +256,10 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 						$select_list = $instance_sub_table -> Get_list ($this->DBHandle, $sub_clause, null, null, null, null, null, null, null, 10);
 						$record_display = $this->FG_TABLE_COL[$i][10];
 
-						for ($l=count($select_list[0])+1;$l>=1;$l--) {
-							$record_display = str_replace("%$l", $select_list[0][$l-1], $record_display);
+						$select_record = isset($select_list[0]) && is_array($select_list[0]) ? $select_list[0] : array();
+						for ($l=count($select_record)+1;$l>=1;$l--) {
+							$replacement = isset($select_record[$l-1]) ? (string)$select_record[$l-1] : '';
+							$record_display = str_replace("%$l", $replacement, $record_display);
 						}
 
 					} elseif($this->FG_TABLE_COL[$i][6]=="lie_link") {

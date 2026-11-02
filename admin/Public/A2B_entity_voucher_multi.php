@@ -164,7 +164,7 @@ if ($form_action == "list" || $popup_select < 2)
     <li>
 	Plan : <select name="callplan_id" size="1" class="form_input_select">
         <?php
-        foreach ($cus_list_voucher as $key => $cus_tariffview) {
+        foreach ((is_array($cus_list_voucher) ? $cus_list_voucher : array()) as $key => $cus_tariffview) {
         ?>
         <option value='<?php echo $cus_tariffview[0] ?>'><?php echo $cus_tariffview[1] ?></option>
         <?php } ?>

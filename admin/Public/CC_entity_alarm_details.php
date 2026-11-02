@@ -138,7 +138,7 @@ function openURL(theLINK)
 				$ttitle=gettext("ALARM REPORT");
 				
 				
-	  			if ((count($list )>0) && is_array($list )){
+                if (is_array($list) && count($list) > 0) {
 	  ?>
 				  
 	    <div class="scroll">

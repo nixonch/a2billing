@@ -33,8 +33,8 @@
 
 
 include_once (dirname(__FILE__) . "/../lib/admin.defines.php");
-include_once (dirname(__FILE__) . "/jpgraph_lib/jpgraph.php");
-include_once (dirname(__FILE__) . "/jpgraph_lib/jpgraph_line.php");
+require_once dirname(__FILE__) . '/../lib/JpGraph.php';
+\mitoteam\jpgraph\MtJpGraph::load('line');
 include_once (dirname(__FILE__) . "/../lib/admin.module.access.php");
 
 if (!has_rights(ACX_CALL_REPORT)) {
@@ -181,6 +181,10 @@ elseif (strpos($date_clause, 'AND') > 0) {
 }
 
 $list_total = $instance_table_graph->Get_list($DBHandle, $FG_TABLE_CLAUSE, 't1.starttime', 'ASC', null, null, null, null);
+if ($list_total === 0 || $list_total === array()) {
+    a2b_jpgraph_no_data(750, 450);
+    exit;
+}
 
 /**************************************/
 
@@ -295,7 +299,7 @@ for ($i = 0; $i <= $nbday; $i++)
 
 //Je remplace les 0 par null pour pour les heures 
 $i = 23;
-while ($tableau_value[$nbday][$i] == 0) {
+while ($i > 0 && $tableau_value[$nbday][$i] == 0) {
 	$tableau_value[$nbday][$i] = null;
 	$i--;
 }

@@ -76,7 +76,7 @@ $payments = $invoice->loadPayments();
 $price_without_vat = 0;
 $price_with_vat = 0;
 $vat_array = array();
-foreach ($items as $item) {
+foreach ((is_array($items) ? $items : array()) as $item) {
 	$price_without_vat = $price_without_vat + $item->getPrice();
 	$price_with_vat = $price_with_vat + ($item->getPrice()*(1+($item->getVAT()/100)));
 	if(array_key_exists("".$item->getVAT(),$vat_array)) {
@@ -86,7 +86,7 @@ foreach ($items as $item) {
 	}
 } 
 $payment_assigned = 0;
-foreach ($payments as $payment) {
+foreach ((is_array($payments) ? $payments : array()) as $payment) {
 	$payment_assigned = $payment_assigned + $payment['payment'];
 }
 
@@ -157,7 +157,7 @@ function changeStatus(){
 				<tr>
 					<td>
 						<select id="payment" name="payment" size="5" style="width:250px;" class="form_input_select">
-						    <?php foreach ($payments as $payment){ ?>
+						    <?php foreach ((is_array($payments) ? $payments : array()) as $payment){ ?>
 							<option value="<?php echo $payment['id'] ?>"  ><?php echo substr($payment['date'],0,10);?>&nbsp;:&nbsp;<?php echo $payment['payment']." ".strtoupper(BASE_CURRENCY); ?>&nbsp;&nbsp;<?php echo "(id : ".$payment['id'].")";?> </option>
 							<?php } ?>
 						</select>

@@ -186,6 +186,10 @@ if(isset($archive) && !empty($archive)){
         $archive_message = "The data has been successfully archived";
 }
 
+if (isset($form_action) && $form_action === 'ask-add' && !$HD_Form->FG_ADDITION) {
+    header('Location: ' . $PHP_SELF);
+    exit;
+}
 $smarty->display('main.tpl');
 
 ?>

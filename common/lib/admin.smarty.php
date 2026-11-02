@@ -39,15 +39,15 @@ define( 'TEMPLATE_DIR',  '../Public/templates/' );
 define( 'TEMPLATE_C_DIR', '../templates_c/' );
 
 
-require_once SMARTY_DIR . 'SmartyBC.class.php';
-$smarty = new SmartyBC();
+require_once __DIR__.'/Smarty.helpers.php';
+$smarty = a2b_smarty_create();
 
 $skin_name = $_SESSION["stylefile"];
 
 
 $smarty->setTemplateDir(TEMPLATE_DIR . $skin_name.'/');
 $smarty->setCompileDir(TEMPLATE_C_DIR);
-$smarty->setPluginsDir(array("./plugins/", SMARTY_PLUGINS_DIR));
+if (is_dir('./plugins/')) $smarty->addPluginsDir('./plugins/');
 
 $smarty->assign("TEXTCONTACT", TEXTCONTACT);
 $smarty->assign("EMAILCONTACT", EMAILCONTACT);
@@ -56,7 +56,7 @@ $smarty->assign("CCMAINTITLE", CCMAINTITLE);
 $smarty->assign("FAVICONPATH", FAVICONPATH);
 $smarty->assign("SKIN_NAME", $skin_name);
 // if it is a pop window
-if (!is_numeric($popup_select)) {
+if (!isset($popup_select) || !is_numeric($popup_select)) {
 	$popup_select=0;
 }
 $smarty->assign("popupwindow", $popup_select);
@@ -78,7 +78,7 @@ $smarty->assign("ACXDID", $ACXDID);
 $smarty->assign("ACXMAIL", $ACXMAIL);
 $smarty->assign("ACXCALLREPORT", $ACXCALLREPORT);
 $smarty->assign("ACXCRONTSERVICE", $ACXCRONTSERVICE);
-$smarty->assign("ACXMISC", $ACXMISC);
+$smarty->assign("ACXMISC", isset($ACXMISC) ? $ACXMISC : 0);
 $smarty->assign("ACXADMINISTRATOR", $ACXADMINISTRATOR);
 $smarty->assign("ACXMAINTENANCE", $ACXMAINTENANCE);
 $smarty->assign("ACXSUPPORT", $ACXSUPPORT);
@@ -96,7 +96,7 @@ $smarty->assign("ASTERISK_GUI_LINK", ASTERISK_GUI_LINK);
 $smarty->assign("LCMODAL", LCMODAL);
 
 
-$section = $_SESSION["menu_section"];
+$section = isset($_SESSION["menu_section"]) ? $_SESSION["menu_section"] : 0;
 
 $smarty->assign("section", $section);
 

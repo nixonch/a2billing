@@ -218,7 +218,6 @@ for ($page = 0; $page < $nbpagemax; $page++) {
                 break;
 
             default:
-				continue;
                 break;
         }
 

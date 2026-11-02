@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{php} header('X-Frame-Options: SAMEORIGIN'); {/php}
+{a2b_frame_options}
 <html lang="en">
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,13 +12,13 @@
     <link rel="stylesheet" href="templates/default/css/left-nav-style.css" type="text/css"/>
     <link rel="stylesheet" href="templates/default/css/index.css" type="text/css"/>
     <script>
-	var emptyemail = "{php} echo gettext("You have to enter a valid email address!"){/php}";
-	var emptylogin = "{php} echo gettext("AUTHENTICATION REFUSED :<br>please check your login/password!");{/php}";
-	var noservice = "{php} echo gettext("Service temporally not available.<br>Try again later.");{/php}";
+	var emptyemail = "{gettext("You have to enter a valid email address!")}";
+	var emptylogin = "{gettext("AUTHENTICATION REFUSED :<br>please check your login/password!")}";
+	var noservice = "{gettext("Service temporally not available.<br>Try again later.")}";
     </script>
 </head>
 <body class="bodygradient">
-{if (SHOW_SLIDEBAR)}
+{if $SHOW_SLIDEBAR}
 <input type="checkbox" id="navi-toggle" hidden>
 <nav class="navi">
 <label for="navi-toggle" class="navi-toggle" onclick=""></label>
@@ -55,16 +55,16 @@
   <div class="frame laud">
     <div class="nav">
       <select name="ui_language" id="ui_language" style="align-self:flex-end">
-                        <option value="english" {php} if(LANGUAGE=="english") echo "selected";{/php} >English</option>
-                        <option value="ukrainian" {php} if(LANGUAGE=="ukrainian") echo "selected";{/php} >Українська</option>
-                        <option value="russian" {php} if(LANGUAGE=="russian") echo "selected";{/php} >Русский</option>
-                        <option value="german" {php} if(LANGUAGE=="german") echo "selected";{/php} >Deutsch</option>
+                        <option value="english" {if $smarty.const.LANGUAGE=="english"}selected{/if} >English</option>
+                        <option value="ukrainian" {if $smarty.const.LANGUAGE=="ukrainian"}selected{/if} >Українська</option>
+                        <option value="russian" {if $smarty.const.LANGUAGE=="russian"}selected{/if} >Русский</option>
+                        <option value="german" {if $smarty.const.LANGUAGE=="german"}selected{/if} >Deutsch</option>
       </select>
       <div class="links">
-        <div class="signin-active"><a class="btn_in">{php} echo gettext("Sign in");{/php}</a></div>
-{php}if(SIGNUPENABLE){{/php}
-        <div class="signup-inactive"><a class="btn_up" style="color: rgba(255,255,255,.3)">{php} echo gettext("Sign up");{/php}</a></div>
-{php}}{/php}
+        <div class="signin-active"><a class="btn_in">{gettext("Sign in")}</a></div>
+{if $smarty.const.SIGNUPENABLE}
+        <div class="signup-inactive"><a class="btn_up" style="color: rgba(255,255,255,.3)">{gettext("Sign up")}</a></div>
+{/if}
       </div>
     </div>
     <div ontouchstart="turn_start(event);" ontouchmove="turn_page(event);">
@@ -72,79 +72,53 @@
       <div class="forms">
 	<form class="form-forgot" method="post" name="formforgot">
           <div style="min-height:55px;display:flex;justify-content:center;align-items:center"><div class="login-title" id="warningforgot"></div></div>
-          <label for="pr_email">{php} echo gettext("E-Mail / Phone number");{/php}</label>
+          <label for="pr_email">{gettext("E-Mail / Phone number")}</label>
           <input class="form-styling" type="email" name="pr_email" id="pr_email"/>
-          <a class="btn-submit btn-forgot">{php} echo gettext("Get password");{/php}</a>
+          <a class="btn-submit btn-forgot">{gettext("Get password")}</a>
 	</form>
 	<form class="form-signin" action="userinfo" method="post" name="formsignin">
           <div style="min-height:55px;display:flex;justify-content:center;align-items:center"><div class="login-title" id="warningsignin"></div></div>
-          <label for="pr_login">{php} echo gettext("Login / E-mail");{/php}</label>
+          <label for="pr_login">{gettext("Login / E-mail")}</label>
           <input autofocus class="form-styling" type="text" name="pr_login" id="pr_login"/>
-          <label for="pr_password">{php} echo gettext("Password");{/php}</label>
+          <label for="pr_password">{gettext("Password")}</label>
           <input class="form-styling" type="password" name="pr_password" id="pr_password"/>
           <input type="checkbox" id="checkbox" class="checkbox"/>
-          <label for="checkbox"><span class="ui"></span>{php} echo gettext("Keep me signed in");{/php}</label>
-          <a class="btn-submit btn-signin">{php} echo gettext("Login");{/php}</a>
+          <label for="checkbox"><span class="ui"></span>{gettext("Keep me signed in")}</label>
+          <a class="btn-submit btn-signin">{gettext("Login")}</a>
           <div class="forgot">
-            <a>{php} echo gettext("Forgot your password?");{/php}</a>
+            <a>{gettext("Forgot your password?")}</a>
           </div>
 	</form>
-{php}if(SIGNUPENABLE){{/php}
+{if $smarty.const.SIGNUPENABLE}
 	<form class="form-signup" action="" method="post" name="formsignup">
           <input type="hidden" name="country" id="country">
           <input type="hidden" name="id_timezone" id="id_timezone">
           <div style="min-height:55px;display:flex;justify-content:center;align-items:center"><div class="login-title" id="warningsignup"></div></div>
-          <label for="fullname">{php} echo gettext("Full name");{/php}</label>
+          <label for="fullname">{gettext("Full name")}</label>
           <input class="form-styling" type="text" name="fullname" id="fullname"/>
-          <label for="r_email">{php} echo gettext("E-Mail");{/php}</label>
+          <label for="r_email">{gettext("E-Mail")}</label>
           <input class="form-styling" type="email" name="r_email" id="r_email"/>
-          <label for="pr_country">{php} echo gettext("COUNTRY");{/php}</label>
+          <label for="pr_country">{gettext("COUNTRY")}</label>
           <div class="select-styling">
-{php}
-		global $countrycode;
-		$country = $countrycode;
-		$DBHandle_max = DbConnect();
-		$instance_table = new Table("cc_country");
-		$QUERY = "SELECT countrycode, countryname, countryprefix FROM cc_country";
-		$countrylist = $instance_table -> SQLExec ($DBHandle_max, $QUERY);
-		if ($countrylist) {
-		    foreach ($countrylist AS $value) {
-			if ($value[0]==$countrycode) {
-			    $country = $value[1].($value[2]!="0"?' +'.$value[2]:"");
-			    break;
-			}
-		    }
-		}
-{/php}
-	    <input class="form-styling" type="text" value="{php} echo $country;{/php}" dataval = "{php} echo $countrycode;{/php}" name="pr_country" id="pr_country" onfocus="this.blur()" onclick="this.blur()" autocomplete="beseder"/>
+{a2b_countries}
+	    <input class="form-styling" type="text" value="{$a2b_country}" dataval = "{$a2b_countrycode}" name="pr_country" id="pr_country" onfocus="this.blur()" onclick="this.blur()" autocomplete="beseder"/>
 	    <ul id="countrylist">
-{php}
-		if ($countrylist) {
-		    foreach ($countrylist AS $value) {
-			echo '<li><a href="#" class="countryselect" dataval="'.$value[0].'">'.$value[1].($value[2]!="0"?' +'.$value[2]:"").'</a></li>'.PHP_EOL;
-		    }
-		}
-{/php}
+{foreach $a2b_countrylist as $value}<li><a href="#" class="countryselect" dataval="{$value[0]}">{$value[1]}{if $value[2] != "0"} +{$value[2]}{/if}</a></li>
+{/foreach}
 	    </ul>
           </div>
-          <label for="timezone">{php} echo gettext("TIMEZONE");{/php}</label>
+          <label for="timezone">{gettext("TIMEZONE")}</label>
           <div class="select-styling">
 	    <input class="form-styling" type="text" value="{$curzonename}" dataval = "{$curzonecode}" name="timezone" id="timezone" onfocus="this.blur()" onclick="this.blur()"/>
 	    <ul id="zonelist">
-{php}
-		global $timezone_list;
-		if ($timezone_list) {
-		    foreach ($timezone_list AS $value) {
-			echo '<li><a href="#" class="zoneselect" dataval="'.$value[1].'">'.$value[0].'</a></li>'.PHP_EOL;
-		    }
-		}
-{/php}
+{foreach $a2b_timezone_list as $value}<li><a href="#" class="zoneselect" dataval="{$value[1]}">{$value[0]}</a></li>
+{/foreach}
 	    </ul>
           </div>
-	  <div class="textinframe">{php}echo gettext('By creating this account, you agree to our <a href="terms">Terms</a> and <a href="policy">Privacy Policy</a>'){/php}</div>
-	  <a class="btn-submit btn-signup">{php} echo gettext("Agree and Create Account");{/php}</a>
+	  <div class="textinframe">{gettext('By creating this account, you agree to our <a href="terms">Terms</a> and <a href="policy">Privacy Policy</a>')}</div>
+	  <a class="btn-submit btn-signup">{gettext("Agree and Create Account")}</a>
 	</form>
-{php}}{/php}
+{/if}
       </div>
     </div>
   </div>
@@ -153,37 +127,12 @@
 <footer class="login-legal">
   <div>A2Billing is software licensed under the <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL 3</a>.</div>
   <div>Copyright (C) 2004-2011 - <a href="http://www.star2billing.com/" target="_blank" rel="noopener noreferrer">Star2billing S.L.</a></div>
-  <div>Version <strong>{php} echo htmlspecialchars(A2BILLING_VERSION, ENT_QUOTES, 'UTF-8'); {/php}</strong> &middot; <a href="https://github.com/nixonch/a2billing" target="_blank" rel="noopener noreferrer">GitHub</a></div>
+  <div>Version <strong>{$smarty.const.A2BILLING_VERSION|escape:'html'}</strong> &middot; <a href="https://github.com/nixonch/a2billing" target="_blank" rel="noopener noreferrer">GitHub</a></div>
   <div>No warranty. Redistribution permitted under the license.</div>
 </footer>
 <div class="footer_icons">
 {if (false)}<div style="color: #BD2A15; font-size: 11px; text-align:center;">{$COPYRIGHT}</div>{/if}
-{php}
-    $DBHandle = DbConnect();
-    $instance_table = new Table();
-    $QUERY = "SELECT configuration_key FROM cc_configuration where configuration_key in ('MODULE_PAYMENT_AUTHORIZENET_STATUS','MODULE_PAYMENT_PAYPAL_BASIC_STATUS','MODULE_PAYMENT_MONEYBOOKERS_STATUS','MODULE_PAYMENT_WORLDPAY_STATUS','MODULE_PAYMENT_PLUGNPAY_STATUS','MODULE_PAYMENT_WM_STATUS') AND configuration_value='True'";
-    $payment_methods = $instance_table->SQLExec($DBHandle, $QUERY);
-    $QUERY = "SELECT configuration_value FROM cc_configuration where configuration_key='MODULE_PAYMENT_WM_WMID'";
-    $wmid = $instance_table->SQLExec($DBHandle, $QUERY);
-    $show_logo = '';
-    for ($index = 0; $index < sizeof($payment_methods); $index++) {
-	if ($payment_methods[$index][0] == "MODULE_PAYMENT_PAYPAL_BASIC_STATUS") {
-	    $show_logo .= '<a href="https://www.paypal.com/en/mrb/pal=PGSJEXAEXKTBU" target="_blank"><img src="' . KICON_PATH . '/payments_paypal.gif" width="120" alt="Paypal"/></a>' . ' &nbsp; ';
-	} elseif ($payment_methods[$index][0] == "MODULE_PAYMENT_MONEYBOOKERS_STATUS") {
-	    $show_logo .= '<a href="https://www.moneybookers.com/app/?rid=811621" target="_blank"><img src="' . KICON_PATH . '/moneybookers.gif" width="88" alt="Moneybookers"/></a>' . ' &nbsp; ';
-	} elseif ($payment_methods[$index][0] == "MODULE_PAYMENT_PLUGNPAY_STATUS") {
-	    $show_logo .= '<a href="http://www.plugnpay.com/" target="_blank"><img src="' . KICON_PATH . '/plugnpay.png" width="110" alt="plugnpay.com"/></a>' . ' &nbsp; ';
-	} elseif ($payment_methods[$index][0] == "MODULE_PAYMENT_WM_STATUS") {
-	    $show_logo .= '<a href="http://www.web.money/" target="_blank"><img src="' . KICON_PATH . '/webmoney_virified.png" width="88" alt="WebMoney"/></a>' . ' &nbsp; ' . '<a href="https://passport.web.money/asp/certview.asp?wmid='.$wmid[0][0].'" target="_blank"><img src="' . KICON_PATH . '/v_blue_on_transp_en.png" width="88" alt="Check the seller\'s WMID" border="0" /></a>';
-	}
-    }
-
-    $show_logo .= ' <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer"><img src="images/agplv3-88x31.png" width="88" height="31" alt="AGPL 3"/></a> &nbsp; ';
-    $aiphone_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : '');
-    $aiphone_utm_source = rawurlencode(trim((string) parse_url('http://' . $aiphone_host, PHP_URL_HOST), '[]'));
-    $show_logo .= '<a href="https://chromewebstore.google.com/detail/pofkcckikkdhiieipefhkaelgnbdkcib?utm_source=' . $aiphone_utm_source . '&amp;utm_medium=referral&amp;utm_campaign=a2billing_customer_login" target="_blank" rel="noopener noreferrer"><img src="images/aiphone-88x31.svg" width="88" height="31" alt="AiPhone"/></a>';
-    echo $show_logo;
-{/php}
+{a2b_payment_logos}
 </div>
 <div>
   <a id="refresh" value="Refresh" onClick="opback()">
@@ -199,21 +148,21 @@
     </svg>
   </a>
 </div>
-{php}if(!isset($_COOKIE["cookiescript"]) && !isset($_COOKIE["UICSESSION"])) {{/php}
+{if !isset($smarty.cookies.cookiescript) && !isset($smarty.cookies.UICSESSION)}
 <div id="cookiescript_container">
     <div id="cookiescript_wrapper">
-	<span id="cookiescript_header">{php} echo gettext("This website uses cookies"){/php}</span>
-{php}if(LANGUAGE=="russian"){{/php}
+	<span id="cookiescript_header">{gettext("This website uses cookies")}</span>
+{if $smarty.const.LANGUAGE=="russian"}
 	&nbsp;&nbsp;&nbsp;Информируем, что на этом сайте используются cookie-файлы. Cookie-файлы используются для выполнения идентификации пользователя и накапливания данных о посещении сайта. Продолжая пользоваться этим веб-сайтом, Вы соглашаетесь на сбор и использование данных cookie-файлов на Вашем устройстве. Свое согласие Вы в любой момент можете отозвать, удалив сохраненные cookie-файлы.
-{php}}elseif(LANGUAGE=="ukrainian"){{/php}
+{elseif $smarty.const.LANGUAGE=="ukrainian"}
 	&nbsp;&nbsp;&nbsp;Інформуємо, що на цьому сайті використовуються cookie-файли. Cookie-файли використовуються для виконання ідентифікації користувача і накопичення даних про відвідування сайту. Продовжуючи користуватися цим веб-сайтом, Ви погоджуєтесь на збір і використання даних cookie-файлів на Вашому пристрої. Свою згоду Ви в будь-який момент можете відкликати, видаливши збережені cookie-файли.
-{php}}elseif(LANGUAGE=="german"){{/php}
+{elseif $smarty.const.LANGUAGE=="german"}
 	&nbsp;&nbsp;&nbsp;Auf dieser Webseite werden Cookies und ähnliche Technologien verwendet. Mit dem Klick auf "Zustimmen" akzeptierst Du die Verarbeitung und Weitergabe Deiner Daten an Drittanbieter. Diese werden auf unserer Seite sowie auf Seiten von Drittanbietern zur Analyse, Retargeting und zur Ausspielung von personalisierten Inhalten und Werbung genutzt. In unseren <a href="policy">Datenschutzhinweisen</a> findest Du weitere Informationen zur Datenverarbeitung durch Drittanbieter. Die Verwendung von Cookies kannst Du jederzeit über die Einstellungen anpassen.
-{php}}else{{/php}
+{else}
 	&nbsp;&nbsp;&nbsp;We use cookies to ensure you have the best browsing experience on our website. By using our site, you acknowledge that you have read and understood our <a href="policy">Privacy Policy</a>.
-{php}}{/php}<br>
+{/if}<br>
 	<div id="cookiescript_buttons">
-	    <div id="cookiescript_accept" onClick="closeCookieScript();">{php} echo gettext("Got it!"){/php}</div>
+	    <div id="cookiescript_accept" onClick="closeCookieScript();">{gettext("Got it!")}</div>
 	</div>
     </div>
 </div>
@@ -227,7 +176,7 @@ function closeCookieScript() {
     document.cookie = "cookiescript=set;expires="+expiryDate.toGMTString()+";path=/";
 }
 </script>
-{php}}{/php}
+{/if}
 {if (!empty($A2Bconfig.webcustomerui.google_ga4_id))}
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id={$A2Bconfig.webcustomerui.google_ga4_id|escape:'url'}"></script>

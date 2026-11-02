@@ -137,7 +137,7 @@ echo $CC_help_generate_signup;
 					  	<select id="selectagent" NAME="agentid" size="1" class="form_input_select">
 								<option value='' ><?php echo gettext("Choose an Agent ");?></option>
 								<?php					 
-									 foreach ($list_agent as $recordset){ 						 
+									 foreach ((is_array($list_agent) ? $list_agent : array()) as $recordset){
 								?>
 									<option class=input value='<?php  echo $recordset['id']?>' <?php if ($recordset['id']==$agentid) echo "selected";?>><?php echo $recordset['login']." ( ".$recordset['id']." - ".$recordset['firstname']." ".$recordset['lastname']." )"?></option>                        
 								<?php 	 }
@@ -161,7 +161,7 @@ echo $CC_help_generate_signup;
 								<option value=''><?php echo gettext("Choose a Call Plan");?></option>
 							
 								<?php					 
-								 foreach ($list_tariffname as $recordset){ 						 
+								 foreach ((is_array($list_tariffname) ? $list_tariffname : array()) as $recordset){
 								?>
 									<option class=input value='<?php  echo $recordset['id']?>' <?php if ($recordset['id']==$tariffplan) echo "selected";?>><?php echo $recordset[1]?></option>                        
 								<?php 	 }
@@ -172,7 +172,7 @@ echo $CC_help_generate_signup;
 				  <select id="group" NAME="group" size="1"  style="width=250" class="form_input_select<?php if($disabled) echo "_disabled" ?>" <?php if($disabled) echo "disabled=true" ?> >
 							  <option value=''><?php echo gettext("Choose a Customer Group");?></option>
 								<?php					 
-								 foreach ($list_group as $recordset){
+								 foreach ((is_array($list_group) ? $list_group : array()) as $recordset){
 								?>
 									<option class=input value='<?php  echo $recordset['id']?>' <?php if ($recordset[0]==$group) echo "selected";?>><?php echo $recordset[1]?></option>                        
 								<?php 	 }

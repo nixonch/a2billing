@@ -37,7 +37,6 @@ getpost_ifset(array('id', 'displayheader', 'type','popup_select','popup_formname
 
 
 // type : refill or payment
-$HD_Form -> FG_DEBUG = 0;
 
 if ($type=='payment'){
 	$HD_Form = new FormHandler("cc_logpayment as t2","Payment");
@@ -67,7 +66,8 @@ if ($type=='payment'){
 
 
 
-$HD_Form -> CV_NO_FIELDS  = gettext("THERE IS NO").strtoupper($HD_Form->FG_INSTANCE_NAME)." ".gettext("CREATED!");  
+$HD_Form -> FG_DEBUG = 0;
+$HD_Form -> CV_NO_FIELDS  = gettext("THERE IS NO").strtoupper($HD_Form->FG_INSTANCE_NAME)." ".gettext("CREATED!");
 $HD_Form -> CV_DISPLAY_LINE_TITLE_ABOVE_TABLE = false;
 $HD_Form -> CV_TEXT_TITLE_ABOVE_TABLE = '';
 $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;

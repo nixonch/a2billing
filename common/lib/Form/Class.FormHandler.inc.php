@@ -122,6 +122,16 @@ class FormHandler
 	var $FG_LIST_ADDING_BUTTON_IMG = '';
 	var $FG_LIST_ADDING_BUTTON_MSG = '';
 	var $FG_LIST_ADDING_BUTTON_ALT = '';
+	var $FG_LIST_ADDING_BUTTON1 = false;
+	var $FG_LIST_ADDING_BUTTON_LINK1 = '';
+	var $FG_LIST_ADDING_BUTTON_IMG1 = '';
+	var $FG_LIST_ADDING_BUTTON_MSG1 = '';
+	var $FG_LIST_ADDING_BUTTON_ALT1 = '';
+	var $FG_LIST_ADDING_BUTTON2 = false;
+	var $FG_LIST_ADDING_BUTTON_LINK2 = '';
+	var $FG_LIST_ADDING_BUTTON_IMG2 = '';
+	var $FG_LIST_ADDING_BUTTON_MSG2 = '';
+	var $FG_LIST_ADDING_BUTTON_ALT2 = '';
 	
 	/**
     * Sets if we want a colum "ACTION" to EDIT or to DELETE
@@ -542,7 +552,7 @@ class FormHandler
 		
 		$this->_action = $action ? $action : $PHP_SELF;
 		
-		$json_data = $_POST["json_data"];
+		$json_data = isset($_POST["json_data"]) ? $_POST["json_data"] : null;
 		if (isset($json_data)) {
 			$json_data = stripslashes($json_data);
 			$this->_vars = json_decode($json_data,true,512);
@@ -625,7 +635,7 @@ class FormHandler
 		}
 		$ext_link ='';
 		if (is_numeric($processed['current_page']))	$ext_link.="&current_page=".$processed['current_page'];
-		if (strlen($processed['filterprefix'])>0)	$ext_link.="&filterprefix=".$processed['filterprefix'];
+		if (isset($processed['filterprefix']) && strlen($processed['filterprefix'])>0)	$ext_link.="&filterprefix=".$processed['filterprefix'];
 		if (!empty($processed['order']) && !empty($processed['sens']))	$ext_link.="&order=".$processed['order']."&sens=".$processed['sens'];
 		$this -> FG_EDITION_LINK	= $PHP_SELF."?form_action=ask-edit".$ext_link."&id=";
 		$this -> FG_DELETION_LINK	= "url:".$PHP_SELF."?form_action=ask-delete&popup_select=4".$ext_link."&id=";
@@ -714,7 +724,6 @@ class FormHandler
 		// remove whitespaces (not a must though)  
 		$input = trim($input);
 		$input = str_replace('--', '', $input);
-		$data = str_replace(';', '', $data);
 
 		if (!(stripos($input, ' or 1')===FALSE)) { return false;}
 		if (!(stripos($input, ' or true')===FALSE)) { return false;}
@@ -1059,7 +1068,8 @@ class FormHandler
 						gettext("(Phone Number format or Skype nickname)"));
 		
 		// 19 - CAPTCHAIMAGE - Alpahnumeric
-		$this -> FG_regular[]  = array(	"^(".strtoupper($_SESSION["captcha_code"]).")|(".strtolower($_SESSION["captcha_code"]).")$",
+		$captcha_code = isset($_SESSION['captcha_code']) ? $_SESSION['captcha_code'] : '';
+		$this -> FG_regular[]  = array(	"^(".strtoupper($captcha_code).")|(".strtolower($captcha_code).")$",
 						gettext("(at least 6 Alphanumeric characters)"));
 		
 		//20 TIME
@@ -1357,7 +1367,7 @@ class FormHandler
 			}
 
 			// RETRIEVE THE CONTENT OF THE SEARCH SESSION AND
-			if (strlen($_SESSION[$this->FG_FILTER_SEARCH_SESSION_NAME])>5 && ($processed['posted_search'] != 1 )){
+			if (isset($_SESSION[$this->FG_FILTER_SEARCH_SESSION_NAME]) && strlen($_SESSION[$this->FG_FILTER_SEARCH_SESSION_NAME])>5 && ($processed['posted_search'] != 1 )){
 				$element_arr = preg_split("/\|/", $_SESSION[$this->FG_FILTER_SEARCH_SESSION_NAME]);
 				foreach ($element_arr as $val_element_arr){
 					$pos = strpos($val_element_arr, '=');
@@ -1383,21 +1393,21 @@ class FormHandler
 			// Search Form On
 			if (($processed['posted_search'] == 1 )) {
 				
-				$this->_processed[fromstatsday_sday] = normalize_day_of_month($processed[fromstatsday_sday], $processed[fromstatsmonth_sday],1);
-				$this->_processed[tostatsday_sday] = normalize_day_of_month($processed[tostatsday_sday], $processed[tostatsmonth_sday],1);
-				$this->_processed[fromstatsday_sday_bis] = normalize_day_of_month($processed[fromstatsday_sday_bis], $processed[fromstatsmonth_sday_bis],1);
-				$this->_processed[tostatsday_sday_bis] = normalize_day_of_month($processed[tostatsday_sday_bis], $processed[tostatsmonth_sday_bis],1);
+				$this->_processed['fromstatsday_sday'] = normalize_day_of_month($processed['fromstatsday_sday'], $processed['fromstatsmonth_sday'],1);
+				$this->_processed['tostatsday_sday'] = normalize_day_of_month($processed['tostatsday_sday'], $processed['tostatsmonth_sday'],1);
+				$this->_processed['fromstatsday_sday_bis'] = normalize_day_of_month($processed['fromstatsday_sday_bis'], $processed['fromstatsmonth_sday_bis'],1);
+				$this->_processed['tostatsday_sday_bis'] = normalize_day_of_month($processed['tostatsday_sday_bis'], $processed['tostatsmonth_sday_bis'],1);
 				
 				$SQLcmd = '';
 				
-				$search_parameters = "Period=$processed[Period]|frommonth=$processed[frommonth]|fromstatsmonth=$processed[fromstatsmonth]|tomonth=$processed[tomonth]";
-				$search_parameters .= "|tostatsmonth=$processed[tostatsmonth]|fromday=$processed[fromday]|fromstatsday_sday=$processed[fromstatsday_sday]";
-				$search_parameters .= "|fromstatsmonth_sday=$processed[fromstatsmonth_sday]|today=$processed[today]|tostatsday_sday=$processed[tostatsday_sday]";
-				$search_parameters .= "|tostatsmonth_sday=$processed[tostatsmonth_sday]";
-				$search_parameters .= "|Period_bis=$processed[Period_bis]|frommonth_bis=$processed[frommonth_bis]|fromstatsmonth_bis=$processed[fromstatsmonth_bis]|tomonth_bis=$processed[tomonth_bis]";
-				$search_parameters .= "|tostatsmonth_bis=$processed[tostatsmonth_bis]|fromday_bis=$processed[fromday_bis]|fromstatsday_sday_bis=$processed[fromstatsday_sday_bis]";
-				$search_parameters .= "|fromstatsmonth_sday_bis=$processed[fromstatsmonth_sday_bis]|today_bis=$processed[today_bis]|tostatsday_sday_bis=$processed[tostatsday_sday_bis]";
-				$search_parameters .= "|tostatsmonth_sday_bis=$processed[tostatsmonth_sday_bis]";
+				$search_parameters = "Period={$processed['Period']}|frommonth={$processed['frommonth']}|fromstatsmonth={$processed['fromstatsmonth']}|tomonth={$processed['tomonth']}";
+				$search_parameters .= "|tostatsmonth={$processed['tostatsmonth']}|fromday={$processed['fromday']}|fromstatsday_sday={$processed['fromstatsday_sday']}";
+				$search_parameters .= "|fromstatsmonth_sday={$processed['fromstatsmonth_sday']}|today={$processed['today']}|tostatsday_sday={$processed['tostatsday_sday']}";
+				$search_parameters .= "|tostatsmonth_sday={$processed['tostatsmonth_sday']}";
+				$search_parameters .= "|Period_bis={$processed['Period_bis']}|frommonth_bis={$processed['frommonth_bis']}|fromstatsmonth_bis={$processed['fromstatsmonth_bis']}|tomonth_bis={$processed['tomonth_bis']}";
+				$search_parameters .= "|tostatsmonth_bis={$processed['tostatsmonth_bis']}|fromday_bis={$processed['fromday_bis']}|fromstatsday_sday_bis={$processed['fromstatsday_sday_bis']}";
+				$search_parameters .= "|fromstatsmonth_sday_bis={$processed['fromstatsmonth_sday_bis']}|today_bis={$processed['today_bis']}|tostatsday_sday_bis={$processed['tostatsday_sday_bis']}";
+				$search_parameters .= "|tostatsmonth_sday_bis={$processed['tostatsmonth_sday_bis']}";
 				
 				foreach ($this->FG_FILTER_SEARCH_FORM_1C as $r){							
 					$search_parameters .= "|$r[1]=".$processed[$r[1]]."|$r[2]=".$processed[$r[2]];
@@ -1440,26 +1450,26 @@ class FormHandler
 
 				$date_clause = '';
 				
-				if ($processed[fromday] && isset($processed[fromstatsday_sday]) && isset($processed[fromstatsmonth_sday]))
-					$date_clause.=" AND ".$this->FG_FILTER_SEARCH_1_TIME_FIELD." >= TIMESTAMP('$processed[fromstatsmonth_sday]-$processed[fromstatsday_sday]')";
-				if ($processed[today] && isset($processed[tostatsday_sday]) && isset($processed[tostatsmonth_sday]))
-					$date_clause.=" AND ".$this->FG_FILTER_SEARCH_1_TIME_FIELD." <= TIMESTAMP('$processed[tostatsmonth_sday]-".sprintf("%02d",intval($processed[tostatsday_sday])/*+1*/)." 23:59:59')";
+				if ($processed['fromday'] && isset($processed['fromstatsday_sday']) && isset($processed['fromstatsmonth_sday']))
+					$date_clause.=" AND ".$this->FG_FILTER_SEARCH_1_TIME_FIELD." >= TIMESTAMP('{$processed['fromstatsmonth_sday']}-{$processed['fromstatsday_sday']}')";
+				if ($processed['today'] && isset($processed['tostatsday_sday']) && isset($processed['tostatsmonth_sday']))
+					$date_clause.=" AND ".$this->FG_FILTER_SEARCH_1_TIME_FIELD." <= TIMESTAMP('{$processed['tostatsmonth_sday']}-".sprintf("%02d",intval($processed['tostatsday_sday'])/*+1*/)." 23:59:59')";
 				
 				
-				if ($processed[Period]=="month_older_rad"){
-					$from_month = $processed[month_earlier];
+				if ($processed['Period']=="month_older_rad"){
+					$from_month = $processed['month_earlier'];
 					$date_clause .= " AND DATE_SUB(NOW(),INTERVAL $from_month MONTH) > ".$this->FG_FILTER_SEARCH_3_TIME_FIELD."";
 				}
 				
 				//BIS FIELD
-				if ($processed[fromday_bis] && isset($processed[fromstatsday_sday_bis]) && isset($processed[fromstatsmonth_sday_bis]))
-					$date_clause.=" AND ".$this->FG_FILTER_SEARCH_1_TIME_FIELD_BIS." >= TIMESTAMP('$processed[fromstatsmonth_sday_bis]-$processed[fromstatsday_sday_bis]')";
-				if ($processed[today_bis] && isset($processed[tostatsday_sday_bis]) && isset($processed[tostatsmonth_sday_bis]))
-					$date_clause.=" AND ".$this->FG_FILTER_SEARCH_1_TIME_FIELD_BIS." <= TIMESTAMP('$processed[tostatsmonth_sday_bis]-".sprintf("%02d",intval($processed[tostatsday_sday_bis])/*+1*/)." 23:59:59')";
+				if ($processed['fromday_bis'] && isset($processed['fromstatsday_sday_bis']) && isset($processed['fromstatsmonth_sday_bis']))
+					$date_clause.=" AND ".$this->FG_FILTER_SEARCH_1_TIME_FIELD_BIS." >= TIMESTAMP('{$processed['fromstatsmonth_sday_bis']}-{$processed['fromstatsday_sday_bis']}')";
+				if ($processed['today_bis'] && isset($processed['tostatsday_sday_bis']) && isset($processed['tostatsmonth_sday_bis']))
+					$date_clause.=" AND ".$this->FG_FILTER_SEARCH_1_TIME_FIELD_BIS." <= TIMESTAMP('{$processed['tostatsmonth_sday_bis']}-".sprintf("%02d",intval($processed['tostatsday_sday_bis'])/*+1*/)." 23:59:59')";
 				
 				
-				if ($processed[Period_bis]=="month_older_rad") {
-					$from_month = $processed[month_earlier_bis];
+				if ($processed['Period_bis']=="month_older_rad") {
+					$from_month = $processed['month_earlier_bis'];
 					$date_clause .= " AND DATE_SUB(NOW(),INTERVAL $from_month MONTH) > ".$this->FG_FILTER_SEARCH_3_TIME_FIELD_BIS."";
 				}
 				
@@ -2158,7 +2168,7 @@ class FormHandler
 						<select NAME="tariffgroup" size="1"  class="form_input_select" width=250">
 							<option value=''><?php echo gettext("Choose a call plan");?></option>
 							<?php
-							 foreach ($list_tariffgroup as $recordset){
+							 foreach ((is_array($list_tariffgroup) ? $list_tariffgroup : array()) as $recordset){
 							?>
 								<option class=input value='<?php  echo $recordset[0]."-:-".$recordset[1]."-:-".$recordset[2]?>' <?php if ($recordset[0]==$this->FG_TOP_FILTER_VALUE2) echo "selected";?>><?php echo $recordset[1]?></option>
 							<?php 	 }

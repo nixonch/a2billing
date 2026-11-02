@@ -83,6 +83,12 @@ $QUERY = "SELECT id, cardid, amount, vat, paymentmethod, cc_owner, cc_number, cc
 $transaction_data = $paymentTable->SQLExec ($DBHandle_max, $QUERY);
 write_log(LOGFILE_EPAYMENT, basename(__FILE__).' line:'.__LINE__." - QUERY = ".$QUERY."\n".print_r($transaction_data, true));
 
+if (!is_array($transaction_data) || count($transaction_data) == 0) {
+    write_log(LOGFILE_EPAYMENT, basename(__FILE__).
+        ' line:'.__LINE__." - transactionID=$transactionID"." ERROR INVALID TRANSACTION ID PROVIDED, TRANSACTION ID =".$transactionID);
+    exit();
+}
+
 $item_id = $transaction_data[0][13];
 $item_type = $transaction_data[0][14];
 if ($transaction_data[0][9] == 0 && ($LMI_WMCHECK_NUMBER or $LMI_SDP_TYPE)) {
@@ -99,15 +105,10 @@ write_log(LOGFILE_EPAYMENT, basename(__FILE__).' line:'.__LINE__." - QUERY = $QU
 $paymentTable->SQLExec ($DBHandle_max, $QUERY);
 
 
-if(!is_array($transaction_data) && count($transaction_data) == 0) {
-	write_log(LOGFILE_EPAYMENT, basename(__FILE__).
-		' line:'.__LINE__." - transactionID=$transactionID"." ERROR INVALID TRANSACTION ID PROVIDED, TRANSACTION ID =".$transactionID);
-	exit();
-} else {
+
 	write_log(LOGFILE_EPAYMENT, basename(__FILE__).
 		' line:'.__LINE__." - transactionID=$transactionID"." EPAYMENT RESPONSE: TRANSACTIONID = ".$transactionID.
 		" FROM ".$transaction_data[0][4]."; FOR CUSTOMER ID ".$transaction_data[0][1]."; OF AMOUNT ".$transaction_data[0][2]);
-}
 
 $security_verify	= true;
 $transaction_detail	= serialize($_POST);

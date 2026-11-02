@@ -30,8 +30,8 @@
  * 
  * 
 **/
-include_once ('../../lib/admin.defines.php');
-include_once ('../../lib/admin.module.access.php');
+include_once __DIR__ . '/../../lib/admin.defines.php';
+include_once __DIR__ . '/../../lib/admin.module.access.php';
 
 if (!has_rights(ACX_DASHBOARD)) {
 	Header("HTTP/1.0 401 Unauthorized");
@@ -39,17 +39,20 @@ if (!has_rights(ACX_DASHBOARD)) {
 	die();
 }
 
-exec("env PATH=/usr/bin:$PATH lsb_release -d 2> /dev/null", $output);
-
-$distro_info = $output[0];
-$info_tmp = preg_split('/:/', $distro_info, 2);
-$OS = trim($info_tmp[1]);
-if (!$OS) $OS = exec("env PATH=/usr/bin:$PATH uname -ro");
+$OS = PHP_OS . ' ' . php_uname('r');
+if (function_exists('exec')) {
+    $output = array();
+    exec('env PATH=/usr/bin:$PATH lsb_release -d 2> /dev/null', $output);
+    if (!empty($output[0])) {
+        $info_tmp = explode(':', $output[0], 2);
+        if (!empty($info_tmp[1])) $OS = trim($info_tmp[1]);
+    }
+}
 $OS_img = preg_split('/ /', $OS);
-if(!file_exists("templates/default/images/OSicon/$OS_img[0]".".png")) $OS_img[0]='unknown';
+if(!file_exists(__DIR__ . "/../templates/default/images/OSicon/$OS_img[0]".".png")) $OS_img[0]='unknown';
 
 $info_tmp = preg_split("/ - /", COPYRIGHT);
-$UI = $info_tmp[0].' '.$info_tmp[1];
+$UI = $info_tmp[0].(isset($info_tmp[1]) ? ' '.$info_tmp[1] : '');
 
 $UI_path = '';
 $info_tmp = preg_split('#//#', $_SERVER["SCRIPT_FILENAME"]);

@@ -253,6 +253,7 @@ $QUERY = "SELECT paymentmethod, count(*), sum(amount) FROM cc_epayment_log"
 	.($HD_Form -> FG_TABLE_CLAUSE?" WHERE ".$HD_Form -> FG_TABLE_CLAUSE:"")
 	." GROUP BY paymentmethod ORDER BY paymentmethod ASC";
 
+$pmtable = new Table();
 $list_total_day = $pmtable -> SQLExec($DBHandle, $QUERY);
 
 if (is_array ( $list_total_day ) && count ( $list_total_day ) > 0) {

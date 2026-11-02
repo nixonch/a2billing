@@ -69,20 +69,6 @@ function a2b_round($number) {
 	return round($number, $PRECISION);
 }
 
-function a2b_encrypt($text, $key) {
-	$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
-	$iv = mcrypt_create_iv($iv_size);
-	$temp = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $text, MCRYPT_MODE_ECB, $iv);
-	return $temp;
-}
-
-function a2b_decrypt($text, $key) {
-	$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
-	$iv = mcrypt_create_iv($iv_size);
-	$temp = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), $text, MCRYPT_MODE_ECB, $iv);
-	return $temp;
-}
-
 /*
  * a2b_mail - function mail used in a2billing
  */
@@ -255,6 +241,16 @@ function cleanInput($input) {
 
 	$output = preg_replace($search, '', $input);
 	return $output;
+}
+
+// Preserve the default FILTER_SANITIZE_STRING transformation used by logins,
+// including numeric quote entities and tags with whitespace after '<'.
+function a2b_filter_login_string($input) {
+    $input = str_replace(array("'", '"'), array('&#39;', '&#34;'), $input);
+    // Make strip_tags() accept these as ordinary HTML tags, without turning
+    // '< ?' or '< !' into PHP instructions or comments by removing the spaces.
+    $input = preg_replace('/<(?=[\x09-\x0d\x20])/', '<a', $input);
+    return strip_tags($input);
 }
 
 /*
@@ -1843,7 +1839,8 @@ function open_url($url)
     ob_start();
 
     curl_exec ($ch);
-    curl_close ($ch);
+    if (is_resource($ch)) curl_close($ch);
+    unset($ch);
     $string = ob_get_contents();
 
     ob_end_clean();
@@ -1893,7 +1890,15 @@ function check_cp()
     
     if ($pos === false) {
         
-        $footer_content = file_get_contents("templates/default/footer.tpl");
+        // Called by admin.defines.php, including from nested/AJAX endpoints.
+        $footer_path = dirname(dirname(__DIR__)) . '/admin/Public/templates/default/footer.tpl';
+        if (!is_readable($footer_path)) {
+            return $ret_val;
+        }
+        $footer_content = file_get_contents($footer_path);
+        if ($footer_content === false) {
+            return $ret_val;
+        }
 
         $pos_copyright = strpos($footer_content, '$COPYRIGHT');
         if ($pos_copyright === false) {
@@ -2021,7 +2026,7 @@ function regex_range($from, $to, $exclude = NULL) {
 	}
 
 	$ranges[] = $to + 1;
-	$excludeseparated = implode("|",$exclude);
+	$excludeseparated = implode("|", is_array($exclude) ? $exclude : array());
 	$regex = "^(?:";
 	$regex .= ($excludeseparated != "") ? "(?!".$excludeseparated.")" : $excludeseparated;
 	$regex .= "(";

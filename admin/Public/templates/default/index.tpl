@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{php} echo LANG; {/php}">
+<html lang="{$smarty.const.LANG}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,14 +12,14 @@
     <div class="frame laud">
         <div class="nav">
             <select name="ui_language" id="ui_language" aria-label="Language" style="align-self:flex-end">
-                <option value="english" {php} if(LANGUAGE=="english") echo "selected"; {/php}>English</option>
-                <option value="ukrainian" {php} if(LANGUAGE=="ukrainian") echo "selected"; {/php}>Українська</option>
-                <option value="russian" {php} if(LANGUAGE=="russian") echo "selected"; {/php}>Русский</option>
-                <option value="german" {php} if(LANGUAGE=="german") echo "selected"; {/php}>Deutsch</option>
-                <option value="brazilian" {php} if(LANGUAGE=="brazilian") echo "selected"; {/php}>Brazilian</option>
-                <option value="romanian" {php} if(LANGUAGE=="romanian") echo "selected"; {/php}>Romanian</option>
-                <option value="french" {php} if(LANGUAGE=="french") echo "selected"; {/php}>French</option>
-                <option value="greek" {php} if(LANGUAGE=="greek") echo "selected"; {/php}>Greek</option>
+                <option value="english" {if $smarty.const.LANGUAGE=="english"}selected{/if}>English</option>
+                <option value="ukrainian" {if $smarty.const.LANGUAGE=="ukrainian"}selected{/if}>Українська</option>
+                <option value="russian" {if $smarty.const.LANGUAGE=="russian"}selected{/if}>Русский</option>
+                <option value="german" {if $smarty.const.LANGUAGE=="german"}selected{/if}>Deutsch</option>
+                <option value="brazilian" {if $smarty.const.LANGUAGE=="brazilian"}selected{/if}>Brazilian</option>
+                <option value="romanian" {if $smarty.const.LANGUAGE=="romanian"}selected{/if}>Romanian</option>
+                <option value="french" {if $smarty.const.LANGUAGE=="french"}selected{/if}>French</option>
+                <option value="greek" {if $smarty.const.LANGUAGE=="greek"}selected{/if}>Greek</option>
             </select>
         </div>
         <form class="form-signin" name="form" method="post" action="PP_intro.php" onsubmit="return test()">
@@ -27,21 +27,21 @@
             <div style="min-height:5px;display:flex;justify-content:center;align-items:center">
                 <div class="login-title" id="warningsignin" role="alert">
                     {if ($error == 1)}
-                        {php} echo gettext("AUTHENTICATION REFUSED, please check your user/password!"); {/php}
+                        {gettext("AUTHENTICATION REFUSED, please check your user/password!")}
                     {elseif ($error == 2)}
-                        {php} echo gettext("INACTIVE ACCOUNT, Please activate your account!"); {/php}
+                        {gettext("INACTIVE ACCOUNT, Please activate your account!")}
                     {elseif ($error == 3)}
-                        {php} echo gettext("BLOCKED ACCOUNT, Please contact the administrator!"); {/php}
+                        {gettext("BLOCKED ACCOUNT, Please contact the administrator!")}
                     {/if}
                 </div>
             </div>
-            <label for="pr_login">{php} echo gettext("Login"); {/php}</label>
+            <label for="pr_login">{gettext("Login")}</label>
             <input autofocus class="form-styling" type="text" name="pr_login" id="pr_login" autocomplete="username">
-            <label for="pr_password">{php} echo gettext("Password"); {/php}</label>
+            <label for="pr_password">{gettext("Password")}</label>
             <input class="form-styling" type="password" name="pr_password" id="pr_password" autocomplete="current-password">
             <input type="checkbox" id="checkbox" class="checkbox">
-            <label for="checkbox"><span class="ui"></span>{php} echo gettext("Keep me signed in"); {/php}</label>
-            <button class="btn-submit btn-signin" type="submit" name="submit">{php} echo gettext("LOGIN"); {/php}</button>
+            <label for="checkbox"><span class="ui"></span>{gettext("Keep me signed in")}</label>
+            <button class="btn-submit btn-signin" type="submit" name="submit">{gettext("LOGIN")}</button>
         </form>
     </div>
     <div class="frameback laud lgrad"></div>
@@ -66,7 +66,7 @@
 </div>
 <script src="javascript/jquery/jquery-1.7.2.min.js"></script>
 <script>
-    var emptylogin = {php} echo json_encode(gettext('You must enter an user and a password!')); {/php};
+    var emptylogin = {json_encode(gettext('You must enter an user and a password!'))};
 </script>
 {literal}
 <script>

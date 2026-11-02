@@ -33,6 +33,21 @@
 
 
 
+$popup_select = isset($popup_select) ? $popup_select : 0;
+$popup_formname = isset($popup_formname) ? $popup_formname : '';
+$popup_fieldname = isset($popup_fieldname) ? $popup_fieldname : '';
+$form_action = isset($form_action) ? $form_action : 'list';
+$filterprefix = isset($filterprefix) ? $filterprefix : '';
+$id = isset($id) ? $id : null;
+$cardnumberlenght_list = isset($cardnumberlenght_list) ? $cardnumberlenght_list : null;
+foreach (array('country_default_val', 'timezone_default_val', 'diller_default',
+    'dillertariffs_ED', 'dillergroups_ED', 'lockpin_default',
+    'default_initbalance', 'vat_init', 'payment_status') as $card_default_name) {
+    if (!isset($$card_default_name)) $$card_default_name = '';
+}
+unset($card_default_name);
+if (!isset($_SESSION['menu_section'])) $_SESSION['menu_section'] = '';
+
 getpost_ifset(array('id', 'username', 'useralias', 'uipass', 'credit', 'language', 'tariff', 'filterprefix', 'current_page',
 'id_didgroup','id_campaign', 'callback', 'simultaccess', 'currency','typepaid', 'creditlimit', 'lastname', 'firstname',
 'email', 'address','city', 'state', 'areaprefix', 'citylength', 'country', 'removeaddprefix', 'addprefixinternational',
@@ -177,7 +192,7 @@ $index = 0;
 foreach ($show_list as $i => $value) {
 	if (array_key_exists($i,$show_fields)) {
 		$param = $show_fields[$i];
-		$param = $param + array("","","","","","");//expand array to max length
+		$param = $param + array_fill(0, 13, '');//expand array to max length
 		$size = "*";
 		$param7 = $param[7];
 		if ($param[6]=="eval"){

@@ -184,7 +184,7 @@ if ($_POST['posted']==1) {
 }
 
 if ($FG_DEBUG == 3) echo "<br>Clause : $FG_TABLE_CLAUSE";
-$nb_record = count($list_total);
+$nb_record = (is_array($list_total) ? count($list_total) : 0);
 if ($FG_DEBUG >= 1) var_dump ($list);
 
 if ($nb_record<=$FG_LIMITE_DISPLAY) {

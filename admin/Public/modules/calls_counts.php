@@ -32,8 +32,8 @@
 **/
 
 
-include_once ("../../lib/admin.defines.php");
-include_once ("../../lib/admin.module.access.php");
+include_once __DIR__ . '/../../lib/admin.defines.php';
+include_once __DIR__ . '/../../lib/admin.module.access.php';
 
 if (!has_rights(ACX_DASHBOARD)) {
 	Header("HTTP/1.0 401 Unauthorized");
@@ -58,7 +58,7 @@ $result_count_congested = 0;
 $result_count_busy = 0;
 $result_count_chanunavail = 0;
 
-foreach ($result as $res_row){
+foreach ((is_array($result) ? $result : array()) as $res_row){
 	if ($res_row[0]==1)
 		$result_count_answered = $res_row[1];
 	if ($res_row[0]==2)

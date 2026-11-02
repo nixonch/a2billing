@@ -49,7 +49,8 @@ function open_url($url)
     ob_start();
 
     curl_exec ($ch);
-    curl_close ($ch);
+    if (is_resource($ch)) curl_close($ch);
+    unset($ch);
     $string = ob_get_contents();
 
     ob_end_clean();

@@ -1,5 +1,13 @@
 <?php
 
+// Missing filters render as empty values; do not change the stored search state.
+$processed += array_fill_keys(array(
+    's', 't', 'order', 'sens', 'current_page', 'fromday', 'today',
+    'fromstatsday_sday', 'tostatsday_sday', 'fromstatsmonth_sday', 'tostatsmonth_sday',
+    'fromday_bis', 'today_bis', 'fromstatsday_sday_bis', 'tostatsday_sday_bis',
+    'fromstatsmonth_sday_bis', 'tostatsmonth_sday_bis', 'month_earlier'
+), null);
+
 if ($this->FG_FILTER_SEARCH_FORM) {
 
 ?>
@@ -284,9 +292,9 @@ if ($this->FG_FILTER_SEARCH_FORM) {
 					<select NAME="<?php echo $ts[0]?>" size="1" class="form_input_select">
 						<option value=''><?php echo $selects[0]?></option>
 				<?php
-					 foreach ($selects[1] as $recordset){
+					 foreach ((is_array($selects[1]) ? $selects[1] : array()) as $recordset){
 				?>
-						<option class=input value='<?php echo $recordset[0]?>'  <?php if ($processed[$ts[0]]==$recordset[0]) echo 'selected="selected"'?>><?php echo $recordset[1]; if (strlen($recordset[2])>0) echo ' - '.$recordset[2]; ?></option>
+						<option class=input value='<?php echo $recordset[0]?>'  <?php if (isset($processed[$ts[0]]) && $processed[$ts[0]]==$recordset[0]) echo 'selected="selected"'?>><?php echo $recordset[1]; if (isset($recordset[2]) && strlen($recordset[2])>0) echo ' - '.$recordset[2]; ?></option>
 				<?php 	 }
 				?>
 					</select>
@@ -425,9 +433,9 @@ if ($this->FG_FILTER_SEARCH_FORM) {
 				<strong>6)&nbsp;<?php echo gettext("RATE INITIAL");?>&nbsp;:</strong>
 				 	<input class="form_input_text" name="upd_rateinitial" size="10" maxlength="10"  value="<?php if (isset($upd_rateinitial)) echo $upd_rateinitial; else echo '0';?>" >
 				<font class="version">
-				<input type="radio" NAME="type[upd_rateinitial]" value="1" <?php if((!isset($type[upd_rateinitial]))|| ($type[upd_rateinitial]==1) ){?>checked<?php }?>> <?php echo gettext("Equal");?>
-				<input type="radio" NAME="type[upd_rateinitial]" value="2" <?php if($type[upd_rateinitial]==2){?>checked<?php }?>> <?php echo gettext("Add");?>
-				<input type="radio" NAME="type[upd_rateinitial]" value="3" <?php if($type[upd_rateinitial]==3){?>checked<?php }?>> <?php echo gettext("Substract");?>
+				<input type="radio" NAME="type[upd_rateinitial]" value="1" <?php if((!isset($type['upd_rateinitial']))|| ($type['upd_rateinitial']==1) ){?>checked<?php }?>> <?php echo gettext("Equal");?>
+				<input type="radio" NAME="type[upd_rateinitial]" value="2" <?php if($type['upd_rateinitial']==2){?>checked<?php }?>> <?php echo gettext("Add");?>
+				<input type="radio" NAME="type[upd_rateinitial]" value="3" <?php if($type['upd_rateinitial']==3){?>checked<?php }?>> <?php echo gettext("Substract");?>
 				</font>
 			</td>
 		</tr>
@@ -441,9 +449,9 @@ if ($this->FG_FILTER_SEARCH_FORM) {
 				<strong>7)&nbsp;<?php echo gettext("MIN DURATION");?>&nbsp;:</strong>
 				 	<input class="form_enter" name="upd_initblock" size="10" maxlength="10" style="border: 2px inset rgb(204, 51, 0);" value="<?php if (isset($upd_initblock)) echo $upd_initblock; else echo '0';?>" >
 				<font class="version">
-				<input type="radio" NAME="type[upd_initblock]" value="1" <?php if((!isset($type[upd_initblock]))|| ($type[upd_initblock]==1) ){?>checked<?php }?>> <?php echo gettext("Equal");?>
-				<input type="radio" NAME="type[upd_initblock]" value="2" <?php if($type[upd_initblock]==2){?>checked<?php }?>> <?php echo gettext("Add");?>
-				<input type="radio" NAME="type[upd_initblock]" value="3" <?php if($type[upd_initblock]==3){?>checked<?php }?>> <?php echo gettext("Substract");?>
+				<input type="radio" NAME="type[upd_initblock]" value="1" <?php if((!isset($type['upd_initblock']))|| ($type['upd_initblock']==1) ){?>checked<?php }?>> <?php echo gettext("Equal");?>
+				<input type="radio" NAME="type[upd_initblock]" value="2" <?php if($type['upd_initblock']==2){?>checked<?php }?>> <?php echo gettext("Add");?>
+				<input type="radio" NAME="type[upd_initblock]" value="3" <?php if($type['upd_initblock']==3){?>checked<?php }?>> <?php echo gettext("Substract");?>
 				</font>
 			</td>
 		</tr>
@@ -457,9 +465,9 @@ if ($this->FG_FILTER_SEARCH_FORM) {
 				<strong>8)&nbsp;<?php echo gettext("BILLINGBLOCK");?>&nbsp;:</strong>
 				 	<input class="form_input_text" name="upd_billingblock" size="10" maxlength="10" style="border: 2px inset rgb(204, 51, 0);" value="<?php if (isset($upd_billingblock)) echo $upd_billingblock; else echo '0';?>" >
 				<font class="version">
-				<input type="radio" NAME="type[upd_billingblock]" value="1" <?php if((!isset($type[upd_billingblock]))|| ($type[upd_billingblock]==1) ){?>checked<?php }?>> <?php echo gettext("Equal");?>
-				<input type="radio" NAME="type[upd_billingblock]" value="2" <?php if($type[upd_billingblock]==2){?>checked<?php }?>> <?php echo gettext("Add");?>
-				<input type="radio" NAME="type[upd_billingblock]" value="3" <?php if($type[upd_billingblock]==3){?>checked<?php }?>> <?php echo gettext("Substract");?>
+				<input type="radio" NAME="type[upd_billingblock]" value="1" <?php if((!isset($type['upd_billingblock']))|| ($type['upd_billingblock']==1) ){?>checked<?php }?>> <?php echo gettext("Equal");?>
+				<input type="radio" NAME="type[upd_billingblock]" value="2" <?php if($type['upd_billingblock']==2){?>checked<?php }?>> <?php echo gettext("Add");?>
+				<input type="radio" NAME="type[upd_billingblock]" value="3" <?php if($type['upd_billingblock']==3){?>checked<?php }?>> <?php echo gettext("Substract");?>
 				</font>
 			</td>
 		</tr>
@@ -473,9 +481,9 @@ if ($this->FG_FILTER_SEARCH_FORM) {
 				<strong>9)&nbsp;<?php echo gettext("CONNECTCHARGE");?>&nbsp;:</strong>
 				 	<input class="form_input_text" name="upd_connectcharge" size="10" maxlength="10" style="border: 2px inset rgb(204, 51, 0);" value="<?php if (isset($upd_connectcharge)) echo $upd_connectcharge; else echo '0';?>" >
 				<font class="version">
-				<input type="radio" NAME="type[upd_connectcharge]" value="1" <?php if((!isset($type[upd_connectcharge]))|| ($type[upd_connectcharge]==1) ){?>checked<?php }?>> <?php echo gettext("Equal");?>
-				<input type="radio" NAME="type[upd_connectcharge]" value="2" <?php if($type[upd_connectcharge]==2){?>checked<?php }?>> <?php echo gettext("Add");?>
-				<input type="radio" NAME="type[upd_connectcharge]" value="3" <?php if($type[upd_connectcharge]==3){?>checked<?php }?>> <?php echo gettext("Substract");?>
+				<input type="radio" NAME="type[upd_connectcharge]" value="1" <?php if((!isset($type['upd_connectcharge']))|| ($type['upd_connectcharge']==1) ){?>checked<?php }?>> <?php echo gettext("Equal");?>
+				<input type="radio" NAME="type[upd_connectcharge]" value="2" <?php if($type['upd_connectcharge']==2){?>checked<?php }?>> <?php echo gettext("Add");?>
+				<input type="radio" NAME="type[upd_connectcharge]" value="3" <?php if($type['upd_connectcharge']==3){?>checked<?php }?>> <?php echo gettext("Substract");?>
 				</font>
 			</td>
 		</tr>
@@ -489,9 +497,9 @@ if ($this->FG_FILTER_SEARCH_FORM) {
 				<strong>10)&nbsp;<?php echo gettext("DISCONNECTCHARGE");?>&nbsp;:</strong>
 				 	<input class="form_input_text" name="upd_disconnectcharge" size="10" maxlength="10" style="border: 2px inset rgb(204, 51, 0);" value="<?php if (isset($upd_disconnectcharge)) echo $upd_disconnectcharge; else echo '0';?>" >
 				<font class="version">
-				<input type="radio" NAME="type[upd_disconnectcharge]" value="1" <?php if((!isset($type[upd_disconnectcharge]))|| ($type[upd_disconnectcharge]==1) ){?>checked<?php }?>> <?php echo gettext("Equal");?>
-				<input type="radio" NAME="type[upd_disconnectcharge]" value="2" <?php if($type[upd_disconnectcharge]==2){?>checked<?php }?>> <?php echo gettext("Add");?>
-				<input type="radio" NAME="type[upd_disconnectcharge]" value="3" <?php if($type[upd_disconnectcharge]==3){?>checked<?php }?>> <?php echo gettext("Substract");?>
+				<input type="radio" NAME="type[upd_disconnectcharge]" value="1" <?php if((!isset($type['upd_disconnectcharge']))|| ($type['upd_disconnectcharge']==1) ){?>checked<?php }?>> <?php echo gettext("Equal");?>
+				<input type="radio" NAME="type[upd_disconnectcharge]" value="2" <?php if($type['upd_disconnectcharge']==2){?>checked<?php }?>> <?php echo gettext("Add");?>
+				<input type="radio" NAME="type[upd_disconnectcharge]" value="3" <?php if($type['upd_disconnectcharge']==3){?>checked<?php }?>> <?php echo gettext("Substract");?>
 				</font>
 			</td>
 		</tr>
@@ -505,10 +513,10 @@ if ($this->FG_FILTER_SEARCH_FORM) {
                                 <strong>11)&nbsp;<?php echo gettext("DISCONNECT CHARGE THRESHOLD");?>&nbsp;:</strong>
                                         <input class="form_input_text" name="upd_disconnectcharge_after" size="10" maxlength="10" style="border: 2px inset rgb(204, 51, 0);" value="<?php if (isset($upd_disconnectcharge_after)) echo $upd_disconnectcharge_after; else echo '0';?>" >
                                 <font class="version">
-                                <input type="radio" NAME="type[upd_disconnectcharge_after]" value="1" <?php if((!isset($type[upd_disconnectcharge_after]))|| ($type[upd_disconnectcharge_after]==1) ){?>checked<?php }?>> <?php echo gettext("Equal");?>
+                                <input type="radio" NAME="type[upd_disconnectcharge_after]" value="1" <?php if((!isset($type['upd_disconnectcharge_after']))|| ($type['upd_disconnectcharge_after']==1) ){?>checked<?php }?>> <?php echo gettext("Equal");?>
 
-                                <input type="radio" NAME="type[upd_disconnectcharge_after]" value="2" <?php if($type[upd_disconnectcharge_after]==2){?>checked<?php }?>> <?php echo gettext("Add");?>
-                                <input type="radio" NAME="type[upd_disconnectcharge_after]" value="3" <?php if($type[upd_disconnectcharge_after]==3){?>checked<?php }?>> <?php echo gettext("Substract");?>
+                                <input type="radio" NAME="type[upd_disconnectcharge_after]" value="2" <?php if($type['upd_disconnectcharge_after']==2){?>checked<?php }?>> <?php echo gettext("Add");?>
+                                <input type="radio" NAME="type[upd_disconnectcharge_after]" value="3" <?php if($type['upd_disconnectcharge_after']==3){?>checked<?php }?>> <?php echo gettext("Substract");?>
                                 </font>
                         </td>
                 </tr>

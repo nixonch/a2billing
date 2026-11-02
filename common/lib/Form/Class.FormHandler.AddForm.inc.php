@@ -58,9 +58,9 @@ var popupCallback = function (payload) {
 		 <TBODY>
 	<?php
 		for($i=0;$i<$this->FG_NB_TABLE_ADITION;$i++){ 
-			$pos = strpos($this->FG_TABLE_ADITION[$i][14], ":");
+			$pos = strpos((string)$this->FG_TABLE_ADITION[$i][14], ":");
 			
-			if (strlen($this->FG_TABLE_ADITION[$i][16])>1 && strtoupper ($this->FG_TABLE_ADITION[$i][3])!=("HAS_MANY")) {
+			if (strlen((string)$this->FG_TABLE_ADITION[$i][16])>1 && strtoupper ($this->FG_TABLE_ADITION[$i][3])!=("HAS_MANY")) {
 				echo '<TR><TD valign="top" bgcolor="#FEFEEE" colspan="2" class="tableBodyRight" ><i>';				
 				echo $this->FG_TABLE_EDITION[$i][16];
 				echo '</i></TD></TR>';
@@ -167,7 +167,7 @@ var popupCallback = function (payload) {
 	?>
 	<option value="-1"><?php echo $this->FG_TABLE_ADITION[$i][6]?></option>
 	<?php		}
-				if (count($select_list)>0){
+				if (is_array($select_list) && count($select_list)>0){
 					$select_number=0;
 					foreach ($select_list as $select_recordset) {
 						$select_number++;
@@ -175,7 +175,7 @@ var popupCallback = function (payload) {
 							$value_display = $this->FG_TABLE_ADITION[$i][12];
 							$nb_recor_k = count($select_recordset);
 							for ($k=1;$k<=$nb_recor_k;$k++) {
-								$value_display  = str_replace("%$k", $select_recordset[$k-1], $value_display );
+								$value_display = str_replace("%$k", isset($select_recordset[$k-1]) ? (string)$select_recordset[$k-1] : '', $value_display);
 							}
 						} else {
 							$value_display = $select_recordset[0];
@@ -213,7 +213,7 @@ var popupCallback = function (payload) {
 			<datalist id="list_<?php echo $myname;?>">
 	<?php  
 			echo ($this->FG_TABLE_ADITION[$i][15]);
-				if (count($select_list)>0){
+				if (is_array($select_list) && count($select_list)>0){
 					$select_number=0;
 					foreach ($select_list as $select_recordset) {
 						$select_number++;
@@ -221,7 +221,7 @@ var popupCallback = function (payload) {
 							$value_display = $this->FG_TABLE_ADITION[$i][12];
 							$nb_recor_k = count($select_recordset);
 							for ($k=1;$k<=$nb_recor_k;$k++) {
-								$value_display  = str_replace("%$k", $select_recordset[$k-1], $value_display );
+								$value_display = str_replace("%$k", isset($select_recordset[$k-1]) ? (string)$select_recordset[$k-1] : '', $value_display);
 							}
 						} else {
 							$value_display = $select_recordset[0];

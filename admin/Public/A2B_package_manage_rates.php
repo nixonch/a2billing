@@ -205,7 +205,7 @@ function delallrate(){
 				<tr>
 					<td>
 						<select id="rate" name="rate" size="10" style="width:250px;" class="form_input_select">
-						    <?php foreach ($result_rates as $rate){ ?>
+						    <?php foreach ((is_array($result_rates) ? $result_rates : array()) as $rate){ ?>
 							<option value="<?php echo $rate['id'] ?>"  ><?php echo $rate['destination'] ;?>&nbsp;:&nbsp;<?php echo $rate['dialprefix']; ?></option>
 							<?php } ?>
 						</select>

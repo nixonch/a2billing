@@ -159,6 +159,10 @@ if (!isset ($report_type)) {
 	$report_type = 1;
 }
 // #### HEADER SECTION
+if (isset($form_action) && $form_action === 'ask-add' && !$HD_Form->FG_ADDITION) {
+    header('Location: ' . $PHP_SELF);
+    exit;
+}
 $smarty->display('main.tpl');
 
 

@@ -82,7 +82,7 @@ if(is_array($result) && !empty($result[0][0])) {
 	$clause_charge .= "creationdate >= '".$result[0][1]."' AND  ";
 //	$desc_billing = gettext("Cost of calls between the "). display_GMT($result[0][1], $_SESSION["gmtoffset"], 1) ." and ". display_GMT(gmdate("Y/m/d H:i:s"), $_SESSION["gmtoffset"], 1) ;
 	$desc_billing = gettext("Cost of calls between the "). $result[0][1] ." and ". display_GMT(gmdate("Y/m/d H:i:s"), $_SESSION["gmtoffset"], 1) ;
-	$desc_billing_postpaid="Amount for periode between the ".date("Y-m-d",strptime($result[0][1]))." and $date_bill";
+	$desc_billing_postpaid="Amount for periode between the ".substr($result[0][1],0,10)." and ".gmdate('Y-m-d');
 	$start_date = $result[0][1];
 } else {
 	$desc_billing = gettext("Cost of calls before the "). display_GMT(gmdate("Y/m/d H:i:s"), $_SESSION["gmtoffset"], 1) ;
@@ -238,7 +238,7 @@ function amount_convert($amount) {
   </tbody>
   </table></div>
 
-<?php if(sizeof($invoice_items)>0){?>
+<?php if((is_array($invoice_items) ? sizeof($invoice_items) : 0)>0){?>
 <div class="invoice-wrapper">
   <table class="invoice-table">
   <thead>

@@ -75,7 +75,7 @@ class captcha
 
 				for ($j = 0; $j < $code_len; $j++)
 				{
-					$image .= $this->randomise(substr($hold_chars[$code{$j}][$i - $offset_y - 1], 1), $char_widths[$j]);
+					$image .= $this->randomise(substr($hold_chars[$code[$j]][$i - $offset_y - 1], 1), $char_widths[$j]);
 				}
 
 				for ($j = $offset_x + $img_width; $j < $this->width; $j++)
@@ -112,9 +112,9 @@ class captcha
 		$new_line = '';
 
 		$end = strlen($scanline) - ceil($width/2);
-		for ($i = floor($width/2); $i < $end; $i++)
+		for ($i = (int)floor($width/2); $i < $end; $i++)
 		{
-			$pixel = ord($scanline{$i});
+			$pixel = ord($scanline[$i]);
 
 			if ($pixel < 190)
 			{
@@ -126,7 +126,7 @@ class captcha
 			}
 			else
 			{
-				$new_line .= $scanline{$i};
+				$new_line .= $scanline[$i];
 			}
 		}
 
@@ -172,11 +172,11 @@ class captcha
 			$length = ($width + 1) * $height;
 
 			// Adler-32 hash generation
-			// Note: The hash is _backwards_ so we must reverse it
+			// hash() already returns the PNG/zlib network byte order.
 
 			if (@extension_loaded('hash'))
 			{
-				$adler_hash = strrev(hash('adler32', $raw_image, true));
+				$adler_hash = hash('adler32', $raw_image, true);
 			}
 			else if (@extension_loaded('mhash'))
 			{

@@ -200,7 +200,7 @@ if ($nb_record<=$FG_LIMITE_DISPLAY) {
 $instance_table_tariff = new Table("cc_package_offer", "id, label");
 $FG_TABLE_CLAUSE = "";
 $list_package = $instance_table_tariff -> Get_list ($DBHandle, $FG_TABLE_CLAUSE, "label", "ASC", null, null, null, null);
-$nb_package = count($list_package);
+$nb_package = (is_array($list_package) ? count($list_package) : 0);
 
 
 
@@ -241,7 +241,7 @@ $smarty->display('main.tpl');
 						<select NAME="enter_packageid" size="1" class="form_input_select">
 							<option class="input" value="">Select a package </option>
 							<?php					 
-							 foreach ($list_package as $recordset){ 						 
+							 foreach ((is_array($list_package) ? $list_package : array()) as $recordset){
 							?>
 								<option class="input" value='<?php echo $recordset[0]?>'  <?php if ($enter_packageid==$recordset[0]) echo 'selected="selected"'?>><?php echo $recordset[1]?></option>
 							<?php } ?>

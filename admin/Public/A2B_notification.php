@@ -135,7 +135,7 @@ $list_notifications = NotificationsDAO::getNotifications($_SESSION['admin_id'],(
 }
 </style>
 
-<?php if(sizeof($list_notifications)>0 && $list_notifications[0]!=null) {  ?>
+<?php if((is_array($list_notifications) ? sizeof($list_notifications) : 0)>0 && $list_notifications[0]!=null) {  ?>
 <table width="90%" style ="margin-left:auto;margin-right:auto;" cellspacing="2" cellpadding="2" border="0">
 	<tr>
 		<td colspan="6" align="center">

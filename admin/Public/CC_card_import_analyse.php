@@ -324,7 +324,7 @@ function sendtoupload(form){
 
                 <tr>
                   <td  class="bgcolor_014" colspan="2"><b>
-                    <?php echo $translate[P34_9]?>
+                    <?php echo isset($translate['P34_9']) ? $translate['P34_9'] : '';?>
                     </b></td>
                 </tr>
 

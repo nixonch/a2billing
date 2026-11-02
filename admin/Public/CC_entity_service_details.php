@@ -123,7 +123,7 @@ $smarty->display('main.tpl');
 				$color="red";
 				$ttitle=gettext("SERVICE REPORT");
 				
-	  			if ((count($list )>0) && is_array($list )){
+                if (is_array($list) && count($list) > 0) {
 	  ?>
 				  
 	  <div class="pscroll">

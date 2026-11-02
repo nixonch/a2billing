@@ -216,14 +216,14 @@ $message_types = Constants::getMsgTypeList();
 <h1><?php echo gettext("Agent Home Page Preview")?> </h1>
 <br/>
 <?php
-$size_msg = sizeof($messages);
+$size_msg = (is_array($messages) ? sizeof($messages) : 0);
 if(!is_array($messages)){ ?>
 <h3><?php echo gettext("No Message")?> </h1>
 <?php
 }?>
 </div>
 <?php
-foreach ($messages as $message) {
+foreach ((is_array($messages) ? $messages : array()) as $message) {
     ?>
 
 	<div id="msg" class="<?php echo $message_types[$message['type']][2];?>" style="margin-top:0px;position:relative;<?php if($message['logo']==0)echo 'background-image:none;padding-left:10px;'; ?>" >

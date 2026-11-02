@@ -57,6 +57,10 @@ if (!isset ($form_action))
 if (!isset ($action))
 	$action = $form_action;
 
+if (isset($form_action) && $form_action === 'ask-add' && !$HD_Form->FG_ADDITION) {
+    header('Location: ' . $PHP_SELF);
+    exit;
+}
 $smarty->display('main.tpl');
 
 

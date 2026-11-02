@@ -88,7 +88,7 @@ if ((!isset($_SESSION['pr_login']) || !isset($_SESSION['pr_password']) || !isset
 	if ($FG_DEBUG == 1) echo "<br>0. HERE WE ARE";
 
 
-	if ($_POST["done"]=="submit_log"){
+	if (isset($_POST["done"]) && $_POST["done"]=="submit_log"){
 
 		$DBHandle  = DbConnect();
         
@@ -108,7 +108,7 @@ if ((!isset($_SESSION['pr_login']) || !isset($_SESSION['pr_password']) || !isset
 
 		if ($return[3]==0){
 			$admin_id = $return[0];
-			$return = true;
+			$pr_reseller_ID = 0;
 			$rights = 33554431;
 			$is_admin = 1;
 			$pr_groupID = $return[3];
@@ -156,8 +156,8 @@ function login ($user, $pass) {
 
 	$user = trim($user);
 	$pass = trim($pass);
-    $user = filter_var($user, FILTER_SANITIZE_STRING);
-    $pass = filter_var($pass, FILTER_SANITIZE_STRING);
+    $user = a2b_filter_login_string($user);
+    $pass = a2b_filter_login_string($pass);
     
 	$pass_encoded= hash( 'whirlpool',$pass);
 	if (strlen($user)==0 || strlen($user)>=50 || strlen($pass)==0 || strlen($pass)>=50) return false;
@@ -176,10 +176,10 @@ function login ($user, $pass) {
 
 
 function has_rights ($condition) {
-	return ($_SESSION["rights"] & $condition);
+	return ((isset($_SESSION["rights"]) ? $_SESSION["rights"] : 0) & $condition);
 }
 
-$ACXACCESS 				= ($_SESSION["rights"] > 0) ? true : false;
+$ACXACCESS = isset($_SESSION["rights"]) && $_SESSION["rights"] > 0;
 $ACXDASHBOARD			= has_rights (ACX_DASHBOARD);
 $ACXCUSTOMER 			= has_rights (ACX_CUSTOMER);
 $ACXBILLING 			= has_rights (ACX_BILLING);

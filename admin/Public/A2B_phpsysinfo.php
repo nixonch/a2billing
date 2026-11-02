@@ -32,36 +32,35 @@
 **/
 
 
-include ("../lib/admin.defines.php");
-include ("../lib/admin.module.access.php");
-include ("../lib/Form/Class.FormHandler.inc.php");
-include ("../lib/admin.smarty.php");
+chdir(__DIR__);
+require_once __DIR__ . '/../lib/admin.defines.php';
+require_once __DIR__ . '/../lib/admin.module.access.php';
+require_once __DIR__ . '/../lib/PhpSysInfo.php';
 
-
-if (! has_rights (ACX_MAINTENANCE)) { 
-	Header ("HTTP/1.0 401 Unauthorized");
-	Header ("Location: PP_error.php?c=accessdenied");	   
-	die();	   
+$resourceRequest = array_key_exists('sysinfo', $_GET);
+if ($resourceRequest) header_register_callback('a2b_sysinfo_headers');
+if (($_SESSION['user_type'] ?? '') !== 'ADMIN' ||
+    !isset($_SESSION['pr_login'], $_SESSION['pr_password']) ||
+    !has_rights(ACX_MAINTENANCE) || !has_rights(ACX_ADMINISTRATOR)) {
+    if ($resourceRequest) {
+        http_response_code(403);
+    } else {
+        header('HTTP/1.0 401 Unauthorized');
+        header('Location: PP_error.php?c=accessdenied');
+    }
+    exit;
 }
-
 check_demo_mode_intro();
-
-
-// #### HEADER SECTION
+if ($resourceRequest) {
+    a2b_sysinfo_serve(__DIR__ . '/../lib/vendor/phpsysinfo/phpsysinfo', $_GET['sysinfo']);
+    exit;
+}
+require_once __DIR__ . '/../lib/admin.smarty.php';
 $smarty->display('main.tpl');
-
 ?>
-<br>
-
-<center>
-
-<iframe src ="../phpsysinfo/" width="1000" height="800">
-</iframe>
-
-</center>
+<iframe id="phpsysinfo" src="A2B_phpsysinfo?sysinfo=index%2Ephp" title="phpSysInfo" scrolling="no"
+    style="display:block;width:100%;max-width:1140px;margin:0 auto;border:0;overflow:hidden;"></iframe>
+<script src="javascript/phpsysinfo.js"></script>
 <?php
-
-
-// #### FOOTER SECTION
 $smarty->display('footer.tpl');
 

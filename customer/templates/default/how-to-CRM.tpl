@@ -1,9 +1,9 @@
 <main role="main">
 <select name="ui_language" id="ui_language" class="lang_select">
-    <option value="english" {php} if(LANGUAGE=="english") echo "selected";{/php} >English</option>
-    <option value="russian" {php} if(LANGUAGE=="russian" || LANGUAGE=="ukrainian") echo "selected";{/php} >Русский</option>
+    <option value="english" {if $smarty.const.LANGUAGE=="english"}selected{/if} >English</option>
+    <option value="russian" {if $smarty.const.LANGUAGE=="russian" || $smarty.const.LANGUAGE=="ukrainian"}selected{/if} >Русский</option>
 </select>
-{php} if (LANGUAGE=="russian" || LANGUAGE=="ukrainian") { {/php}
+{if $smarty.const.LANGUAGE=="russian" || $smarty.const.LANGUAGE=="ukrainian"}
 <h1>Интеграция AiPhone с вашей CRM</h1>
 <p>Для интеграции с CRM вы можете использовать способность <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">расширения</a> посылать предопределенные заголовки в HTTP запросе методом HEAD в момент ответа на входящий звонок. Эти заголовки задаются двумя способами...</p>
 <p><b>1-й способ</b> — с помощью 2-х настроек прямо в <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">расширении</a>.</p>
@@ -32,7 +32,7 @@ Accept: */*<br>
 Accept-Encoding: gzip, deflate, br
 <p3 style="color:#0f2b4e;text-indent:-3rem;word-break:break-all">Accept-Language: uk,ru;q=0.9,en;q=0.8,ru-RU;q=0.7,en-US;q=0.6,he-IL;q=0.5,he;q=0.4</p3></b></li></ul></p1>
 <br><p1>Ваши вопросы и пожелания, пожалуйста, направляйте по адресу <a href="mailto:{$MAILTO}">{$MAILTO}</a></p1>
-{php}}else{{/php}
+{else}
 <h1>Integration of AiPhone with your CRM</h1>
 <p>To integrate with CRM, you can use the <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">Extension's</a> built-in function to send predefined headers in an HTTP request using the HEAD method when answering an incoming call. These headers are set in two ways ...</p>
 <p><b>1st method</b> — using two settings directly in the <a href="{$WEBPHONE}" target="_blank" rel="noopener noreferrer">Extension</a>.</p>
@@ -61,7 +61,7 @@ Accept: */*<br>
 Accept-Encoding: gzip, deflate, br
 <p3 style="color:#0f2b4e;text-indent:-3rem">Accept-Language: uk,ru;q=0.9,en;q=0.8,ru-RU;q=0.7,en-US;q=0.6,he-IL;q=0.5,he;q=0.4</p3></b></li></ul></p1>
 <br><p1>Please, send your questions and wishes to <a href="mailto:{$MAILTO}">{$MAILTO}</a></p1>
-{php}}{/php}
+{/if}
 {if (!empty($A2Bconfig.webcustomerui.google_adsense_client_id) && !empty($A2Bconfig.webcustomerui.google_adsense_article_slot))}
 <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="{$A2Bconfig.webcustomerui.google_adsense_client_id|escape:'html'}" data-ad-slot="{$A2Bconfig.webcustomerui.google_adsense_article_slot|escape:'html'}"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>

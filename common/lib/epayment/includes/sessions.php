@@ -1,6 +1,6 @@
 <?php
 
-  if (STORE_SESSIONS == 'mysql') {
+  if (defined('STORE_SESSIONS') && STORE_SESSIONS == 'mysql') {
     if (!$SESS_LIFE = get_cfg_var('session.gc_maxlifetime')) {
       $SESS_LIFE = 1440;
     }
@@ -91,18 +91,23 @@
     global $session_started;
 
     if ($session_started == true) {
-      return session_register($variable);
+      if (!array_key_exists($variable, $GLOBALS)) {
+        $GLOBALS[$variable] = isset($_SESSION[$variable]) ? $_SESSION[$variable] : null;
+      }
+      $_SESSION[$variable] =& $GLOBALS[$variable];
+      return true;
     } else {
       return false;
     }
   }
 
   function tep_session_is_registered($variable) {
-    return session_is_registered($variable);
+    return isset($_SESSION) && array_key_exists($variable, $_SESSION);
   }
 
   function tep_session_unregister($variable) {
-    return session_unregister($variable);
+    unset($_SESSION[$variable]);
+    return true;
   }
 
   function tep_session_id($sessid = '') {

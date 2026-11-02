@@ -39,20 +39,19 @@ define( 'SMARTY_DIR', './lib/vendor/smarty/smarty/libs/' );
 define( 'TEMPLATE_DIR',  './templates/' );
 define( 'TEMPLATE_C_DIR', './templates_c/' );
 
-require_once SMARTY_DIR . 'SmartyBC.class.php';
-$smarty = new SmartyBC();
+require_once __DIR__.'/Smarty.helpers.php';
+$smarty = a2b_smarty_create();
 
 $skin_name = $_SESSION["stylefile"];
 
 $smarty->setTemplateDir(TEMPLATE_DIR . $skin_name.'/');
 $smarty->setCompileDir(TEMPLATE_C_DIR);
-$smarty->setPluginsDir(array("./plugins/", SMARTY_PLUGINS_DIR));
+if (is_dir('./plugins/')) $smarty->addPluginsDir('./plugins/');
 
 $smarty->assign("TEXTCONTACT", TEXTCONTACT);
 $smarty->assign("EMAILCONTACT", EMAILCONTACT);
 $smarty->assign("COPYRIGHT", COPYRIGHT);
 $smarty->assign("CCMAINTITLE", CCMAINTITLE);
-$smarty->assign("SIGNUPLINK", SIGNUP_LINK);
 $smarty->assign("LOGOPATH", LOGOPATH);
 $smarty->assign("FAVICONPATH", FAVICONPATH);
 
@@ -89,13 +88,13 @@ getpost_ifset(array('section'));
 if(!empty($section)) {
 	$_SESSION["menu_section"] = $section;
 } else {
-	$section = $_SESSION["menu_section"];
+	$section = isset($_SESSION["menu_section"]) ? $_SESSION["menu_section"] : 0;
 }
 $smarty->assign("section", $section);
 
 $smarty->assign("SKIN_NAME", $skin_name);
 // if it is a pop window
-if (!is_numeric($popup_select)) {
+if (!isset($popup_select) || !is_numeric($popup_select)) {
 	$popup_select=0;
 }
 // for menu

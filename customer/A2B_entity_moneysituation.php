@@ -126,7 +126,7 @@ if ((!isset($filterprefix) || strlen($filterprefix)==0) && (!isset($filterprefix
 	
 	$j = 0;
 	for ($i = 0; $i <= $nb_month; $i++) {
-		if (sizeof($result_invoice_enough_paid) > $j) {
+		if ((is_array($result_invoice_enough_paid) ? sizeof($result_invoice_enough_paid) : 0) > $j) {
 			$val = $result_invoice_enough_paid[$j];
 			if ($now_month > $i)
 				$month_test = intval($now_month - $i);
@@ -144,7 +144,7 @@ if ((!isset($filterprefix) || strlen($filterprefix)==0) && (!isset($filterprefix
 	$list_invoice_unpaid = array ();
 	$j = 0;
 	for ($i = 0; $i <= $nb_month; $i++) {
-		if (sizeof($result_invoice_unpaid) > $j) {
+		if ((is_array($result_invoice_unpaid) ? sizeof($result_invoice_unpaid) : 0) > $j) {
 			$val = $result_invoice_unpaid[$j];
 			if ($now_month > $i)
 				$month_test = intval($now_month - $i);
@@ -162,7 +162,7 @@ if ((!isset($filterprefix) || strlen($filterprefix)==0) && (!isset($filterprefix
 	$list_invoice_paid = array ();
 	$j = 0;
 	for ($i = 0; $i <= $nb_month; $i++) {
-		if (sizeof($result_invoice_paid) > $j) {
+		if ((is_array($result_invoice_paid) ? sizeof($result_invoice_paid) : 0) > $j) {
 			if ($now_month > $i)
 				$month_test = intval($now_month - $i);
 			else
@@ -180,7 +180,7 @@ if ((!isset($filterprefix) || strlen($filterprefix)==0) && (!isset($filterprefix
 	$list_invoice_count = array ();
 	$j = 0;
 	for ($i = 0; $i <= $nb_month; $i++) {
-		if (sizeof($result_invoice_count) > $j) {
+		if ((is_array($result_invoice_count) ? sizeof($result_invoice_count) : 0) > $j) {
 			if ($now_month > $i)
 				$month_test = intval($now_month - $i);
 			else

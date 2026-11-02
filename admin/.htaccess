@@ -10,6 +10,7 @@ RewriteRule ^ %1 [R=301,L]
 
 RewriteCond %{HTTP_HOST} (.*)
 RewriteCond %{REQUEST_URI} /+$ [NC]
+RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)(/+)$ $1.php [R=301,L]
 
 # To internally redirect /dir/foo/ to /dir/foo.php

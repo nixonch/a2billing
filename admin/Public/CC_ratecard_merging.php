@@ -136,7 +136,7 @@ $con = "";
 
 $list_tariffname = $instance_table_tariffname  -> Get_list ($HD_Form -> DBHandle, $con, "tariffname", "ASC", null, null, null, null);
 
-$nb_tariffname = count($list_tariffname);
+$nb_tariffname = (is_array($list_tariffname) ? count($list_tariffname) : 0);
 
 
 ?>
@@ -218,7 +218,7 @@ function removeSource()
                   	<td width="70%" valign="top" class="tableBodyRight">
 				  		<select NAME="ratecard_source" size="1"  style="width=250" class="form_input_select">
 							<option value=''><?php echo gettext("SOURCE RATECARD");?></option>
-							<?php foreach ($list_tariffname as $recordset){?>
+							<?php foreach ((is_array($list_tariffname) ? $list_tariffname : array()) as $recordset){?>
 								<option class=input value='<?php  echo $recordset[0]?>' <?php if ($recordset[0]==$ratecard_source) echo "selected";?>><?php echo $recordset[1]?></option>
 							<?php }?>
 						</select>
@@ -229,7 +229,7 @@ function removeSource()
                   	<td width="70%" valign="top" class="tableBodyRight">
 				  		<select NAME="ratecard_destination" size="1"  style="width=250" class="form_input_select">
 							<option value=''><?php echo gettext("DESTINATION RATECARD");?></option>
-							<?php foreach ($list_tariffname as $recordset){?>
+							<?php foreach ((is_array($list_tariffname) ? $list_tariffname : array()) as $recordset){?>
 								<option class=input value='<?php  echo $recordset[0]?>' <?php if ($recordset[0]==$ratecard_destination) echo "selected";?>><?php echo $recordset[1]?></option>
 							<?php }?>
 						</select>
@@ -296,7 +296,7 @@ function removeSource()
 							    document.prefs.unselected_search_sources[0].style.color="#505050";
 							    document.prefs.selected_search_sources[0].style.color="#505050";
 							    </script>
-<?php							foreach ($fieldtomerge as $val) {?>
+<?php							foreach ((is_array($fieldtomerge) ? $fieldtomerge : array()) as $val) {?>
 							    <script>
 								for (i = 1; i < document.prefs.unselected_search_sources.length; i++) {
 								    if (document.prefs.unselected_search_sources[i].value == '<?php echo $val;?>') {

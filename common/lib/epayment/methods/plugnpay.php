@@ -1,4 +1,5 @@
 <?php
+require_once dirname(dirname(__DIR__)) . '/DateFormat.php';
 
 include(dirname(__FILE__).'/../includes/methods/plugnpay.php');
 
@@ -11,7 +12,7 @@ class plugnpay {
       $this->code = 'plugnpay';
       $this->title = MODULE_PAYMENT_PLUGNPAY_TEXT_TITLE;
       $this->description = MODULE_PAYMENT_PLUGNPAY_TEXT_DESCRIPTION;
-      $this->sort_order = MODULE_PAYMENT_PLUGNPAY_SORT_ORDER;
+      $this->sort_order = defined('MODULE_PAYMENT_PLUGNPAY_SORT_ORDER') ? MODULE_PAYMENT_PLUGNPAY_SORT_ORDER : 0;
       $this->enabled = ((MODULE_PAYMENT_PLUGNPAY_STATUS == 'True') ? true : false);
       $this->accepted_cc = MODULE_PAYMENT_PLUGNPAY_ACCEPTED_CC;
 
@@ -86,12 +87,12 @@ class plugnpay {
       }
 
       for ($i=1; $i<13; $i++) {
-        $expires_month[] = array('id' => sprintf('%02d', $i), 'text' => strftime('%B',mktime(0,0,0,$i,1,2000)));
+        $expires_month[] = array('id' => sprintf('%02d', $i), 'text' => a2b_strftime('%B',mktime(0,0,0,$i,1,2000)));
       }
 
       $today = getdate(); 
       for ($i=$today['year']; $i < $today['year']+10; $i++) {
-        $expires_year[] = array('id' => strftime('%y',mktime(0,0,0,1,1,$i)), 'text' => strftime('%Y',mktime(0,0,0,1,1,$i)));
+        $expires_year[] = array('id' => a2b_strftime('%y',mktime(0,0,0,1,1,$i)), 'text' => a2b_strftime('%Y',mktime(0,0,0,1,1,$i)));
       }
 
       if ((MODULE_PAYMENT_PLUGNPAY_PAYMETHOD == 'onlinecheck') && (MODULE_PAYMENT_PLUGNPAY_CVV == 'no')) {
@@ -225,7 +226,7 @@ class plugnpay {
           case -5:
             $error = TEXT_CCVAL_ERROR_CARD_TYPE_MISMATCH;
             break;
-          case -6;
+          case -6:
             $error = TEXT_CCVAL_ERROR_CVV_LENGTH;
             break; 
           case false:
@@ -269,7 +270,7 @@ class plugnpay {
                                                 array('title' => MODULE_PAYMENT_PLUGNPAY_TEXT_CREDIT_CARD_NUMBER,
                                                       'field' => substr($this->cc_card_number, 0, 4) . str_repeat('X', (strlen($this->cc_card_number) - 8)) . substr($this->cc_card_number, -4)),
                                                 array('title' => MODULE_PAYMENT_PLUGNPAY_TEXT_CREDIT_CARD_EXPIRES,
-                                                      'field' => strftime('%B, %Y', mktime(0,0,0,$_POST['plugnpay_cc_expires_month'], 1, '20' . $_POST['plugnpay_cc_expires_year'])))));
+                                                      'field' => a2b_strftime('%B, %Y', mktime(0,0,0,$_POST['plugnpay_cc_expires_month'], 1, '20' . $_POST['plugnpay_cc_expires_year'])))));
       }  
       else {
         $card_cvv=$_POST['cvv'];
@@ -281,7 +282,7 @@ class plugnpay {
                                                 array('title' => MODULE_PAYMENT_PLUGNPAY_TEXT_CREDIT_CARD_NUMBER,
                                                       'field' => substr($this->cc_card_number, 0, 4) . str_repeat('X', (strlen($this->cc_card_number) - 8)) . substr($this->cc_card_number, -4)),
                                                 array('title' => MODULE_PAYMENT_PLUGNPAY_TEXT_CREDIT_CARD_EXPIRES,
-                                                      'field' => strftime('%B, %Y', mktime(0,0,0,$_POST['plugnpay_cc_expires_month'], 1, '20' . $_POST['plugnpay_cc_expires_year'])))));
+                                                      'field' => a2b_strftime('%B, %Y', mktime(0,0,0,$_POST['plugnpay_cc_expires_month'], 1, '20' . $_POST['plugnpay_cc_expires_year'])))));
         $card_cvv=$_POST['cvv'];
       }
       return $confirmation;

@@ -59,7 +59,7 @@ if (isset ($form_action) && $form_action == "ask-add") {
 $instance_config_table = new Table("cc_card_concat", "concat_id");
 $return = $instance_config_table -> Get_list($DBHandle,NULL,"concat_id","ASC",NULL,NULL,NULL,NULL,"GROUP BY concat_id");
 $unions = array();
-foreach ($return as $n => $val) {
+foreach ((is_array($return) ? $return : array()) as $n => $val) {
 	$unions [$n] = array($val[0],$val[0]);
 }
 
@@ -90,7 +90,7 @@ $HD_Form -> AddEditElement (gettext("ROOT CONTROL"),
 			"",
 			"",
 			"",
-			"", "", "", gettext("Yes").":1, - ".gettext("No").":0");
+			"", "", "", gettext("Yes").":1, - ".gettext("No").":0", "", "");
 
 $HD_Form -> AddEditElement (gettext("ADMINISTER VoIP & DID INSIDE THE UNION"),
 			"foreignvoipconf",
@@ -99,7 +99,7 @@ $HD_Form -> AddEditElement (gettext("ADMINISTER VoIP & DID INSIDE THE UNION"),
 			"",
 			"",
 			"",
-			"", "", "", gettext("Yes").":1, - ".gettext("No").":0");
+			"", "", "", gettext("Yes").":1, - ".gettext("No").":0", "", "");
 
 $HD_Form -> AddEditElement (gettext("ACCESS TO UNION'S LOGS"),
 			"foreignlogs",

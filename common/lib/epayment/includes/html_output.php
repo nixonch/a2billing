@@ -43,7 +43,7 @@
       }
     }
 
-    if ( (SEARCH_ENGINE_FRIENDLY_URLS == 'true') && ($search_engine_safe == true) ) {
+    if ( defined('SEARCH_ENGINE_FRIENDLY_URLS') && (SEARCH_ENGINE_FRIENDLY_URLS == 'true') && ($search_engine_safe == true) ) {
       while (strstr($link, '&&')) $link = str_replace('&&', '&', $link);
 
       $link = str_replace('?', '/', $link);
@@ -75,7 +75,7 @@
       $image .= ' title=" ' . tep_output_string($alt) . ' "';
     }
 
-    if ( (CONFIG_CALCULATE_IMAGE_SIZE == 'true') && (empty($width) || empty($height)) ) {
+    if ( defined('CONFIG_CALCULATE_IMAGE_SIZE') && (CONFIG_CALCULATE_IMAGE_SIZE == 'true') && (empty($width) || empty($height)) ) {
       if ($image_size = @getimagesize($src)) {
         if (empty($width) && tep_not_null($height)) {
           $ratio = $height / $image_size[1];
@@ -291,4 +291,4 @@
     return tep_draw_pull_down_menu($name, $countries_array, $selected, $parameters);
   }
 
-  
+

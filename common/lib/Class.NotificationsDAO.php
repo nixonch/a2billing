@@ -72,7 +72,7 @@ class NotificationsDAO {
 		$return = $table->Get_list($DBHandle, $clause, "date", "DESC");
 		$list = array();
 		$i=0;
-		foreach ($return as $record) {
+		foreach ((is_array($return) ? $return : array()) as $record) {
 			if($record['viewed']!=0 && !is_null($record['viewed']))$new = false;
 			else $new = true;
 			$list[$i] = new Notification($record['id'],$record['date'],$record['key_value'],$record['priority'],$record['from_type'],$record['from_id'],$record['link_id'],$record['link_type'],$new);
@@ -96,7 +96,8 @@ class NotificationsDAO {
 		$table = new Table("cc_notification LEFT JOIN cc_notification_admin ON id = id_notification AND id_admin =$id", "*");
 		$return = $table->Get_list($DBHandle, "", "date", "DESC",null,null,$nb,$current);
 		$i=0;
-		foreach ($return as $record) {
+        $list = array();
+		foreach ((is_array($return) ? $return : array()) as $record) {
 			if($record['viewed']!=0 && !is_null($record['viewed']))$new = false;
 			else $new = true;
 			$list[$i] = new Notification($record['id'],$record['date'],$record['key_value'],$record['priority'],$record['from_type'],$record['from_id'],$record['link_id'],$record['link_type'],$new);

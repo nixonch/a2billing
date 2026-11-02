@@ -170,7 +170,7 @@ $zippostcode = '';
 //      -= Need to install GeoIP http://ua2.php.net/manual/en/geoip.setup.php =-
 if (function_exists('geoip_db_avail') && (geoip_db_avail(GEOIP_REGION_EDITION_REV0) || geoip_db_avail(GEOIP_REGION_EDITION_REV1))) {
         $countryregion = geoip_record_by_name($_SERVER['REMOTE_ADDR']);
-        $zippostcode = "value='".$countryregion['postal_code']."'"; // ZIP/POSTAL CODE
+        $zippostcode = "value='".(isset($countryregion['postal_code']) ? $countryregion['postal_code'] : '')."'"; // ZIP/POSTAL CODE
 } else {
         $countrycode = $region = "";
 	$countryregion = array();
@@ -181,11 +181,11 @@ $country_city_list = array (array('Jeru'  ,'Israel' ),
                             );
 $town = "";
 foreach ($country_city_list as $cur_value) {
-        if ($cur_value[1]==$countryregion['country_name'])
+        if (isset($countryregion['country_name']) && $cur_value[1]==$countryregion['country_name'])
             $town = $cur_value[0];
 }
 
-$countrycode = $countryregion['country_code3'];
+$countrycode = isset($countryregion['country_code3']) ? $countryregion['country_code3'] : '';
 if ($countrycode=="") {
     $countrycode = 'USA';
 }
@@ -197,8 +197,8 @@ $timezone_list = get_timezones();
                         if ($countryregion===false) {
                                 $country = $region = "";
                         } else {
-                                $country = $countryregion['country_code'];
-                                $region = $countryregion['region'];
+                                $country = isset($countryregion['country_code']) ? $countryregion['country_code'] : '';
+                                $region = isset($countryregion['region']) ? $countryregion['region'] : '';
                         }
                         if ($region == "") {
                                 if ($country == "") $country = geoip_country_code_by_name($_SERVER['REMOTE_ADDR']);

@@ -194,7 +194,7 @@ if ($_POST['posted']==1){
 	$list_total = $instance_table_graph -> Get_list ($DBHandle, $FG_TABLE_CLAUSE, null, null, null, null, null, null);
 }
 
-$nb_record = count($list_total);
+$nb_record = (is_array($list_total) ? count($list_total) : 0);
 
 if ($nb_record<=$FG_LIMITE_DISPLAY) { 
 	$nb_record_max=1;

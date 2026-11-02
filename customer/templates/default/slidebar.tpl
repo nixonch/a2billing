@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{php} header('X-Frame-Options: SAMEORIGIN'); {/php}
+{a2b_frame_options}
 <html lang="en">
 <head>
     <link rel="shortcut icon" href="{$FAVICONPATH}"/>
@@ -38,30 +38,7 @@
 <div class="container" onClick="if ($('#navi-toggle').prop('checked') && event.target.tagName!='A') document.getElementById('navi-toggle').checked=false">
   <div class="footer_icons">
     <div style="text-align:center">
-{php}
-    $DBHandle = DbConnect();
-    $instance_table = new Table();
-    $QUERY = "SELECT configuration_key FROM cc_configuration where configuration_key in ('MODULE_PAYMENT_AUTHORIZENET_STATUS','MODULE_PAYMENT_PAYPAL_BASIC_STATUS','MODULE_PAYMENT_MONEYBOOKERS_STATUS','MODULE_PAYMENT_WORLDPAY_STATUS','MODULE_PAYMENT_PLUGNPAY_STATUS','MODULE_PAYMENT_WM_STATUS') AND configuration_value='True'";
-    $payment_methods = $instance_table->SQLExec($DBHandle, $QUERY);
-    $QUERY = "SELECT configuration_value FROM cc_configuration where configuration_key='MODULE_PAYMENT_WM_WMID'";
-    $wmid = $instance_table->SQLExec($DBHandle, $QUERY);
-    $show_logo = '';
-    $aiphone_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : '');
-    $aiphone_utm_source = rawurlencode(trim((string) parse_url('http://' . $aiphone_host, PHP_URL_HOST), '[]'));
-    $show_logo .= ' <a href="https://chromewebstore.google.com/detail/pofkcckikkdhiieipefhkaelgnbdkcib?utm_source=' . $aiphone_utm_source . '&amp;utm_medium=referral&amp;utm_campaign=a2billing_customer_slidebar" target="_blank" rel="noopener noreferrer"><img src="images/aiphone-88x31.svg" width="88" height="31" alt="AiPhone"/></a>&nbsp;';
-    for ($index=0; $index<sizeof($payment_methods); $index++) {
-	if ($payment_methods[$index][0] == "MODULE_PAYMENT_MONEYBOOKERS_STATUS") {
-	    $show_logo .= '<a href="https://www.moneybookers.com/app/?rid=811621" target="_blank"><img src="' . KICON_PATH . '/moneybookers.gif" width="88" alt="Moneybookers"/></a>';
-	} elseif ($payment_methods[$index][0] == "MODULE_PAYMENT_PLUGNPAY_STATUS") {
-	    $show_logo .= '<a href="http://www.plugnpay.com/" target="_blank"><img src="' . KICON_PATH . '/plugnpay.png" width="110" alt="plugnpay.com"/></a>';
-	} elseif ($payment_methods[$index][0] == "MODULE_PAYMENT_WM_STATUS") {
-	    $show_logo .= '<a href="http://www.web.money/" target="_blank"><img src="' . KICON_PATH . '/webmoney_virified.png" width="88" alt="WebMoney"/></a>';
-	} elseif ($payment_methods[$index][0] == "MODULE_PAYMENT_PAYPAL_BASIC_STATUS") {
-	    $show_logo .= '<a href="https://www.paypal.com/en/mrb/pal=PGSJEXAEXKTBU" target="_blank"><img src="' . KICON_PATH . '/payments_paypal.gif" width="120" alt="Paypal"/></a>';
-	}
-    }
-    echo $show_logo;
-{/php}
+{a2b_payment_logos sidebar=true}
 
     </div>
   </div>

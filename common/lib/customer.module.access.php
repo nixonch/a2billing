@@ -93,7 +93,7 @@ if (!isset($_SESSION['pr_login']) || !isset($_SESSION['pr_password']) || !isset(
 
 	if ($FG_DEBUG == 1) echo "<br>0. HERE WE ARE";
 
-	if ($done=="submit_log" || $done=="submit_sig") {
+	if (isset($done) && ($done=="submit_log" || $done=="submit_sig")) {
 		if (!isset ($_SESSION["date_forgot"]) || (time() - $_SESSION["date_forgot"]) > 5) {
                         $_SESSION["date_forgot"] = time();
                 } else {
@@ -160,7 +160,7 @@ if (!isset($_SESSION['pr_login']) || !isset($_SESSION['pr_password']) || !isset(
 			$res = $DBHandle -> Execute($QUERY);
 			if ($res!==false) {
 				$row [] = $res -> fetchRow();
-				$_SESSION["admin_ip"] = $row [0][0];
+				$_SESSION["admin_ip"] = isset($row[0][0]) ? $row[0][0] : '';
 			}
 			
 			$log = new Logger();
@@ -186,8 +186,8 @@ function login ($user, $pass)
 	$pass = trim($pass);
 	if (strlen($user)==0 || strlen($user)>=50 || strlen($pass)==0 || strlen($pass)>=50) return false;
 
-    $user = filter_var($user, FILTER_SANITIZE_STRING);
-    $pass = filter_var($pass, FILTER_SANITIZE_STRING);
+    $user = a2b_filter_login_string($user);
+    $pass = a2b_filter_login_string($pass);
 
 //	$QUERY = "SELECT cc.username, cc.credit, cc.status, cc.id, cc.id_didgroup, cc.tariff, cc.vat, IF(CONCAT(cc.id_timezone+0) = cc.id_timezone, ct.gmtoffset, (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(CONVERT_TZ(NOW(), SUBSTRING_INDEX(cc.id_timezone, ';', -1), 'UTC')))), cc.voicemail_permitted, " .
 	$QUERY = "SELECT cc.username, cc.credit, cc.status, cc.id, cc.id_didgroup, cc.tariff, cc.vat, IF(CONCAT(cc.id_timezone+0) = cc.id_timezone, ct.gmtoffset, 0), cc.voicemail_permitted, cc.voicemail_activated, cc_card_group.users_perms, " .
@@ -248,5 +248,5 @@ $ACXDISTRIBUTION			= has_rights (ACX_DISTRIBUTION);
 $ACXSURVEILLANCE			= has_rights (ACX_SURVEILLANCE);
 
 if (ACT_VOICEMAIL) {
-    $ACXVOICEMAIL 				= $_SESSION["voicemail"];
+    $ACXVOICEMAIL = isset($_SESSION["voicemail"]) ? $_SESSION["voicemail"] : false;
 }
