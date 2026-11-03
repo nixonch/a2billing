@@ -90,34 +90,7 @@ $list = $HD_Form->perform_action($form_action);
 $smarty->display('main.tpl');
 
 if ($popup_select == 4 && $form_action == 'edit' && $HD_Form->VALID_SQL_REG_EXP && $HD_Form->RESULT_QUERY) {
-?>
-<table width="95%" align="center">
-<tr height="80px">
-<td align="center"><b><?php echo gettext("Information has successfully been updated"); ?></b></td>
-</tr>
-</table>
-<div align="center">
-    <input id="speeddial-close" class="form_input_button" type="button" value="<?php echo htmlspecialchars(gettext("Close Window"), ENT_QUOTES, 'UTF-8'); ?>" onclick="window.parent.postMessage({action:'closeAlert'},'*');">
-</div>
-<script type="text/javascript">
-(function () {
-    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*');
-    var button = document.getElementById('speeddial-close');
-    var label = <?php echo json_encode(gettext("Close Window"), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
-    var seconds = 10;
-    button.focus();
-    button.value = label + ' (' + seconds + ')';
-    var timer = setInterval(function () {
-        seconds--;
-        button.value = label + ' (' + seconds + ')';
-        if (seconds <= 0) {
-            clearInterval(timer);
-            button.click();
-        }
-    }, 1000);
-}());
-</script>
-<?php
+    FormHandler::create_popup_result();
     $smarty->display('footer.tpl');
     exit;
 }

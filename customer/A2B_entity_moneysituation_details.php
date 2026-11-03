@@ -55,42 +55,13 @@ if ($resmax) {
     $row = $resmax->fetchRow();
     $HD_Form -> FG_INTRO_TEXT_EDITION = "<u><font color=blue>".$row[0]." ".$row[1]."</font> (".$row[2].") <font color=green>".$row[3]." ".BASE_CURRENCY."</font></u>";
     if ($form_action != "ask-edit") {
-	?><center><?php
-	echo $HD_Form -> FG_INTRO_TEXT_EDITION;
+	echo '<div align="center">'.$HD_Form->FG_INTRO_TEXT_EDITION.'</div>';
     }
     $HD_Form -> FG_INTRO_TEXT_EDITION = "<B>".$HD_Form -> FG_INTRO_TEXT_EDITION."</B>";
 }
 
 if ($message == "editsuccess") {
-?>
-<table width="95%" align="center">
-<tr height="100px">
-<td align="center"><b><?php echo gettext("Information has successfully been updated")?></b></td>
-</tr>
-</table>
-<br>
-<form runat="server">
-    <div>
-        <input id="button1" onclick="window.parent.postMessage({action:'closeAlert'},'*')" class="form_input_button" type="button" value="" />
-    </div>
-</form>
-<script type="text/javascript">
-    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*');
-    objbutton=document.getElementById('button1');
-    objbutton.focus();
-    timeleft=10;
-    function buttontimer(){
-	timeleft--;
-	if(timeleft==0) {
-		objbutton.click();
-	}
-	objbutton.value = '<?= gettext("Close Window") ?> ('+timeleft+')';
-    }
-    buttontimer();
-    setInterval(function() {buttontimer()}, 1000);
-</script>
-
-<?php
+    FormHandler::create_popup_result();
 } else {
     // #### TOP SECTION PAGE
     $HD_Form->create_toppage($form_action);

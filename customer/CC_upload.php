@@ -34,6 +34,7 @@
 
 include ("lib/customer.defines.php");
 include ("lib/customer.module.access.php");
+include_once ("lib/Form/Class.FormHandler.inc.php");
 include ("lib/customer.smarty.php");
 
 
@@ -88,6 +89,7 @@ function arr_rid_blank($my_arr) {
 	}
 }
 $file_ext_allow = arr_rid_blank($file_ext_allow);
+$upload_succeeded = false;
 
 //Any other action the user must be logged in!
 
@@ -97,8 +99,6 @@ if ($method) {
 	//Upload the file
 	if ($method == "upload") {
 
-		$file_array = $_FILES['file'];
-		$_SESSION['message'] = "";
 		$uploads = false;
 
 		//print_r($file_ext_allow);
@@ -107,31 +107,34 @@ if ($method) {
 		for ($i = 0; $i < $files_to_upload; $i++) {
 			if ($_FILES['file']['name'][$i]) {
 				$uploads = true;
-				if ($_FILES['file']['name'][$i]) {
 
-					$fileupload_name = $_FILES['file']['name'][0];
+				$fileupload_name = $_FILES['file']['name'][0];
 
-					for ($i = 0; $i < count($file_ext_allow); $i++) {
-						//if (getlast($fileupload_name)!=$file_ext_allow[$i]){
-						if (strcmp(getlast($fileupload_name), $file_ext_allow[$i]) != 0) {
-							$test .= "~~";
-							//echo "<br>'".getlast($fileupload_name)."' - '".$file_ext_allow[$i]."'<br>";
-						}
+				for ($i = 0; $i < count($file_ext_allow); $i++) {
+					//if (getlast($fileupload_name)!=$file_ext_allow[$i]){
+					if (strcmp(getlast($fileupload_name), $file_ext_allow[$i]) != 0) {
+						$test .= "~~";
+						//echo "<br>'".getlast($fileupload_name)."' - '".$file_ext_allow[$i]."'<br>";
 					}
-					$exp = explode("~~", $test);
-					if (count($exp) == (count($file_ext_allow) + 1)) {
-						$_SESSION['message'] .= "<br><img src=\"$dir_img/error.gif\" width=\"15\" height=\"15\">&nbsp;<b><font size=\"2\">" . gettext("ERROR: your file type is not allowed") . " (" . getlast($fileupload_name) . ")</font>, " . gettext("or you didn't specify a file to upload") . ".</b><br>";
+				}
+				$exp = explode("~~", $test);
+				if (!empty($_FILES['file']['error'][0])) {
+					$_SESSION['message'] .= gettext("File Upload Failed");
+				} elseif (count($exp) == (count($file_ext_allow) + 1)) {
+					$_SESSION['message'] .= "<br><img src=\"$dir_img/msg_error.png\" width=\"15\" height=\"15\">&nbsp;<b><font size=\"2\">" . gettext("ERROR: your file type is not allowed") . " (" . getlast($fileupload_name) . ")</font>, " . gettext("or you didn't specify a file to upload") . ".</b><br>";
+				} else {
+					if ($_FILES['file']['size'][0] > $file_size_ind) {
+						$_SESSION['message'] .= "<br><img src=\"$dir_img/msg_error.png\" width=\"15\" height=\"15\">&nbsp;<b><font size=\"2\">" . gettext("ERROR: please get the file size less than") . " " . $file_size_ind . " BYTES  (" . round(($file_size_ind / 1024), 2) . " KB)</font></b><br>";
 					} else {
-						if ($_FILES['file']['size'][0] > $file_size_ind) {
-							$_SESSION['message'] .= "<br><img src=\"$dir_img/error.gif\" width=\"15\" height=\"15\">&nbsp;<b><font size=\"2\">" . gettext("ERROR: please get the file size less than") . " " . $file_size_ind . " BYTES  (" . round(($file_size_ind / 1024), 2) . " KB)</font></b><br>";
-						} else {
-							$file_to_upload = $upload_dir . "/" . $_FILES['file']['name'][0];
-							if (!file_exists($upload_dir)) mkdir($upload_dir, 0755);
-							move_uploaded_file($_FILES['file']['tmp_name'][0], $file_to_upload);
-							//echo "<br>::$file_to_upload</br>";
+						$file_to_upload = $upload_dir . "/" . $_FILES['file']['name'][0];
+						if (!file_exists($upload_dir)) mkdir($upload_dir, 0755);
+						if (move_uploaded_file($_FILES['file']['tmp_name'][0], $file_to_upload)) {
 							chmod($upload_dir, 0755);
 							chmod($file_to_upload,0644);
 							$_SESSION['message'] .= "<font color=\"grey\"><u>" . $_FILES['file']['name'][0] . "</u></font> uploaded.<br>";
+							$upload_succeeded = true;
+						} else {
+							$_SESSION['message'] .= gettext("File Save Failed, FILE=").htmlspecialchars($_FILES['file']['name'][0], ENT_QUOTES, 'UTF-8');
 						}
 					}
 				}
@@ -174,6 +177,10 @@ if ($method) {
 	}
 }
 
+$show_completion = isset($_SESSION['message'])
+    && $_SESSION['message'] !== gettext("No files selected!")
+    && ($method !== 'upload' || $upload_succeeded);
+
 $smarty->display('main.tpl');
 
 ?>
@@ -190,7 +197,7 @@ $smarty->display('main.tpl');
 </table>
 
 
-<form method='post' enctype='multipart/form-data' action='<?php echo $_SERVER['PHP_SELF'];?>?popup_select=1&method=upload'>
+<form method='post' enctype='multipart/form-data' action='<?php echo $_SERVER['PHP_SELF'];?>?popup_select=1&method=upload' onreset="var message = document.getElementById('upload-message'); if (message) message.textContent = '';">
 <input type="hidden" value="<?php echo $acc?>" name="acc"/>
 <table cellspacing="5" cellpadding="2" border="0" style="padding:5px;">
  <?php for( $i = 0; $i < $files_to_upload; $i++ ) { ?>
@@ -224,10 +231,10 @@ $smarty->display('main.tpl');
     </td>
   </tr>
   <tr>
-    <td colspan="2" align="right"><font color="red"><?= $_SESSION['message']?:'' ?></font><br><br><br></td>
+    <td colspan="2" align="right"><font id="upload-message" color="red"><?= $_SESSION['message']?:'' ?></font><br><br><br></td>
   </tr>
 </table>
-<?php   if (!isset($_SESSION['message']) || $_SESSION['message'] === gettext("No files selected!")) { ?>
+<?php   if (!$show_completion) { ?>
 <div id="inline-alert-buttons">
   <button type="submit" id="inline-alert-main" style="background:#1e3a83;border:1px solid #1e3a83;"><?php echo gettext("Upload") ?></button>
   <button type="reset" id="inline-alert-secondary"><?= gettext("Clear") ?></button>
@@ -236,36 +243,9 @@ $smarty->display('main.tpl');
 </form>
 <?php
         //When there is a message, after an action, show it
-        if(isset($_SESSION['message']))
-        {
-	  if ($_SESSION['message'] !== gettext("No files selected!")) {
-?>
-<center>
-<form runat="server">
-    <div>
-        <input id="button1" onclick="window.parent.postMessage({action:'closeAlert'},'*')" class="form_input_button" type="button" value="" />
-    </div>
-</form>
-<script type="text/javascript">
-    objbutton=document.getElementById('button1');
-    objbutton.focus();
-    timeleft=10;
-    function buttontimer(){
-	timeleft--;
-	if(timeleft==0) {
-	    objbutton.click();
-	}
-        objbutton.value = '<?php echo gettext("Close Window")?> ('+timeleft+')';
-    }
-    var updateLink = window.parent.location.protocol + '//' + window.parent.location.host + window.parent.location.pathname + '?play=2';
-    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*')
-    buttontimer();
-    setInterval(function() {buttontimer()}, 1000);
-</script>
-
-<?php     }
-          unset($_SESSION['message']);
-	}
-?>
-</center>
-<?php
+        if (isset($_SESSION['message'])) {
+            if ($show_completion) {
+                FormHandler::create_popup_result('');
+            }
+            unset($_SESSION['message']);
+        }

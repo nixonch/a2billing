@@ -166,45 +166,9 @@ if ($form_action == "list" && $message != "success" && has_rights (ACX_DISTRIBUT
 }
 
 if ($message == "success") {
-?>
-<TABLE cellSpacing=2 class="toppage_actionfinish">
-    <TR>
-	<TD class="form_head"> 
-	  <?php echo gettext("INSERT NEW Refill")." ".$HD_Form -> FG_INTRO_TEXT_ADITION;?>
-	</TD>
-    </TR><TR>
-	<TD width="516" valign="top" class="tdstyle_001"> <br>
-	    <div align="center"><strong>
-		<?php echo gettext("Transaction was completed succesfully")?><br>
-	    </strong></div>
-	    <br>
-	</TD>
-    </TR>
-</TABLE>
-<br>
-<center>
-<form runat="server">
-    <div>
-        <input id="button1" onclick="window.parent.postMessage({action:'closeAlert'},'*')" class="form_input_button" type="button" value="" />
-    </div>
-</form>
-<script type="text/javascript">
-    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*');
-    objbutton=document.getElementById('button1');
-    objbutton.focus();
-    timeleft=10;
-    function buttontimer(){
-	timeleft--;
-	if(timeleft==0) {
-	    objbutton.click();
-	}
-        objbutton.value = '<?php echo gettext("Close Window")?> ('+timeleft+')';
-    }
-    buttontimer();
-    setInterval(function() {buttontimer()}, 1000);
-</script>
-
-<?php
+    FormHandler::create_popup_result(
+        gettext("INSERT NEW Refill")." ".$HD_Form->FG_INTRO_TEXT_ADITION."<br>".gettext("Transaction was completed succesfully")
+    );
 }
 
 // #### FOOTER SECTION

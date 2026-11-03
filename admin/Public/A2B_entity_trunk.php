@@ -56,34 +56,8 @@ if (!isset ($action))
 
 if ($message == "editsuccess") {
     $smarty->display('header.tpl');
+    FormHandler::create_popup_result(null, true);
 ?>
-<style type="text/css">
-    body { height:auto; min-height:100vh; display:grid; grid-template-rows:1fr auto 2fr; }
-    #page-wrap { width:100%; grid-row:2; }
-    #page-wrap > #inside { margin:0; padding:20px 0 40px; }
-</style>
-<div class="block_centered" style="width:max-content; min-width:80%;">
-    <div class="msg_success" role="status" style="color:#444; border-color:#aaa; background-color:#f2f2f2; margin:0 0 10px;">
-        <strong><?php echo gettext("Information has successfully been updated"); ?></strong>
-    </div>
-    <input id="button1" class="form_input_button" type="button" value="<?php echo htmlspecialchars(gettext("Close Window"), ENT_QUOTES, 'UTF-8'); ?>" />
-</div>
-<script type="text/javascript">
-(function () {
-    var button = document.getElementById('button1'), label = button.value, seconds = 10;
-    button.onclick = function () {
-        clearInterval(timer);
-        window.parent.postMessage({action:'closeAlert'},'*');
-    };
-    button.value = label + ' (' + seconds + ')';
-    button.focus();
-    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*');
-    var timer = setInterval(function () {
-        button.value = label + ' (' + --seconds + ')';
-        if (seconds <= 0) { button.click(); }
-    }, 1000);
-}());
-</script>
 </div>
 </div>
 </body>

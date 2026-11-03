@@ -110,7 +110,7 @@ if ($form_action == "upload"){
 	$uploaddir = BACKUP_PATH.'/';
 	$uploadfile = $uploaddir . basename($_FILES['databasebackup']['name']);
 
-	if (move_uploaded_file($_FILES['databasebackup']['tmp_name'], $uploadfile)) {
+	if (empty($_FILES['databasebackup']['error']) && move_uploaded_file($_FILES['databasebackup']['tmp_name'], $uploadfile)) {
 		$instance_table_backup = new Table($HD_Form -> FG_TABLE_NAME, 'id, name, path, creationdate');
 		$param_add_value = "'','Custom".date("Ymd-His")."','".$uploadfile."',now()";
 		$result_query=$instance_table_backup -> Add_table ($HD_Form -> DBHandle, $param_add_value, null, null, null);
@@ -120,6 +120,7 @@ if ($form_action == "upload"){
 		}	
 	} else {
 		$error_upload=gettext("Error uploading file");
+		$form_action = "list";
 	}
 }
 																	
@@ -130,6 +131,14 @@ $list = $HD_Form -> perform_action($form_action);
 
 // #### HEADER SECTION
 $smarty->display('main.tpl');
+
+if (isset($error_upload)) {
+?>
+<script type="text/javascript">
+alertBase(<?php echo json_encode(htmlspecialchars($error_upload, ENT_QUOTES, 'UTF-8'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>, null, true, true, 'danger');
+</script>
+<?php
+}
 
 // #### HELP SECTION
 if ($form_action == "list" || $popup_select < 2)

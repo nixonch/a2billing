@@ -52,7 +52,7 @@ $HD_Form ->FG_LIST_ADDING_BUTTON_ALT1 = gettext("Check/Update greetings list");
 $HD_Form ->FG_LIST_ADDING_BUTTON_IMG1 = Images_Path ."/icon_refresh.gif" ;
 
 $HD_Form ->FG_LIST_ADDING_BUTTON2 = true;
-$HD_Form ->FG_LIST_ADDING_BUTTON_LINK2 = "javascript:;\" onClick=\"alertBase('url:CC_upload.php?popup_select=1','".gettext("Upload my greeting")."',true,false,'info',event.pageX+15,event.pageY-15,'UL')";
+$HD_Form ->FG_LIST_ADDING_BUTTON_LINK2 = "javascript:;\" onClick=\"alertBase('url:CC_upload.php?popup_select=1','".gettext("Upload my greeting")."',true,false,'info',event.pageX+15,event.pageY-15,'UL',null,null,null,null,null,greetingUploadResult)";
 $HD_Form ->FG_LIST_ADDING_BUTTON_ALT2 = gettext("Upload my greeting");
 $HD_Form ->FG_LIST_ADDING_BUTTON_IMG2 = Images_Path ."/icon_upload.gif" ;
 

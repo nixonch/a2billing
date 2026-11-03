@@ -100,34 +100,35 @@ if ($method) {
 	//Upload the file
 	if ($method == "upload") {
 
-		$file_array = $_FILES['file'];
-		$_SESSION['message'] = "";
 		$uploads = false;
 
 		for ($i = 0; $i < $files_to_upload; $i++) {
 			if ($_FILES['file']['name'][$i]) {
 				$uploads = true;
-				if ($_FILES['file']['name'][$i]) {
 
-					$fileupload_name = $_FILES['file']['name'][0];
+				$fileupload_name = $_FILES['file']['name'][0];
 
-					for ($i = 0; $i < count($file_ext_allow); $i++) {
-						if (strcmp(getlast($fileupload_name), $file_ext_allow[$i]) != 0) {
-							$test .= "~~";
-						}
+				for ($i = 0; $i < count($file_ext_allow); $i++) {
+					if (strcmp(getlast($fileupload_name), $file_ext_allow[$i]) != 0) {
+						$test .= "~~";
 					}
-					$exp = explode("~~", $test);
-					if (count($exp) == (count($file_ext_allow) + 1)) {
-						$_SESSION['message'] .= "<br><img src=\"$dir_img/error.gif\" width=\"15\" height=\"15\">&nbsp;<b><font size=\"2\">" . gettext("ERROR: your file type is not allowed") . " (" . getlast($fileupload_name) . ")</font>, " . gettext("or you didn't specify a file to upload") . ".</b><br>";
+				}
+				$exp = explode("~~", $test);
+				if (!empty($_FILES['file']['error'][0])) {
+					$_SESSION['message'] .= gettext("File Upload Failed");
+				} elseif (count($exp) == (count($file_ext_allow) + 1)) {
+					$_SESSION['message'] .= "<br><img src=\"$dir_img/error.gif\" width=\"15\" height=\"15\">&nbsp;<b><font size=\"2\">" . gettext("ERROR: your file type is not allowed") . " (" . getlast($fileupload_name) . ")</font>, " . gettext("or you didn't specify a file to upload") . ".</b><br>";
+				} else {
+					if ($_FILES['file']['size'][0] > $file_size_ind) {
+						$_SESSION['message'] .= "<br><img src=\"$dir_img/error.gif\" width=\"15\" height=\"15\">&nbsp;<b><font size=\"2\">" . gettext("ERROR: please get the file size less than") . " " . $file_size_ind . " BYTES  (" . round(($file_size_ind / 1024), 2) . " KB)</font></b><br>";
 					} else {
-						if ($_FILES['file']['size'][0] > $file_size_ind) {
-							$_SESSION['message'] .= "<br><img src=\"$dir_img/error.gif\" width=\"15\" height=\"15\">&nbsp;<b><font size=\"2\">" . gettext("ERROR: please get the file size less than") . " " . $file_size_ind . " BYTES  (" . round(($file_size_ind / 1024), 2) . " KB)</font></b><br>";
-						} else {
-							$file_to_upload = $upload_dir . "/" . $_FILES['file']['name'][0];
-							move_uploaded_file($_FILES['file']['tmp_name'][0], $file_to_upload);
+						$file_to_upload = $upload_dir . "/" . $_FILES['file']['name'][0];
+						if (move_uploaded_file($_FILES['file']['tmp_name'][0], $file_to_upload)) {
 							chmod($upload_dir, 0755);
 							chmod($file_to_upload,0644);
 							$_SESSION['message'] .= $_FILES['file']['name'][0] . " uploaded.<br>";
+						} else {
+							$_SESSION['message'] .= gettext("File Save Failed, FILE=").htmlspecialchars($_FILES['file']['name'][0], ENT_QUOTES, 'UTF-8');
 						}
 					}
 				}
@@ -193,7 +194,7 @@ $smarty->display('main.tpl');
 
 
 <table width="560" cellspacing="5" cellpadding="2" border="0" style="padding-top:5px;padding-left=5px;padding-bottom:5px;padding-right:5px">
-  <form method='post' enctype='multipart/form-data' action='<?php echo $_SERVER['PHP_SELF'];?>?method=upload'>
+  <form method='post' enctype='multipart/form-data' action='<?php echo $_SERVER['PHP_SELF'];?>?method=upload' onreset="var message = document.getElementById('upload-message'); if (message) message.textContent = '';">
   <input type="hidden" value="<?php echo $acc?>" name="acc"/>
  <?php for( $i = 0; $i < $files_to_upload; $i++ ) { ?>
          <tr>
@@ -237,7 +238,7 @@ $smarty->display('main.tpl');
         //When there is a message, after an action, show it
         if(isset($_SESSION['message']))
         {
-          echo "<br></br><font color='red'>" . $_SESSION['message'] . "</font>";
+          echo "<br></br><font id='upload-message' color='red'>" . $_SESSION['message'] . "</font>";
         }
       ?>
 <br><br><table width="560" cellspacing="1" cellpadding="1" border="0">

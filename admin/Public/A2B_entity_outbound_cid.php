@@ -57,35 +57,13 @@ if (!isset ($action))
 	$action = $form_action;
 
 if ($message == "editsuccess") {
+    $smarty->display('header.tpl');
+    FormHandler::create_popup_result(null, true);
 ?>
-<table width="95%" align="center">
-<tr height="80px">
-<td align="center"><b><?php echo gettext("Information has successfully been updated")?></b></td>
-</tr>
-</table>
-<form runat="server">
-    <div>
-        <input id="button1" onclick="window.parent.postMessage({action:'closeAlert'},'*')" class="form_input_button" type="button" value="" />
-    </div>
-</form>
-<br>
-<br>
-</center>
-<script type="text/javascript">
-    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*');
-    objbutton=document.getElementById('button1');
-    objbutton.focus();
-    timeleft=11;
-    function buttontimer(){
-        timeleft--;
-        if(timeleft==0) {
-                objbutton.click();
-        }
-        objbutton.value = '<?= gettext("Close Window") ?> ('+timeleft+')';
-    }
-    buttontimer();
-    setInterval(function() {buttontimer()}, 1000);
-</script>
+</div>
+</div>
+</body>
+</html>
 <?php
 } else {
 

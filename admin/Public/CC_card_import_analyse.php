@@ -99,16 +99,10 @@ if ($task=='upload') {
 			exit;
 		}
 		$new_filename = "/tmp/".MDP(6).".csv";
-		if (file_exists($new_filename))
+		if (!move_uploaded_file($_FILES["the_file"]["tmp_name"], $new_filename))
 		{
-			echo $_FILES["file"]["name"] . " already exists. ";
-		}
-		else
-		{
-			if(!move_uploaded_file($_FILES["the_file"]["tmp_name"],	$new_filename))
-			{
-			    echo gettext("File Save Failed, FILE=".$new_filename);
-			}
+			echo gettext("File Save Failed, FILE=".$new_filename);
+			exit;
 		}
 		$the_file = $new_filename;
 	}

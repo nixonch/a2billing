@@ -121,7 +121,8 @@ if (($method == 'ask-edit' && isset($id) && is_numeric($id)) || $method == 'cust
 	$the_file_type = $_FILES['the_file']['type'];
 	$the_file = $_FILES['the_file']['tmp_name'];
 	$uploaded = false;
-	if (count($_FILES)>0 && $the_file) {
+	$skip_empty_phonebook = $id_ringup !== false && empty($_FILES['the_file']['size']) && empty($_FILES['the_file']['error']);
+	if (count($_FILES)>0 && $the_file && !$skip_empty_phonebook) {
 		$errortext = validate_upload($the_file, $the_file_type);
 		if ($errortext != "" || $errortext != false) {
 			echo $errortext;
@@ -437,6 +438,7 @@ function moveSourceDown(search_sources)
 
 function clearMyForm()
 {
+    document.myForm.elements.the_file.value = '';
     sss = document.myForm["selected_callerids"];
     uss = document.myForm["unselected_callerids"];
     for (i = 1; i < sss.length; i++) {
@@ -578,6 +580,21 @@ function sendtoupload(form){
 		alert ('<?php echo addslashes(gettext("Please, type only permitted characters \",0123456789\" into CallerIDs field !")); ?>');
 		form.callerids.focus();
 		return (false);
+	}
+	var phonebook = form.the_file.files[0], uploadError = '';
+	if (phonebook && (phonebook.size > 0 || !document.getElementById('id'))) {
+		if (['text/csv', 'text/x-csv'].indexOf(phonebook.type) === -1) {
+			uploadError = <?php echo json_encode(gettext("ERROR: your file type is not allowed")); ?> + ' (' + phonebook.type + ')';
+		} else if (phonebook.size === 0) {
+			uploadError = <?php echo json_encode(gettext("Failed to upload the file, The file you uploaded may not exist on disk.")); ?>;
+		} else if (phonebook.size > <?php echo $file_size_ind; ?>) {
+			uploadError = <?php echo json_encode(gettext("ERROR: please get the file size less than") . " " . $file_size_ind . " BYTES"); ?>;
+		}
+		if (uploadError) {
+			alert(uploadError);
+			form.the_file.focus();
+			return false;
+		}
 	}
 	document.myForm.submit();
 }

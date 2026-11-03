@@ -158,37 +158,7 @@ $list = $HD_Form->perform_action($form_action);
 $smarty->display('main.tpl');
 
 if ($message == "editsuccess") {
-?>
-<center>
-<table width="95%" align="center">
-<tr height="80px">
-<td align="center"><b><?php echo gettext("Information has successfully been updated")?></b></td>
-</tr>
-</table>
-<form runat="server">
-    <div>
-        <input id="button1" onclick="window.parent.postMessage({action:'closeAlert'},'*')" class="form_input_button" type="button" value="" />
-    </div>
-</form>
-</center>
-<br>
-<br>
-<script type="text/javascript">
-    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*');
-    objbutton=document.getElementById('button1');
-    objbutton.focus();
-    timeleft=10;
-    function buttontimer(){
-        timeleft--;
-        if(timeleft==0) {
-                objbutton.click();
-        }
-        objbutton.value = ' <?= gettext("Close Window") ?> ('+timeleft+') ';
-    }
-    buttontimer();
-    setInterval(function() {buttontimer()}, 1000);
-</script>
-<?php
+    FormHandler::create_popup_result();
 } else {
 
 // #### HELP SECTION

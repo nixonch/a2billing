@@ -1163,7 +1163,9 @@ function validate_upload($the_file, $the_file_type) {
 
 	$start_error = "\n<b>ERROR:</b>\n<ul>";
 	$error = "";
-	if ($the_file == "") {
+	if (!empty($_FILES['the_file']['error'])) {
+		$error .= "\n<li>" . gettext("File Upload Failed") . "</li>";
+	} elseif ($the_file == "") {
 		$error .= "\n<li>" . gettext("File size is greater than allowed limit.") . "\n<ul>";
 	} else {
 		if ($the_file == "none") {

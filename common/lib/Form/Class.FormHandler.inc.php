@@ -2061,6 +2061,54 @@ class FormHandler
 	
 	
 	/**
+     * Render a popup result after the caller has established the operation outcome.
+     * $message_html is trusted presentation markup; null uses the edit-success text,
+     * and an empty string renders only the close button for pages with their own result.
+     * Center the whole page only for standalone responses without other page content.
+     */
+    static function create_popup_result($message_html = null, $center_page = false)
+    {
+        if ($message_html === null) {
+            $message_html = htmlspecialchars(gettext("Information has successfully been updated"), ENT_QUOTES, 'UTF-8');
+        }
+        if ($center_page) {
+?>
+<style type="text/css">
+    body { height:auto; min-height:100vh; display:grid; grid-template-rows:1fr auto 2fr; }
+    #page-wrap { width:100%; grid-row:2; }
+    #page-wrap > #inside { margin:0; padding:20px 0 40px; }
+</style>
+<?php
+        }
+?>
+<div class="block_centered" style="width:max-content; min-width:80%;">
+<?php if ($message_html !== '') { ?>
+    <div class="msg_success" role="status" style="color:#444; border-color:#aaa; background-color:#f2f2f2; margin:0 0 10px;">
+        <strong><?php echo $message_html; ?></strong>
+    </div>
+<?php } ?>
+    <input data-popup-result-close class="form_input_button" type="button" value="<?php echo htmlspecialchars(gettext("Close Window"), ENT_QUOTES, 'UTF-8'); ?>" />
+</div>
+<script type="text/javascript">
+(function () {
+    var button = document.currentScript.previousElementSibling.querySelector('[data-popup-result-close]'), label = button.value, seconds = 10;
+    button.onclick = function () {
+        clearInterval(timer);
+        window.parent.postMessage({action:'closeAlert'},'*');
+    };
+    button.value = label + ' (' + seconds + ')';
+    button.focus();
+    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*');
+    var timer = setInterval(function () {
+        button.value = label + ' (' + --seconds + ')';
+        if (seconds <= 0) { button.click(); }
+    }, 1000);
+}());
+</script>
+<?php
+    }
+
+	/**
      * CREATE_ACTIONFINISH : Function to display result
      * @public     	 
      */

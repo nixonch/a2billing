@@ -230,6 +230,21 @@ $list = $HD_Form -> perform_action($form_action);
 // #### HEADER SECTION
 $smarty->display( 'main.tpl');
 
+?>
+<script type="text/javascript">
+function greetingUploadResult(payload) {
+    if (payload.type !== 'refreshInside') { return false; }
+    var previous = window.refreshProcessed;
+    window.refreshProcessed = Object.assign({}, previous, {play:2});
+    try {
+        return refreshInsideCallback(payload);
+    } finally {
+        window.refreshProcessed = previous;
+    }
+}
+</script>
+<?php
+
 if ($form_action == "list") {
     $HD_Form -> create_toppage ("ask-add");
     if ($istts) {
@@ -288,7 +303,10 @@ if ($form_action == "list") {
 // #### TOP SECTION PAGE
 $HD_Form -> create_toppage ($form_action);
 
+$empty_greeting_list = $form_action == 'list' && (!is_array($list) || count($list) == 0);
+if ($empty_greeting_list) echo '<div id="main-list">';
 $HD_Form -> create_form ($form_action, $list, $id=null) ;
+if ($empty_greeting_list) echo '</div>';
 
 
 // #### FOOTER SECTION
