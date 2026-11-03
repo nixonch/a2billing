@@ -71,6 +71,16 @@ $DBHandle = DbConnect();
 $return = $instance_sub_table->Get_list($DBHandle, $QUERY, 0);
 $paymentMethod = substr($return[0][0], 0, strrpos($return[0][0], '.'));
 
+// Load gateway settings before rendering controls or handling their save redirect.
+(static function () use ($A2B) {
+	// loadconfiguration.php uses $configuration as its loop variable. Keep the
+	// posted configuration array and this controller's query variables intact.
+	include_once __DIR__ . '/../lib/epayment/includes/configure.php';
+	include_once __DIR__ . '/../lib/epayment/includes/loadconfiguration.php';
+})();
+if (!defined('CC_OWNER_MIN_LENGTH')) define('CC_OWNER_MIN_LENGTH', '2');
+if (!defined('CC_NUMBER_MIN_LENGTH')) define('CC_NUMBER_MIN_LENGTH', '15');
+
 $instance_sub_table = new Table("cc_configuration", "payment_filename");
 $QUERY = " active = 't'";
 
@@ -92,15 +102,9 @@ if (tep_not_null($action)) {
 
 
 $payment_modules = new payment($paymentMethod);
-$GLOBALS['paypal']->enabled = true;
-$GLOBALS['paypalcreditcard']->enabled = true;
-$GLOBALS['moneybookers']->enabled = true;
-$GLOBALS['authorizenet']->enabled = true;
-$GLOBALS['worldpay']->enabled = true;
-$GLOBALS['plugnpay']->enabled = true;
-$GLOBALS['iridium']->enabled = true;
-$GLOBALS['webmoney']->enabled = true;
-$GLOBALS['webmoneycreditcard']->enabled = true;
+if (isset($GLOBALS[$paymentMethod]) && is_object($GLOBALS[$paymentMethod])) {
+	$GLOBALS[$paymentMethod]->enabled = true;
+}
 $module_keys = $payment_modules->keys();
 
 $keys_extra = array ();
@@ -123,7 +127,8 @@ $keys = '';
 foreach ($mInfo->keys as $key => $value) {
 	$keys .= '<b>' . $value['title'] . '</b><br>' . $value['description'] . '<br>';
 	if ($value['set_function']) {
-		eval ('$keys .= ' . $value['set_function'] . "'" . $value['value'] . "', '" . $key . "');");
+		// Keep configuration values out of the function's PHP source.
+		eval ('$keys .= ' . $value['set_function'] . '(string)$value["value"], (string)$key);');
 	} else {
 		$keys .= tep_draw_input_field('configuration[' . $key . ']', $value['value']);
 	}

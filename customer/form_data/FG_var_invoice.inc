@@ -59,7 +59,7 @@ $HD_Form -> FG_INFO_IMG = "info.png";
 $HD_Form -> FG_OTHER_BUTTON3_LINK = "checkout_payment.php?item_type=invoice&item_id=";
 $HD_Form -> FG_OTHER_BUTTON3_IMG = Images_Path."/money.png";
 $HD_Form -> FG_OTHER_BUTTON3 = true;
-$HD_Form -> FG_OTHER_BUTTON3_CONDITION = '|col6| == "UNPAID"';
+$HD_Form -> FG_OTHER_BUTTON3_CONDITION = '|col6| == 0';
 
 
 $status_list = Constants::getInvoicePaidStatusList();

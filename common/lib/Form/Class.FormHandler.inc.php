@@ -738,6 +738,43 @@ class FormHandler
     // RECIPIENT METHODS
     // ----------------------------------------------
 
+	/** Evaluate a trusted form expression with row data kept out of PHP source. */
+	function evaluateViewExpression($expression, array $viewValues, $condition = false) {
+		$quotedViewValues = $viewValues;
+		foreach ($viewValues as $index => &$value) {
+			if (!$condition && $value == '') $value = 0;
+			$quotedViewValues[$index] = $value;
+			// SQL drivers return numbers as strings. Unquoted legacy placeholders
+			// were numeric PHP literals; quoted placeholders must retain their text.
+			if (is_numeric($value)) $value += 0;
+		}
+		unset($value);
+		$pattern = $condition ? '/\|col(\d+)\|/i' : '/%(\d+)/';
+		$reference = function ($match, $quoted = false) use ($condition) {
+			return '(' . ($quoted ? '$quotedViewValues[' : '$viewValues[') . (int)$match[1] . '] ?? ' . ($condition ? 'null' : '0') . ')';
+		};
+		$source = '';
+		$literals = array();
+		foreach (token_get_all('<?php ' . $expression) as $token) {
+			if (is_array($token) && $token[0] === T_OPEN_TAG) continue;
+			if (is_array($token) && $token[0] === T_CONSTANT_ENCAPSED_STRING) {
+				// Preserve quoted placeholders and literal prefixes/suffixes without
+				// inserting quotes, backslashes or HTML from the row into executable code.
+				$quote = $token[1][0];
+				$literal = preg_replace_callback($pattern, function ($match) use ($quote, $reference) {
+					return $quote . ' . ' . $reference($match, true) . ' . ' . $quote;
+				}, $token[1]);
+				$key = "\0view" . count($literals) . "\0";
+				$literals[$key] = '(' . $literal . ')';
+				$source .= $key;
+			} else {
+				$source .= is_array($token) ? $token[1] : $token;
+			}
+		}
+		$source = strtr(preg_replace_callback($pattern, $reference, $source), $literals);
+		return eval('return ' . $source . ';');
+	}
+
 	/**
      * Adds a "element" to the FG_TABLE_COL.  Returns void.
      * @public
@@ -757,6 +794,7 @@ class FormHandler
 	 * @ 11. $lie_display
 	 * @ 12. $function render
      */
+
 
 	function AddViewElement($displayname, $fieldname, $colpercentage, $textalign='center', $sort='sort', $char_limit = null, $lie_type = null, $lie_with = null, $lie_fieldname = null, $lie_clause = null, $lie_display = null, $myfunc = null, $link_file = null, $ermess = null) {
         	$cur = count($this->FG_TABLE_COL);

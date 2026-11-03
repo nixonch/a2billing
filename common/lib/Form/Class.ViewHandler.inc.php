@@ -267,17 +267,20 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 						$instance_sub_table = new Table($this->FG_TABLE_COL[$i][7], $this->FG_TABLE_COL[$i][8]);
 						$sub_clause = str_replace("%id", $list[$ligne_number][$i-$k], $this->FG_TABLE_COL[$i][9]);
 						$select_list = $instance_sub_table -> Get_list ($this->DBHandle, $sub_clause, null, null, null, null, null, null, null, 10);
-						if (is_array($select_list)) {
+						if (isset($select_list[0]) && is_array($select_list[0])) {
 							$record_display = $this->FG_TABLE_COL[$i][10];
 							$link = $this->FG_TABLE_COL[$i][12] . "?";
 							if (stripos($this->FG_TABLE_COL[$i][12],'form_action')===false)
 								$link .= "form_action=ask-edit&";
 							$link.= "id=".$select_list[0][1];
 							for ($l=count($select_list[0])+1;$l>=1;$l--){
-								$record_display = str_replace("%$l", $select_list[0][$l-1], $record_display);
+								$replacement = isset($select_list[0][$l-1]) ? (string)$select_list[0][$l-1] : '';
+								$record_display = str_replace("%$l", $replacement, $record_display);
 							}
+							$record_clear = $record_display;
 							$record_display = "<a href=\"$link\">$record_display</a>";
 						} elseif ($list[$ligne_number][$i-$k] != 0) {
+							$record_clear = $list[$ligne_number][$i-$k];
 							$record_display = "<a href='{$this->FG_TABLE_COL[$i][12]}'>{$list[$ligne_number][$i-$k]}</a>";
 							$string_to_eval = $this->FG_TABLE_COL[$i][7];
 							for ($l=count($list[$ligne_number])-1;$l>=0;$l--){
@@ -295,20 +298,23 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 						$instance_sub_table = new Table($this->FG_TABLE_COL[$i][7], $sub_clause);
 						$sub_clause = str_replace("%id", $list[$ligne_number][$i-$k], $this->FG_TABLE_COL[$i][9]);
 						$select_list = $instance_sub_table -> Get_list ($this->DBHandle, $sub_clause, null, null, null, null, null, null, null, 10);
-						if (is_array($select_list)) {
+						if (isset($select_list[0]) && is_array($select_list[0])) {
 							$record_clear = $this->FG_TABLE_COL[$i][10];
+							$record_display = $record_clear;
 							$link_display = $this->FG_TABLE_COL[$i][12];
 							if (count($select_list[0])>=5 && strlen($select_list[0][3])>0) {
 							    $select_list[0][4] = str_replace($select_list[0][3], "<b>".$select_list[0][3]."</b>", $select_list[0][4]);
 							}
 							for ($l=count($select_list[0]);$l>=1;$l--){
 								if ($l==1 && $list[$ligne_number][$i-$k] >= 0)
-								    $record_clear = str_replace("%1", "%1</a>", $record_clear);
+								    $record_display = str_replace("%1", "%1</a>", $record_display);
+								// Keep link markup out of values reused by calculated columns.
+								$record_display = str_replace("%$l", $select_list[0][$l-1], $record_display);
 								$record_clear = str_replace("%$l", $select_list[0][$l-1], $record_clear);
 								$link_display = str_replace("%$l", $select_list[0][$l-1], $link_display);
 							}
 							if ($list[$ligne_number][$i-$k] >= 0)
-								$record_display = "<a href=\"".$link_display."\">".$record_clear;
+								$record_display = "<a href=\"".$link_display."\">".$record_display;
 							else	$record_display = str_replace($select_list[0][0], "<b>".$select_list[0][0]."</b>", $record_clear);
 						} elseif ($list[$ligne_number][$i-$k] != 0) {
 							$record_display = $this->FG_TABLE_COL[$i][13];
@@ -318,13 +324,7 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 
 					} elseif ($this->FG_TABLE_COL[$i][6]=="eval") {
 
-						$string_to_eval = $this->FG_TABLE_COL[$i][7]; // %4-%3
-						for ($l=count($list[$ligne_number])-1;$l>=0;$l--){
-							if ($list[$ligne_number][$l]=='') $list[$ligne_number][$l]=0;
-							$string_to_eval = str_replace("%$l", $list[$ligne_number][$l], $string_to_eval);
-						}
-						@eval("\$eval_res = $string_to_eval;");
-						$record_display = $eval_res;
+						$record_display = $this->evaluateViewExpression($this->FG_TABLE_COL[$i][7], $list[$ligne_number]);
 
 					} elseif ($this->FG_TABLE_COL[$i][6]=="list") {
 
@@ -345,15 +345,11 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 					} elseif ($this->FG_TABLE_COL[$i][6]=="timeleft") {
 
 						$record_display = $list[$ligne_number][$i-$k];
+						$record_clear = $record_display ?? 0;
 						if ($record_display < 0) {
 							$record_display = "<span style='color: red'>00:00</span>";
 						} else {
-							$string_to_eval = $this->FG_TABLE_COL[$i][7]; // %4-%3
-							for ($l=count($list[$ligne_number])-1;$l>=0;$l--) {
-								if ($list[$ligne_number][$l]=='') $list[$ligne_number][$l]=0;
-								$string_to_eval = str_replace("%$l", $list[$ligne_number][$l], $string_to_eval);
-							}
-							eval("\$eval_res = $string_to_eval;");
+							$eval_res = $this->evaluateViewExpression($this->FG_TABLE_COL[$i][7], $list[$ligne_number]);
 
 							$record_display ="
 								<span style='color: green' id='timer{$ligne_number}_out'></span>
@@ -387,6 +383,7 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 					}
 
 					/**********************   IF LENGHT OF THE VALUE IS TOO LONG IT MIGHT BE CUT ************************/
+					if (is_null($record_clear)) $record_clear = $record_display;
 					if ( is_numeric($this->FG_TABLE_COL[$i][5]) && (strlen($record_display) > $this->FG_TABLE_COL[$i][5])  ){
 						$record_display = substr($record_display, 0, $this->FG_TABLE_COL[$i][5])."";
 					} ?>
@@ -421,14 +418,7 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 							$check_eval=false;
 							if (!empty($this->FG_DELETION_CONDITION) && (preg_match ('/col[0-9]/', $this->FG_DELETION_CONDITION))) {
 								$check =false;
-								for ($h=count($list[$ligne_number]);$h>=0;$h--){
-									$findme = "|col$h|";
-									$pos = stripos($condition_eval, $findme);
-									if ($pos !== false) {
-										$condition_eval = str_replace($findme,$list[$ligne_number][$h],$condition_eval);
-									}
-								}
-								eval('$check_eval = '.$condition_eval.';');
+								$check_eval = $this->evaluateViewExpression($condition_eval, $list[$ligne_number], true);
 							}
 							if ($check || $check_eval) {
 							    if (strpos($this->FG_DELETION_LINK,'url:')===0) {
@@ -448,14 +438,7 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 							$check_eval=false;
 							if (!empty($this->FG_EDITION_CONDITION) && (preg_match ('/col[0-9]/i', $this->FG_EDITION_CONDITION))) {
 								$check =false;
-								for ($h=count($list[$ligne_number]);$h>=0;$h--){
-									$findme = "|col$h|";
-									$pos = stripos($condition_eval, $findme);
-									if ($pos !== false) {
-										$condition_eval = str_replace($findme,$list[$ligne_number][$h],$condition_eval);
-									}
-								}
-								eval('$check_eval = '.$condition_eval.';');
+								$check_eval = $this->evaluateViewExpression($condition_eval, $list[$ligne_number], true);
 							}
 							if($check || $check_eval){
 							    if (strpos($this->FG_EDITION_LINK,'url:')===0) {
@@ -472,14 +455,7 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 							$check_eval=false;
 							if (!empty($this->FG_OTHER_BUTTON1_CONDITION) && (preg_match ('/col[0-9]/i', $this->FG_OTHER_BUTTON1_CONDITION))) {
 								$check =false;
-								for ($h=count($list[$ligne_number]);$h>=0;$h--){
-									$findme = "|col$h|";
-									$pos = stripos($condition_eval, $findme);
-									if ($pos !== false) {
-										$condition_eval = str_replace($findme,$list[$ligne_number][$h],$condition_eval);
-									}
-								}
-								eval('$check_eval = '.$condition_eval.';');
+								$check_eval = $this->evaluateViewExpression($condition_eval, $list[$ligne_number], true);
 							}
 							if ($check || $check_eval) {
 							?>
@@ -564,15 +540,8 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 					  		$condition_eval=$this->FG_OTHER_BUTTON2_CONDITION;
 							$check_eval=false;	
 					  		if (!empty($this->FG_OTHER_BUTTON2_CONDITION) && (preg_match ('/col[0-9]/i', $this->FG_OTHER_BUTTON2_CONDITION))) {
-					  			$check =false;
-								for ($h=count($list[$ligne_number]);$h>=0;$h--){
-									$findme = "|col$h|";
-									$pos = stripos($condition_eval, $findme);
-									if ($pos !== false) {
-										$condition_eval = str_replace($findme,$list[$ligne_number][$h],$condition_eval);
-									}
-								}
-								eval('$check_eval = '.$condition_eval.';');
+								$check =false;
+								$check_eval = $this->evaluateViewExpression($condition_eval, $list[$ligne_number], true);
 								}
 					  		if($check || $check_eval){
 							?>
@@ -656,15 +625,8 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 					  		$condition_eval=$this->FG_OTHER_BUTTON3_CONDITION;
 							$check_eval=false;	
 					  		if (!empty($this->FG_OTHER_BUTTON3_CONDITION) && (preg_match ('/col[0-9]/i', $this->FG_OTHER_BUTTON3_CONDITION))) {
-					  			$check =false;
-									for ($h=count($list[$ligne_number]);$h>=0;$h--){
-										$findme = "|col$h|";
-										$pos = stripos($condition_eval, $findme);
-										if ($pos !== false) {
-											$condition_eval = str_replace($findme,$list[$ligne_number][$h],$condition_eval);
-										}
-									}
-							eval('$check_eval = '.$condition_eval.';');	
+									$check =false;
+									$check_eval = $this->evaluateViewExpression($condition_eval, $list[$ligne_number], true);
 								}
 					  		if($check || $check_eval){
 							?>
@@ -737,15 +699,8 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 					  		$condition_eval=$this->FG_OTHER_BUTTON4_CONDITION;
 							$check_eval=false;	
 					  		if (!empty($this->FG_OTHER_BUTTON4_CONDITION) && (preg_match ('/col[0-9]/i', $this->FG_OTHER_BUTTON4_CONDITION))) {
-					  			$check =false;
-									for ($h=count($list[$ligne_number]);$h>=0;$h--){
-										$findme = "|col$h|";
-										$pos = stripos($condition_eval, $findme);
-										if ($pos !== false) {
-											$condition_eval = str_replace($findme,$list[$ligne_number][$h],$condition_eval);
-										}
-									}
-							eval('$check_eval = '.$condition_eval.';');	
+									$check =false;
+									$check_eval = $this->evaluateViewExpression($condition_eval, $list[$ligne_number], true);
 								}
 					  		if($check || $check_eval){
 							?>
@@ -819,15 +774,8 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 					  		$condition_eval=$this->FG_OTHER_BUTTON5_CONDITION;
 							$check_eval=false;	
 					  		if (!empty($this->FG_OTHER_BUTTON5_CONDITION) && (preg_match ('/col[0-9]/i', $this->FG_OTHER_BUTTON5_CONDITION))) {
-					  			$check =false;
-									for ($h=count($list[$ligne_number]);$h>=0;$h--){
-										$findme = "|col$h|";
-										$pos = stripos($condition_eval, $findme);
-										if ($pos !== false) {
-											$condition_eval = str_replace($findme,$list[$ligne_number][$h],$condition_eval);
-										}
-									}
-							eval('$check_eval = '.$condition_eval.';');	
+									$check =false;
+									$check_eval = $this->evaluateViewExpression($condition_eval, $list[$ligne_number], true);
 								}
 					  		if($check || $check_eval){
 							?>
