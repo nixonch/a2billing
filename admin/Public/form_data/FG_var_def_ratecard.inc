@@ -541,31 +541,6 @@ $HD_Form -> AddEditElement(gettext("SCHEDULE"),
    "id_ratecard='%id'", "'%id','%1',SEC_TO_TIME('%2'),SEC_TO_TIME('%3')", "", "", "", ":", "`id_ratecard`,`weekdays`,`timefrom`,`timetill`");
 
 
-if ($form_action=="ask-add") {
-	$comp_time = " value=0 ";
-	$comp_time_plus = " value=10079 ";
-}
-/**
-$HD_Form -> AddEditElement(gettext("START TIME"),
-   "starttime",
-   '$value',
-   "POPUPDATETIME",
-   "size=8 maxlength=8 $comp_time",
-   "4",
-   gettext("Insert the start time"),
-   "" , "", "", "", "",  "", "", gettext("Set the time and day of the week at the rate is first valid (ie Monday 00:00 is 0)") );
-
-
-$HD_Form -> AddEditElement(gettext("END TIME"),
-   "endtime",
-   '$value',
-   "POPUPDATETIME",
-   "size=8 maxlength=8 $comp_time_plus",
-   "4",
-   gettext("Insert the end time"),
-   "" , "", "", "", "",  "", "", gettext("Set the time and the day of the week that the rate is no longer valid. (ie Sunday 23:59 is 10079)") );
-**/
-
 $HD_Form -> AddEditElement(gettext("ROUNDING CALLTIME"),
    "rounding_calltime",
    '$value',

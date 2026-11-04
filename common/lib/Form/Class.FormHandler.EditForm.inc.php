@@ -210,7 +210,6 @@ function moveSourceDown(search_sources)
 }
 ?>
 <script language="JavaScript" src="./javascript/krutilke.js"></script>
-<script language="JavaScript" src="./javascript/calonlydays.js"></script>
 <script language="JavaScript" type="text/JavaScript">
 <!--
 function MM_openBrWindow(theURL,winName,features) { //v2.0
@@ -361,21 +360,6 @@ function updatecontent(id_el, record, field_inst, instance)
                         <INPUT class="form_enter" name=<?php echo $this->FG_TABLE_EDITION[$i][1]?>  <?php echo $this->FG_TABLE_EDITION[$i][4]?> value="<?php if($this->VALID_SQL_REG_EXP){ echo stripslashes(isset($list[0][$i]) ? (string)$list[0][$i] : ''); }else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]]; }?>">
                          <a href="#" onclick="window.open('<?php echo $this->FG_TABLE_EDITION[$i][12]?>formname=myForm&fieldname=<?php echo $this->FG_TABLE_EDITION[$i][1]?>' <?php echo $this->FG_TABLE_EDITION[$i][14]?>);"><img src="<?php echo Images_Path_Main;?>/icon_arrow_orange.gif"/></a>
                         <?php
-				} elseif (strtoupper ($this->FG_TABLE_EDITION[$i][3])=="POPUPDATETIME") {
-                        ?>
-                         <INPUT class="form_enter" name=<?php echo $this->FG_TABLE_EDITION[$i][1]?>  <?php echo $this->FG_TABLE_EDITION[$i][4]?> value="<?php if($this->VALID_SQL_REG_EXP){ echo stripslashes(isset($list[0][$i]) ? (string)$list[0][$i] : ''); }else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]]; }?>">
-                          <a href="javascript:cal<?php echo $this->FG_TABLE_EDITION[$i][1]?>.popup();"><img src="<?php echo Images_Path_Main;?>/cal.gif" width="16" height="16" border="0" title="Click Here to Pick up the date" alt="Click Here to Pick up the date"></a>
-                          <script language="JavaScript">
-                         <!-- // create calendar object(s) just after form tag closed
-                             // specify form element as the only parameter (document.forms['formname'].elements['inputname']);
-                             // note: you can have as many calendar objects as you need for your application
-                          var cal<?php echo $this->FG_TABLE_EDITION[$i][1]?> = new calendaronlyminutes(document.forms['myForm'].elements['<?php echo $this->FG_TABLE_EDITION[$i][1]?>']);
-                          cal<?php echo $this->FG_TABLE_EDITION[$i][1]?>.year_scroll = false;
-                          cal<?php echo $this->FG_TABLE_EDITION[$i][1]?>.time_comp = true;
-                          cal<?php echo $this->FG_TABLE_EDITION[$i][1]?>.formatpgsql = true;
-                          //-->
-                          </script>
-			<?php
 				} elseif (stripos($this->FG_TABLE_EDITION[$i][3],"POPUPDAYTIME")===0) {
 					$k = substr($this->FG_TABLE_EDITION[$i][3], -1);
 					$instance_sub_table = new Table($this->FG_TABLE_EDITION[$i][8], $this->FG_TABLE_EDITION[$i][9]);

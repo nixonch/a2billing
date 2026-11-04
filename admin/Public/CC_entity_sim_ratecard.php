@@ -150,7 +150,7 @@ echo $CC_help_sim_ratecard;
 		</td>
 		<td height="31" style="padding-left: 5px; padding-right: 3px;" class="bgcolor_001">				  
 				  <input class="form_input_text" name="id_cc_card" size="20" maxlength="40" value="<?php echo $id_cc_card;?>"> 
-					<a href="#" onclick="window.open('A2B_entity_card.php?popup_select=1&popup_formname=theFormFilter&popup_fieldname=id_cc_card' , 'CardNumberSelection','width=550,height=330,top=20,left=100,scrollbars=1');"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a>
+					<a href="#" onclick="alertBase('url:A2B_entity_card?popup_select=1&popup_formname=theFormFilter&popup_fieldname=id_cc_card','Card Number Selection',true,false,'#445760',null,event.pageY+20,'UR',null,null,null,null,null,sendValueCallback); return false;"><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a>
 		</td>		   
 	</tr>
 	<tr>

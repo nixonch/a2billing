@@ -131,7 +131,7 @@ else
 			<TD valign="top" class="tablestyle_001">
 				<?php
 					if ($this->FG_DEBUG == 1) print($this->FG_TABLE_EDITION[$i][3]);
-					$arr_input = array("INPUT", "POPUPVALUE", "POPUPVALUETIME", "POPUPDATETIME");					
+					$arr_input = array("INPUT", "POPUPVALUE", "POPUPVALUETIME");
 					if (in_array(strtoupper ($this->FG_TABLE_EDITION[$i][3]), $arr_input)){
 				?>
 					<INPUT class="form_enter" readonly name=<?php echo $this->FG_TABLE_EDITION[$i][1]?>  <?php echo $this->FG_TABLE_EDITION[$i][4]?> value="<?php echo stripslashes($list[0][$i])?>">

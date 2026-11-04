@@ -1460,38 +1460,51 @@ function get_db_languages($handle = null) {
 
 function archive_data($condition, $entity = "")
 {	
+	$tables = array('call' => array('cc_call', 'cc_call_archive'), 'card' => array('cc_card', 'cc_card_archive'));
+	if (!isset($tables[$entity])) return false;
+	list($source_table, $archive_table) = $tables[$entity];
 	$handle = DbConnect();
-	$instance_table = new Table();
-	if (!empty ($entity)) {
-		if ($entity == "card") {
-			$func_fields = "id, creationdate, firstusedate, expirationdate, enableexpire, expiredays, username, useralias, uipass, credit, tariff, id_didgroup, activated, status, lastname, firstname, address, city, state, country, zipcode, phone, email, fax, inuse, simultaccess, currency, lastuse, nbused, typepaid, creditlimit, voipcall, sip_buddy, iax_buddy, language, redial, runservice, nbservice, id_campaign, num_trials_done, vat, servicelastrun, initialbalance, invoiceday, autorefill, loginkey, mac_addr, id_timezone, tag, voicemail_permitted, voicemail_activated, last_notification, email_notification, notify_email, credit_notification, id_group, company_name, company_website, VAT_RN, traffic, traffic_target, discount, restriction";
-			$value = "SELECT $func_fields FROM cc_card $condition";
-			$func_table = 'cc_card_archive';
-			$id_name = "";
-			$subquery = true;
-			$result = $instance_table->Add_table($handle, $value, $func_fields, $func_table, $id_name, $subquery);
-			$fun_table = "cc_card";
-			if (strpos($condition, 'WHERE') > 0) {
-				$condition = str_replace("WHERE", "", $condition);
-			}
-
-			$result = $instance_table->Delete_table($handle, $condition, $fun_table);
-		} else
-			if ($entity == "call") {
-				$value = "SELECT id, sessionid,uniqueid,card_id,nasipaddress,starttime,stoptime,sessiontime,calledstation,sessionbill,id_tariffgroup,id_tariffplan,id_ratecard,id_trunk,sipiax,src,id_did,buyrate,id_card_package_offer,real_sessiontime FROM cc_call $condition";
-				$func_fields = "id, sessionid,uniqueid,card_id,nasipaddress,starttime,stoptime,sessiontime,calledstation,sessionbill,id_tariffgroup,id_tariffplan,id_ratecard,id_trunk,sipiax,src,id_did,buyrate,id_card_package_offer,real_sessiontime";
-				$func_table = 'cc_call_archive';
-				$id_name = "";
-				$subquery = true;
-				$result = $instance_table->Add_table($handle, $value, $func_fields, $func_table, $id_name, $subquery);
-				if (strpos($condition, 'WHERE') > 0) {
-					$condition = str_replace("WHERE", "", $condition);
-				}
-				$fun_table = "cc_call";
-				$result = $instance_table->Delete_table($handle, $condition, $fun_table);
-			}
+	$predicate = trim(preg_replace('/^\s*WHERE\s+/i', '', $condition, 1));
+	if ($predicate === '') return false;
+	$source_columns = $handle->MetaColumns($source_table);
+	$archive_columns = $handle->MetaColumns($archive_table);
+	if (!$source_columns || !$archive_columns || count($source_columns) !== count($archive_columns)) return false;
+	$archive_by_name = array();
+	foreach ($archive_columns as $column) $archive_by_name[strtolower($column->name)] = $column;
+	$field_names = array();
+	$identifier_quote = DB_TYPE === 'postgres' ? '"' : '`';
+	foreach ($source_columns as $column) {
+		$name = strtolower($column->name);
+		if (!isset($archive_by_name[$name])) return false;
+		foreach (array('type', 'max_length', 'scale', 'not_null') as $attribute) {
+			if ((isset($column->$attribute) ? (string)$column->$attribute : '') !== (isset($archive_by_name[$name]->$attribute) ? (string)$archive_by_name[$name]->$attribute : '')) return false;
+		}
+		$field_names[] = $identifier_quote.str_replace($identifier_quote, $identifier_quote.$identifier_quote, $column->name).$identifier_quote;
 	}
-	return 1;
+	// Evaluate filters once. New matching rows must not enter the DELETE.
+	$snapshot = uniqid('a2b_archive_'.$entity.'s_');
+	if (!$handle->Execute("CREATE TEMPORARY TABLE $snapshot AS SELECT * FROM $source_table WHERE $predicate")) return false;
+	try {
+		$count = $handle->Execute("SELECT COUNT(*) FROM $snapshot");
+		if (!$count) return false;
+		$row = $count->fetchRow();
+		$count->Close();
+		$expected = (int)$row[0];
+		$fields = implode(', ', $field_names);
+		if (!$handle->Execute("INSERT INTO $archive_table ($fields) SELECT $fields FROM $snapshot")) return false;
+		// Delete only unchanged rows whose complete archived copy matches.
+		$equal = DB_TYPE === 'postgres' ? ' IS NOT DISTINCT FROM ' : ' <=> ';
+		$matches = array('saved.id = original.id', 'original.id = '.$source_table.'.id');
+		foreach ($field_names as $field) {
+			$matches[] = 'saved.'.$field.$equal.'original.'.$field;
+			$matches[] = $source_table.'.'.$field.$equal.'original.'.$field;
+		}
+		if (!$handle->Execute("DELETE FROM $source_table WHERE EXISTS (SELECT 1 FROM $snapshot original JOIN $archive_table saved ON saved.id = original.id WHERE ".implode(' AND ', $matches).')')) return false;
+		$removed = $handle->Affected_Rows();
+		return $removed == $expected ? $removed : false;
+	} finally {
+		$handle->Execute("DROP TABLE $snapshot");
+	}
 }
 
 /*

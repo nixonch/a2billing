@@ -124,7 +124,7 @@ if($form_action=="list"){
 					    <?php if ($atmenu == "2") {?>
 						onclick="alertBase('url:A2B_entity_card?popup_select=1&popup_formname=myForm&popup_fieldname=enteradmin','Card Number Selection',true,false,'#445760',null,event.pageY+20,'UR',null,null,null,null,null,sendValueCallback);"
 					    <?php }else{ ?>
-						onclick="window.open('A2B_entity_user.php?popup_select=1&popup_formname=myForm&popup_fieldname=enteradmin' , 'AdminSelection','width=550,height=330,top=20,left=100,scrollbars=1');"
+						onclick="alertBase('url:A2B_entity_user?popup_select=1&popup_formname=myForm&popup_fieldname=enteradmin','Admin Selection',true,false,'#445760',null,event.pageY+20,'UR',null,null,null,null,null,sendValueCallback); return false;"
 					    <?php } ?>
 						><img src="<?php echo Images_Path;?>/icon_arrow_orange.gif"></a>
 					</td>

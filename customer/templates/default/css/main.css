@@ -961,6 +961,13 @@ SPAN.errorText {
 	color: #BC2222;
 }
 
+.form_input_checkbox,
+input[type="checkbox"],
+input[type="radio"],
+a img[src$="/icon_arrow_orange.gif"] {
+	vertical-align: middle;
+}
+
 .form_input_select_disabled {
 	background-color: #F9FBF9;
 	font-family: Arial, Helvetica, sans-serif;
