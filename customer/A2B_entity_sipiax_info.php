@@ -48,53 +48,33 @@ if ($atmenu == "") $atmenu = "SIP";
 
 if ($atmenu == "SIP")
     do {
-	$QUERY = "SELECT extmin, extmax, extquantity, id, language FROM cc_card WHERE username = '" . $_SESSION["pr_login"] . "' AND uipass = '" . $_SESSION["pr_password"] . "'";
+	$QUERY = "SELECT id FROM cc_card WHERE username = '" . $_SESSION["pr_login"] . "' AND uipass = '" . $_SESSION["pr_password"] . "'";
 	$DBHandle_max = DbConnect();
 	$resmax = $DBHandle_max->Execute($QUERY);
-	if ($resmax) {
-		$row = $resmax->fetchRow();
-		$extmin = $row[0];
-		$extmax = $row[1];
-		$extquantity = $row[2];
-		$cardid = $row[3];
-		$language = $row[4];
-		$extstart=1+$extmin;
+	if (!$resmax || !($row = $resmax->fetchRow())) {
+		Header("HTTP/1.0 401 Unauthorized");
+		Header("Location: PP_error.php?c=accessdenied");
+		die();
 	}
-	$QUERY = "SELECT regexten AS field, id_cc_card, cc_sip_buddies.id FROM cc_sip_buddies
-			LEFT JOIN cc_card_concat bb ON bb.concat_card_id = id_cc_card
-			LEFT JOIN ( SELECT aa.concat_id FROM cc_card_concat aa WHERE aa.concat_card_id = $cardid ) AS v ON bb.concat_id = v.concat_id
-			WHERE (id_cc_card = $cardid OR v.concat_id IS NOT NULL) AND external = 0
-		UNION ALL
-		  SELECT ext_num AS field, 0, -cc_fax.id FROM cc_fax
-			LEFT JOIN cc_card_concat bb ON bb.concat_card_id = cc_fax.id_cc_card
-			LEFT JOIN ( SELECT aa.concat_id FROM cc_card_concat aa WHERE aa.concat_card_id = $cardid ) AS v ON bb.concat_id = v.concat_id
-			WHERE id_cc_card = $cardid OR v.concat_id IS NOT NULL
-		ORDER BY field";
-	$inst_table = new Table();
-	$resmax = $inst_table->SQLExec($DBHandle_max, $QUERY);
-	if ($resmax) {
-		for ($k=0;$k<count($resmax);$k++) {
-			if ($resmax[$k][1] == $cardid && $extstart == 1+$extmin) {
-				$extstart = (is_numeric($resmax[$k][0]) && $extmin <= $resmax[$k][0] && $resmax[$k][0] <= $extmax) ? floor($resmax[$k][0]/100)*100+1 : $extstart+1;
-				break;
-			}
-		}
-		$extlen = strlen($extstart);
-		$exten_include = array();
-		for ($k=0;$k<count($resmax);$k++) {
-			if ($resmax[$k][1] == $cardid) $extquantity--;
-			if (is_numeric($resmax[$k][0])) {
-				if ($resmax[$k][0] == $extstart)	$extstart++;
-				$exten_include[$resmax[$k][2]] = $resmax[$k][0];
-//echo $resmax[$k][2]." = ".$exten_include[$resmax[$k][2]]."<br/>";
-			}
-		}
-	} else	$extstart=$extmin;
+	$cardid = (int) $row[0];
+	$extension_defaults = get_sip_extension_defaults($cardid, $DBHandle_max);
+	if ($extension_defaults === false) {
+		Header("HTTP/1.0 401 Unauthorized");
+		Header("Location: PP_error.php?c=accessdenied");
+		die();
+	}
+	$extmin = $extension_defaults['extmin'];
+	$extmax = $extension_defaults['extmax'];
+	$extlimit = $extension_defaults['extlimit'];
+	$extquantity = $extension_defaults['extquantity'];
+	$extstart = $extension_defaults['extstart'];
+	$extlen = $extension_defaults['extlen'];
+	$exten_include = $extension_defaults['exten_include'];
 	if ($form_action == "addexten") {
 		unset($form_action);
-		if ( !is_numeric($quantity) || !is_numeric($startnumber) || $quantity == '0' || startnumber == '0' || $quantity > $extquantity || $startnumber < $extmin || $extmax < $startnumber + $quantity -1 )
+		if ( !is_numeric($quantity) || !is_numeric($startnumber) || $quantity == '0' || $startnumber == '0' || $quantity > $extquantity || $startnumber < $extmin || $extmax < $startnumber + $quantity -1 )
 			break;
-		$extcreated = gen_friends($cardid,$startnumber,$quantity,$extmin,$extmax,$DBHandle_max,$A2B,$language);
+		$extcreated = gen_friends($cardid,$startnumber,$quantity,$extmin,$extmax,$DBHandle_max,$A2B);
 		if (count($extcreated)>0) {
 			$log = new Logger();
 			$log -> insertLog_Update($_SESSION["card_id"], 1, "SIP EXTENSION".(($quantity>1)?"S":"")." ADDED", implode(',', $extcreated), '', $_SERVER['REMOTE_ADDR'], 'A2B_entity_sipiax_info.php','',2);
@@ -221,13 +201,13 @@ if ($atmenu == "SIP" && $form_action == "list") {
 		<tr><td align="left" valign="top">
 			<font style="font-weight:bold;"><?php echo gettext("Quantity");?>:</font>
 		    </td><td valign="top" nowrap="nowrap">
-			&nbsp<input class="form_input_text" id="num2" name="quantity" oninput="allowOnlyDigits(this);" size="10" maxlength="3" value="1"><br/>
+			&nbsp<input class="form_input_text" id="num2" name="quantity" oninput="allowOnlyDigits(this);" size="10" maxlength="3" value="<?php echo $extension_defaults['quantity'];?>"><br/>
 			&nbsp;<sup><em><?php echo gettext("Extensions left");?>:&nbsp;<?php echo $extquantity;?></em></sup>
 		    </td>
 		</tr>
 		<tr>
 		    <td align="right" valign="center">
-			<input class="form_input_button" type="button" VALUE="<?php echo gettext(" CREATE ");?>" onClick="openURL('<?php echo $_SERVER['PHP_SELF']?>?form_action=addexten&startnumber=',<?php echo $extquantity;?>,'Вы превысили лимит на <?php echo $extquantity;?> номеров.\nМаксимальное количество <?php echo $row[2];?>.\nУ Вас уже создано <?php echo $row[2]-$extquantity;?> номеров.\nУменьшите количество новых номеров.','<?php echo gettext("Both fields must be numeric\\nand greater than zero");?>',<?php echo $extmin;?>,<?php echo $extmax;?>)">
+			<input class="form_input_button" type="button" VALUE="<?php echo gettext(" CREATE ");?>" onClick="openURL('<?php echo $_SERVER['PHP_SELF']?>?form_action=addexten&startnumber=',<?php echo $extquantity;?>,'Вы превысили лимит на <?php echo $extquantity;?> номеров.\nМаксимальное количество <?php echo $extlimit;?>.\nУ Вас уже создано <?php echo $extlimit-$extquantity;?> номеров.\nУменьшите количество новых номеров.','<?php echo gettext("Both fields must be numeric\\nand greater than zero");?>',<?php echo $extmin;?>,<?php echo $extmax;?>)">
 		    </td>
 		    <td></td>
 		</tr>

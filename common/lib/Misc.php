@@ -982,15 +982,86 @@ function gen_card_with_alias($table = "cc_card, cc_voucher", $api = 0, $length_c
 	}
 }
 
-/*
- * function 
- gen_friends
+/**
+ * Prepare SIP extension defaults for an already authorized card.
+ * extlimit is the card quota; extquantity is the remaining quota. The occupied
+ * numbers include internal SIP peers and faxes of this card and linked cards.
+ * Returns false when the card cannot be loaded. Callers must authorize card_id.
  */
-function gen_friends($card_id, $start, $quantity, $min, $max, $DBHandle, &$A2B, $language = false, $api = 0)
+function get_sip_extension_defaults($card_id, $DBHandle = null)
 {
+	$card_id = (int) $card_id;
+	if ($card_id <= 0) return false;
 	if (!isset($DBHandle)) {
 		$DBHandle = DbConnect();
 	}
+	$res = $DBHandle->Execute("SELECT extmin, extmax, extquantity FROM cc_card WHERE id = $card_id");
+	if (!$res || !($card = $res->fetchRow())) return false;
+
+	$extmin = $card[0];
+	$extmax = $card[1];
+	$extquantity = $card[2];
+	$extstart = 1 + $extmin;
+	$exten_include = array();
+	$QUERY = "SELECT regexten AS field, id_cc_card, cc_sip_buddies.id FROM cc_sip_buddies
+			LEFT JOIN cc_card_concat bb ON bb.concat_card_id = id_cc_card
+			LEFT JOIN ( SELECT aa.concat_id FROM cc_card_concat aa WHERE aa.concat_card_id = $card_id ) AS v ON bb.concat_id = v.concat_id
+			WHERE (id_cc_card = $card_id OR v.concat_id IS NOT NULL) AND external = 0
+		UNION ALL
+		  SELECT ext_num AS field, 0, -cc_fax.id FROM cc_fax
+			LEFT JOIN cc_card_concat bb ON bb.concat_card_id = cc_fax.id_cc_card
+			LEFT JOIN ( SELECT aa.concat_id FROM cc_card_concat aa WHERE aa.concat_card_id = $card_id ) AS v ON bb.concat_id = v.concat_id
+			WHERE id_cc_card = $card_id OR v.concat_id IS NOT NULL
+		ORDER BY field";
+	$inst_table = new Table();
+	$resmax = $inst_table->SQLExec($DBHandle, $QUERY);
+	if ($resmax) {
+		for ($k = 0; $k < count($resmax); $k++) {
+			if ($resmax[$k][1] == $card_id && $extstart == 1 + $extmin) {
+				$extstart = (is_numeric($resmax[$k][0]) && $extmin <= $resmax[$k][0] && $resmax[$k][0] <= $extmax) ? floor($resmax[$k][0] / 100) * 100 + 1 : $extstart + 1;
+				break;
+			}
+		}
+		$extlen = strlen($extstart);
+		for ($k = 0; $k < count($resmax); $k++) {
+			if ($resmax[$k][1] == $card_id) $extquantity--;
+			if (is_numeric($resmax[$k][0])) {
+				if ($resmax[$k][0] == $extstart) $extstart++;
+				$exten_include[$resmax[$k][2]] = $resmax[$k][0];
+			}
+		}
+	} else {
+		$extstart = $extmin;
+		$extlen = strlen($extstart);
+	}
+	return array(
+		'extmin' => $extmin,
+		'extmax' => $extmax,
+		'extlimit' => $card[2],
+		'extquantity' => $extquantity,
+		'extstart' => $extstart,
+		'extlen' => $extlen,
+		'exten_include' => $exten_include,
+		'quantity' => 1
+	);
+}
+
+/**
+ * Generate SIP peers and voicemail records for an already authorized card.
+ * Keep the language argument for existing callers; the card language is used.
+ * Returns an array of generated extension numbers, including partial results.
+ */
+function gen_friends($card_id, $start, $quantity, $min, $max, $DBHandle, &$A2B, $language = false, $api = 0)
+{
+	$card_id = (int) $card_id;
+	if ($card_id <= 0) return array();
+	if (!isset($DBHandle)) {
+		$DBHandle = DbConnect();
+	}
+	$res = $DBHandle->Execute("SELECT username, language FROM cc_card WHERE id = $card_id");
+	if (!$res || !($card = $res->fetchRow())) return array();
+	$accountcode = $DBHandle->qstr($card[0]);
+	$language = $DBHandle->qstr($card[1]);
 	$inst_table = new Table('cc_sip_buddies');
 
 	$amaflags	= $A2B->config["peer_friend"]['amaflag'];
@@ -1001,7 +1072,6 @@ function gen_friends($card_id, $start, $quantity, $min, $max, $DBHandle, &$A2B, 
 	$host		= $A2B->config["peer_friend"]['host'];
 	$context	= $A2B->config["peer_friend"]['context'];
 	$qualify	= $A2B->config["peer_friend"]['qualify'];
-	if ($language===false)	$language = $A2B->config["global"]['base_language'];
 	$regseconds	= "'0'";
 	$rtptimeout	= "'60'";
 	$rtpholdtimeout	= "'300'";
@@ -1010,6 +1080,7 @@ function gen_friends($card_id, $start, $quantity, $min, $max, $DBHandle, &$A2B, 
 	$nums		= array();
 
 		for ($i = 1; $i <= $quantity; $i++) {
+		    if ($start > $max) return $nums;
 		    for ($k = 0; $k <= 1000; $k++) {
 			if ($k == 1000) {
 				if ($api) {
@@ -1038,7 +1109,7 @@ function gen_friends($card_id, $start, $quantity, $min, $max, $DBHandle, &$A2B, 
 			if ($resmax)
 				$numrow = $resmax->RecordCount();
 			if ($numrow != 0) {
-				if ($start >= $max) return $i-1;
+				if ($start >= $max) return $nums;
 				$start++;
 				continue;
 			}
@@ -1048,9 +1119,10 @@ function gen_friends($card_id, $start, $quantity, $min, $max, $DBHandle, &$A2B, 
 		$pass = MDP_STRING(10);
 		$c_id = $i==1 ? $card_id : 0 ;
 		$name = gen_card_with_alias("cc_card", 0, LEN_CARDNUMBER, $DBHandle, $start, $c_id);
+		$mailbox = $DBHandle->qstr($start . '@' . $card[0]);
 
-		$QUERY = "INSERT INTO cc_sip_buddies (id_cc_card, name, defaultuser, accountcode, secret, regexten, callerid, amaflags, type, nat, dtmfmode, allow, host, context, regseconds, language, mailbox, rtptimeout, rtpholdtimeout, rtpkeepalive, qualify, allowtransfer)
-			VALUES ('$card_id', '{$name[1]}', '{$name[1]}', '" . $_SESSION["pr_login"] . "', '$pass', '$start', 'Internal-$start', '$amaflags', '$type', '$nat', '$dtmfmode', '$allow', '$host', '$context', $regseconds, '$language', '{$start}@{$_SESSION["pr_login"]}', $rtptimeout, $rtpholdtimeout, $rtpkeepalive, '$qualify', $allowtransfer)";
+		$QUERY = "INSERT INTO cc_sip_buddies (id_cc_card, external, name, defaultuser, accountcode, secret, regexten, callerid, amaflags, type, nat, dtmfmode, allow, host, context, regseconds, language, mailbox, rtptimeout, rtpholdtimeout, rtpkeepalive, qualify, allowtransfer)
+			VALUES ('$card_id', 0, '{$name[1]}', '{$name[1]}', $accountcode, '$pass', '$start', 'Internal-$start', '$amaflags', '$type', '$nat', '$dtmfmode', '$allow', '$host', '$context', $regseconds, $language, $mailbox, $rtptimeout, $rtpholdtimeout, $rtpkeepalive, '$qualify', $allowtransfer)";
 		$result = $inst_table->SQLExec($DBHandle, $QUERY, 0);
 		$nums[] = $start;
 //echo $QUERY."<br/>";
