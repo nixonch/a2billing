@@ -44,72 +44,92 @@ if (! has_rights (ACX_CUSTOMER)) {
 	die();
 }
 
-/********************************* BATCH UPDATE ***********************************/
-getpost_ifset(array('upd_callerid', 'upd_context', 'batchupdate', 'check', 'type', 'mode'));
-
 $HD_Form -> setDBHandler (DbConnect());
 $HD_Form -> init();
 
+/********************************* ADD SIP EXTENSIONS ***********************************/
+if ($atmenu == 'sip' && ($form_action == 'ask-add-extension' || $form_action == 'addexten')) {
+	getpost_ifset(array('card_id', 'startnumber', 'quantity'));
+	$DBHandle = $HD_Form->DBHandle;
+	$defaults = get_sip_extension_defaults($card_id, $DBHandle);
+	if ($defaults === false) {
+		Header("HTTP/1.0 401 Unauthorized");
+		Header("Location: PP_error.php?c=accessdenied");
+		die();
+	}
+	$extmin = $defaults['extmin'];
+	$extmax = $defaults['extmax'];
+	$extquantity = $defaults['extquantity'];
+	if ($form_action == 'addexten') {
+		if ( !is_numeric($quantity) || !is_numeric($startnumber) || $quantity == '0' || $startnumber == '0' || $quantity > $extquantity || $startnumber < $extmin || $extmax < $startnumber + $quantity -1 ) {
+			$form_action = 'ask-add-extension';
+		} else {
+			$extcreated = gen_friends($card_id, $startnumber, $quantity, $defaults['extmin'], $defaults['extmax'], $DBHandle, $A2B);
+			if (count($extcreated) > 0) {
+				$log = new Logger();
+				$log->insertLog_Update($_SESSION['admin_id'], 1, "SIP EXTENSION" . (($quantity > 1) ? "S" : "") . " ADDED", implode(',', $extcreated), 'cc_sip_buddies', $_SERVER['REMOTE_ADDR'], 'A2B_entity_friend.php', '', 0);
+				unset($log);
+				// The SIP list remembers its effective page size, including the ALL option.
+				$session_limit = $HD_Form->FG_TABLE_NAME . '-displaylimit';
+				$page_size = $HD_Form->FG_LIMITE_DISPLAY;
+				if (isset($_SESSION[$session_limit]) && is_numeric($_SESSION[$session_limit])) {
+					$page_size = $_SESSION[$session_limit];
+				}
+				$sip_table = new Table('cc_sip_buddies', 'id');
+				$sip_count = $sip_table->Get_list_count($DBHandle);
+				// Start with a clean list URL so previous filters cannot hide the new rows.
+				$list_url = $_SERVER['PHP_SELF'] . '?' . http_build_query(array(
+					'current_page' => max(0, ceil($sip_count / $page_size) - 1),
+					'atmenu' => 'sip', 'section' => $_SESSION['menu_section'],
+					'order' => 'id', 'sens' => 'ASC'
+				));
+				?>
+<script type="text/javascript">
+window.parent.postMessage({action:'popupResult', payload:{type:'refreshInside', link:<?php echo json_encode($list_url); ?>}}, '*');
+</script>
+				<?php
+				exit;
+			}
+		}
+	}
+	$extension_url = $_SERVER['PHP_SELF'] . '?' . http_build_query(array(
+		'form_action' => 'addexten', 'atmenu' => 'sip', 'section' => $_SESSION['menu_section'],
+		'popup_select' => 4, 'card_id' => $card_id
+	)) . '&startnumber=';
+	$smarty->display('main.tpl');
+?>
+<script src="./javascript/sipiax.js"></script>
+<br>
+<form name="theForm" style="padding: 0 15px;">
+	<table class="bar-status" width="100%" border="0" align="center" cellpadding="4" cellspacing="1">
+		<tr>
+			<td nowrap="nowrap">
+				<strong><?php echo gettext("Create extensions from"); ?>:</strong><br/>
+				<sup>[<?php echo gettext("from") . ' ' . $extmin . ' ' . gettext("to") . ' ' . $extmax; ?>]</sup>
+			</td>
+			<td><input class="form_input_text" name="startnumber" oninput="allowOnlyDigits(this);" size="10" maxlength="<?php echo $defaults['extlen']; ?>" value="<?php echo $defaults['extstart']; ?>"></td>
+		</tr>
+		<tr>
+			<td><strong><?php echo gettext("Quantity"); ?>:</strong></td>
+			<td>
+				<input class="form_input_text" name="quantity" oninput="allowOnlyDigits(this);" size="10" maxlength="3" value="<?php echo $defaults['quantity']; ?>"><br/>
+				<sup><em><?php echo gettext("Extensions left") . ': ' . $extquantity; ?></em></sup>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right">
+				<input class="form_input_button" type="button" value="<?php echo gettext("Create"); ?>" onclick="openURL('<?php echo htmlspecialchars($extension_url, ENT_QUOTES, 'UTF-8'); ?>',<?php echo $extquantity; ?>,'Вы превысили лимит на <?php echo $extquantity; ?> номеров.\nМаксимальное количество <?php echo $defaults['extlimit']; ?>.\nУ Вас уже создано <?php echo $defaults['extlimit'] - $extquantity; ?> номеров.\nУменьшите количество новых номеров.','<?php echo gettext("Both fields must be numeric\\nand greater than zero"); ?>',<?php echo $extmin; ?>,<?php echo $extmax; ?>)">
+			</td>
+		</tr>
+	</table>
+</form>
+<?php
+	$smarty->display('footer.tpl');
+	exit;
+}
+
 $HD_Form -> FG_EDITION_LINK	= $_SERVER['PHP_SELF']."?form_action=ask-edit&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&filterprefix2=$filterprefix2&id=";
 $HD_Form -> FG_DELETION_LINK	= "url:".$_SERVER['PHP_SELF']."?popup_select=4&form_action=ask-delete&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&filterprefix2=$filterprefix2&id=";
-
-// CHECK IF REQUEST OF BATCH UPDATE
-if ($batchupdate == 1 && is_array($check)) {
-	$SQL_REFILL="";
-	$HD_Form->prepare_list_subselection('list');
-
-	// Array ( [upd_simultaccess] => on [upd_currency] => on )
-	$loop_pass=0;
-	$SQL_UPDATE = '';
-	foreach ($check as $ind_field => $ind_val) {
-		//echo "<br>::> $ind_field -";
-		$myfield = substr($ind_field,4);
-		if ($loop_pass!=0) $SQL_UPDATE.=',';
-
-		// Standard update mode
-		if (!isset($mode["$ind_field"]) || $mode["$ind_field"]==1) {
-			if (!isset($type["$ind_field"])) {
-				$SQL_UPDATE .= " $myfield='".$$ind_field."'";
-			} else {
-				$SQL_UPDATE .= " $myfield='".$type["$ind_field"]."'";
-			}
-		// Mode 2 - Equal - Add - Subtract
-		} elseif($mode["$ind_field"]==2) {
-			if (!isset($type["$ind_field"])) {
-				$SQL_UPDATE .= " $myfield='".$$ind_field."'";
-			} else {
-				if ($type["$ind_field"] == 1) {
-					$SQL_UPDATE .= " $myfield='".$$ind_field."'";
-				} elseif ($type["$ind_field"] == 2) {
-					$SQL_UPDATE .= " $myfield = $myfield +'".$$ind_field."'";
-				} else {
-					$SQL_UPDATE .= " $myfield = $myfield -'".$$ind_field."'";
-				}
-			}
-		}
-		$loop_pass++;
-	}
-
-	$SQL_UPDATE = "UPDATE $HD_Form->FG_TABLE_NAME SET $SQL_UPDATE";
-	if (strlen($HD_Form->FG_TABLE_CLAUSE)>1) {
-		$SQL_UPDATE .= ' WHERE ';
-		$SQL_UPDATE .= $HD_Form->FG_TABLE_CLAUSE;
-	}
-	$update_msg_error = '<center><font color="red"><b>'.gettext('Could not perform the batch update!').'</b></font></center>';
-
-	if (!$HD_Form -> DBHandle -> Execute("begin")){
-		$update_msg = $update_msg_error;
-	} else {
-
-		if(!$HD_Form -> DBHandle -> Execute($SQL_UPDATE)){
-			$update_msg = $update_msg_error;
-		}
-		if (! $res = $HD_Form -> DBHandle -> Execute("commit")) {
-			$update_msg = '<center><font color="green"><b>'.gettext('The batch update has been successfully perform!').'</b></font></center>';
-		}
-
-	};
-}
 
 /********************************* ADD SIP / IAX FRIEND ***********************************/
 getpost_ifset(array("id_cc_card", "cardnumber", "useralias"));
@@ -202,6 +222,34 @@ $list = $HD_Form -> perform_action($form_action);
 // #### HEADER SECTION
 $smarty->display('main.tpl');
 
+if ($atmenu == 'sip' && $form_action == 'list') {
+?>
+<script type="text/javascript">
+function addSipExtension(event) {
+	var popupY = event.pageY - 100;
+	alertBase('url:A2B_entity_card?popup_select=1', <?php echo json_encode(gettext("Card Number Selection")); ?>,
+		true, false, '#445760', null, popupY, 'UL', null, null, null, null, null, function (payload) {
+			if (payload.type !== 'sendValue') return false;
+			var url = <?php echo json_encode($_SERVER['PHP_SELF'] . '?' . http_build_query(array(
+				'form_action' => 'ask-add-extension', 'atmenu' => 'sip',
+				'section' => $_SESSION['menu_section'], 'popup_select' => 4
+			))); ?> + '&card_id=' + encodeURIComponent(payload.selvalue);
+			// alertBase removes the previous window after its 150 ms closing animation.
+			setTimeout(function () {
+				alertBase('url:' + url, <?php echo json_encode(gettext("Add Extension")); ?>,
+					true, false, '#445760', null, popupY, 'UL', null, null, null, null, null, function (result) {
+						if (result.type !== 'refreshInside') return false;
+						setTimeout(function () { window.location.href = result.link; }, 200);
+						return true;
+					});
+			}, 200);
+			return true;
+		});
+}
+</script>
+<?php
+}
+
 // #### HELP SECTION
 if ($form_action=='list') {
 
@@ -258,54 +306,6 @@ if ($form_action=='list') {
 </div>
 
 <br/>
-<!-- ** ** ** ** ** Part for the Update ** ** ** ** ** -->
-<div class="toggle_hide2show">
-<center><a href="#" target="_self" class="toggle_menu"><img src="<?php echo KICON_PATH; ?>/toggle_hide2show.png" onmouseover="this.style.cursor='hand';" HEIGHT="16"> <font class="fontstyle_002"><?php echo gettext("BATCH UPDATE");?> </font></a></center>
-	<div class="tohide" style="display:none;">
-
-<center>
-<b>&nbsp;<?php echo $HD_Form -> FG_NB_RECORD ?> <?php echo gettext("cards selected!"); ?>&nbsp;<?php echo gettext("Use the options below to batch update the selected cards.");?></b>
-	   <table align="center" border="0" width="65%"  cellspacing="1" cellpadding="2">
-        <tbody>
-		<form name="updateForm" action="<?php echo $_SERVER['PHP_SELF']?>" method="post">
-		<INPUT type="hidden" name="batchupdate" value="1">
-		<INPUT type="hidden" name="filterprefix" value="<?php echo $filterprefix?>">
-		<INPUT type="hidden" name="filterprefix2" value="<?php echo $filterprefix2?>">
-		<tr>
-          <td align="left" class="bgcolor_001" >
-		  		<input name="check[upd_callerid]" type="checkbox" <?php if ($check["upd_callerid"]=="on") echo "checked"?>>
-		  </td>
-		  <td align="left"  class="bgcolor_001">
-				1)&nbsp;<?php echo gettext("CallerID"); ?>&nbsp;:
-				<input class="form_input_text"  name="upd_callerid" size="30" maxlength="40" value="<?php if (isset($upd_callerid)) echo $upd_callerid;?>">
-				<br/>
-		  </td>
-		</tr>
-
-		<tr>
-          <td align="left" class="bgcolor_001" >
-		  		<input name="check[upd_context]" type="checkbox" <?php if ($check["upd_context"]=="on") echo "checked"?>>
-		  </td>
-		  <td align="left"  class="bgcolor_001">
-				2)&nbsp;<?php echo gettext("Context"); ?>&nbsp;:
-				<input class="form_input_text"  name="upd_context" size="30" maxlength="40" value="<?php if (isset($upd_context)) echo $upd_context;?>">
-				<br/>
-		  </td>
-		</tr>
-
-		<tr>
-			<td align="right" class="bgcolor_001"></td>
-		 	<td align="right"  class="bgcolor_001">
-				<input class="form_input_button"  value=" <?php echo gettext("BATCH UPDATE VOIP SETTINGS");?>  " type="submit">
-		</td>
-		</tr>
-		</form>
-		</table>
-</center>
-	</div>
-</div>
-<!-- ** ** ** ** ** Part for the Update ** ** ** ** ** -->
-
 <?php
 } else if ($popup_select < 2) {
 	echo $CC_help_sipfriend_edit;

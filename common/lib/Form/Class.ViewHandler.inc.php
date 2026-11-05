@@ -345,7 +345,7 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 					} elseif ($this->FG_TABLE_COL[$i][6]=="timeleft") {
 
 						$record_display = $list[$ligne_number][$i-$k];
-						$record_clear = $record_display ?? 0;
+						$record_clear = isset($record_display) ? $record_display : 0;
 						if ($record_display < 0) {
 							$record_display = "<span style='color: red'>00:00</span>";
 						} else {

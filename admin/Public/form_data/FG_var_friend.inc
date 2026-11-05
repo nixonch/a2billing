@@ -88,10 +88,14 @@ foreach ($result as $one) {
 	}
 }
 
-if ($atmenu == 'sip' && $form_action=="ask-edit" && isset($id)) {
-	$cbe_table = new Table('cc_sip_buddies','callbackextension');
+$card_readonly = false;
+if ($atmenu == 'sip' && ($form_action == 'ask-edit' || $form_action == 'edit') && isset($id)) {
+	$cbe_table = new Table('cc_sip_buddies','callbackextension, external');
 	$cbe_list = $cbe_table -> Get_list ($handle, "id='$id'", null, null, null, null);
-	$cbe = (is_array($cbe_list) && count($cbe_list)>0 && !is_null($cbe_list[0][0])) ? 1 : 0;
+	if ($form_action == 'ask-edit') {
+		$cbe = (is_array($cbe_list) && count($cbe_list)>0 && !is_null($cbe_list[0][0])) ? 1 : 0;
+	}
+	$card_readonly = is_array($cbe_list) && count($cbe_list)>0 && $cbe_list[0][1] == '0';
 }
 
 $HD_Form -> AddViewElement(gettext("CARDHOLDER"), "id_cc_card", "17%", "center", "sort", "50", "lie", "cc_card", "CONCAT_WS(' ',lastname,firstname,IF(company_name='','',CONCAT('(',company_name,')'))) AS customer", "id='%id'", "%1");
@@ -110,22 +114,26 @@ $HD_Form -> AddViewElement(gettext("CALLERID"), "callerid", "24%", "center", "so
 $HD_Form -> AddViewElement(gettext("CONTEXT"), "context", "9%", "center", "sort");
 $HD_Form -> AddViewElement("<font color=#00ff00>IP</font> / ".gettext("DEFAULTIP"), "curip", "20%", "center", "sort");
 
-
 $HD_Form ->FG_LIST_ADDING_BUTTON1 = true;
 $HD_Form ->FG_LIST_ADDING_BUTTON_LINK1 = "A2B_entity_friend.php?form_action=ask-add&atmenu=$atmenu&section=".$_SESSION["menu_section"];
 
 if ($atmenu=='sip') {
-	$HD_Form ->FG_LIST_ADDING_BUTTON_ALT1 = $HD_Form ->FG_LIST_ADDING_BUTTON_MSG1 = gettext("Add SIP Config");
+	$HD_Form ->FG_LIST_ADDING_BUTTON_ALT1 = $HD_Form ->FG_LIST_ADDING_BUTTON_MSG1 = gettext("Add Extension");
+	$HD_Form ->FG_LIST_ADDING_BUTTON2 = true;
+	$HD_Form ->FG_LIST_ADDING_BUTTON_LINK2 = $HD_Form ->FG_LIST_ADDING_BUTTON_LINK1;
+	$HD_Form ->FG_LIST_ADDING_BUTTON_LINK1 = "javascript:;\" onclick=\"addSipExtension(event);";
+	$HD_Form ->FG_LIST_ADDING_BUTTON_ALT2 = $HD_Form ->FG_LIST_ADDING_BUTTON_MSG2 = gettext("Add SIP DID/Trunk");
+	$HD_Form ->FG_LIST_ADDING_BUTTON_IMG2 = Images_Path ."/telephone_add.png";
 	$HD_Form -> FieldViewElement ("id_cc_card, accountcode, name, $un, secret, callerid, context, IF(port>0 AND UNIX_TIMESTAMP()<regseconds,concat('<font color=green>',ipaddr,':',port,'</font> ',IF(lastms=-1,'UNREACHABLE',IF(lastms>0,concat('(',lastms,' ms)'),'')),'<br>',useragent),defaultip) AS curip");
+	// Keep the row ID in place; the following value is only used by the popup title.
+	$HD_Form->FG_COL_QUERY .= ", IF(external=1, defaultuser, regexten) AS delete_title";
+	$HD_Form -> FG_CAPCHA_POPUP = '|col2| | |col'.($HD_Form->FG_NB_TABLE_COL + 1).'|';
 } else {
 	$HD_Form ->FG_LIST_ADDING_BUTTON_ALT1 = $HD_Form ->FG_LIST_ADDING_BUTTON_MSG1 = gettext("Add IAX Config");
 	$HD_Form -> FieldViewElement ("id_cc_card, accountcode, name, $un, secret, callerid, context, IF(port>0 AND UNIX_TIMESTAMP()<regseconds,concat('<font color=green>',ipaddr,':',port,'</font> ',IF(qualifyfreqok=-1,'UNREACHABLE',IF(qualifyfreqok>0,concat('(',qualifyfreqok,' ms)'),''))),defaultip) AS curip");
+	$HD_Form -> FG_CAPCHA_POPUP = '|col2| | |col3|';
 }
 $HD_Form ->FG_LIST_ADDING_BUTTON_IMG1 = Images_Path ."/telephone_add.png" ;
-
-
-
-
 
 $HD_Form -> CV_NO_FIELDS  = gettext("THERE IS NO ".strtoupper($HD_Form->FG_INSTANCE_NAME)." CREATED!"); 
 $HD_Form -> CV_DISPLAY_LINE_TITLE_ABOVE_TABLE = false;
@@ -141,8 +149,6 @@ if (isset($friend_id)  &&  (strlen($friend_id)>0)) {
 	}
 }
 
-
-
 $HD_Form -> FG_EDITION = true;
 $HD_Form -> FG_DELETION = true;
 $HD_Form -> FG_ADDITION = true;
@@ -156,7 +162,6 @@ if ($form_action=="ask-add") {
 } else {
 $maxi=$acc='';
 }
-
 
 if ($form_action=="ask-add" || $form_action == "add_sip" || $form_action == "add_iax") {
 	$AMAFLAGS_default= "value='".$A2B->config["peer_friend"]['amaflag']."'";
@@ -181,6 +186,10 @@ if ($form_action=="ask-add" || $form_action == "add_sip" || $form_action == "add
 	$dtmfmode		= $A2B->config["peer_friend"]['dtmfmode'];
 }
 
+if ($atmenu == 'sip' && ($form_action == 'ask-add' || $form_action == 'add')) {
+	$HD_Form->_vars['external'] = $external = '1';
+}
+
 // Possible value to notify the user
 $instance_config_table = new Table("cc_config", "id, config_value");
 $QUERY = " config_key = 'values_notifications' ";
@@ -199,8 +208,8 @@ foreach ($values as $val) {
 $HD_Form -> AddEditElement (gettext("ID CARD"),
 						    "id_cc_card",
 						    '',
-						    "POPUPVALUEALERT",
-						    "readonly size=30 maxlength=50",
+						    $card_readonly ? "INPUT" : "POPUPVALUEALERT",
+						    $card_readonly ? "size=30 maxlength=50 readonly" : "readonly size=30 maxlength=50",
 						    "4",
 						    gettext("Insert the Id CardNumber"),
 						    "", "", "", "", "",
@@ -212,7 +221,7 @@ $HD_Form -> AddEditElement (gettext("EXTERNAL"),
 						    "external",
 						    $external,
 						    "SELECT",
-						    "",
+						    ($atmenu == 'sip') ? 'disabled="true" style="color: gray;" readonly' : "",
 						    "",
 						    "",
 						    "list", "", "", "", $yesno, "%1", "", gettext("'Yes' for external line or 'No' for extension"));
@@ -1239,6 +1248,21 @@ if ($atmenu=='sip') {
 			'jitterbuffer, forcejitterbuffer, codecpriority, qualifysmoothing, qualifyfreqok, qualifyfreqnotok, timezone, adsi, requirecalltoken, maxcallnumbers, maxcallnumbers_nonvalidated';
 }
 
+
+if ($atmenu == 'sip' && ($form_action == 'ask-delete' || $form_action == 'ask-del-confirm')) {
+	$delete_fields = array('external', 'name', 'accountcode', 'regexten', 'callerid', 'cid_number', 'defaultuser',
+		'context', 'subscribecontext', 'mailbox', 'host', 'fromuser', 'fromdomain', 'callbackextension');
+	$delete_elements = array();
+	foreach ($HD_Form->FG_TABLE_EDITION as $element) {
+		$delete_elements[$element[1]] = $element;
+	}
+	$HD_Form->FG_TABLE_EDITION = array();
+	foreach ($delete_fields as $field) {
+		$HD_Form->FG_TABLE_EDITION[] = $delete_elements[$field];
+	}
+	$HD_Form->FG_NB_TABLE_EDITION = count($delete_fields);
+	$field_list_edit = implode(', ', $delete_fields);
+}
 
 $HD_Form -> FieldEditElement ($field_list_edit);
 

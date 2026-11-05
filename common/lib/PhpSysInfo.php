@@ -38,7 +38,7 @@ function a2b_sysinfo_url($url, $source = 'index.php', $endpoint = 'A2B_phpsysinf
     if ($url === '' || preg_match('~^(?:[a-z][a-z0-9+.-]*:|/|\#)~i', $url)) return $url;
     $parts = parse_url($url);
     if ($parts === false) return $url;
-    $relative = $parts['path'] ?? '';
+    $relative = isset($parts['path']) ? $parts['path'] : '';
     $path = $relative === '' ? $source : dirname($source) . '/' . $relative;
     $segments = array();
     foreach (explode('/', $path) as $segment) {

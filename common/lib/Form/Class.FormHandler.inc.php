@@ -751,7 +751,8 @@ class FormHandler
 		unset($value);
 		$pattern = $condition ? '/\|col(\d+)\|/i' : '/%(\d+)/';
 		$reference = function ($match, $quoted = false) use ($condition) {
-			return '(' . ($quoted ? '$quotedViewValues[' : '$viewValues[') . (int)$match[1] . '] ?? ' . ($condition ? 'null' : '0') . ')';
+			$value = ($quoted ? '$quotedViewValues[' : '$viewValues[') . (int)$match[1] . ']';
+			return '(isset(' . $value . ') ? ' . $value . ' : ' . ($condition ? 'null' : '0') . ')';
 		};
 		$source = '';
 		$literals = array();

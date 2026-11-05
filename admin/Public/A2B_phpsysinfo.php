@@ -39,7 +39,7 @@ require_once __DIR__ . '/../lib/PhpSysInfo.php';
 
 $resourceRequest = array_key_exists('sysinfo', $_GET);
 if ($resourceRequest) header_register_callback('a2b_sysinfo_headers');
-if (($_SESSION['user_type'] ?? '') !== 'ADMIN' ||
+if ((isset($_SESSION['user_type']) ? $_SESSION['user_type'] : '') !== 'ADMIN' ||
     !isset($_SESSION['pr_login'], $_SESSION['pr_password']) ||
     !has_rights(ACX_MAINTENANCE) || !has_rights(ACX_ADMINISTRATOR)) {
     if ($resourceRequest) {
