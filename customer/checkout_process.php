@@ -34,7 +34,7 @@
 include ("./lib/customer.defines.php");
 
 getpost_ifset (array('transactionID', 'sess_id', 'key', 'mc_currency', 'currency', 'md5sig', 'merchant_id', 'mb_amount', 'status', 'mb_currency',
-					'transaction_id', 'mc_fee', 'card_number', 'mc_gross', 'item_name', 'receiver_id',
+					'transaction_id', 'card_number', 'mc_gross', 'item_name', 'receiver_id',
 					'LMI_PREREQUEST','LMI_PAYEE_PURSE','LMI_PAYMENT_AMOUNT','LMI_PAYMENT_NO','LMI_MODE','LMI_SYS_INVS_NO','LMI_WMCHECK_NUMBER',
 					'LMI_SYS_TRANS_NO','LMI_PAYER_PURSE','LMI_SDP_TYPE','LMI_PAYER_WM','LMI_HASH','LMI_SYS_TRANS_DATE','LMI_PAYMENT_DESC'));
 
@@ -117,8 +117,8 @@ $currencies_list 	= get_currencies();
 $user_paypal 		= true;
 $payment_modules	= new payment($transaction_data[0][4]);
 
-if ($A2B->config['epayment_method']['charge_paypal_fee']==1 || !isset($mc_fee))
-	$mc_fee 	= 0;
+// Only a verified PayPal POST may supply a fee; other gateways ignore mc_fee.
+$mc_fee = 0;
 if (!isset($mc_gross))
 	$mc_gross	= 0;
 
@@ -129,6 +129,10 @@ switch($transaction_data[0][4])
 	case "paypal":
 		$currCurrency = $mc_currency;
 		$currAmount = $mc_gross;
+		if (isset($_POST['mc_fee']) && !is_scalar($_POST['mc_fee'])) {
+			$security_verify = false;
+			break;
+		}
 		$postvars = array();
 		$req = 'cmd=_notify-validate';
 		foreach ($_POST as $vkey => $Value) {
@@ -166,6 +170,15 @@ switch($transaction_data[0][4])
 			if (!$flag_ver) {
 				write_log(LOGFILE_EPAYMENT, basename(__FILE__).' line:'.__LINE__." - PAYPAL Transaction Verification Status: Failed \nreq=$req\n$gather_res");
 				$security_verify = false;
+			} elseif ($A2B->config['epayment_method']['charge_paypal_fee'] != 1 && isset($_POST['mc_fee'])) {
+				if (!is_numeric($_POST['mc_fee']) || !is_finite((float)$_POST['mc_fee']) ||
+					(float)$_POST['mc_fee'] < 0 || !is_numeric($currAmount) ||
+					!is_finite((float)$currAmount) || (float)$_POST['mc_fee'] > (float)$currAmount) {
+					write_log(LOGFILE_EPAYMENT, basename(__FILE__).' line:'.__LINE__." - PAYPAL Transaction Verification Status: Invalid fee");
+					$security_verify = false;
+				} else {
+					$mc_fee = (float)$_POST['mc_fee'];
+				}
 			}
 		}
 		fclose ($fp);

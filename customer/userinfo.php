@@ -266,6 +266,7 @@ if(!empty($subscribe)){
 		    <input type="hidden" name="no_note" value="1">
 		    <input type="hidden" name="notify_url" value="<?php echo $link?>">
 		    <input type="hidden" name="return" value="<?php echo $link_return?>">
+		    <?php echo tep_draw_hidden_field('cbt', gettext('Return to ').STORE_NAME); ?>
 		    <input type="hidden" name="cancel_return" value="<?php echo $link_cancel?>">
 		    <input type="hidden" name="item_name" value="<?php echo $desc?>">
 		    <input type="hidden" name="a3" value="<?php echo $amount_subscribe?>">

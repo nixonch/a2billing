@@ -34,73 +34,93 @@
 
 include ("./lib/customer.defines.php");
 
-getpost_ifset (array('id', 'key', 'payment_gross','payment_status', 'txn_type','payer_email'));
-
-$log = "\nREQUEST RECURRING PAYMENT:\n";
-$log .= "GET:\n";
-foreach ($_GET as $vkey => $Value) {
-	$log .= $vkey . " = " . $Value . "\n";
+getpost_ifset(array('id', 'key'));
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+	http_response_code(405);
+	exit;
 }
-$log .= "POST:\n";
-foreach ($_POST as $vkey => $Value) {
-	$log .= $vkey . " = " . $Value . "\n";
-}
-
-write_log(LOGFILE_EPAYMENT, basename(__FILE__) . ' line:' . __LINE__ . "$log");
-
-if (!isset($payment_status, $txn_type) || $payment_status != "Completed" || $txn_type != "subscr_payment") {
-	die();
-}
-
-$req = 'cmd=_notify-validate';
-foreach ($_POST as $vkey => $Value) {
-	$req .= "&" . $vkey . "=" . urlencode($Value);
-}
-
-$header .= "POST /cgi-bin/webscr HTTP/1.0\r\n";
-$header .= "Content-Type: application/x-www-form-urlencoded\r\n";
-$header .= "Content-Length: " . strlen($req) . "\r\n\r\n";
-
-for ($i = 1; $i <= 3; $i++) {
-	write_log(LOGFILE_EPAYMENT, basename(__FILE__) . ' line:' . __LINE__ . "-OPENDING HTTP CONNECTION TO " . PAYPAL_VERIFY_URL);
-	$fp = fsockopen(PAYPAL_VERIFY_URL, 443, $errno, $errstr, 30);
-	if ($fp) {
-		break;
-	} else {
-		write_log(LOGFILE_EPAYMENT, basename(__FILE__) . ' line:' . __LINE__ . " -Try#" . $i . " Failed to open HTTP Connection : " . $errstr . ". Error Code: " . $errno);
-		sleep(3);
+// Validate exactly the body returned to PayPal, never GET or sanitized globals.
+$paypal_body = file_get_contents('php://input');
+$paypal_post = array();
+parse_str($paypal_body, $paypal_post);
+foreach ($paypal_post as $value) {
+	if (!is_string($value)) {
+		http_response_code(400);
+		exit;
 	}
 }
+if (!isset($paypal_post['payment_status'], $paypal_post['txn_type']) ||
+	$paypal_post['payment_status'] !== 'Completed' || $paypal_post['txn_type'] !== 'subscr_payment') {
+	exit;
+}
+if (!isset($id, $key) || !is_string($id) || !ctype_digit($id) || (int)$id <= 0 || !is_string($key) ||
+	!isset($paypal_post['txn_id'], $paypal_post['mc_gross'], $paypal_post['mc_currency']) ||
+	!preg_match('/^[A-Za-z0-9]{1,30}$/D', $paypal_post['txn_id']) ||
+	!preg_match('/^[0-9]+(?:\.[0-9]{1,2})?$/D', $paypal_post['mc_gross']) ||
+	(float)$paypal_post['mc_gross'] <= 0 || (float)$paypal_post['mc_gross'] > 9999999.99 ||
+	$paypal_post['mc_currency'] !== strtoupper(BASE_CURRENCY)) {
+	http_response_code(400);
+	exit;
+}
 
-if (!$fp) {
-	write_log(LOGFILE_EPAYMENT, basename(__FILE__) . ' line:' . __LINE__ . "-Failed to open HTTP Connection: " . $errstr . ". Error Code: " . $errno);
-	exit ();
-} else {
-	fputs($fp, $header . $req);
-	$flag_ver = 0;
-	while (!feof($fp)) {
-		$res = fgets($fp, 1024);
-		$gather_res .= $res;
-		if (strcmp($res, "VERIFIED") == 0) {
-			write_log(LOGFILE_EPAYMENT, basename(__FILE__) . ' line:' . __LINE__ . "-PAYPAL Transaction Verification Status: Verified ");
-			$flag_ver = 1;
-		}
-	}
-	write_log("/var/log/a2billing/test.log", "\nREQUEST:\n$gather_res");
-	if ($flag_ver == 0) {
-		write_log(LOGFILE_EPAYMENT, basename(__FILE__) . ' line:' . __LINE__ . "-PAYPAL Transaction Verification Status: Failed \nreq=$req\n$gather_res");
-		$security_verify = false;
+// Existing configuration uses ssl://www.paypal.com; use the HTTPS IPN endpoint.
+$paypal_host = parse_url(str_replace('ssl://', 'https://', PAYPAL_VERIFY_URL), PHP_URL_HOST);
+if (!in_array($paypal_host, array('www.paypal.com', 'ipnpb.paypal.com', 'www.sandbox.paypal.com', 'ipnpb.sandbox.paypal.com'), true) ||
+	!function_exists('curl_init')) {
+	write_log(LOGFILE_EPAYMENT, 'Recurring PayPal: verification configuration unavailable');
+	http_response_code(503);
+	exit;
+}
+$paypal_verify_url = strpos($paypal_host, 'sandbox') !== false
+	? 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr' : 'https://ipnpb.paypal.com/cgi-bin/webscr';
+$paypal_curl = curl_init($paypal_verify_url);
+curl_setopt_array($paypal_curl, array(
+	CURLOPT_POST => true,
+	CURLOPT_POSTFIELDS => 'cmd=_notify-validate&' . $paypal_body,
+	CURLOPT_RETURNTRANSFER => true,
+	CURLOPT_CONNECTTIMEOUT => 10,
+	CURLOPT_TIMEOUT => 30,
+	CURLOPT_SSL_VERIFYPEER => true,
+	CURLOPT_SSL_VERIFYHOST => 2,
+	CURLOPT_FOLLOWLOCATION => false,
+	CURLOPT_HTTPHEADER => array('Content-Type: application/x-www-form-urlencoded', 'Connection: close')
+));
+$paypal_response = curl_exec($paypal_curl);
+$paypal_http_code = curl_getinfo($paypal_curl, CURLINFO_HTTP_CODE);
+curl_close($paypal_curl);
+if ($paypal_response === false || $paypal_http_code !== 200) {
+	write_log(LOGFILE_EPAYMENT, 'Recurring PayPal: verification transport failed');
+	http_response_code(503);
+	exit;
+}
+if (trim($paypal_response) !== 'VERIFIED') {
+	write_log(LOGFILE_EPAYMENT, 'Recurring PayPal: notification not VERIFIED');
+	http_response_code(400);
+	exit;
+}
+$paypal_account = trim($A2B->config['epayment_method']['paypal_subscription_account']);
+$paypal_receiver_matches = false;
+foreach (array('business', 'receiver_email', 'receiver_id') as $field) {
+	if ($paypal_account !== '' && isset($paypal_post[$field]) && strcasecmp($paypal_account, $paypal_post[$field]) === 0) {
+		$paypal_receiver_matches = true;
 	}
 }
-fclose($fp);
+if (!$paypal_receiver_matches) {
+	write_log(LOGFILE_EPAYMENT, 'Recurring PayPal: wrong payment recipient');
+	http_response_code(400);
+	exit;
+}
+$txn_id = $paypal_post['txn_id'];
+$payment_gross = $paypal_post['mc_gross'];
+$payer_email = isset($paypal_post['payer_email']) ? $paypal_post['payer_email'] : '';
 $DBHandle = DbConnect();
-$table_card = new Table("cc_card", "username,useralias,UNIX_TIMESTAMP(creationdate) creationdate,vat,firstname,lastname");
-$card_clause = "id = $id";
-$result = $table_card->Get_list($DBHandle, $card_clause);
+$table_card = new Table("cc_card", "username,useralias,UNIX_TIMESTAMP(creationdate) creationdate,vat,firstname,lastname,email");
+$result = $table_card->Get_list($DBHandle, 'id = ?', null, null, null, null, null, null, null, 0, array($id));
 
-if (!is_array($result)) {
+if (!is_array($result) || count($result) !== 1) {
 	write_log(LOGFILE_EPAYMENT, basename(__FILE__) . ' line:' . __LINE__ . "-PAYPAL Reccurring Payment Failed : card id( $id ) not found");
-	die();
+	http_response_code(400);
+	exit;
 }
 
 $card = $result[0];
@@ -113,39 +133,69 @@ $lastname = $result[0]['lastname'];
 $email = $result[0]['email'];
 $newkey = securitykey(EPAYMENT_TRANSACTION_KEY, $username . "^" . $id . "^" . $useralias . "^" . $creationdate);
 
-if ($newkey == $key) {
+if (hash_equals($newkey, $key)) {
 	write_log(LOGFILE_EPAYMENT, basename(__FILE__) . ' line:' . __LINE__ . "----------- Transaction Key Verified ------------");
 } else {
-	write_log(LOGFILE_EPAYMENT, basename(__FILE__) . ' line:' . __LINE__ . "----NEW KEY =" . $newkey . " OLD KEY= " . $key . " ------- Transaction Key Verification Failed:" . $transaction_data[0][8] . "^" . $transactionID . "^" . $transaction_data[0][2] . "^" . $transaction_data[0][1] . " ------------\n");
-	exit ();
+	write_log(LOGFILE_EPAYMENT, 'Recurring PayPal: invalid customer key');
+	http_response_code(400);
+	exit;
 }
 
+if (!is_numeric($vat) || !is_finite((float)$vat) || $vat < 0) {
+	http_response_code(500);
+	exit;
+}
 $amount_paid = $payment_gross;
 $amount_without_vat = $amount_paid / (1 + $vat / 100);
 $nowDate = date("Y-m-d H:i:s");
 
+// The existing UNIQUE txn_id index is the claim, including concurrent requests.
+// Claim before any balance/journal write: MyISAM cannot roll back partial writes.
+$claimed = $DBHandle->Execute('INSERT INTO cc_paypal (txn_id, payment_status, txn_type, mc_gross, mc_currency, item_number) VALUES (?, ?, ?, ?, ?, ?)',
+	array($txn_id, 'Processing', 'subscr_payment', $amount_paid, $paypal_post['mc_currency'], $id));
+if (!$claimed) {
+	$paypal_table = new Table('cc_paypal', 'payment_status');
+	$previous = $paypal_table->Get_list($DBHandle, 'txn_id = ?', null, null, null, null, null, null, null, 0, array($txn_id));
+	if (is_array($previous) && count($previous) === 1 && $previous[0]['payment_status'] === 'Completed') {
+		write_log(LOGFILE_EPAYMENT, 'Recurring PayPal: duplicate ignored, txn_id=' . $txn_id);
+		http_response_code(200);
+	} else {
+		write_log(LOGFILE_EPAYMENT, 'Recurring PayPal: claim failed or unfinished payment requires review, txn_id=' . $txn_id);
+		http_response_code(503);
+	}
+	exit;
+}
+$require_recurring_write = function ($result) {
+	if (!$result) throw new \RuntimeException('Recurring payment database write failed');
+	return $result;
+};
+
+try {
+
 $Query = "INSERT INTO cc_payments ( customers_id, customers_name, customers_email_address, item_name, payment_method,cc_number,orders_status, " .
 " last_modified, date_purchased, orders_date_finished, orders_amount, currency, currency_value) values (" .
-" '" . $id . "', '" . $firstname . " " . $lastname . "', '" . $email . "', 'RECURRING PAYMENT', 'PAYPAL' ," .
-" '$payer_email','2', '" . $nowDate . "', '" . $nowDate . "', '" . $nowDate . "',  " . $amount_paid . ",  '" . BASE_CURRENCY . "', '1' )";
-$result = $DBHandle->Execute($Query);
+" ?, ?, ?, 'RECURRING PAYMENT', 'PAYPAL', ?, '2', ?, ?, ?, ?, ?, '1')";
+$require_recurring_write($DBHandle->Execute($Query, array($id, $firstname . ' ' . $lastname, $email,
+	substr($payer_email, 0, 32), $nowDate, $nowDate, $nowDate, $amount_paid, BASE_CURRENCY)));
 
 $instance_table = new Table("cc_card", "username, id");
-$param_update = " credit = credit+'" . $amount_without_vat . "'";
-$FG_EDITION_CLAUSE = " id='$id'";
-$instance_table->Update_table($DBHandle, $param_update, $FG_EDITION_CLAUSE, $func_table = null);
+$param_update = 'credit = credit + ?';
+$FG_EDITION_CLAUSE = 'id = ?';
+$require_recurring_write($instance_table->Update_table($DBHandle, $param_update, $FG_EDITION_CLAUSE, null, array($amount_without_vat, $id)));
 write_log(LOGFILE_EPAYMENT, basename(__FILE__) . ' line:' . __LINE__ . "-Recurring payment" . " Update_table cc_card : $param_update - CLAUSE : $FG_EDITION_CLAUSE");
 
 $field_insert = "date, credit, card_id, description";
-$value_insert = "'$nowDate', '" . $amount_without_vat . "', '$id', '" . gettext("Reccurring payment : automated refill") . "'";
+$value_insert = '?, ?, ?, ?';
 $instance_sub_table = new Table("cc_logrefill", $field_insert);
-$id_logrefill = $instance_sub_table->Add_table($DBHandle, $value_insert, null, null, 'id');
+$id_logrefill = $require_recurring_write($instance_sub_table->Add_table($DBHandle, $value_insert, null, null, 'id', false, null,
+	array($nowDate, $amount_without_vat, $id, gettext('Reccurring payment : automated refill'))));
 write_log(LOGFILE_EPAYMENT, basename(__FILE__) . ' line:' . __LINE__ . "-Recurring payment" . " Add_table cc_logrefill : $field_insert - VALUES $value_insert");
 
 $field_insert = "date, payment, card_id, id_logrefill, description";
-$value_insert = "'$nowDate', '" . $amount_paid . "', '$id', '$id_logrefill', '" . gettext("Reccurring payment : automated refill") . "'";
+$value_insert = '?, ?, ?, ?, ?';
 $instance_sub_table = new Table("cc_logpayment", $field_insert);
-$id_payment = $instance_sub_table->Add_table($DBHandle, $value_insert, null, null, "id");
+$id_payment = $require_recurring_write($instance_sub_table->Add_table($DBHandle, $value_insert, null, null, 'id', false, null,
+	array($nowDate, $amount_paid, $id, $id_logrefill, gettext('Reccurring payment : automated refill'))));
 write_log(LOGFILE_EPAYMENT, basename(__FILE__) . ' line:' . __LINE__ . "-Recurring payment" . " Add_table cc_logpayment : $field_insert - VALUES $value_insert");
 
 //ADD an INVOICE
@@ -155,9 +205,10 @@ $date = $nowDate;
 $card_id = $id;
 $title = gettext("CUSTOMER REFILL");
 $description = gettext("Invoice for refill");
-$value_insert = " '$date' , '$card_id', '$title','$reference','$description',1,1 ";
+$value_insert = '?, ?, ?, ?, ?, 1, 1';
 $instance_table = new Table("cc_invoice", $field_insert);
-$id_invoice = $instance_table->Add_table($DBHandle, $value_insert, null, null, "id");
+$id_invoice = $require_recurring_write($instance_table->Add_table($DBHandle, $value_insert, null, null, 'id', false, null,
+	array($date, $card_id, $title, $reference, $description)));
 
 //load vat of this card
 if (!empty ($id_invoice) && is_numeric($id_invoice)) {
@@ -165,15 +216,15 @@ if (!empty ($id_invoice) && is_numeric($id_invoice)) {
 	$description = gettext("Automated Refill : recurring payment");
 	$field_insert = "date, id_invoice ,price,vat, description";
 	$instance_table = new Table("cc_invoice_item", $field_insert);
-	$value_insert = " '$date' , '$id_invoice', '$amount','$VAT','$description' ";
-	$instance_table->Add_table($DBHandle, $value_insert, null, null, "id");
+	$value_insert = '?, ?, ?, ?, ?';
+	$require_recurring_write($instance_table->Add_table($DBHandle, $value_insert, null, null, 'id', false, null,
+		array($date, $id_invoice, $amount, $vat, $description)));
 }
 
 //link payment to this invoice
 $table_payment_invoice = new Table("cc_invoice_payment", "*");
 $fields = " id_invoice , id_payment";
-$values = " $id_invoice, $id_payment	";
-$table_payment_invoice->Add_table($DBHandle, $values, $fields);
+$require_recurring_write($table_payment_invoice->Add_table($DBHandle, '?, ?', $fields, null, null, false, null, array($id_invoice, $id_payment)));
 
 //END INVOICE
 //Agent commision
@@ -196,9 +247,21 @@ if (is_array($result_agent) && !is_null($result_agent[0]['id_agent']) && $result
 		$description_commission .= "\nID PAYMENT : " . $id_payment;
 		$description_commission .= "\nPAYMENT AMOUNT: " . $amount_paid;
 		$description_commission .= "\nCOMMISSION APPLIED: " . $result_agent[0]['commission'];
-		$value_insert = "'" . $id_payment . "', '$id', '$commission','$description_commission','$id_agent'";
+		$value_insert = '?, ?, ?, ?, ?';
 		$commission_table = new Table("cc_agent_commission", $field_insert);
-		$id_commission = $commission_table->Add_table($DBHandle, $value_insert, null, null, "id");
+		$id_commission = $require_recurring_write($commission_table->Add_table($DBHandle, $value_insert, null, null, 'id', false, null,
+			array($id_payment, $id, $commission, $description_commission, $id_agent)));
 	}
+}
+
+$require_recurring_write($DBHandle->Execute('UPDATE cc_paypal SET payment_status = ? WHERE txn_id = ?', array('Completed', $txn_id)));
+write_log(LOGFILE_EPAYMENT, 'Recurring PayPal: completed, txn_id=' . $txn_id);
+http_response_code(200);
+} catch (\Exception $error) {
+	// Retain the claim even if the balance write already succeeded; never credit twice.
+	$DBHandle->Execute('UPDATE cc_paypal SET payment_status = ? WHERE txn_id = ?', array('Error', $txn_id));
+	write_log(LOGFILE_EPAYMENT, 'Recurring PayPal: partial failure requires review, txn_id=' . $txn_id);
+	http_response_code(500);
+	exit;
 }
 
