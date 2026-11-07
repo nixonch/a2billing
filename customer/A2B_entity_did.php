@@ -126,11 +126,55 @@ if (isset ($mydisplaylimit) && (is_numeric($mydisplaylimit) || ($mydisplaylimit 
 		$FG_LIMITE_DISPLAY = $mydisplaylimit;
 	}
 }
-if (isset ($choose_did_rate) && strlen($choose_did_rate) != 0) {
-	$did_rate = explode("CUR", $choose_did_rate);
-	$choose_did = $did_rate[0];
-	$rate = $did_rate[1];
-	$did_name = $did_rate[2];
+// The browser selects an ID; price, label and access scope come from the database.
+if (!isset($assign) || $assign === '') $assign = 1;
+if (!is_scalar($assign) || !in_array((string)$assign, array('1', '2', '3'), true)) {
+	Header("HTTP/1.0 400 Bad Request");
+	die(gettext("Invalid request"));
+}
+if (!isset($confirm_buy_did) || $confirm_buy_did === '') $confirm_buy_did = 0;
+if (!isset($action_release)) $action_release = '';
+if (!is_scalar($confirm_buy_did) || !in_array((string)$confirm_buy_did, array('0', '1', '4'), true)
+	|| !is_scalar($action_release) || !in_array((string)$action_release, array('', 'ask_release', 'confirm_release'), true)
+	|| ($confirm_buy_did == 1 && $assign != 1) || ($confirm_buy_did == 4 && $assign != 2)
+	|| ($action_release !== '' && $assign != 3)) {
+	Header("HTTP/1.0 400 Bad Request");
+	die(gettext("Invalid request"));
+}
+$choose_did = null;
+$rate = 0;
+$did_name = '';
+$did_selection_requested = isset($choose_did_rate) && $choose_did_rate !== '';
+if (!$did_selection_requested && ($confirm_buy_did != 0 || $action_release !== '')) {
+	Header("HTTP/1.0 400 Bad Request");
+	die(gettext("Invalid request"));
+}
+if ($did_selection_requested) {
+	if (!is_scalar($choose_did_rate) || !ctype_digit((string)$choose_did_rate) || ltrim((string)$choose_did_rate, '0') === '') {
+		Header("HTTP/1.0 400 Bad Request");
+		die(gettext("Invalid request"));
+	}
+	$did_selection_sql = "SELECT cc_did.id, cc_did.did, cc_did.fixrate FROM cc_did WHERE cc_did.id = ?";
+	$did_selection_params = array((string)$choose_did_rate);
+	if ($assign == 1) {
+		$did_selection_sql .= " AND cc_did.id_cc_didgroup = ? AND cc_did.reserved = 0";
+		$did_selection_params[] = (int)$_SESSION['id_didgroup'];
+	} else {
+		$did_selection_sql .= " AND (cc_did.id_cc_didgroup = ? OR cc_did.iduser = ?) AND EXISTS (SELECT 1 FROM cc_did_use WHERE cc_did_use.id_did = cc_did.id AND cc_did_use.id_cc_card = ? AND cc_did_use.activated = 1 AND (cc_did_use.releasedate IS NULL OR cc_did_use.releasedate < '1984-01-01 00:00:00'))";
+		$did_selection_params[] = (int)$_SESSION['id_didgroup'];
+		$did_selection_params[] = (int)$_SESSION['card_id'];
+		$did_selection_params[] = (int)$_SESSION['card_id'];
+	}
+	$did_selection_table = new Table();
+	$selected_did = $did_selection_table->SQLExec($HD_Form->DBHandle, $did_selection_sql, 1, 0, $did_selection_params);
+	if (!is_array($selected_did) || count($selected_did) == 0) {
+		Header("HTTP/1.0 403 Forbidden");
+		die(gettext("Access denied"));
+	}
+	$choose_did = $selected_did[0][0];
+	$did_name = $selected_did[0][1];
+	$rate = $selected_did[0][2];
+	$choose_did_rate = (string)$choose_did;
 }
 
 $QUERY = "SELECT credit, creditlimit, typepaid FROM cc_card	WHERE username = '" . $_SESSION["pr_login"] . "' AND uipass = '" . $_SESSION["pr_password"] . "'";
@@ -185,7 +229,8 @@ if ($action_release == "ask_release") {
 	echo $CC_help_release_did;
 ?>
 	<FORM action="A2B_entity_did.php" name="form1">
-		<INPUT type="hidden" name="choose_did" value="<?php echo $choose_did?>">
+		<INPUT type="hidden" name="assign" value="3">
+		<INPUT type="hidden" name="choose_did_rate" value="<?php echo htmlspecialchars($choose_did_rate, ENT_QUOTES, 'UTF-8')?>">
 		<INPUT type="hidden" name="action_release" value="confirm_release"><br><br>
 		<br><br>
 		<TABLE cellspacing="0" class="delform_table5">
@@ -231,8 +276,8 @@ if (!isset ($action_release) || $action_release == "confirm_release" || $action_
 		$result = $instance_table_did_use->SQLExec($HD_Form->DBHandle, $QUERY, 0);
 		if ($confirm_buy_did == 2) {
 			$QUERY1 = "INSERT INTO cc_charge (id_cc_card, amount, chargetype, description, id_cc_did, charged_status) " .
-					"VALUES ('" . $_SESSION["card_id"] . "', '" . $rate . "', '2', 'DID: ".$did_name."', '" . $choose_did . "', '1')";
-			$result = $instance_table_did_use->SQLExec($HD_Form->DBHandle, $QUERY1, 0);
+					"VALUES (?, ?, '2', ?, ?, '1')";
+			$result = $instance_table_did_use->SQLExec($HD_Form->DBHandle, $QUERY1, 0, 0, array($_SESSION['card_id'], $rate, 'DID: '.$did_name, $choose_did));
 
 			$QUERY1 = "UPDATE cc_did set iduser = " . $_SESSION["card_id"] . ",reserved=1 where id = '" . $choose_did . "'";
 			$result = $instance_table_did_use->SQLExec($HD_Form->DBHandle, $QUERY1, 0);
@@ -324,7 +369,7 @@ if (!isset ($action_release) || $action_release == "confirm_release" || $action_
 	if (!isset ($assign))
 		$assign = 1;
 
-	if (isset ($choose_country)) {
+	if ($assign == 1 && isset($choose_country) && is_scalar($choose_country) && ctype_digit((string)$choose_country)) {
 		// LIST FREE DID TO ADD PHONENUMBER
 		$instance_table_did = new Table("cc_did", "DISTINCT cc_did.id, did, fixrate, connection_charge, selling_rate, aleg_retail_connect_charge, aleg_retail_cost_min");
 		$FG_TABLE_CLAUSE = "id_cc_country=$choose_country and id_cc_didgroup='" . $_SESSION["id_didgroup"] . "' and reserved=0";
@@ -409,7 +454,7 @@ function CheckCountry(Source){
 	if (Source == 'did_release')
 	{	
 		document.theForm.action_release.value = 'ask_release';
-		document.theForm.assign.value=1;
+		document.theForm.assign.value=3;
 		did = document.theForm.choose_did_rate.value;
 		if (did == '') 
 		{ 
@@ -424,15 +469,16 @@ function CheckCountry(Source){
 
 //-->
 </script>
-	  <center><?php echo $error_msg;?>
-	  <a href="A2B_entity_did.php?assign=1"><input type="radio" value="1" <?php if ($assign==1) echo 'checked'; ?>/><?php echo gettext("Buy New DID");?> </a> - <a href="A2B_entity_did.php?assign=2"><input type="radio" value="2" <?php if ($assign==2) echo 'checked'; ?>/><?php echo gettext("Add Destination Number to your DID");?></a> - <a href="A2B_entity_did.php?assign=3"><input type="radio" value="3" <?php if ($assign==3) echo 'checked'; ?>/><?php echo gettext("Release DID");?></a>
+	  <div class="did-actions" style="width:75%; margin:0 auto; text-align:left;">
+	  <?php echo $error_msg;?>
+	  <div class="did-action-modes"><a href="A2B_entity_did.php?assign=1"><input type="radio" value="1" <?php if ($assign==1) echo 'checked'; ?>/><?php echo gettext("Buy New DID");?> </a> - <a href="A2B_entity_did.php?assign=2"><input type="radio" value="2" <?php if ($assign==2) echo 'checked'; ?>/><?php echo gettext("Add Destination Number to your DID");?></a> - <a href="A2B_entity_did.php?assign=3"><input type="radio" value="3" <?php if ($assign==3) echo 'checked'; ?>/><?php echo gettext("Release DID");?></a></div>
 	
 	   <form name="theForm" action="A2B_entity_did.php">
 	    <INPUT type="hidden" name="assign" value="<?php echo $assign ?>">
 	    <INPUT type="hidden" name="new_did_page" value="<?php echo $new_did_page?>">
 	    <INPUT type="hidden" name="confirm_buy_did" value="0">
 	    <INPUT type="hidden" name="action_release">
-	   <table align="center"  border="0" class="bgcolor_006" width="75%">
+	   <table border="0" class="bgcolor_006" width="100%">
 		<?php 
 		switch ($new_did_page) {
 		
@@ -471,7 +517,7 @@ function CheckCountry(Source){
 					$price_annoucement .= ';'.gettext("A-Leg Rate:").$recordset[6].' '.BASE_CURRENCY;
 					?>
 					
-						<option class=input value='<?php echo $recordset[0]."CUR".$recordset[2]."CUR".$recordset[1] ?>'<?php if ($choose_did_rate == $recordset[0]."CUR".$recordset[2]."CUR".$recordset[1]) echo 'selected';?>><?php echo $recordset[1]?>  (<?php echo $price_annoucement; ?>)</option>
+						<option class=input value="<?php echo htmlspecialchars((string)$recordset[0], ENT_QUOTES, 'UTF-8') ?>"<?php if (isset($choose_did_rate) && (string)$choose_did_rate === (string)$recordset[0]) echo ' selected';?>><?php echo htmlspecialchars($recordset[1], ENT_QUOTES, 'UTF-8')?>  (<?php echo htmlspecialchars($price_annoucement, ENT_QUOTES, 'UTF-8'); ?>)</option>
 					<?php 	 }
 					?>
 				</select>
@@ -556,7 +602,7 @@ function CheckCountry(Source){
 		} ?>
   </table>
   </form>
-  </center>
+  </div>
   <?php
 	}
 				$HD_Form->create_form($form_action, $list, $id = null);
