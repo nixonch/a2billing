@@ -193,34 +193,53 @@ class Invoice {
 			$DBHandle = DbConnect();
 			$instance_sub_table = new Table("cc_invoice_payment", "*");
 			$fields = " id_invoice , id_payment";
-			$values = " $this->id , $idpayment	";
-			$instance_sub_table->Add_table($DBHandle, $values, $fields);
+			return $instance_sub_table->Add_table($DBHandle, '?, ?', $fields, null, null, false, null, array($this->id, $idpayment));
 		} else
 			return null;
 	}
 
+	// Customer checkout may close an issued invoice only when its database payments
+	// cover its database items, including VAT. IN prevents duplicate links counting twice.
+	function markPaidIfCovered() {
+		if (is_null($this->id)) return false;
+		$DBHandle = DbConnect();
+		$query = 'UPDATE cc_invoice SET paid_status = 1 WHERE id = ? AND status = 1 AND paid_status = 0 AND ' .
+			'(SELECT ROUND(COALESCE(SUM(price * (1 + VAT / 100)), 0), 5) FROM cc_invoice_item WHERE id_invoice = ?) <= ' .
+			'(SELECT ROUND(COALESCE(SUM(payment), 0), 5) FROM cc_logpayment WHERE card_id = ? AND id IN ' .
+			'(SELECT id_payment FROM cc_invoice_payment WHERE id_invoice = ?))';
+		if (!$DBHandle->Execute($query, array($this->id, $this->id, $this->card, $this->id))) {
+			throw new \RuntimeException('Cannot settle invoice');
+		}
+		if ((int)$DBHandle->Affected_Rows() !== 1) return false;
+		$this->applyPaymentStatus(1);
+		return true;
+	}
+
+	// Administrative manual status changes keep their existing meaning.
 	function changeStatus($status) {
-		if (!is_null($this->id)) {
-			$DBHandle = DbConnect();
-			$instance_sub_table = new Table("cc_invoice", "*");
-			$clause = "id = " . $this->id;
-			$param = " paid_status = " . $status;
-			$instance_sub_table->Update_table($DBHandle, $param, $clause);
-			if($this->paid_status !=$status){
-				$items = $this -> loadItems();
-				foreach ($items as $item) {
-					if($item->getExtType() =="DID" && is_numeric($item->getExtId())){
-						$did_table = new Table("cc_did_use", "*");
-						if($status == 0) $param = " reminded = 1, month_payed = month_payed-1";
-						else $param = " reminded = 0, month_payed = month_payed+1";
-						$QUERY = "UPDATE cc_did_use set $param WHERE id_did = '".$item->getExtId() ."' and activated = 1" ;
-						$did_table -> SQLExec ($DBHandle, $QUERY, 0);
-					}
+		if (is_null($this->id)) return false;
+		$DBHandle = DbConnect();
+		if (!$DBHandle->Execute('UPDATE cc_invoice SET paid_status = ? WHERE id = ? AND paid_status <> ?', array($status, $this->id, $status))) {
+			return false;
+		}
+		if ((int)$DBHandle->Affected_Rows() !== 1) return false;
+		$this->applyPaymentStatus($status);
+		return true;
+	}
+
+	private function applyPaymentStatus($status) {
+		$this->paid_status = $status;
+		$DBHandle = DbConnect();
+		foreach ($this->loadItems() as $item) {
+			if ($item->getExtType() === 'DID' && is_numeric($item->getExtId())) {
+				$param = $status == 0 ? 'reminded = 1, month_payed = month_payed - 1' : 'reminded = 0, month_payed = month_payed + 1';
+				$query = 'UPDATE cc_did_use SET ' . $param . ' WHERE id_did = ? AND id_cc_card = ? AND activated = 1 ' .
+					"AND (releasedate IS NULL OR releasedate < '1984-01-01 00:00:00')";
+				if (!$DBHandle->Execute($query, array($item->getExtId(), $this->card))) {
+					throw new \RuntimeException('Cannot update paid DID period');
 				}
 			}
-			
-		} else
-			return null;
+		}
 	}
 
 	function insertInvoiceItem($desc, $price, $VAT) {

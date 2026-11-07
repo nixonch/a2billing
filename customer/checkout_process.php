@@ -378,6 +378,36 @@ $nowDate = date("Y-m-d H:i:s");
 $pmodule = str_replace('creditcard','',$transaction_data[0][4]);
 
 $OrderStatus = $payment_modules -> get_OrderStatus();
+// Claim invoice callbacks before writing payment history. A repeated notification
+// must not create a second partial payment that could falsely cover the invoice.
+$invoice_transaction_claimed = false;
+if (strcasecmp('invoice', (string)$item_type) === 0 && $OrderStatus == 2) {
+	if (!is_scalar($item_id) || !ctype_digit((string)$item_id) || (int)$item_id <= 0 ||
+		!is_numeric($amount_paid) || !is_finite((float)$amount_paid) || $amount_paid <= 0) {
+		http_response_code(400);
+		exit;
+	}
+	$invoice_table = new Table('cc_invoice', 'id');
+	$owned_invoice = $invoice_table->Get_list($DBHandle, 'id = ? AND id_card = ? AND status = 1',
+		null, null, null, null, null, null, null, 0, array($item_id, $transaction_data[0][1]));
+	if (!is_array($owned_invoice) || count($owned_invoice) !== 1) {
+		http_response_code(400);
+		exit;
+	}
+	$invoice_processing_marker = serialize(array('invoice_payment' => 'processing'));
+	$claimed_invoice = $DBHandle_max->Execute('UPDATE cc_epayment_log SET transaction_detail = ? WHERE id = ? AND transaction_detail IS NULL',
+		array($invoice_processing_marker, $transactionID));
+	if (!$claimed_invoice) {
+		http_response_code(503);
+		exit;
+	}
+	if ((int)$DBHandle_max->Affected_Rows() !== 1) {
+		$previous_invoice = $paymentTable->SQLExec($DBHandle_max, 'SELECT transaction_detail FROM cc_epayment_log WHERE id = ?', 1, 0, array($transactionID));
+		http_response_code(is_array($previous_invoice) && $previous_invoice[0][0] !== $invoice_processing_marker ? 200 : 503);
+		exit;
+	}
+	$invoice_transaction_claimed = true;
+}
 $transaction_type = (empty($item_type))?'balance':$item_type;
 $item_name = (empty($item_name))?(empty($LMI_PAYMENT_DESC)?$transaction_type:$LMI_PAYMENT_DESC):$item_name;
 
@@ -389,6 +419,11 @@ $Query = "INSERT INTO cc_payments ( customers_id, customers_name, customers_emai
 			$currencyObject -> get_value($currCurrency)."' )";
 write_log(LOGFILE_EPAYMENT, basename(__FILE__).' line:'.__LINE__." - QUERY = $Query");
 $result = $DBHandle_max -> Execute($Query);
+if ($invoice_transaction_claimed && !$result) {
+	write_log(LOGFILE_EPAYMENT, 'Invoice payment write failed; requires review, transactionID=' . $transactionID);
+	http_response_code(500);
+	exit;
+}
 
 
 // UPDATE THE CARD CREDIT
@@ -409,7 +444,7 @@ if ($customer_info[0] > 0 && $OrderStatus == 2) {
 $QUERY = "SELECT transaction_detail FROM cc_epayment_log WHERE id = ".$transactionID;
 $is_transaction = $paymentTable->SQLExec ($DBHandle_max, $QUERY);
 
-if ($id > 0 && is_null($is_transaction[0][0])) {
+if ($id > 0 && ($invoice_transaction_claimed || is_null($is_transaction[0][0]))) {
 	if (strcasecmp("invoice",$item_type)!=0) {
 	    #Payment not related to a Postpaid invoice
 	    $addcredit = $transaction_data[0][2]; 
@@ -461,29 +496,33 @@ if ($id > 0 && is_null($is_transaction[0][0])) {
 	    #Payment related to a Postpaid invoice
 		if ($item_id > 0) {
 			$invoice_table = new Table('cc_invoice','reference');
-			$invoice_clause = "id = ".$item_id;
-			$result_invoice = $invoice_table->Get_list($DBHandle,$invoice_clause);
+			$invoice_clause = 'id = ? AND id_card = ? AND status = 1';
+			$result_invoice = $invoice_table->Get_list($DBHandle, $invoice_clause, null, null, null, null, null, null, null, 0, array($item_id, $id));
 			
 			if (is_array($result_invoice) && sizeof($result_invoice)==1) {
 				$reference =$result_invoice[0][0];
 				
 				$field_insert = "date, payment, card_id, description";
-				$value_insert = "'$nowDate', '".$amount_paid."', '$id', '(".$pmodule.") ".gettext('Invoice Payment Ref: ')."$reference '";
+				$value_insert = '?, ?, ?, ?';
 				$instance_sub_table = new Table("cc_logpayment", $field_insert);
-				$id_payment = $instance_sub_table -> Add_table ($DBHandle, $value_insert, null, null,"id");
+				$id_payment = $instance_sub_table->Add_table($DBHandle, $value_insert, null, null, 'id', false, null,
+					array($nowDate, $amount_paid, $id, '(' . $pmodule . ') ' . gettext('Invoice Payment Ref: ') . $reference));
+				if (!$id_payment) {
+					http_response_code(500);
+					exit;
+				}
 				write_log(LOGFILE_EPAYMENT, basename(__FILE__).' line:'.__LINE__." - transactionID=$transactionID"." Add_table cc_logpayment : $field_insert - VALUES $value_insert");
 
-				//update invoice to paid
+				// Partial receipts stay linked; only full database coverage activates services.
 				$invoice = new Invoice($item_id);
-				$invoice -> addPayment($id_payment);
-				$invoice -> changeStatus(1);
-				$items = $invoice -> loadItems();
+				if (!$invoice->addPayment($id_payment)) {
+					http_response_code(500);
+					exit;
+				}
+				$invoice_newly_paid = $invoice->markPaidIfCovered();
+				$items = $invoice_newly_paid ? $invoice->loadItems() : array();
+				$instance_table = new Table();
 				foreach ($items as $item) {
-					if ($item -> getExtType() == 'DID') {
-						$QUERY = "UPDATE cc_did_use SET month_payed = month_payed+1 , reminded = 0 WHERE id_did = '" . $item -> getExtId() .
-								 "' AND activated = 1 AND ( releasedate IS NULL OR releasedate < '1984-01-01 00:00:00') ";
-						$instance_table->SQLExec($DBHandle, $QUERY, 0);
-					}
 					if ($item -> getExtType() == 'SUBSCR') {
 						//Load subscription
                         write_log(LOGFILE_EPAYMENT, basename(__FILE__).' line:'.__LINE__." - Type SUBSCR");
