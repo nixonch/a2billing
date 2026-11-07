@@ -65,7 +65,7 @@ $smarty->display('main.tpl');
 // #### HELP SECTION
 if ($form_action == 'list')
 	echo $CC_help_list_did;
-else if ($popup_select < 2)
+else if ($popup_select < 2 || in_array($form_action, array('ask-edit', 'edit')))
 	echo $CC_help_edit_did;
 
 // #### TOP SECTION PAGE

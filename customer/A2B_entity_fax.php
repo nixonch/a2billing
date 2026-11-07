@@ -98,6 +98,18 @@ getpost_ifset(array('startnumber'));
 		if ($result[0][0] < $A2B->config["webcustomerui"]['limit_callerid']){
 			$QUERY = "INSERT INTO cc_fax (id_cc_card, ext_num, email) VALUES ('".$_SESSION["card_id"]."', '".$startnumber."', '".$_SESSION["email"]."')";
 			$result = $instance_sub_table->SQLExec($DBHandle_max, $QUERY, 0);
+			if ($result) {
+				// Remove addition parameters before they can enter refreshProcessed.
+				$list_params = array('form_action' => 'list');
+				$request_params = array_merge($_GET, $_POST);
+				foreach (array('current_page', 'order', 'sens', 'filterprefix', 'atmenu', 'stitle', 'section', 'popup_select', 'popup_formname', 'popup_fieldname') as $param) {
+					if (isset($request_params[$param]) && is_scalar($request_params[$param])) {
+						$list_params[$param] = $request_params[$param];
+					}
+				}
+				Header("Location: " . $_SERVER['PHP_SELF'] . "?" . http_build_query($list_params));
+				die();
+			}
 		}
 		unset($startnumber);
 		continue;

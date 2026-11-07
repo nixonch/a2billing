@@ -35,7 +35,7 @@ function help_wiki_link($wiki_article_name) {
 	return gettext("For further information please consult") . ' <a target="_blank" href="http://trac.asterisk2billing.org/cgi-bin/trac.cgi/wiki/1-4-' . $wiki_article_name . '">' . gettext("the online documention") . '</a>.<br/>';
 }
 
-function create_help($text, $wiki = null) {
+function create_help($text, $wiki = null, $for_edit = false) {
 	if (!empty ($wiki))
 		$wiki_text = help_wiki_link($wiki);
 	else
@@ -46,6 +46,7 @@ function create_help($text, $wiki = null) {
 	<div class="msg_info">' . $text . '
 	<br/>' . $wiki_text . '<a href="#" target="_self" class="hide_help" style="float:right;"><img class="toggle_show2hide" src="' . KICON_PATH . '/toggle_hide2show_on.png" onmouseover="this.style.cursor=\'hand\';" HEIGHT="16"> </a>
 	</div></div></div>';
+	if ($for_edit) $help .= '<h2 class="edit-help" style="display:none;">' . $text . '</h2>';
 	return $help;
 
 }
@@ -72,7 +73,7 @@ if (SHOW_HELP) {
 
 	$CC_help_refill_customer = create_help(gettext("Top up the account by selecting or typing in the account number directly, and enter the amount of credit to apply, then click ADD to confirm."), 'RefillCustomer');
 
-	$CC_help_create_customer = create_help(gettext("Create and edit the properties of each customer. Click <b>CONFIRM DATA</b> at the bottom of the page to save changes."), 'CreateCustomer');
+	$CC_help_create_customer = create_help(gettext("Create and edit the properties of each customer. Click <b>CONFIRM DATA</b> at the bottom of the page to save changes."), 'CreateCustomer', true);
 
 	$CC_help_generate_customer = create_help(gettext("Bulk create customers in a single step. <br> Set the properties of the batch such as initial credit, account type and currency, then click on the GENERATE CUSTOMERS button to create the batch."), 'GenerateCustomers');
 
@@ -83,7 +84,7 @@ if (SHOW_HELP) {
 
 	$CC_help_sipfriend_edit = create_help(gettext("Each SIP/IAX client is identified by a number of parameters.</br></br>") .
 	gettext("More details on how to configure clients are on the Wiki") . ' -> <a href="http://voip-info.org/wiki-Asterisk+config+sip.conf" target="_blank">sip.conf</a> &
-<a href="http://voip-info.org/wiki-Asterisk+config+iax.conf" target="_blank">iax.conf</a>', 'EditFriend');
+<a href="http://voip-info.org/wiki-Asterisk+config+iax.conf" target="_blank">iax.conf</a>', 'EditFriend', true);
 
 	$CC_help_callerid_list = create_help(gettext("Set the caller ID so that the customer calling in is authenticated on the basis of the callerID rather than with the account number"), 'ListCallerID');
 
@@ -124,7 +125,7 @@ if (SHOW_HELP) {
 
 	$CC_help_edit_ratecard = create_help(gettext("A ratecard is a set of rates defined and applied according to the dialling prefix, for instance 441 & 442 : UK Landline.") . '<br/>' .
 	gettext("Each ratecard may have as many rates as you wish, however, if a dialling prefix cannot be matched when a call is made, then the call will be terminated.") . '<br/>' .
-	gettext('A ratecard has a "start date", an "expiry date" and a you can define a default trunk, but if no trunk is defined, the ratecard default trunk will be used.'), 'EditRatecard');
+	gettext('A ratecard has a "start date", an "expiry date" and a you can define a default trunk, but if no trunk is defined, the ratecard default trunk will be used.'), 'EditRatecard', true);
 
 	$CC_help_def_ratecard = create_help(gettext("Please select a ratecard and click on search to browse the different rates/dialing prefix of the selected ratecard."), 'Rate');
 
@@ -150,7 +151,7 @@ if (SHOW_HELP) {
 
 	$CC_help_trunk_edit = create_help(gettext("Trunks are used to terminate the call!<br>") .
 	gettext("The trunk and ratecard is selected by the rating engine on the basis of the dialed digits.") .
-	gettext("The trunk is used to dial out from your asterisk box which can be a zaptel interface or a voip provider."), 'EditTrunk');
+	gettext("The trunk is used to dial out from your asterisk box which can be a zaptel interface or a voip provider."), 'EditTrunk', true);
 
 	$CC_help_admin_list = create_help(gettext("Administrators - this shows a list of all the Administrators who have access to the Administrator interface."), 'ShowAdministrator');
 
@@ -177,9 +178,9 @@ if (SHOW_HELP) {
 
 	$CC_help_list_cid = create_help(gettext("Outbound CID list. CID can be added by customers through the customer interface."), 'ListCIDs');
 
-	$CC_help_edit_cidgroup = create_help(gettext("CID group offers customers a group of CID numbers which can be selected for a ratecard for outgoing calls"), 'EditCIDGroup');
+	$CC_help_edit_cidgroup = create_help(gettext("CID group offers customers a group of CID numbers which can be selected for a ratecard for outgoing calls"), 'EditCIDGroup', true);
 
-	$CC_help_edit_cid = create_help(gettext("Outbound CID offers customers a number which will be selected randomly for a ratecard for outgoing calls"), 'EditCID');
+	$CC_help_edit_cid = create_help(gettext("Outbound CID offers customers a number which will be selected randomly for a ratecard for outgoing calls"), 'EditCID', true);
 
 	$CC_help_currency = create_help(gettext("Currency data is automatically updated from Yahoo Financial.") .
 	'<br>' . gettext("For more information please visit the website http://finance.yahoo.com.") .
@@ -187,11 +188,11 @@ if (SHOW_HELP) {
 
 	$CC_help_list_didgroup = create_help(gettext("DID (or DDI) Group list. DID can be chosen by customers through the customer interface."), 'ListDIDGroup');
 
-	$CC_help_edit_didgroup = create_help(gettext("DID group offers customers a group of DID numbers which can be selected by the customer"), 'EditDIDGroup');
+	$CC_help_edit_didgroup = create_help(gettext("DID group offers customers a group of DID numbers which can be selected by the customer"), 'EditDIDGroup', true);
 
 	$CC_help_list_did = create_help(gettext("DID number list with destinations."), 'ListDID');
 
-	$CC_help_edit_did = create_help(gettext("DID can be assigned to a customer to re-route calls to a SIP/IAX client or a PSTN number. The Priority sets the order in which the calls are to be routed to allow for failover or follow-me."), 'EditDID');
+	$CC_help_edit_did = create_help(gettext("DID can be assigned to a customer to re-route calls to a SIP/IAX client or a PSTN number. The Priority sets the order in which the calls are to be routed to allow for failover or follow-me."), 'EditDID', true);
 
 	$CC_help_import_did = create_help(gettext("You can import lists of DIDs using a CSV file."), 'ImportDID');
 
@@ -200,7 +201,7 @@ if (SHOW_HELP) {
 	$CC_help_release_did = create_help(gettext("Releasing DID put it in free stat and the user will not be monthly charged any more.."), 'ReleaseDID');
 
 	$CC_help_edit_charge = create_help(gettext("Extra charges allow the billing of one-off or re-occurring monthly charges. These may be used as setup or service charges, etc...") .
-	gettext("Charges will appear to the user with the description you attach. Each charge that you create for a user will decrement his account."), 'AddCharge');
+	gettext("Charges will appear to the user with the description you attach. Each charge that you create for a user will decrement his account."), 'AddCharge', true);
 
 	$CC_help_list_did_billing = create_help(gettext("DID list and billing list.") .
 	gettext("You will see which customers have used your DIDs in past months and the traffic (amount of seconds)."), 'DIDBilling');

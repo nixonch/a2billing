@@ -3,7 +3,6 @@
 include ("./lib/customer.defines.php");
 include ("./lib/customer.module.access.php");
 include ("./lib/Form/Class.FormHandler.inc.php");
-include ("./form_data/FG_var_ringup.inc");
 include ("./lib/Class.RateEngine.php");
 include ("./lib/customer.smarty.php");
 
@@ -12,6 +11,8 @@ if (!has_rights(ACX_SURVEILLANCE)) {
 	Header("Location: PP_error.php?c=accessdenied");
 	die();
 }
+
+include ("./form_data/FG_var_ringup.inc");
 
 $FG_DEBUG = 0;
 $color_msg = 'red';
@@ -38,7 +39,7 @@ $A2B -> DBHandle = DbConnect();
 $instance_table = new Table();
 $A2B -> set_instance_table ($instance_table);
 $A2B -> cardnumber = $_SESSION["pr_login"];
-if ($A2B -> callingcard_ivr_authenticate_light ($error_msg) && $callback) {
+if ($A2B -> callingcard_ivr_authenticate_light ($error_msg) && $callback && empty($form_action)) {
 	$called  = $A2B -> apply_rules($called);
 	$calling = $A2B -> apply_rules($calling);
 	if (strlen($called)>1 && is_numeric($called) && ($calling == "" || (strlen($calling)>1 && is_numeric($calling)))) {

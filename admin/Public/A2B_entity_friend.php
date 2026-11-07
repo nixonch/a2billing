@@ -325,7 +325,7 @@ if ($form_action=='list') {
 
 <br/>
 <?php
-} else if ($popup_select < 2) {
+} else if ($popup_select < 2 || in_array($form_action, array('ask-edit', 'edit'))) {
 	echo $CC_help_sipfriend_edit;
 }
 

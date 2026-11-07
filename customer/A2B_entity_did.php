@@ -35,7 +35,6 @@
 include ("./lib/customer.defines.php");
 include ("./lib/customer.module.access.php");
 include ("./lib/Form/Class.FormHandler.inc.php");
-include ("./form_data/FG_var_did.inc");
 include ("./lib/customer.smarty.php");
 
 if (!has_rights(ACX_DID)) {
@@ -43,6 +42,8 @@ if (!has_rights(ACX_DID)) {
 	Header("Location: PP_error.php?c=accessdenied");
 	die();
 }
+
+include ("./form_data/FG_var_did.inc");
 
 getpost_ifset(array('download', 'file'));
 
@@ -107,6 +108,12 @@ if (($download == "file") && $file) {
 
 $HD_Form->setDBHandler(DbConnect());
 $HD_Form->init();
+
+// A list refresh or edit must not repeat purchase/release parameters from the wizard.
+if (isset($form_action) && in_array($form_action, array('list', 'ask-edit', 'edit'))) {
+	$confirm_buy_did = 0;
+	$action_release = '';
+}
 
 if (!isset ($form_action)) $form_action = "list";
 if (!isset ($action)) $action = $form_action;
@@ -249,7 +256,6 @@ if (!isset ($action_release) || $action_release == "confirm_release" || $action_
 
 		if (strlen($A2B->config["webcustomerui"]['error_email']) > 3)
 			mail($A2B->config["webcustomerui"]['error_email'], "[$date] Destinaton-DID notification", $message, $em_headers);
-
 	} else {
 		if ($voip_call==1 && strpos(substr($destination, strpos( $destination, '@')),'.') === false) {
 			$confirm_buy_did = 5;
@@ -264,7 +270,7 @@ if (!isset ($action_release) || $action_release == "confirm_release" || $action_
 
 	if ($id != "" || !is_null($id)) {
 		if (isset ($form_action) && ($form_action == 'ask-edit' || $form_action == 'edit')) {
-			$HD_Form->FG_EDITION_CLAUSE = " id = " . $id;
+			$HD_Form->FG_EDITION_CLAUSE = "id='".(int)$id."' AND id_cc_card=".(int)$_SESSION['card_id'];
 		} else {
 			$HD_Form->FG_EDITION_CLAUSE = $HD_Form->FG_TABLE_CLAUSE . " AND t1.id = " . $id;
 		}
@@ -333,7 +339,7 @@ if (!isset ($action_release) || $action_release == "confirm_release" || $action_
 		$list_did = $instance_table_did->Get_list($HD_Form->DBHandle, $FG_TABLE_CLAUSE, "did", "ASC", null, null, null, null);
 		$nb_did = count($list_did);
 	}
-	if ($form_action != 'ask-delete' && $form_action != 'ask-edit') {
+	if ($form_action != 'ask-delete' && $form_action != 'ask-edit' && $form_action != 'edit') {
 ?>
 <script language="JavaScript" type="text/JavaScript">
 <!--

@@ -41,6 +41,18 @@ if (isset($json_data)) {
 }
 
 $HD_Form = new FormHandler("cc_did_destination",gettext("Destination"));
+$HD_Form -> FG_EDITION_CLAUSE = "id='%id' AND id_cc_card=".(int)$_SESSION['card_id'];
+
+if ($form_action == 'ask-edit' || $form_action == 'edit') {
+    // Check before reading selector values or loading/updating the schedule.
+    $edit_table = new Table('cc_did_destination', 'id');
+    $edit_record = is_scalar($id) && ctype_digit((string)$id)
+        ? $edit_table->Get_list(DbConnect(), "id='".$id."' AND id_cc_card=".(int)$_SESSION['card_id']) : false;
+    if (!is_array($edit_record) || count($edit_record) == 0) {
+        Header("HTTP/1.0 403 Forbidden");
+        die(gettext("Access denied"));
+    }
+}
 
 $HD_Form -> FG_DEBUG = 0;
 $HD_Form -> FG_TABLE_DEFAULT_ORDER = "did DESC, priority";
@@ -75,7 +87,7 @@ if ($return!==false) {
         }
 }
 $instance_table = new Table("cc_did_destination", "playsound, calleesound");
-$list = $instance_table -> Get_list($DBHandle, "id = $id", 0);
+$list = $instance_table -> Get_list($DBHandle, "id = '".(int)$id."' AND id_cc_card=".(int)$_SESSION['card_id'], 0);
 if (is_array($list) && count($list)>0) {
     $playsound = preg_replace('/\.[^\.\/]+$/', '', basename($list[0][0]));
     $selectedgreeting = ($playsound && array_search($playsound,array_column($soundlist,0))===false) ? "<OPTION value=\"$playsound\">".$playsound."</OPTION>" : NULL;
@@ -108,7 +120,7 @@ if ($resmax) {
 	    $destlist[] = array($val[0],$val[0]);
 }
 $instance_table = new Table("cc_did_destination", "destination");
-$list = $instance_table -> Get_list($DBHandle, "id = $id", 0);
+$list = $instance_table -> Get_list($DBHandle, "id = '".(int)$id."' AND id_cc_card=".(int)$_SESSION['card_id'], 0);
 if (is_array($list) && count($list)>0) {
     $dest = $list[0][0];
     $selecteddest = ($dest && array_search($dest,array_column($destlist,0))===false) ? "<OPTION value=\"$dest\">".$dest."</OPTION>" : NULL;
@@ -126,12 +138,13 @@ $HD_Form -> AddViewElement(gettext("VALIDATED"), "validated", "10%", "center", "
 
 if (isset($form_action) && ($form_action=='ask-edit' || $form_action=='edit')) {
 	$HD_Form -> FG_TABLE_NAME = "cc_did_destination AS t1";
+	$HD_Form -> FG_TABLE_CLAUSE = "t1.id_cc_card=".(int)$_SESSION['card_id'];
 	$country_field = '';
 	$validated = 1;
 
 	if (strpos($destination,"/") > 2) {
 	    // It's a Voip Call
-	    $resmax = $DBHandle -> Execute("SELECT * FROM cc_did_destination WHERE id='$id' AND destination='$destination' AND validated=1");
+	    $resmax = $DBHandle -> Execute("SELECT * FROM cc_did_destination WHERE id='$id' AND id_cc_card=".(int)$_SESSION['card_id']." AND destination='$destination' AND validated=1");
 
 	    $numrow = ($resmax) ? $resmax -> RecordCount( ) : 0;
 	    $validated = ($numrow) ? 1 : 0;
@@ -160,6 +173,7 @@ $HD_Form -> FG_LIMITE_DISPLAY = 14;
 
 $HD_Form -> FG_CAPCHA_POPUP = '|col0| >> |col1|';
 $HD_Form -> FG_EDITION = true;
+$HD_Form -> FG_EDITION_POPUP = true;
 $HD_Form -> FG_DELETION = true;
 $HD_Form -> FG_ADDITION = true;
 $HD_Form -> FG_OTHER_BUTTON1 = false;
@@ -187,11 +201,11 @@ $HD_Form -> AddEditElement (gettext("DID"),
 	"id_cc_did",
 	'$value',
 	"SELECT",
-	"readonly", "", "",
+	"disabled readonly", "", "",
 	"SQL",
 	"cc_did",
 	"did, id",
-	"id=(SELECT id_cc_did FROM cc_did_destination WHERE id='%id')", "", "%1", "" , "");
+	"id=(SELECT id_cc_did FROM cc_did_destination WHERE id='%id' AND id_cc_card=".(int)$_SESSION['card_id'].")", "", "%1", "" , "");
 
 if (isset($form_action) && $form_action<>"ask-add")
 $HD_Form -> AddEditElement(gettext("SCHEDULE"),

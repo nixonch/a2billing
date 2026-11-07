@@ -3,6 +3,8 @@
 function a2b_smarty_configure($smarty)
 {
     $smarty->registerPlugin('function', 'a2b_frame_options', 'a2b_smarty_frame_options', false);
+    $smarty->registerPlugin('function', 'a2b_edit_help', 'a2b_smarty_edit_help', false);
+    $smarty->registerPlugin('function', 'a2b_popup_context', 'a2b_smarty_popup_context', false);
     $smarty->registerPlugin('function', 'a2b_profiler', 'a2b_smarty_profiler', false);
     $smarty->registerPlugin('function', 'a2b_countries', 'a2b_smarty_countries', false);
     $smarty->registerPlugin('function', 'a2b_payment_logos', 'a2b_smarty_payment_logos', false);
@@ -28,6 +30,41 @@ function a2b_smarty_frame_options($params, $template)
 {
     if (!headers_sent()) header('X-Frame-Options: SAMEORIGIN');
     return '';
+}
+
+function a2b_smarty_edit_help($params, $template)
+{
+    global $form_action, $popup_select;
+    if ((string)$popup_select !== '4') return '';
+    if (!in_array($form_action, array('ask-edit', 'edit', 'add-content', 'del-content', 'update-content'), true)) return '';
+    if (class_exists('FormHandler', false)) {
+        $form = FormHandler::GetInstance();
+        if ($form && $form->is_popup_edit_saved()) return '';
+    }
+    return '<style type="text/css">.toggle_show2hide{display:none!important}.edit-help{display:block!important;margin:10px 0;text-align:center;font-size:14px;line-height:1.4}</style>';
+}
+
+function a2b_smarty_popup_context($params, $template)
+{
+    if (!class_exists('FormHandler', false)) return '';
+    $form = FormHandler::GetInstance();
+    if (!$form || !$form->FG_EDITION_POPUP) return '';
+    $processed = $form->getProcessed();
+    if (!isset($processed['popup_select']) || (string)$processed['popup_select'] !== '4') return '';
+
+    // JSON forms may decode their popup mode after Smarty has been initialized.
+    global $popup_select;
+    $popup_select = 4;
+    $template->assign('popupwindow', 4);
+    if (!$form->is_popup_edit_saved()) return '';
+
+    // End the response before the entity can output menus, help or other forms.
+    $smarty = method_exists($template, 'getSmarty') ? $template->getSmarty() : $template->smarty;
+    $smarty->assign('popupwindow', 4);
+    echo $smarty->fetch('header.tpl');
+    FormHandler::create_popup_result(null, true);
+    echo "\n</div></div>\n</body>\n</html>";
+    exit;
 }
 
 function a2b_smarty_profiler($params, $template)

@@ -25,6 +25,7 @@
 	<link href="templates/{$SKIN_NAME}/css/style-def.css" rel="stylesheet" type="text/css">
 	<link href="templates/{$SKIN_NAME}/css/invoice.css" rel="stylesheet" type="text/css">
 	<link href="templates/{$SKIN_NAME}/css/receipt.css" rel="stylesheet" type="text/css">
+{a2b_edit_help}
 {if ($popupwindow != 0)}
 	<link href="templates/{$SKIN_NAME}/css/popup.css" rel="stylesheet" type="text/css">
 {else}

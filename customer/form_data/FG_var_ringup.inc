@@ -16,12 +16,26 @@ if ( (empty($form_action) || $form_action=="list") && $deleteselected != 'true')
 }
 
 $HD_Form -> FG_DEBUG = 0;
+$ringup_owner_clause = "account = '".addslashes($_SESSION['pr_login'])."' AND flagringup = 1";
+$HD_Form -> FG_EDITION_CLAUSE .= " AND ".$ringup_owner_clause;
+
+if ($form_action == 'ask-edit' || $form_action == 'edit') {
+    // A scoped parent UPDATE alone does not protect the separate schedule writes.
+    $edit_table = new Table('cc_callback_spool', 'id');
+    $edit_record = is_scalar($id) && ctype_digit((string)$id)
+        ? $edit_table->Get_list(DbConnect(), "id='".$id."' AND ".$ringup_owner_clause) : false;
+    if (!is_array($edit_record) || count($edit_record) == 0) {
+        Header("HTTP/1.0 403 Forbidden");
+        die(gettext("Access denied"));
+    }
+}
 
 $HD_Form -> FG_TABLE_DEFAULT_ORDER = "entry_time";
 $HD_Form -> FG_TABLE_DEFAULT_SENS = "DESC";
 
 $HD_Form -> FG_CAPCHA_POPUP = '|col0| | |col1|';
 $HD_Form -> FG_EDITION = true;
+$HD_Form -> FG_EDITION_POPUP = true;
 $HD_Form -> FG_DELETION = true;
 $HD_Form -> FG_ACTION_SIZE_COLUMN = '5%';
 
@@ -79,11 +93,7 @@ $HD_Form -> FG_LIMITE_DISPLAY = 25;
 
 if (strlen($HD_Form -> FG_TABLE_CLAUSE)>0)
     $HD_Form -> FG_TABLE_CLAUSE.=" AND ";
-	$HD_Form -> FG_TABLE_CLAUSE.="account = ".$_SESSION["pr_login"]." AND flagringup = 1";
-	
-//if (strlen($HD_Form -> FG_EDITION_CLAUSE)>0)
-//    $HD_Form -> FG_EDITION_CLAUSE.=" AND ";
-//	$HD_Form -> FG_EDITION_CLAUSE.="account = ".$_SESSION["pr_login"];
+	$HD_Form -> FG_TABLE_CLAUSE.=$ringup_owner_clause;
 
 $HD_Form -> AddEditElement (gettext("NAME"),
 			   "data",

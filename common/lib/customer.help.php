@@ -31,7 +31,7 @@
  * 
 **/
 
-function create_help($text,$balance=null,$limit=null) {
+function create_help($text,$balance=null,$limit=null,$for_edit=false) {
 	global $r;
 	$help = '
 	<div class="toggle_show2hide">
@@ -72,6 +72,7 @@ function create_help($text,$balance=null,$limit=null) {
 	<a href="#" target="_self" class="hide_help" style="float:right;"><img class="toggle_show2hide" src="' . Images_Path . '/toggle_hide2show_on.png" onmouseover="this.style.cursor=\'hand\';" HEIGHT="16"> </a>
 	</div></div></div>
 	';
+	if ($for_edit) $help .= '<h2 class="edit-help" style="display:none;">' . $text . '</h2>';
 	return $help;
 
 }
@@ -122,9 +123,9 @@ if (SHOW_HELP) {
 
 	$CC_help_support = create_help(gettext("On this page, you can open a support ticket and consult the status of your existing ticket."),$credit_cur,$limit_cur);
 	
-	$CC_help_card = create_help(gettext("Personal information.") . '<br>' . gettext("You can update your personal information here."),$credit_cur,$limit_cur);
+	$CC_help_card = create_help(gettext("Personal information.") . '<br>' . gettext("You can update your personal information here."),$credit_cur,$limit_cur,true);
 
-	$CC_help_notification = create_help(gettext("Notification settings.") . '<br>' . gettext("You can update your notification settings here."),$credit_cur,$limit_cur);
+	$CC_help_notification = create_help(gettext("Notification settings.") . '<br>' . gettext("You can update your notification settings here."),$credit_cur,$limit_cur,true);
 	
 	$CC_help_simulator_rateengine = create_help(gettext("Simulate the calling process to discover the cost per minute of a call, and the number of minutes you can call that number with your current credit."),$credit_cur,$limit_cur);
 
@@ -169,7 +170,7 @@ if (SHOW_HELP) {
 	$CC_help_ringuplist = create_help(gettext("<b>List of periodic call numbers.</b><br>In the 'LAST ACTIVITY' column, blue marks an idle periodic call, and green marks an active one.<br>Click 'NUMBER' to open call statistics for this number for the current month."),$credit_cur,$limit_cur);
 //	$CC_help_ringuplist = create_help("<b>Список номеров периодического дозвона.</b><br>В колонке 'ПОСЛЕДНЯЯ АКТИВНОСТЬ' синим цветом обозначается простаивающий дозвон, зелёным - действующий.<br>Нажав на 'НОМЕР', откроется статистика звонков на этот номер за текущий месяц.",$credit_cur,$limit_cur);
 
-	$CC_help_ringupedit = create_help(gettext("Set the event schedule for periodic dialing, the pause between events, the number of calls each time, and the maximum call duration limit."),$credit_cur,$limit_cur);
+	$CC_help_ringupedit = create_help(gettext("Set the event schedule for periodic dialing, the pause between events, the number of calls each time, and the maximum call duration limit."),$credit_cur,$limit_cur,true);
 //	$CC_help_ringupedit = create_help("Назначте расписание событий дозвона, паузу между событиями, количество звонков каждый раз и ограничение максимальной продолжительности звонка.",$credit_cur,$limit_cur);
 
 	$CC_help_log_viewer_info = create_help(gettext("The system log helps you track all events on your application. Log levels are the Importance Levels for the events - 1 is lowest level and 3 is highest level. 1 is used for Login, Logout and Page Visit. 2 is used for Add, Import, Export. 3 is for Update and Delete."),$credit_cur,$limit_cur);

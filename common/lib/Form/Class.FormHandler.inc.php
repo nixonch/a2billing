@@ -616,6 +616,11 @@ class FormHandler
 		$this->DBHandle = $DBHandle;
 	}
 
+	function is_popup_edit_saved()
+	{
+		return $this->edition_popup_saved;
+	}
+
 	/**
      * Perform the execution of some actions to prepare the form generation
      * @public     	 
@@ -725,6 +730,74 @@ class FormHandler
 			}
 		}
 		return $this->_processed;
+	}
+
+	function is_legacy_list_context()
+	{
+		$page = preg_replace('/\.php$/', '', basename($_SERVER['PHP_SELF']));
+		$processed = $this->getProcessed();
+		return $page === 'A2B_entity_moneysituation_details'
+			|| ($page === 'A2B_entity_callerid' && !empty($processed['idcust']));
+	}
+
+	/** Parameters for subsequent list requests, never for executing the current action. */
+	function get_list_parameters()
+	{
+		$parameters = $this->getProcessed();
+		if ($this->is_legacy_list_context()) return $parameters;
+
+		// getProcessed() escapes SQL values; navigation must round-trip the input once.
+		array_walk_recursive($parameters, function (&$value) {
+			if (is_string($value)) $value = stripslashes($value);
+		});
+		$follow = array();
+		parse_str(ltrim($this->CV_FOLLOWPARAMETERS, '&?'), $follow);
+		$parameters = array_replace($parameters, $follow);
+
+		if (isset($parameters['batchupdate'])) {
+			unset($parameters['check'], $parameters['mode'], $parameters['type']);
+			foreach (array_keys($parameters) as $name) {
+				if (strpos($name, 'upd_') === 0) unset($parameters[$name]);
+			}
+		}
+		foreach (array('action', 'sub_action', 'deleteselected', 'batchupdate', 'agi_conf', 'groupdelete', 'add_callerid', 'json_data', 'message', 'archive') as $name) {
+			unset($parameters[$name]);
+		}
+		$page = preg_replace('/\.php$/', '', basename($_SERVER['PHP_SELF']));
+		$operation_parameters = array(
+			'A2B_entity_card_multi' => array('nb_to_create', 'gen_id'),
+			'A2B_entity_voucher_multi' => array('choose_list', 'gen_id'),
+			'A2B_entity_did' => array('confirm_buy_did', 'action_release', 'choose_did', 'choose_did_rate', 'destination', 'new_did_page'),
+			'A2B_entity_ringup' => array('callback', 'called', 'calling', 'duration', 'data'),
+			'A2B_entity_surveillance' => array('callback', 'called', 'calling', 'duration', 'surveillance'),
+			'A2B_entity_fax' => array('startnumber', 'quantity'),
+			'A2B_entity_speeddial' => array('choose_speeddial', 'destination', 'name'),
+			'support' => array('title', 'description', 'priority', 'component'),
+		);
+		if (isset($operation_parameters[$page])) {
+			foreach ($operation_parameters[$page] as $name) unset($parameters[$name]);
+		}
+		if ($page === 'A2B_entity_greeting' && isset($parameters['play']) && in_array($parameters['play'], array('1', '3'), true)) {
+			$parameters['play'] = '2';
+		}
+		$parameters['form_action'] = 'list';
+		return $parameters;
+	}
+
+	function create_list_hidden_fields($parameters, $excluded)
+	{
+		$parameters = array_diff_key($parameters, array_fill_keys($excluded, true));
+		if ($this->is_legacy_list_context()) {
+			foreach ($parameters as $name => $value) {
+				if ($value != '') echo '<input type="hidden" name="'.$name.'" value="'.$value.'">';
+			}
+			return;
+		}
+		foreach (explode('&', http_build_query($parameters)) as $field) {
+			if ($field === '') continue;
+			list($name, $value) = explode('=', $field, 2);
+			echo '<input type="hidden" name="'.htmlspecialchars(urldecode($name), ENT_QUOTES, 'UTF-8').'" value="'.htmlspecialchars(urldecode($value), ENT_QUOTES, 'UTF-8').'">';
+		}
 	}
 	
 	

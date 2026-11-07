@@ -1,4 +1,4 @@
-{include file="header.tpl"}
+{a2b_popup_context}{include file="header.tpl"}
 {if ($popupwindow == 0)}
 {if ($EXPORT == 0)}
 

@@ -75,6 +75,7 @@ $HD_Form -> FG_EDITION_CLAUSE.="id_cc_card =".$_SESSION["card_id"];
 $HD_Form -> FG_CAPCHA_POPUP = '|col0|';
 $HD_Form -> FG_ADDITION = true;
 $HD_Form -> FG_EDITION = true;
+$HD_Form -> FG_EDITION_POPUP = true;
 $HD_Form -> FG_DELETION = true;
 $HD_Form -> FG_OTHER_BUTTON1 = false;
 

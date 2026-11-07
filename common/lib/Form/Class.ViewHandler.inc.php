@@ -13,12 +13,9 @@ if (!function_exists("stripos")) {
 getpost_ifset(array('stitle', 'letter', 'current_page', 'popup_select', 'message'));
 
 $processed = $this->getProcessed();
-$refresh_processed = $processed;
-if ($this->FG_EDITION_POPUP) {
-	// Refresh the list without repeating a completed batch update or add action.
-	$refresh_processed['form_action'] = 'list';
-	unset($refresh_processed['action'], $refresh_processed['deleteselected'], $refresh_processed['batchupdate'], $refresh_processed['agi_conf']);
-}
+$list_parameters = $this->get_list_parameters();
+$legacy_list_context = $this->is_legacy_list_context();
+$refresh_processed = $list_parameters;
 $current_page = $this->CV_CURRENT_PAGE;
 ?>
 <script type="text/JavaScript">
@@ -148,12 +145,18 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 		    <span class="viewhandler_span2">
 			<?php
 			$c_url = $PHP_SELF.'?current_page=%s';
-			foreach ($processed as $key => $val) {
-				if (!in_array($key,array('current_page','id')) && $val!='') {
-					$c_url .= '&'.$key.'='.$val;
+			if ($legacy_list_context) {
+				foreach ($processed as $key => $val) {
+					if (!in_array($key,array('current_page','id')) && $val!='') {
+						$c_url .= '&'.$key.'='.$val;
+					}
 				}
+				$c_url .= $this->CV_FOLLOWPARAMETERS;
+			} else {
+				$page_parameters = $list_parameters;
+				unset($page_parameters['current_page'], $page_parameters['id']);
+				$c_url .= '&'.htmlspecialchars(http_build_query($page_parameters), ENT_QUOTES, 'UTF-8');
 			}
-			$c_url .= $this-> CV_FOLLOWPARAMETERS;
 			$this -> printPages($this -> CV_CURRENT_PAGE+1, $this -> FG_NB_RECORD_MAX, $c_url) ;
 			?>
 		    </span>
@@ -169,13 +172,7 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 		?>
 		<tr><td class="viewhandler_filter_td1" nowrap><FORM NAME="theFormFilter" action="<?php echo $PHP_SELF?>">
             <?php
-            	foreach ($processed as $key => $val) {
-            		if (!in_array($key,array('current_page','id','form_action','filterfield','filterfield2','filterprefix','filterprefix2')) && $val!='') {
-            	?>
-                   <input type="hidden" name="<?php echo $key?>" value="<?php echo $val?>">
-             	<?php  
-             		}
-            	}
+				$this->create_list_hidden_fields($list_parameters, array('current_page','id','form_action','filterfield','filterfield2','filterprefix','filterprefix2'));
              ?>
 			<INPUT type="hidden" name="form_action"	value="<?php echo $this->FG_FILTER_FORM_ACTION ?>">
 			<?php if ($this -> FG_FILTER_APPLY){ ?>
@@ -227,7 +224,17 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 				?>
 				 <td class="tableBody" style="padding: 2px;" align="center" width="<?php echo $this->FG_TABLE_COL[$i][2]?>" >
 						<?php  if (strtoupper($this->FG_TABLE_COL[$i][4])=="SORT"){?>
-						<a href="<?php echo $PHP_SELF."?stitle=$stitle&atmenu=$atmenu&current_page=$current_page&letter=".$processed["letter"]."&popup_select=".$processed["popup_select"]."&order=".$this->FG_TABLE_COL[$i][1]."&sens="; if ($this->FG_SENS=="ASC"){echo"DESC";}else{echo"ASC";} echo $this-> CV_FOLLOWPARAMETERS;?>">
+						<a href="<?php
+						if ($legacy_list_context) {
+							echo $PHP_SELF."?stitle=$stitle&atmenu=$atmenu&current_page=$current_page&letter=".$processed['letter']."&popup_select=".$processed['popup_select']."&order=".$this->FG_TABLE_COL[$i][1]."&sens=".($this->FG_SENS === 'ASC' ? 'DESC' : 'ASC').$this->CV_FOLLOWPARAMETERS;
+						} else {
+							$sort_parameters = $list_parameters;
+							unset($sort_parameters['id']);
+							$sort_parameters['current_page'] = $current_page;
+							$sort_parameters['order'] = $this->FG_TABLE_COL[$i][1];
+							$sort_parameters['sens'] = $this->FG_SENS === 'ASC' ? 'DESC' : 'ASC';
+							echo htmlspecialchars($PHP_SELF.'?'.http_build_query($sort_parameters), ENT_QUOTES, 'UTF-8');
+						} ?>">
 						<font color="#FFF999"><?php  } ?>
 						<?php echo $this->FG_TABLE_COL[$i][0]?>
 						<?php if ($this->FG_ORDER==$this->FG_TABLE_COL[$i][1] && $this->FG_SENS=="ASC"){?>
@@ -901,13 +908,7 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 		<?php if ($this->CV_DISPLAY_RECORD_LIMIT){ ?>
 			<?php echo gettext("DISPLAY");?>
             <?php 
-            	foreach ($processed as $key => $val) {
-            		if (!in_array($key,array('current_page','mydisplaylimit')) && $val!='') {
-            	?>
-                   <input type="hidden" name="<?php echo $key?>" value="<?php echo $val?>">
-             	<?php
-             		}
-            	}
+				$this->create_list_hidden_fields($list_parameters, array('current_page','mydisplaylimit'));
              ?>
 			<select name="mydisplaylimit" size="1" class="form_input_select">
 			<?php $session_limit = $this->FG_TABLE_NAME."-displaylimit"; ?>
@@ -947,13 +948,7 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 		?>
 		<tr><td class="viewhandler_filter_td1" nowrap><FORM NAME="theFormFilter" action="<?php echo $PHP_SELF?>">
             <?php
-            	foreach ($processed as $key => $val) {
-            		if (!in_array($key,array('current_page','id','form_action','filterfield','filterfield2','filterprefix','filterprefix2')) && $val!='') {
-            	?>
-                   <input type="hidden" name="<?php echo $key?>" value="<?php echo $val?>">
-             	<?php
-             		}
-            	}
+				$this->create_list_hidden_fields($list_parameters, array('current_page','id','form_action','filterfield','filterfield2','filterprefix','filterprefix2'));
              ?>
 			<INPUT type="hidden" name="form_action"	value="<?php echo $this->FG_FILTER_FORM_ACTION ?>">
 			<span >

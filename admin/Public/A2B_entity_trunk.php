@@ -64,7 +64,7 @@ $list = $HD_Form->perform_action($form_action);
 // #### HELP SECTION
     if ($form_action == 'list') {
 	if (!$popup_select)	echo $CC_help_trunk_list;
-    } else if ($popup_select!=4) {
+    } else if ($popup_select!=4 || in_array($form_action, array('ask-edit', 'edit', 'add-content', 'del-content', 'update-content'))) {
 	echo $CC_help_trunk_edit;
     }
 

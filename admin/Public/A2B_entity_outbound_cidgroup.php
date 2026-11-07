@@ -65,7 +65,7 @@ $smarty->display('main.tpl');
 // #### HELP SECTION
 if ($form_action == 'list') {
     if (!$popup_select) echo $CC_help_list_cidgroup;
-} else if ($popup_select != 4) {
+} else if ($popup_select != 4 || in_array($form_action, array('ask-edit', 'edit'))) {
     echo $CC_help_edit_cidgroup;
 }
 
