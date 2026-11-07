@@ -92,7 +92,7 @@ $typemail_list["subscription_disable_card"]	= array( gettext("Subscription Disab
 $typemail_list["fax_success"] 		= array( gettext("Fax success"), Mail::$TYPE_FAX_SUCCESS);
 $typemail_list["fax_failed"] 		= array( gettext("Fax failed"), Mail::$TYPE_FAX_FAILED);
 
-if (($popup_select>=1)) {
+if ($popup_select >= 1 && $popup_select != 4) {
 	$HD_Form -> AddViewElement(gettext("ID MAIL"), "id", "10%", "center", "sort");
 }
 $HD_Form -> AddViewElement(gettext("MAILTYPE"), "mailtype", "14%", "center", "sort");
@@ -100,7 +100,7 @@ $HD_Form -> AddViewElement(gettext("FROMEMAIL"), "fromemail", "25%", "center", "
 $HD_Form -> AddViewElement(gettext("SUBJECT"), "subject", "30%", "center", "sort");
 
 
-if (($popup_select>=1)) {
+if ($popup_select >= 1 && $popup_select != 4) {
 	$HD_Form -> FieldViewElement ('id, mailtype, fromemail, subject');
 } else {
 	$HD_Form -> FieldViewElement ('mailtype, fromemail, subject');
@@ -112,7 +112,7 @@ $HD_Form -> CV_DISPLAY_LINE_TITLE_ABOVE_TABLE = false;
 $HD_Form -> CV_TEXT_TITLE_ABOVE_TABLE = '';
 $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
 
-if (($popup_select>=1)) {
+if ($popup_select >= 1 && $popup_select != 4) {
 	$HD_Form -> FG_OTHER_BUTTON1 = true;
 	$HD_Form -> FG_OTHER_BUTTON1_ALT = '<font color="red">&lt;'.gettext("SELECT TEXT").'&gt;</font>';
 	$HD_Form -> FG_OTHER_BUTTON1_IMG = '';
@@ -128,6 +128,7 @@ if (($popup_select>=1)) {
 	
 	$HD_Form -> FG_ADDITION = true;
 	$HD_Form -> FG_EDITION = true;
+	$HD_Form -> FG_EDITION_POPUP = true;
 	$HD_Form -> FG_DELETION = true;
 	
 	// Translation
@@ -183,6 +184,7 @@ $HD_Form -> AddEditElement (gettext("MESSAGE TEXT"),
 	"" , "", "", "", "" , "", "", "");
 
 $HD_Form -> FieldEditElement ('mailtype, fromemail, fromname, subject, messagetext');
+$HD_Form -> FG_EDITION_POPUP_PARAMS = array('languages' => $languages, 'id_language' => $id_language);
 
 $HD_Form ->FG_QUERY_ADITION_HIDDEN_FIELDS = "id, id_language";
 $HD_Form ->FG_QUERY_ADITION_HIDDEN_VALUE  = "$latest_id, $id_language";

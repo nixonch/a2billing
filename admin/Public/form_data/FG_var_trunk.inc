@@ -139,6 +139,7 @@ if ($popup_select && $popup_select<4) {
 } else {
 	$HD_Form -> FG_LIMITE_DISPLAY = 20;
 	$HD_Form -> FG_EDITION = true;
+	$HD_Form -> FG_EDITION_POPUP = true;
 	$HD_Form -> FG_CAPCHA_POPUP = '|col0|';
 	$HD_Form -> FG_DELETION = true;
 	$HD_Form -> FG_ADDITION = true;
@@ -587,8 +588,8 @@ $HD_Form -> FieldEditElement ('id_provider, trunkcode, trunkprefix, removeprefix
 
 $HD_Form -> FG_ADITION_HIDDEN_PARAM = 'filterprefix,current_page';
 $HD_Form -> FG_ADITION_HIDDEN_PARAM_VALUE = $filterprefix.",".$current_page;
-$HD_Form -> FG_EDITION_HIDDEN_PARAM = 'filterprefix,popup_select';
-$HD_Form -> FG_EDITION_HIDDEN_PARAM_VALUE = $filterprefix.",".$popup_select;
+$HD_Form -> FG_EDITION_HIDDEN_PARAM = 'filterprefix';
+$HD_Form -> FG_EDITION_HIDDEN_PARAM_VALUE = $filterprefix;
 
 $HD_Form -> FG_QUERY_EDITION_HIDDEN_FIELDS = "wrapnexttime";
 $HD_Form -> FG_QUERY_EDITION_HIDDEN_VALUE = date("Y-m-d H:i:s");

@@ -97,6 +97,7 @@ if ($atmenu == 'sip' && ($form_action == 'ask-edit' || $form_action == 'edit') &
 	}
 	$card_readonly = is_array($cbe_list) && count($cbe_list)>0 && $cbe_list[0][1] == '0';
 }
+$HD_Form->FG_EDITION_POPUP = $card_readonly;
 
 $HD_Form -> AddViewElement(gettext("CARDHOLDER"), "id_cc_card", "17%", "center", "sort", "50", "lie", "cc_card", "CONCAT_WS(' ',lastname,firstname,IF(company_name='','',CONCAT('(',company_name,')'))) AS customer", "id='%id'", "%1");
 $HD_Form -> AddViewElement(gettext("ACCOUNTCODE"), "accountcode", "12%", "center", "sort", "", "", "", "", "", "", "linktocustomer");
@@ -127,6 +128,7 @@ if ($atmenu=='sip') {
 	$HD_Form -> FieldViewElement ("id_cc_card, accountcode, name, $un, secret, callerid, context, IF(port>0 AND UNIX_TIMESTAMP()<regseconds,concat('<font color=green>',ipaddr,':',port,'</font> ',IF(lastms=-1,'UNREACHABLE',IF(lastms>0,concat('(',lastms,' ms)'),'')),'<br>',useragent),defaultip) AS curip");
 	// Keep the row ID in place; the following value is only used by the popup title.
 	$HD_Form->FG_COL_QUERY .= ", IF(external=1, defaultuser, regexten) AS delete_title";
+	$HD_Form->FG_COL_QUERY .= ", CASE WHEN external=0 THEN 1 ELSE 0 END AS edit_extension";
 	$HD_Form -> FG_CAPCHA_POPUP = '|col2| | |col'.($HD_Form->FG_NB_TABLE_COL + 1).'|';
 } else {
 	$HD_Form ->FG_LIST_ADDING_BUTTON_ALT1 = $HD_Form ->FG_LIST_ADDING_BUTTON_MSG1 = gettext("Add IAX Config");

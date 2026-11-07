@@ -48,7 +48,6 @@ getpost_ifset(array ('destination',	'choose_speeddial',	'name'));
 
 $HD_Form->setDBHandler(DbConnect());
 $HD_Form->init();
-$HD_Form->FG_EDITION_LINK = "url:".$PHP_SELF."?form_action=ask-edit&popup_select=4&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&order=$order&sens=$sens&id=";
 
 // ADD SPEED DIAL
 if (strlen($destination) > 0 && is_numeric($choose_speeddial)) {
@@ -88,12 +87,6 @@ $list = $HD_Form->perform_action($form_action);
 
 // #### HEADER SECTION
 $smarty->display('main.tpl');
-
-if ($popup_select == 4 && $form_action == 'edit' && $HD_Form->VALID_SQL_REG_EXP && $HD_Form->RESULT_QUERY) {
-    FormHandler::create_popup_result();
-    $smarty->display('footer.tpl');
-    exit;
-}
 
 // #### HELP SECTION
 if ($form_action == 'list') {

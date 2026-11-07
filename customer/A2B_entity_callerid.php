@@ -101,8 +101,6 @@ $HD_Form -> init();
 if ($idcust) {
     $HD_Form -> FG_EDITION_LINK  = $PHP_SELF."?form_action=ask-edit&popup_select=$popup_select&idcust=$idcust&id=";
     $HD_Form -> FG_DELETION_LINK = $PHP_SELF."?form_action=ask-delete&popup_select=$popup_select&idcust=$idcust&id=";
-} else {
-    $HD_Form -> FG_EDITION_LINK  = "url:".$PHP_SELF."?form_action=ask-edit&popup_select=4&id=";
 }
 
 // My Code for Where Cluase
@@ -225,10 +223,6 @@ if ($form_action == "list" && (!in_array($message, ['success','editsuccess']) ||
     // END END END My code for Creating two functionalities in a page
 }
 
-if (!is_numeric($idcust) && $message == "editsuccess") {
-    echo '</center>';
-    FormHandler::create_popup_result();
-} else {
 ?>
 </center>
 <?php
@@ -260,4 +254,3 @@ if (!is_numeric($idcust) && $message == "editsuccess") {
 
 // #### FOOTER SECTION
     $smarty->display( 'footer.tpl');
-}

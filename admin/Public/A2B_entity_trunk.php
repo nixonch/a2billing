@@ -47,23 +47,10 @@ if (!has_rights(ACX_TRUNK)) {
 $HD_Form->setDBHandler(DbConnect());
 $HD_Form->init();
 
-$HD_Form->FG_EDITION_LINK = "url:".$_SERVER['PHP_SELF']."?popup_select=4&form_action=ask-edit&atmenu=$atmenu&current_page=$current_page&id=";
-
 if (!isset ($form_action))
 	$form_action = "list"; //ask-add
 if (!isset ($action))
 	$action = $form_action;
-
-if ($message == "editsuccess") {
-    $smarty->display('header.tpl');
-    FormHandler::create_popup_result(null, true);
-?>
-</div>
-</div>
-</body>
-</html>
-<?php
-} else {
 
 if ($id != "" || !is_null($id)) {
 	$HD_Form->FG_EDITION_CLAUSE = str_replace("%id", "$id", $HD_Form->FG_EDITION_CLAUSE);
@@ -206,4 +193,3 @@ $list = $HD_Form->perform_action($form_action);
     if (!$popup_select) {
 	$smarty->display('footer.tpl');
     }
-}

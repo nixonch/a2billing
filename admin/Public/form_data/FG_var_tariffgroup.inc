@@ -101,6 +101,7 @@ if ($popup_select && $popup_select != 4) {
 		$HD_Form -> FG_OTHER_BUTTON1_LINK = "javascript:sendValue('|col0|');";
 } else {
 	$HD_Form -> FG_EDITION = true;
+	$HD_Form -> FG_EDITION_POPUP = true;
 	$HD_Form -> FG_DELETION = true;
 	$HD_Form -> FG_ADDITION = true;
 }
@@ -173,8 +174,8 @@ if ($numrow>0){
 
 $HD_Form -> FieldEditElement ('tariffgroupname, lcrtype, id_cc_package_offer, removeinterprefix');
 
-$HD_Form -> FG_EDITION_HIDDEN_PARAM = 'popup_select,filterprefix';
-$HD_Form -> FG_EDITION_HIDDEN_PARAM_VALUE = $popup_select.",".$filterprefix;
+$HD_Form -> FG_EDITION_HIDDEN_PARAM = 'filterprefix';
+$HD_Form -> FG_EDITION_HIDDEN_PARAM_VALUE = $filterprefix;
 
 
 $HD_Form -> FG_INTRO_TEXT_EDITION= '';

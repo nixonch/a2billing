@@ -133,6 +133,8 @@ if (has_rights (ACX_MODIFY_ADMINS) && !($popup_select && $popup_select!=4)) {
 	$HD_Form -> FG_CAPCHA_POPUP = '|col2|';
 	$HD_Form -> FG_DELETION = true;
 	$HD_Form -> FG_EDITION = true;
+	$HD_Form -> FG_EDITION_POPUP = true;
+	$HD_Form -> FG_EDITION_POPUP_PARAMS = array('groupID' => $groupID);
 	
 	if ($form_action!="ask-add" && $form_action!="add") {
 		$HD_Form -> AddEditElement (gettext("USERID"),

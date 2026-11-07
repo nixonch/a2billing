@@ -141,6 +141,11 @@ class FormHandler
 	var $FG_DELETION=false;
 	var $FG_INFO=false;
 	var $FG_EDITION=false;
+	// Opt in only for forms that do not open another alertBase picker.
+	var $FG_EDITION_POPUP = false;
+	// Page context to retain in the edit URL and POST (for example group/language).
+	var $FG_EDITION_POPUP_PARAMS = array();
+	private $edition_popup_saved = false;
 	var $FG_OTHER_BUTTON1=false;
 	var $FG_OTHER_BUTTON2=false;
 	var $FG_OTHER_BUTTON3=false;
@@ -638,6 +643,29 @@ class FormHandler
 		if (isset($processed['filterprefix']) && strlen($processed['filterprefix'])>0)	$ext_link.="&filterprefix=".$processed['filterprefix'];
 		if (!empty($processed['order']) && !empty($processed['sens']))	$ext_link.="&order=".$processed['order']."&sens=".$processed['sens'];
 		$this -> FG_EDITION_LINK	= $PHP_SELF."?form_action=ask-edit".$ext_link."&id=";
+		if ($this->FG_EDITION_POPUP) {
+			$edit_params = array('form_action' => 'ask-edit', 'popup_select' => 4, 'section' => $section);
+			foreach (array('atmenu', 'current_page', 'filterprefix', 'filterprefix2', 'order', 'sens') as $name) {
+				if (isset($processed[$name]) && is_scalar($processed[$name])) $edit_params[$name] = $processed[$name];
+			}
+			$hidden_names = explode(',', $this->FG_EDITION_HIDDEN_PARAM);
+			$hidden_values = explode(',', $this->FG_EDITION_HIDDEN_PARAM_VALUE);
+			foreach ($hidden_names as $index => $name) {
+				$name = trim($name);
+				if ($name !== '' && isset($hidden_values[$index])) $edit_params[$name] = $hidden_values[$index];
+			}
+			$edit_params = array_merge($edit_params, $this->FG_EDITION_POPUP_PARAMS);
+			$this->FG_EDITION_LINK = 'url:'.$PHP_SELF.'?'.http_build_query($edit_params).'&id=';
+			if (isset($processed['popup_select']) && $processed['popup_select'] == 4) {
+				$existing_hidden = array_map('trim', array_merge($hidden_names, explode(',', $this->FG_QUERY_EDITION_HIDDEN_FIELDS)));
+				foreach (array_merge($this->FG_EDITION_POPUP_PARAMS, array('popup_select' => 4)) as $name => $value) {
+					if (in_array($name, $existing_hidden)) continue;
+					$separator = $this->FG_EDITION_HIDDEN_PARAM === '' ? '' : ',';
+					$this->FG_EDITION_HIDDEN_PARAM .= $separator.$name;
+					$this->FG_EDITION_HIDDEN_PARAM_VALUE .= $separator.$value;
+				}
+			}
+		}
 		$this -> FG_DELETION_LINK	= "url:".$PHP_SELF."?form_action=ask-delete&popup_select=4".$ext_link."&id=";
 		
 		$this -> FG_DELETE_ALT = gettext("Delete this ").$this -> FG_INSTANCE_NAME;
@@ -1247,6 +1275,7 @@ class FormHandler
      * @public     	 
      */
 	function perform_action (&$form_action){
+		$this->edition_popup_saved = false;
 		//security check
 		global $PHP_SELF;
 		switch ($form_action) {
@@ -1286,6 +1315,7 @@ class FormHandler
 		}
 				
 		$processed = $this->getProcessed();  //$processed['firstname']
+		if ($this->edition_popup_saved) return array();
 
 		if ($form_action == "ask-delete" && in_array($processed['id'],$this->FG_DELETION_FORBIDDEN_ID) ){
 			if(!empty($this->FG_GO_LINK_AFTER_ACTION_DELETE)){
@@ -1723,6 +1753,7 @@ class FormHandler
      */
 	function perform_edit (&$form_action)
 	{
+		$this->edition_popup_saved = false;
 		include_once (FSROOT."lib/Class.Table.php");
 
 		$processed = $this->getProcessed();  //$processed['firstname']
@@ -1877,7 +1908,9 @@ class FormHandler
 			if (strlen($this->FG_ADDITIONAL_FUNCTION_AFTER_EDITION)>0 && ($this->VALID_SQL_REG_EXP))
 				$res_funct = call_user_func(array('FormBO', $this->FG_ADDITIONAL_FUNCTION_AFTER_EDITION)); 
 			
-			if (($this->VALID_SQL_REG_EXP) && (isset($this->FG_GO_LINK_AFTER_ACTION_EDIT))) {				
+			$popup_edit = $this->FG_EDITION_POPUP && isset($processed['popup_select']) && $processed['popup_select'] == 4;
+			$this->edition_popup_saved = $popup_edit && $this->VALID_SQL_REG_EXP && $this->RESULT_QUERY && $res_funct !== false;
+			if (!$popup_edit && ($this->VALID_SQL_REG_EXP) && (isset($this->FG_GO_LINK_AFTER_ACTION_EDIT))) {
 				if ($this->FG_DEBUG == 1)  echo "<br> GOTO ; ".$this->FG_GO_LINK_AFTER_ACTION_EDIT.$id;
 				$ext_link ='&message=editsuccess';
 				if (strpos($this->FG_GO_LINK_AFTER_ACTION_EDIT,'popup_select')===false && is_numeric($processed['popup_select']))
@@ -2379,6 +2412,10 @@ class FormHandler
      */
 	function create_form ($form_action, $list, $id=null)
 	{
+		if ($form_action == 'edit' && $this->edition_popup_saved) {
+			self::create_popup_result(null, true);
+			return;
+		}
 		$cons = new Console();
 		$cons->logSpeed('Time taken to get to line '.__LINE__);
 		include_once (FSROOT."lib/Class.Table.php");

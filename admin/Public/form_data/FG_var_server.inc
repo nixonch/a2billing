@@ -64,6 +64,7 @@ $HD_Form -> FG_LIMITE_DISPLAY = 10;
 
 $HD_Form -> FG_ADDITION = true;
 $HD_Form -> FG_EDITION = true;
+$HD_Form -> FG_EDITION_POPUP = true;
 $HD_Form -> FG_DELETION = true;
 
 $HD_Form -> AddEditElement (gettext("SERVER GROUP"),

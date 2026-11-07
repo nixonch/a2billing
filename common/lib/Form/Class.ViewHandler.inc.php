@@ -13,10 +13,16 @@ if (!function_exists("stripos")) {
 getpost_ifset(array('stitle', 'letter', 'current_page', 'popup_select', 'message'));
 
 $processed = $this->getProcessed();
+$refresh_processed = $processed;
+if ($this->FG_EDITION_POPUP) {
+	// Refresh the list without repeating a completed batch update or add action.
+	$refresh_processed['form_action'] = 'list';
+	unset($refresh_processed['action'], $refresh_processed['deleteselected'], $refresh_processed['batchupdate'], $refresh_processed['agi_conf']);
+}
 $current_page = $this->CV_CURRENT_PAGE;
 ?>
 <script type="text/JavaScript">
-var refreshProcessed = <?= json_encode($processed, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+var refreshProcessed = <?= json_encode($refresh_processed, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
 function openURLFilter(theLINK)
 {
 	selInd = document.theFormFilter.choose_list.selectedIndex;

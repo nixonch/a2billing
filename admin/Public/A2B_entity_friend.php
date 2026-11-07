@@ -47,6 +47,24 @@ if (! has_rights (ACX_CUSTOMER)) {
 $HD_Form -> setDBHandler (DbConnect());
 $HD_Form -> init();
 
+if ($atmenu == 'sip' && (!isset($form_action) || $form_action == 'list')) {
+	// The ID and delete title keep their positions; the final value identifies internal extensions.
+	$extension_column = $HD_Form->FG_NB_TABLE_COL + 2;
+	$HD_Form->FG_EDITION_CONDITION = '|col'.$extension_column.'| != 1';
+	$HD_Form->FG_OTHER_BUTTON1 = true;
+	$HD_Form->FG_OTHER_BUTTON1_CONDITION = '|col'.$extension_column.'| == 1';
+	$HD_Form->FG_OTHER_BUTTON1_IMG = Images_Path_Main.'/'.$HD_Form->FG_EDITION_IMG;
+	$HD_Form->FG_OTHER_BUTTON1_ALT = $HD_Form->FG_EDIT_ALT;
+	$edit_context = $HD_Form->getProcessed();
+	$extension_params = array('form_action' => 'ask-edit', 'popup_select' => 4, 'atmenu' => 'sip', 'section' => $_SESSION['menu_section']);
+	foreach (array('current_page', 'filterprefix', 'filterprefix2', 'order', 'sens', 'friend_id') as $name) {
+		if (isset($edit_context[$name]) && is_scalar($edit_context[$name])) $extension_params[$name] = $edit_context[$name];
+	}
+	$extension_url = 'url:'.$PHP_SELF.'?'.http_build_query($extension_params).'&id=';
+	$extension_onclick = 'alertBase('.json_encode($extension_url).' + \'|param|\', '.json_encode(gettext('Edit Extension')).",true,false,'#445760',event.pageX-55,event.pageY-100,'UR',null,null,null,null,null,refreshInsideCallback); return false;";
+	$HD_Form->FG_OTHER_BUTTON1_LINK = 'javascript:;" onclick="'.htmlspecialchars($extension_onclick, ENT_QUOTES, 'UTF-8');
+}
+
 /********************************* ADD SIP EXTENSIONS ***********************************/
 if ($atmenu == 'sip' && ($form_action == 'ask-add-extension' || $form_action == 'addexten')) {
 	getpost_ifset(array('card_id', 'startnumber', 'quantity'));

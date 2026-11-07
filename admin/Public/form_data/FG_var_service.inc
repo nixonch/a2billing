@@ -102,6 +102,7 @@ $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
 
 $HD_Form -> FG_ADDITION = true;
 $HD_Form -> FG_EDITION = true;
+$HD_Form -> FG_EDITION_POPUP = true;
 $HD_Form -> FG_DELETION = true;
 // View Details
 $HD_Form -> FG_OTHER_BUTTON1 = true;

@@ -118,7 +118,6 @@ include ("./form_data/FG_var_sipiax_info.inc");
 $HD_Form->setDBHandler(DbConnect());
 $HD_Form->init();
 
-$HD_Form -> FG_EDITION_LINK	= 'url:'.$PHP_SELF."?popup_select=4&form_action=ask-edit&id=";
 //$HD_Form -> FG_DELETION_LINK	= $_SERVER['PHP_SELF']."?form_action=ask-delete&atmenu=$atmenu&id=";
 
 if (strlen($HD_Form -> FG_EDITION_CLAUSE)>0)
@@ -136,10 +135,6 @@ $list = $HD_Form->perform_action($form_action);
 
 // #### HEADER SECTION
 $smarty->display('main.tpl');
-
-if ($message == "editsuccess") {
-    FormHandler::create_popup_result();
-} else {
 
 // #### HELP SECTION
 if ($popup_select !=4)
@@ -227,4 +222,3 @@ $HD_Form->create_form($form_action, $list, $id = null);
 
 // #### FOOTER SECTION
 $smarty->display('footer.tpl');
-}

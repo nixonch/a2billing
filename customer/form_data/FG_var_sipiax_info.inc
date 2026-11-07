@@ -136,6 +136,7 @@ $HD_Form -> FG_DELETION_CONDITION = $HD_Form -> FG_EDITION_CONDITION;
 
 $HD_Form -> FG_CAPCHA_POPUP = '|col0| | |col1|';
 $HD_Form -> FG_EDITION = true;
+$HD_Form -> FG_EDITION_POPUP = true;
 $HD_Form -> FG_DELETION = true;
 $HD_Form -> FG_ADDITION = false;
 $HD_Form -> FG_VIEW_TABLE_WITDH = '80%';
@@ -257,8 +258,10 @@ $field_list_edit = 'regexten, name, secret, callerid, avpf, nat, encryption, war
 
 $HD_Form -> FieldEditElement ($field_list_edit);
 
-$HD_Form->FG_ADITION_HIDDEN_PARAM	= $HD_Form->FG_EDITION_HIDDEN_PARAM	  = "popup_select, filterprefix, cbe";
-$HD_Form->FG_ADITION_HIDDEN_PARAM_VALUE = $HD_Form->FG_EDITION_HIDDEN_PARAM_VALUE = "$popup_select, $filterprefix, $cbe";
+$HD_Form->FG_ADITION_HIDDEN_PARAM = "popup_select, filterprefix, cbe";
+$HD_Form->FG_ADITION_HIDDEN_PARAM_VALUE = "$popup_select, $filterprefix, $cbe";
+$HD_Form->FG_EDITION_HIDDEN_PARAM = 'filterprefix,cbe';
+$HD_Form->FG_EDITION_HIDDEN_PARAM_VALUE = $filterprefix.','.$cbe;
 
 
 $HD_Form -> FG_FILTER_APPLY = false;

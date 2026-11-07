@@ -139,6 +139,7 @@ $HD_Form -> FG_LIMITE_DISPLAY = 20;
 $HD_Form -> FG_CAPCHA_POPUP = '|col0|';
 $HD_Form -> FG_ADDITION = false;
 $HD_Form -> FG_EDITION = true;
+$HD_Form -> FG_EDITION_POPUP = empty($idcust);
 $HD_Form -> FG_DELETION = true;
 
 if ($form_action=="ask-add") {
@@ -343,6 +344,10 @@ if ($form_action != 'ask-delete') {
 }
 $HD_Form->FG_ADITION_HIDDEN_PARAM	= $HD_Form->FG_EDITION_HIDDEN_PARAM	  = 'popup_select, idcust';
 $HD_Form->FG_ADITION_HIDDEN_PARAM_VALUE = $HD_Form->FG_EDITION_HIDDEN_PARAM_VALUE = "$popup_select, $idcust";
+if ($HD_Form->FG_EDITION_POPUP) {
+	$HD_Form->FG_EDITION_HIDDEN_PARAM = 'idcust';
+	$HD_Form->FG_EDITION_HIDDEN_PARAM_VALUE = $idcust;
+}
 
 if (isset($filterprefix)  &&  (strlen($filterprefix)>0)) {
     if (strlen($HD_Form -> FG_TABLE_CLAUSE)>0)

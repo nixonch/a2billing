@@ -120,6 +120,7 @@ $HD_Form -> FG_EXPORT_CSV = true;
 $HD_Form -> FG_EXPORT_XML = true;
 
 $HD_Form -> FG_EDITION = true;
+$HD_Form -> FG_EDITION_POPUP = true;
 $HD_Form -> FG_DELETION = true;
 $HD_Form -> FG_ADDITION = true;
 

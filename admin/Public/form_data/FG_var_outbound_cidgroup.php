@@ -44,6 +44,7 @@ $HD_Form -> CV_TEXT_TITLE_ABOVE_TABLE = '';
 $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
 
 $HD_Form -> FG_EDITION = true;
+$HD_Form -> FG_EDITION_POPUP = true;
 $HD_Form -> FG_DELETION = true;
 $HD_Form -> FG_ADDITION = true;
 $HD_Form -> FG_CAPCHA_POPUP = '|col1|';
@@ -60,8 +61,8 @@ $HD_Form -> AddEditElement (gettext("CIDGROUPNAME"),
 
 $HD_Form -> FieldEditElement ('group_name');
 
-$HD_Form -> FG_EDITION_HIDDEN_PARAM = 'popup_select,filterprefix';
-$HD_Form -> FG_EDITION_HIDDEN_PARAM_VALUE = $popup_select.",".$filterprefix;
+$HD_Form -> FG_EDITION_HIDDEN_PARAM = 'filterprefix';
+$HD_Form -> FG_EDITION_HIDDEN_PARAM_VALUE = $filterprefix;
 
 
 $HD_Form -> FG_INTRO_TEXT_EDITION= gettext("Modify the properties of the DID Group");

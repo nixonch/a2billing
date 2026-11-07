@@ -49,7 +49,6 @@ $HD_Form -> setDBHandler (DbConnect());
 $HD_Form -> init();
 
 $redirect_url = isset($_SERVER['REDIRECT_URL']) ? $_SERVER['REDIRECT_URL'] : $_SERVER['SCRIPT_NAME'];
-$HD_Form -> FG_EDITION_LINK= $redirect_url."?form_action=ask-edit&groupID=$groupID&id=";
 $HD_Form -> FG_DELETION_LINK= 'url:'.$redirect_url."?form_action=ask-delete&groupID=$groupID&popup_select=4&id=";
 
 if ($id!="" || !is_null($id)) {

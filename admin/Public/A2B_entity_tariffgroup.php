@@ -48,23 +48,10 @@ if (!has_rights(ACX_RATECARD)) {
 $HD_Form->setDBHandler(DbConnect());
 $HD_Form->init();
 
-$HD_Form->FG_EDITION_LINK = "url:".$PHP_SELF."?form_action=ask-edit&popup_select=4&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&order=$order&sens=$sens&id=";
-
 if (!isset ($form_action))
 	$form_action = "list"; //ask-add
 if (!isset ($action))
 	$action = $form_action;
-
-if ($message == "editsuccess") {
-    $smarty->display('header.tpl');
-    FormHandler::create_popup_result(null, true);
-?>
-</div>
-</div>
-</body>
-</html>
-<?php
-} else {
 
 if ($id != "" || !is_null($id)) {
 	$HD_Form->FG_EDITION_CLAUSE = str_replace("%id", "$id", $HD_Form->FG_EDITION_CLAUSE);
@@ -93,4 +80,3 @@ $HD_Form->create_form($form_action, $list, $id = null);
 // #### FOOTER SECTION
 if (!$popup_select)
 	$smarty->display('footer.tpl');
-}

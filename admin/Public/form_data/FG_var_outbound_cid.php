@@ -31,6 +31,7 @@ $HD_Form -> CV_DISPLAY_FILTER_ABOVE_TABLE = false;
 
 $HD_Form -> FG_ADDITION = true;
 $HD_Form -> FG_EDITION = true;
+$HD_Form -> FG_EDITION_POPUP = true;
 $HD_Form -> FG_DELETION = true;
 $HD_Form -> FG_CAPCHA_POPUP = '|col0|';
 $HD_Form -> FG_SPLITABLE_FIELD = 'cid';
@@ -81,8 +82,8 @@ $HD_Form -> AddEditElement (gettext("ACTIVATED"),
 
 $HD_Form -> FieldEditElement ('cid, outbound_cid_group, activated');
 
-$HD_Form -> FG_EDITION_HIDDEN_PARAM = 'popup_select,filterprefix';
-$HD_Form -> FG_EDITION_HIDDEN_PARAM_VALUE = $popup_select.",".$filterprefix;
+$HD_Form -> FG_EDITION_HIDDEN_PARAM = 'filterprefix';
+$HD_Form -> FG_EDITION_HIDDEN_PARAM_VALUE = $filterprefix;
 
 
 $HD_Form -> FG_INTRO_TEXT_EDITION = '';
