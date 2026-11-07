@@ -82,13 +82,13 @@ if (isset($form_action) && $form_action=="ask-add") {
 $HD_Form -> AddEditElement (gettext("ACCOUNT ID"),
 				"id_cc_card",
 				'',
-				"POPUPVALUE",
+				"POPUPVALUEALERT",
 				"size=30 maxlength=50 $idd",
 				"4",
 				gettext("Insert the Customer ID"),
 				"" , "", "", "", "",
 				"A2B_entity_card.php?popup_select=1&"
-				, ", 'CardNumberSelection','width=550,height=350,top=20,left=100,scrollbars=1'" ,
+				, ", 'Card Number Selection',true,false,'#445760',event.pageX+25,event.pageY-200,'UL',null,null,null,null,null,sendValueCallback" ,
 				gettext("Set the Customer ID."));
 		
 $HD_Form -> AddEditElement (gettext("ID SUBSCRIPTION SERVICE"),

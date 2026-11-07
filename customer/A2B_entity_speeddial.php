@@ -145,15 +145,7 @@ if ($form_action == "list") {
 // #### TOP SECTION PAGE
 $HD_Form -> create_toppage ($form_action);
 
-// The shared view only provides this refresh target for a nonempty list.
-$empty_speeddial_list = $form_action == 'list' && empty($list);
-if ($empty_speeddial_list) {
-	echo '<div id="main-list">';
-}
 $HD_Form -> create_form ($form_action, $list, $id=null) ;
-if ($empty_speeddial_list) {
-	echo '</div>';
-}
 
 // #### FOOTER SECTION
 $smarty->display('footer.tpl');

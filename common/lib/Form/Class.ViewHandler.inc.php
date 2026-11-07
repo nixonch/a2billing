@@ -13,6 +13,7 @@ if (!function_exists("stripos")) {
 getpost_ifset(array('stitle', 'letter', 'current_page', 'popup_select', 'message'));
 
 $processed = $this->getProcessed();
+$current_page = $this->CV_CURRENT_PAGE;
 ?>
 <script type="text/JavaScript">
 var refreshProcessed = <?= json_encode($processed, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
@@ -50,6 +51,7 @@ function sendValue(selvalue, othervalue = null) {
 <?php
 }
 ?>
+<div id="main-list" data-current-page="<?php echo (int)$current_page; ?>">
 <div style="" align="center">
 <table width="<?php echo $this->FG_VIEW_TABLE_WITDH; ?>" border="0" cellpadding="0" cellspacing="0">
 <?php
@@ -101,11 +103,11 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 		</TR>
 	   <?php  } //END IF ?>
 	   <?php  IF ($this -> CV_DISPLAY_FILTER_ABOVE_TABLE){ ?>
-		<TR><FORM NAME="theFormFilter">
+		<TR><TD class="tdstyle_002"><FORM NAME="theFormFilter">
 			<input type="hidden" name="popup_select" value="<?php echo $processed['popup_select']?>">
 			<input type="hidden" name="popup_formname" value="<?php echo $processed['popup_formname']?>">
 			<input type="hidden" name="popup_fieldname" value="<?php echo $processed['popup_fieldname']?>">
-		<TD class="tdstyle_002"><SPAN>
+		<SPAN>
 				<SELECT name="choose_list" size="1" class="form_input_select" style="width: 185px;" onchange="openURLFilter('<?php echo $PHP_SELF.$this->CV_FILTER_ABOVE_TABLE_PARAM?>')">
 
 					<OPTION><?php echo gettext("Sort");?></OPTION>
@@ -119,8 +121,8 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 					<?php 	 }
 					?>
 				</SELECT>
-		</SPAN></TD>
-		</FORM>
+		</SPAN>
+		</FORM></TD>
 		</TR>
 		<?php  } //END IF ?>
 
@@ -159,7 +161,7 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 		// Add filter  FG_FILTER_APPLY , FG_FILTERFIELD and FG_FILTER_FORM_ACTION
 		if ($this -> FG_FILTER_APPLY || $this -> FG_FILTER_APPLY2){
 		?>
-		<tr><FORM NAME="theFormFilter" action="<?php echo $PHP_SELF?>">
+		<tr><td class="viewhandler_filter_td1" nowrap><FORM NAME="theFormFilter" action="<?php echo $PHP_SELF?>">
             <?php
             	foreach ($processed as $key => $val) {
             		if (!in_array($key,array('current_page','id','form_action','filterfield','filterfield2','filterprefix','filterprefix2')) && $val!='') {
@@ -170,7 +172,6 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
             	}
              ?>
 			<INPUT type="hidden" name="form_action"	value="<?php echo $this->FG_FILTER_FORM_ACTION ?>">
-            <td class="viewhandler_filter_td1" nowrap>
 			<?php if ($this -> FG_FILTER_APPLY){ ?>
 
 				<font class="viewhandler_filter_on"><?php echo gettext("FILTER ON ");?> <?php mb_internal_encoding('UTF-8');?><?php echo mb_strtoupper($this->FG_FILTERFIELDNAME)?> :</font>
@@ -207,12 +208,12 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 			}
 			?>
 				<input type="SUBMIT" value="<?php echo gettext("APPLY FILTER ");?>" class="form_input_button"/>
-			</td></FORM>
+			</FORM></td>
         </tr>
 		<?php } ?>
 
         <TR>
-          <TD id="main-list">
+          <TD>
 			<TABLE border="0" cellPadding="2" cellSpacing="2" width="100%">
 				<TR class="form_head">
 				<?php
@@ -889,8 +890,8 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
         </TR>
 		<?php  	} 	?>
 
-        <FORM name="otherForm2" action="<?php echo $PHP_SELF; ?>">
 		<tr><td>
+        <FORM name="otherForm2" action="<?php echo $PHP_SELF; ?>">
 		<?php if ($this->CV_DISPLAY_RECORD_LIMIT){ ?>
 			<?php echo gettext("DISPLAY");?>
             <?php 
@@ -922,8 +923,8 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 
 		<?php  	}?>
 
-		</td></tr>
 		</FORM>
+		</td></tr>
       </table>
 	</td></tr>
       </table>
@@ -938,7 +939,7 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 		// Add filter  FG_FILTER_APPLY , FG_FILTERFIELD and FG_FILTER_FORM_ACTION
 		if ($this -> FG_FILTER_APPLY || $this -> FG_FILTER_APPLY2){
 		?>
-		<tr><FORM NAME="theFormFilter" action="<?php echo $PHP_SELF?>">
+		<tr><td class="viewhandler_filter_td1" nowrap><FORM NAME="theFormFilter" action="<?php echo $PHP_SELF?>">
             <?php
             	foreach ($processed as $key => $val) {
             		if (!in_array($key,array('current_page','id','form_action','filterfield','filterfield2','filterprefix','filterprefix2')) && $val!='') {
@@ -949,7 +950,6 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
             	}
              ?>
 			<INPUT type="hidden" name="form_action"	value="<?php echo $this->FG_FILTER_FORM_ACTION ?>">
-			<td class="viewhandler_filter_td1" nowrap>
 			<span >
 			<?php if ($this -> FG_FILTER_APPLY){ ?>
 
@@ -988,7 +988,7 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 			?>
 				<input type="SUBMIT" value="<?php echo gettext("APPLY FILTER ");?>" class="form_input_button"/>
 			</span>
-			</td></FORM>
+			</FORM></td>
 		<?php } ?>
 		</tr>
       </table>
@@ -1008,3 +1008,4 @@ if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 <?php 
 	}//end_if
 ?>
+</div>

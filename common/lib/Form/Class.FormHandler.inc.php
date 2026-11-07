@@ -1360,6 +1360,15 @@ class FormHandler
 					$this -> FG_NB_RECORD_MAX = ceil($this -> FG_NB_RECORD / $this -> FG_LIMITE_DISPLAY);
 				}
 
+				// Deleting the last row on a page can leave its offset past the end of the list.
+				if ($this->CV_CURRENT_PAGE >= $this->FG_NB_RECORD_MAX) {
+					$this->CV_CURRENT_PAGE = $this->FG_NB_RECORD_MAX - 1;
+					$this->_vars['current_page'] = $this->_processed['current_page'] = $this->CV_CURRENT_PAGE;
+					$list = $instance_table->Get_list($this->DBHandle, $this->FG_TABLE_CLAUSE, $this->FG_ORDER, $this->FG_SENS, null, null,
+						$this->FG_LIMITE_DISPLAY, $this->CV_CURRENT_PAGE * $this->FG_LIMITE_DISPLAY, $this->SQL_GROUP);
+					if ($list === false) return false;
+				}
+
 				if ($this->FG_DEBUG == 3) echo "<br>Nb_record : ".$this -> FG_NB_RECORD ;
 				if ($this->FG_DEBUG == 3) echo "<br>Nb_record_max : ".$this -> FG_NB_RECORD_MAX ;
 					

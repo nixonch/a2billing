@@ -149,11 +149,11 @@ $HD_Form -> AddEditElement (gettext("MIN VALUE"),
 $HD_Form -> AddEditElement(gettext("TRUNK"),
    "id_trunk",
    '$value',	
-   "POPUPVALUE",	
+   "POPUPVALUEALERT",
    "",	
    "",
    "",
-   "" , "", "",	"", "" , "A2B_entity_trunk.php?popup_select=1&", ", 'id_trunk','width=550,height=340,top=20,left=100,scrollbars=1'", gettext("Set if you want to apply the alarm on a specific trunk or leave empty for all trunk."));
+   "" , "", "",	"", "" , "A2B_entity_trunk.php?popup_select=1&", ", 'Trunk Selection',true,false,'#445760',event.pageX+25,event.pageY-200,'UL',null,null,null,null,null,sendValueCallback", gettext("Set if you want to apply the alarm on a specific trunk or leave empty for all trunk."));
 
 $HD_Form -> AddEditElement (gettext("STATUS"),
 	"status",

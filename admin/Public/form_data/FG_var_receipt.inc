@@ -104,10 +104,10 @@ $HD_Form -> FG_DELETION = true;
 
 $HD_Form -> AddEditElement (gettext("ID CUSTOMER"),
 			   "id_card",		
-			   "$value", "POPUPVALUE", "size=30 maxlength=50",	
+			   "$value", "POPUPVALUEALERT", "size=30 maxlength=50",
 			   "4",	gettext("Insert the Customer ID"),
 			    "" , "", "", "", "", 				
-				"A2B_entity_card.php?popup_select=1&", ", 'CardNumberSelection','width=550,height=330,top=20,left=100,scrollbars=1'" ,
+				"A2B_entity_card.php?popup_select=1&", ", 'Card Number Selection',true,false,'#445760',event.pageX+25,event.pageY-200,'UL',null,null,null,null,null,sendValueCallback" ,
 				gettext("Select the Customer ID"));
 
 if ($form_action=="ask-add"){	

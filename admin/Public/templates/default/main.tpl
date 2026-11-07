@@ -321,9 +321,6 @@
 				<li><a href="A2B_entity_commission_agent.php?atmenu=payment&section=10">»» {gettext("Commissions")}</a></li>
 				<li><a href="A2B_entity_remittance_request.php?atmenu=payment&section=10">»» {gettext("Remittance Request")}</a></li>
 				<li><a href="A2B_entity_transactions_agent.php?atmenu=payment&section=10">»» {gettext("Transactions")}</a></li>
-				<li><a href="A2B_entity_logrefill_agent.php?atmenu=payment&section=10">»» {gettext("Refills")}</a></li>
-				<li><a href="A2B_entity_payment_agent.php?atmenu=payment&section=10">»» {gettext("Payments")}</a></li>
-				<li><a href="A2B_entity_paymentlog_agent.php?section=10">»» {gettext("E-Payment Log")}</a></li>
 -->
 				<li><a href="A2B_entity_payment_configuration.php?atmenu=payment&section=10">{gettext("Payment Methods")}</a></li>
 				<li><a href="A2B_currencies.php?section=10">{gettext("Currency List")}</a></li>

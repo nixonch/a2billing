@@ -303,10 +303,7 @@ if ($form_action == "list") {
 // #### TOP SECTION PAGE
 $HD_Form -> create_toppage ($form_action);
 
-$empty_greeting_list = $form_action == 'list' && (!is_array($list) || count($list) == 0);
-if ($empty_greeting_list) echo '<div id="main-list">';
 $HD_Form -> create_form ($form_action, $list, $id=null) ;
-if ($empty_greeting_list) echo '</div>';
 
 
 // #### FOOTER SECTION

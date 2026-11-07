@@ -98,7 +98,16 @@ fetch(link, {
 		}
 	    }
 
-	    if (newPart && oldPart) { oldPart.innerHTML = newPart.innerHTML; }
+	    if (newPart && oldPart) {
+		oldPart.innerHTML = newPart.innerHTML;
+		var currentPage = newPart.getAttribute('data-current-page');
+		if (currentPage !== null) {
+		    oldPart.setAttribute('data-current-page', currentPage);
+		    if (typeof refreshProcessed === 'object' && refreshProcessed !== null) {
+			refreshProcessed.current_page = currentPage;
+		    }
+		}
+	    }
 	});
 
     // Keep alert open, same as the old refreshInside case
