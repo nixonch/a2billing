@@ -187,11 +187,10 @@ if (!isset ($disable_load_conf) || !($disable_load_conf)) {
 
 	$DBHandle = DbConnect();
 	$instance_table = new Table();
-	$QUERY = "SELECT configuration_key FROM cc_configuration where configuration_key in ('MODULE_PAYMENT_AUTHORIZENET_STATUS','MODULE_PAYMENT_PAYPAL_BASIC_STATUS','MODULE_PAYMENT_MONEYBOOKERS_STATUS','MODULE_PAYMENT_WORLDPAY_STATUS','MODULE_PAYMENT_PLUGNPAY_STATUS','MODULE_PAYMENT_WM_STATUS','MODULE_PAYMENT_WM_STATUS_10') AND configuration_value='True'";
+	$QUERY = "SELECT configuration_key FROM cc_configuration where configuration_key in ('MODULE_PAYMENT_AUTHORIZENET_STATUS','MODULE_PAYMENT_PAYPAL_BASIC_STATUS','MODULE_PAYMENT_WORLDPAY_STATUS','MODULE_PAYMENT_PLUGNPAY_STATUS','MODULE_PAYMENT_WM_STATUS','MODULE_PAYMENT_WM_STATUS_10') AND configuration_value='True'";
 	$payment_methods = $instance_table->SQLExec($DBHandle, $QUERY);
 	$show_logo = '';
 	$SPOT['paypal'] = '<a href="https://www.paypal.com/ru/mrb/pal=PGSJEXAEXKTBU" target="_blank"><img src="' . KICON_PATH . '/paypal_logo.gif" alt="Paypal"/></a>';
-	$SPOT['moneybookers'] = '<a href="https://www.moneybookers.com/app/?rid=811621" target="_blank"><img src="' . KICON_PATH . '/moneybookers.gif" alt="Moneybookers"/></a>';
 //	$SPOT['authorizenet'] = '<a href="http://authorize.net/" target="_blank"><img src="'.KICON_PATH.'/authorize.gif" alt="Authorize.net"/></a>';
 	$SPOT['authorizenet'] = '';
 //	$SPOT['worldpay'] = '<a href="http://www.worldpay.com/" target="_blank"><img src="'.KICON_PATH.'/worldpay.gif" alt="worldpay.com"/></a>';
@@ -204,8 +203,6 @@ if (!isset ($disable_load_conf) || !($disable_load_conf)) {
 	<tr>
 		<TD valign="top" align="center" class="tableBodyRight">
 			' . $SPOT['paypal'] . '
-			&nbsp;&nbsp; &nbsp;
-			' . $SPOT['moneybookers'] . '
 			&nbsp;&nbsp; &nbsp;
 			' . $SPOT['authorizenet'] . '
 			&nbsp;&nbsp; &nbsp;
@@ -225,9 +222,6 @@ if (!isset ($disable_load_conf) || !($disable_load_conf)) {
 //		elseif( $payment_methods[$index][0] == "MODULE_PAYMENT_AUTHORIZENET_STATUS") {
 //			$show_logo .= $SPOT['authorizenet'] . ' &nbsp; ';
 //		}
-		elseif ($payment_methods[$index][0] == "MODULE_PAYMENT_MONEYBOOKERS_STATUS") {
-			$show_logo .= $SPOT['moneybookers'] . ' &nbsp; ';
-		}
 //		elseif( $payment_methods[$index][0] == "MODULE_PAYMENT_WORLDPAY_STATUS") {
 //			$show_logo .= $SPOT['worldpay'] . ' &nbsp; ';
 //		}

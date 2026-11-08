@@ -69,6 +69,10 @@ $QUERY = sprintf($QUERY, $paymentMethodID);
 
 $DBHandle = DbConnect();
 $return = $instance_sub_table->Get_list($DBHandle, $QUERY, 0);
+if (!is_array($return) || empty($return[0][0]) || !is_file(__DIR__ . '/../lib/epayment/methods/' . $return[0][0])) {
+	http_response_code(404);
+	exit(gettext('Payment module ID not found'));
+}
 $paymentMethod = substr($return[0][0], 0, strrpos($return[0][0], '.'));
 
 // Load gateway settings before rendering controls or handling their save redirect.

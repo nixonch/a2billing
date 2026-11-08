@@ -33,8 +33,8 @@
 
 include ("./lib/customer.defines.php");
 
-getpost_ifset (array('transactionID', 'sess_id', 'key', 'mc_currency', 'currency', 'md5sig', 'merchant_id', 'mb_amount', 'status', 'mb_currency',
-					'transaction_id', 'card_number', 'mc_gross', 'item_name', 'receiver_id',
+getpost_ifset (array('transactionID', 'sess_id', 'key', 'mc_currency',
+					'card_number', 'mc_gross', 'item_name', 'receiver_id',
 					'LMI_PREREQUEST','LMI_PAYEE_PURSE','LMI_PAYMENT_AMOUNT','LMI_PAYMENT_NO','LMI_MODE','LMI_SYS_INVS_NO','LMI_WMCHECK_NUMBER',
 					'LMI_SYS_TRANS_NO','LMI_PAYER_PURSE','LMI_SDP_TYPE','LMI_PAYER_WM','LMI_HASH','LMI_SYS_TRANS_DATE','LMI_PAYMENT_DESC'));
 
@@ -89,6 +89,15 @@ if (!is_array($transaction_data) || count($transaction_data) == 0) {
     exit();
 }
 
+// Reject callbacks for removed modules before changing any payment record.
+$user_paypal = true;
+$payment_modules = new payment($transaction_data[0][4]);
+if (empty($payment_modules->selected_module)) {
+	write_log(LOGFILE_EPAYMENT, 'Unsupported payment module, transactionID=' . $transactionID);
+	http_response_code(400);
+	exit;
+}
+
 $item_id = $transaction_data[0][13];
 $item_type = $transaction_data[0][14];
 if ($transaction_data[0][9] == 0 && ($LMI_WMCHECK_NUMBER or $LMI_SDP_TYPE)) {
@@ -114,8 +123,6 @@ $security_verify	= true;
 $transaction_detail	= serialize($_POST);
 $currencyObject 	= new currencies();
 $currencies_list 	= get_currencies();
-$user_paypal 		= true;
-$payment_modules	= new payment($transaction_data[0][4]);
 
 // Only a verified PayPal POST may supply a fee; other gateways ignore mc_fee.
 $mc_fee = 0;
@@ -182,20 +189,6 @@ switch($transaction_data[0][4])
 			}
 		}
 		fclose ($fp);
-		break;
-		
-	case "moneybookers":
-		$currAmount = $transaction_data[0][2];
-		$sec_string = $merchant_id.$transaction_id.mb_strtoupper(md5(MONEYBOOKERS_SECRETWORD)).$mb_amount.$mb_currency.$status;
-		$sig_string = mb_strtoupper(md5($sec_string));
-		
-		if($sig_string == $md5sig) {
-			write_log(LOGFILE_EPAYMENT, basename(__FILE__).' line:'.__LINE__." - MoneyBookers Transaction Verification Status: Verified | md5sig =".$md5sig." Reproduced Signature = ".$sig_string." Generated String = ".$sec_string);
-		} else {
-			write_log(LOGFILE_EPAYMENT, basename(__FILE__).' line:'.__LINE__." - MoneyBookers Transaction Verification Status: Failed | md5sig =".$md5sig." Reproduced Signature = ".$sig_string." Generated String = ".$sec_string);
-			$security_verify = false;			
-		}
-		$currCurrency = $currency;
 		break;
 		
 	case "authorizenet":
@@ -378,12 +371,15 @@ $nowDate = date("Y-m-d H:i:s");
 $pmodule = str_replace('creditcard','',$transaction_data[0][4]);
 
 $OrderStatus = $payment_modules -> get_OrderStatus();
-// Claim invoice callbacks before writing payment history. A repeated notification
-// must not create a second partial payment that could falsely cover the invoice.
-$invoice_transaction_claimed = false;
-if (strcasecmp('invoice', (string)$item_type) === 0 && $OrderStatus == 2) {
-	if (!is_scalar($item_id) || !ctype_digit((string)$item_id) || (int)$item_id <= 0 ||
-		!is_numeric($amount_paid) || !is_finite((float)$amount_paid) || $amount_paid <= 0) {
+// Claim invoice callbacks before writing payment history.
+// Repeated notifications must not create duplicate receipts or pay an invoice twice.
+$payment_transaction_claimed = false;
+if ($OrderStatus == 2 && strcasecmp('invoice', (string)$item_type) === 0) {
+	if (!is_numeric($amount_paid) || !is_finite((float)$amount_paid) || $amount_paid <= 0) {
+		http_response_code(400);
+		exit;
+	}
+	if (!is_scalar($item_id) || !ctype_digit((string)$item_id) || (int)$item_id <= 0) {
 		http_response_code(400);
 		exit;
 	}
@@ -394,19 +390,19 @@ if (strcasecmp('invoice', (string)$item_type) === 0 && $OrderStatus == 2) {
 		http_response_code(400);
 		exit;
 	}
-	$invoice_processing_marker = serialize(array('invoice_payment' => 'processing'));
-	$claimed_invoice = $DBHandle_max->Execute('UPDATE cc_epayment_log SET transaction_detail = ? WHERE id = ? AND transaction_detail IS NULL',
-		array($invoice_processing_marker, $transactionID));
-	if (!$claimed_invoice) {
+	$payment_processing_marker = serialize(array('invoice_payment' => 'processing'));
+	$claimed_payment = $DBHandle_max->Execute('UPDATE cc_epayment_log SET transaction_detail = ? WHERE id = ? AND transaction_detail IS NULL',
+		array($payment_processing_marker, $transactionID));
+	if (!$claimed_payment) {
 		http_response_code(503);
 		exit;
 	}
 	if ((int)$DBHandle_max->Affected_Rows() !== 1) {
-		$previous_invoice = $paymentTable->SQLExec($DBHandle_max, 'SELECT transaction_detail FROM cc_epayment_log WHERE id = ?', 1, 0, array($transactionID));
-		http_response_code(is_array($previous_invoice) && $previous_invoice[0][0] !== $invoice_processing_marker ? 200 : 503);
+		$previous_payment = $paymentTable->SQLExec($DBHandle_max, 'SELECT transaction_detail FROM cc_epayment_log WHERE id = ?', 1, 0, array($transactionID));
+		http_response_code(is_array($previous_payment) && count($previous_payment) === 1 && $previous_payment[0][0] !== $payment_processing_marker ? 200 : 503);
 		exit;
 	}
-	$invoice_transaction_claimed = true;
+	$payment_transaction_claimed = true;
 }
 $transaction_type = (empty($item_type))?'balance':$item_type;
 $item_name = (empty($item_name))?(empty($LMI_PAYMENT_DESC)?$transaction_type:$LMI_PAYMENT_DESC):$item_name;
@@ -419,8 +415,8 @@ $Query = "INSERT INTO cc_payments ( customers_id, customers_name, customers_emai
 			$currencyObject -> get_value($currCurrency)."' )";
 write_log(LOGFILE_EPAYMENT, basename(__FILE__).' line:'.__LINE__." - QUERY = $Query");
 $result = $DBHandle_max -> Execute($Query);
-if ($invoice_transaction_claimed && !$result) {
-	write_log(LOGFILE_EPAYMENT, 'Invoice payment write failed; requires review, transactionID=' . $transactionID);
+if ($payment_transaction_claimed && !$result) {
+	write_log(LOGFILE_EPAYMENT, 'Payment write failed; requires review, transactionID=' . $transactionID);
 	http_response_code(500);
 	exit;
 }
@@ -444,7 +440,7 @@ if ($customer_info[0] > 0 && $OrderStatus == 2) {
 $QUERY = "SELECT transaction_detail FROM cc_epayment_log WHERE id = ".$transactionID;
 $is_transaction = $paymentTable->SQLExec ($DBHandle_max, $QUERY);
 
-if ($id > 0 && ($invoice_transaction_claimed || is_null($is_transaction[0][0]))) {
+if ($id > 0 && ($payment_transaction_claimed || is_null($is_transaction[0][0]))) {
 	if (strcasecmp("invoice",$item_type)!=0) {
 	    #Payment not related to a Postpaid invoice
 	    $addcredit = $transaction_data[0][2]; 

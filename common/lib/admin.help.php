@@ -259,7 +259,7 @@ Browse here the pending and completed callbacks. You will see that different par
 
 	$CC_help_server_group = create_help(gettext("Server Groups define the set of servers that are going to be used by the callback system. A callback is bound to a server group which will be used to dispatch the callback requests."), 'ShowServerGroup');
 
-	$CC_help_transaction = create_help(gettext("You can view all the transactions through the different epayment configured systems (Paypal, MoneyBookers, etc...). "), 'ViewTransactions');
+	$CC_help_transaction = create_help(gettext("You can view all the transactions through the configured payment systems."), 'ViewTransactions');
 
 	$CC_help_payment_config = create_help(gettext("You can configure your epayment method here. It helps you to enable or disable the payment method. You can define the currency settings."));
 
@@ -294,7 +294,6 @@ Browse here the pending and completed callbacks. You will see that different par
 } //ENDIF SHOW_HELP
 
 $SPOT['paypal'] = '<a href="https://www.paypal.com/ru/mrb/pal=PGSJEXAEXKTBU" target="_blank"><img src="' . KICON_PATH . '/paypal_logo.gif" alt="Paypal"/></a>';
-$SPOT['moneybookers'] = '<a href="https://www.moneybookers.com/app/?rid=811621" target="_blank"><img src="' . KICON_PATH . '/moneybookers.gif" alt="Moneybookers"/></a>';
 //$SPOT['AUTHORIZENET'] = '<a href="http://authorize.net/" target="_blank"><img src="'.KICON_PATH.'/authorize.gif" alt="Authorize.net"/></a>';
 $SPOT['authorizenet'] = '';
 //$SPOT['WORLDPAY'] = '<a href="http://www.worldpay.com/" target="_blank"><img src="'.KICON_PATH.'/worldpay.gif" alt="worldpay.com"/></a>';
@@ -306,8 +305,6 @@ $PAYMENT_METHOD = '
 	<tr>
 		<TD valign="top" align="center" class="tableBodyRight">
 			' . $SPOT['paypal'] . '
-			&nbsp;&nbsp; &nbsp;
-			' . $SPOT['moneybookers'] . '
 			&nbsp;&nbsp; &nbsp;
 			' . $SPOT['authorizenet'] . '
 			&nbsp;&nbsp; &nbsp;

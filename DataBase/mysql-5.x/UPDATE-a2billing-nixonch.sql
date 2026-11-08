@@ -1320,3 +1320,12 @@ CREATE TABLE IF NOT EXISTS cc_queue_rules (
 ALTER TABLE `cc_queue_rules`
 ADD `id_cc_card` INTEGER NOT NULL DEFAULT '0' AFTER `rule_name`,
 ADD INDEX `id_cc_card` ( `id_cc_card` );
+
+-- Remove Moneybookers/Skrill registration and settings; retain payment history.
+DELETE FROM cc_payment_methods
+WHERE LOWER(payment_method) IN ('moneybookers', 'skrill')
+   OR LOWER(payment_filename) IN ('moneybookers.php', 'skrill.php');
+DELETE FROM cc_configuration
+WHERE LOWER(configuration_key) REGEXP '^module_payment_(moneybookers|skrill)_';
+DELETE FROM cc_config
+WHERE LOWER(config_key) REGEXP '^(moneybookers|skrill)(_|$)';

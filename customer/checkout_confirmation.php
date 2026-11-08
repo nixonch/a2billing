@@ -80,6 +80,10 @@ $_SESSION["p_module"] = $payment;
 $_SESSION["p_amount"] = 3;
 
 $payment_modules = new payment($payment);
+if (empty($payment_modules->selected_module) || empty($GLOBALS[$payment_modules->selected_module]->enabled)) {
+	Header('Location: checkout_payment');
+	exit;
+}
 if (!isset($wm_purse_type)) {
 	$paycur = 1;
 	$getcur = mb_strtoupper(BASE_CURRENCY);

@@ -16,23 +16,29 @@ Class payment {
 	// class constructor
     public function __construct($module = '') {
       global $payment, $language;
-      $PHP_SELF = $_SERVER['PHP_SELF'];
       $instance_sub_table = new Table("cc_payment_methods", "payment_filename");
       $DBHandle  = DbConnect();
       $return = null;
-      $return = $instance_sub_table -> Get_list($DBHandle, $QUERY, 0);
+      $return = $instance_sub_table -> Get_list($DBHandle, '', 0);
       $this ->modules = array();
 
       if(is_array($return))
       {
           foreach($return as $value)
           {
-              array_push($this ->modules, $value["payment_filename"]);
+              // Removed modules may still have a registration in an older database.
+              if (is_file(dirname(__FILE__) . '/../methods/' . $value['payment_filename'])) {
+                  array_push($this->modules, $value['payment_filename']);
+              }
           }
       }
       
       $include_modules = array();
-      if ((!empty($module)) && (in_array($module . '.' . substr($PHP_SELF, (strrpos($PHP_SELF, '.')+1)), $this->modules)) ) {
+      if (!empty($module) && !in_array($module . '.php', $this->modules, true)) {
+          $payment = '';
+          return;
+      }
+      if (!empty($module) && in_array($module . '.php', $this->modules, true)) {
           $this->selected_module = $module;
          
           $include_modules[] = array('class' => $module, 'file' => $module . '.php');
@@ -55,7 +61,7 @@ Class payment {
           $this->form_action_url = $GLOBALS[$module]->form_action_url;
       }
       $actived_module = $this->selection();
-      $payment = $actived_module[0]['id'];
+      $payment = isset($actived_module[0]['id']) ? $actived_module[0]['id'] : '';
     }
 
 // class methods
@@ -99,7 +105,7 @@ Class payment {
 
         foreach ($this->modules as $value) {
           $class = substr($value, 0, strrpos($value, '.'));
-          if ($GLOBALS[$class]->enabled) {
+          if (isset($GLOBALS[$class]) && $GLOBALS[$class]->enabled) {
             $js .= $GLOBALS[$class]->javascript_validation();
           }
         }
@@ -126,7 +132,7 @@ Class payment {
       if (is_array($this->modules)) {
         foreach ($this->modules as $value) {
           $class = substr($value, 0, strrpos($value, '.'));
-          if ($GLOBALS[$class]->enabled) { 
+          if (isset($GLOBALS[$class]) && $GLOBALS[$class]->enabled) {
             $selection = $GLOBALS[$class]->selection();
             if (is_array($selection)) $selection_array[] = $selection;
           }
