@@ -195,7 +195,7 @@ if ($form_action == "list" && (!in_array($message, ['success','editsuccess']) ||
 		<input name="idcust" type=hidden value="<?= $idcust ?>">
 		<tr class="bgcolor_001" >
 
-		<td align="center" valign="top" nowrap>
+		<td align="center" valign="middle" nowrap>
 				<?php //echo gettext("CALLER ID :");?>
 				+<input class="form_input_text" id="add_callerid" name="add_callerid" size="15" maxlength="60" value="<?php echo $phonenumber;?>">
 			</td>

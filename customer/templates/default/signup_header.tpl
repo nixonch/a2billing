@@ -14,6 +14,8 @@
 	{if ($popupwindow != 0)}
 		<link href="templates/{$SKIN_NAME}/css/popup.css" rel="stylesheet" type="text/css">
  	{/if}
+	<link href="./javascript/popupButtons.css" rel="stylesheet" type="text/css">
+	<script type="text/javascript" src="./javascript/popupButtons.js"></script>
 	<script type="text/javascript">	
 		var IMAGE_PATH = "templates/{$SKIN_NAME}/images/";
 	</script>

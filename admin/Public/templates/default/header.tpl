@@ -19,6 +19,8 @@
 	<script type="text/javascript" src="./javascript/popupResult.js"></script>
 	<script type="text/javascript" src="./javascript/alertBase.js"></script>
 {/if}
+	<link href="./javascript/popupButtons.css" rel="stylesheet" type="text/css">
+	<script type="text/javascript" src="./javascript/popupButtons.js"></script>
 	<script type="text/javascript">	
 	    var IMAGE_PATH = "templates/{$SKIN_NAME}/images/";
 	</script>
