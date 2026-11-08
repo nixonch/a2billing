@@ -146,6 +146,10 @@ class FormHandler
 	// Page context to retain in the edit URL and POST (for example group/language).
 	var $FG_EDITION_POPUP_PARAMS = array();
 	private $edition_popup_saved = false;
+	private $popup_result_output_level = null;
+	private $addition_saved = false;
+	// Signup completes its confirmation and mail step before returning the popup result.
+	var $FG_ADDITION_POPUP_DEFERRED = false;
 	var $FG_OTHER_BUTTON1=false;
 	var $FG_OTHER_BUTTON2=false;
 	var $FG_OTHER_BUTTON3=false;
@@ -621,6 +625,60 @@ class FormHandler
 		return $this->edition_popup_saved;
 	}
 
+	function is_popup_delete_confirmation($form_action)
+	{
+		return $form_action !== 'delete' && $this->is_popup_delete_request($form_action);
+	}
+
+	function is_popup_delete_request($form_action = null)
+	{
+		$processed = $this->getProcessed();
+		if ($form_action === null) $form_action = isset($processed['form_action']) ? $processed['form_action'] : null;
+		return in_array($form_action, array('ask-delete', 'ask-del-confirm', 'delete'), true)
+			&& isset($processed['popup_select']) && (string)$processed['popup_select'] === '4'
+			&& !$this->is_legacy_list_context();
+	}
+
+	/** Complete only a confirmed deletion, including pages with their own DELETE. */
+	function finish_popup_delete($result)
+	{
+		if (!$result || !$this->is_popup_delete_request('delete')) return;
+		$processed = $this->getProcessed();
+		$message = str_replace(array('%id', '%table'), array($processed['id'], $this->FG_TABLE_NAME), $this->FG_INTRO_TEXT_DELETION);
+		$this->finish_popup_result($message);
+	}
+
+	function is_popup_add_request($form_action = null)
+	{
+		$processed = $this->getProcessed();
+		if ($form_action === null) $form_action = isset($processed['form_action']) ? $processed['form_action'] : null;
+		return in_array($form_action, array('ask-add', 'add'), true)
+			&& isset($processed['popup_select']) && in_array((string)$processed['popup_select'], array('1', '2', '3', '4'), true)
+			&& !$this->is_legacy_list_context();
+	}
+
+	function is_add_saved()
+	{
+		return $this->addition_saved;
+	}
+
+	function finish_popup_add($result, $message_html = null, $refresh_payload = null)
+	{
+		if (!$result || !$this->is_popup_add_request('add')) return;
+		$this->finish_popup_result($message_html === null ? $this->FG_TEXT_ADITION_CONFIRMATION : $message_html, $refresh_payload);
+	}
+
+	private function finish_popup_result($message_html, $refresh_payload = null)
+	{
+		// Some entities render main.tpl before perform_action(). Discard that output.
+		if ($this->popup_result_output_level !== null) {
+			while (ob_get_level() > $this->popup_result_output_level) ob_end_clean();
+			$this->popup_result_output_level = null;
+		}
+		global $smarty;
+		a2b_smarty_popup_result($smarty, $message_html, $refresh_payload);
+	}
+
 	/**
      * Perform the execution of some actions to prepare the form generation
      * @public     	 
@@ -628,6 +686,19 @@ class FormHandler
 	function init ()
 	{
 		$processed = $this->getProcessed();
+		if (isset($processed['form_action']) && in_array($processed['form_action'], array('add', 'delete'), true)
+			&& ($this->is_popup_delete_request() || $this->is_popup_add_request()) && $this->popup_result_output_level === null) {
+			$this->popup_result_output_level = ob_get_level();
+			ob_start();
+		}
+		if ($this->is_popup_add_request()) {
+			$hidden_names = array_map('trim', explode(',', $this->FG_ADITION_HIDDEN_PARAM . ',' . $this->FG_QUERY_ADITION_HIDDEN_FIELDS));
+			if (!in_array('popup_select', $hidden_names, true)) {
+				$separator = $this->FG_ADITION_HIDDEN_PARAM === '' ? '' : ',';
+				$this->FG_ADITION_HIDDEN_PARAM .= $separator . 'popup_select';
+				$this->FG_ADITION_HIDDEN_PARAM_VALUE .= $separator . $processed['popup_select'];
+			}
+		}
 		
 		$cons = new Console();
 		$cons->log('FormHandler -> init');
@@ -1657,6 +1728,8 @@ class FormHandler
 	function perform_add (&$form_action)
 	{
 		include_once (FSROOT."lib/Class.Table.php");
+		$this->addition_saved = false;
+		$this->RESULT_QUERY = false;
 		
 		$processed = $this->getProcessed();  //$processed['firstname']
 		$this->VALID_SQL_REG_EXP = $res_funct = true;
@@ -1788,6 +1861,7 @@ class FormHandler
 				foreach ($arr_value_to_import as $current_value) {
 					$param_add_value_replaced = str_replace("%TAGPREFIX%", $current_value, $param_add_value);				
 					if ($this->VALID_SQL_REG_EXP) $this -> RESULT_QUERY = $instance_table -> Add_table ($this->DBHandle, $param_add_value_replaced, null, null, $this->FG_TABLE_ID);
+					if (!$this->RESULT_QUERY) break;
 				}
 			} else {
 				if ($this->VALID_SQL_REG_EXP) $this -> RESULT_QUERY = $instance_table -> Add_table ($this->DBHandle, $param_add_value, null, null, $this->FG_TABLE_ID);
@@ -1800,9 +1874,12 @@ class FormHandler
 			$pageName = explode('?', basename($_SERVER['REQUEST_URI']));
 			$_SESSION["last_page"] = array_shift($pageName);
 			// CALL DEFINED FUNCTION AFTER THE ACTION ADDITION
-			if (strlen($this->FG_ADDITIONAL_FUNCTION_AFTER_ADD)>0 && ($this->VALID_SQL_REG_EXP))
+			if (strlen($this->FG_ADDITIONAL_FUNCTION_AFTER_ADD)>0 && $this->VALID_SQL_REG_EXP && $this->RESULT_QUERY)
 				$res_funct = call_user_func(array('FormBO', $this->FG_ADDITIONAL_FUNCTION_AFTER_ADD));
-			if ($this->FG_ADITION_GO_EDITION == "yes"){
+			if ($res_funct === false) $this->RESULT_QUERY = false;
+			$this->addition_saved = $this->VALID_SQL_REG_EXP && (bool)$this->RESULT_QUERY;
+			if ($this->addition_saved && !$this->FG_ADDITION_POPUP_DEFERRED) $this->finish_popup_add(true);
+			if ($this->addition_saved && $this->FG_ADITION_GO_EDITION == "yes"){
 				$form_action="ask-edit";
 				$this->FG_ADITION_GO_EDITION = "yes-done";
 			}
@@ -2004,6 +2081,7 @@ class FormHandler
 	{
 		include_once (FSROOT."lib/Class.Table.php");
 		
+		$res_funct = true;
 		if (strlen($this -> FG_ADDITIONAL_FUNCTION_AFTER_DELETE) > 0)
 			$res_funct = call_user_func(array('FormBO', $this->FG_ADDITIONAL_FUNCTION_AFTER_DELETE));
 		$processed = $this->getProcessed();  //$processed['firstname']
@@ -2028,6 +2106,7 @@ class FormHandler
 		$instance_table->FK_DELETE = ($this->FG_FK_WARNONLY ? false : true);
 
 		$this -> RESULT_QUERY = $instance_table -> Delete_table ($this->DBHandle, $this->FG_EDITION_CLAUSE, $func_table = null);
+		if ($res_funct === false) $this->RESULT_QUERY = false;
 		$agent  = (isset($_SESSION["card_id"])) ? 2 : 0 ;
 		$idcust = ($agent) ? $_SESSION["card_id"]:$_SESSION["admin_id"];
 		if ($this -> FG_ENABLE_LOG == 1) {
@@ -2039,7 +2118,8 @@ class FormHandler
 
 		$this->FG_INTRO_TEXT_DELETION = str_replace("%id", $processed['id'], $this->FG_INTRO_TEXT_DELETION);
 		$this->FG_INTRO_TEXT_DELETION = str_replace("%table", $this->FG_TABLE_NAME, $this->FG_INTRO_TEXT_DELETION);
-		if (isset($this->FG_GO_LINK_AFTER_ACTION_DELETE)) {
+		$this->finish_popup_delete($this->RESULT_QUERY);
+		if (($this->RESULT_QUERY || $this->is_legacy_list_context()) && isset($this->FG_GO_LINK_AFTER_ACTION_DELETE)) {
 			if ($this->FG_DEBUG == 1)  echo "<br> GOTO ; ".$this->FG_GO_LINK_AFTER_ACTION_DELETE.$processed['id'];
 			if ($this->FG_GO_LINK_AFTER_ACTION_DELETE){
 				$ext_link ='&message=delsuccess';
@@ -2220,7 +2300,7 @@ class FormHandler
      * and an empty string renders only the close button for pages with their own result.
      * Center the whole page only for standalone responses without other page content.
      */
-    static function create_popup_result($message_html = null, $center_page = false)
+    static function create_popup_result($message_html = null, $center_page = false, $refresh_payload = null)
     {
         if ($message_html === null) {
             $message_html = htmlspecialchars(gettext("Information has successfully been updated"), ENT_QUOTES, 'UTF-8');
@@ -2252,7 +2332,7 @@ class FormHandler
     };
     button.value = label + ' (' + seconds + ')';
     button.focus();
-    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*');
+    window.parent.postMessage({action:'popupResult',payload:<?php echo $refresh_payload === null ? "{type:'refreshInside'}" : json_encode(array_merge($refresh_payload, array('type' => 'refreshInside')), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>},'*');
     var timer = setInterval(function () {
         button.value = label + ' (' + --seconds + ')';
         if (seconds <= 0) { button.click(); }
@@ -2284,7 +2364,7 @@ class FormHandler
 				<div align="center"><strong> 
 				<?php 
 					if ($form_action == "delete") { 
-				 		echo $this->FG_INTRO_TEXT_DELETION;
+						echo $this->RESULT_QUERY ? $this->FG_INTRO_TEXT_DELETION : gettext("error deletion");
 					} elseif ($form_action == "add") { 
 					 	if(!empty($this -> RESULT_QUERY)) {
 					 		echo $this->FG_TEXT_ADITION_CONFIRMATION;
@@ -2530,6 +2610,12 @@ class FormHandler
 				if (strlen($this -> FG_ADDITIONAL_FUNCTION_BEFORE_DELETE) > 0)
 			   	$res_funct = call_user_func(array('FormBO', $this->FG_ADDITIONAL_FUNCTION_BEFORE_DELETE));
 				include('Class.FormHandler.DelForm.inc.php');
+				if ($this->is_popup_delete_confirmation($form_action)) {
+					// main.tpl opens one popup wrapper inside header.tpl's two wrappers.
+					// Do not let the entity append summaries, extra forms or its footer.
+					echo "\n</div></div></div>\n</body>\n</html>";
+					exit;
+				}
 				break;
 				
 			case "list":

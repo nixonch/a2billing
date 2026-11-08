@@ -358,7 +358,7 @@ if (is_array ( $list_total_day ) && count ( $list_total_day ) > 0) {
 <?php  } ?>
 </center>
 
-<?
+<?php
 
 
 // #### FOOTER SECTION

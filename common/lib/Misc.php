@@ -95,8 +95,8 @@ function a2b_mail($to, $subject, $mail_content, $from = 'root@localhost', $fromn
 	if (strlen(SMTP_USERNAME) > 0)
 		$mail->SMTPAuth = true;
 
-	$mail->From = $from;
-	$mail->FromName = $fromname;
+	// setFrom also sets the envelope sender required by qmail's -f invocation.
+	$mail->setFrom($from, $fromname);
 	$mail->Subject = $subject;
 	$mail->Body = nl2br($mail_content); //$HTML;
 	if ($attachfile) $mail->AddAttachment($attachfile);
@@ -112,11 +112,7 @@ function a2b_mail($to, $subject, $mail_content, $from = 'root@localhost', $fromn
 	    $mail->AddAddress($to);
 	}
 	
-	try {
-		$mail->Send();
-	} catch (phpmailerException $e) {
-		throw $e;
-	}
+	$mail->Send();
 }
 
 /*

@@ -91,7 +91,6 @@ if($date_clause != "")
 if ($pmethod == '') $pmethod = 'all'; 
 if ($pmethod != 'all') { 
         $HD_Form -> FG_TABLE_CLAUSE.=" AND UPPER(paymentmethod)=UPPER('$pmethod')"; 
-        print_r($HD_Form -> FG_TABLE_CLAUSE); 
 } 
 
 $status_list = Constants::getPaymentStateList();

@@ -96,17 +96,14 @@ if ($atmenu == 'sip' && ($form_action == 'ask-add-extension' || $form_action == 
 				$sip_table = new Table('cc_sip_buddies', 'id');
 				$sip_count = $sip_table->Get_list_count($DBHandle);
 				// Start with a clean list URL so previous filters cannot hide the new rows.
-				$list_url = $_SERVER['PHP_SELF'] . '?' . http_build_query(array(
+				$list_parameters = array(
+					'form_action' => 'list',
 					'current_page' => max(0, ceil($sip_count / $page_size) - 1),
 					'atmenu' => 'sip', 'section' => $_SESSION['menu_section'],
 					'order' => 'id', 'sens' => 'ASC'
-				));
-				?>
-<script type="text/javascript">
-window.parent.postMessage({action:'popupResult', payload:{type:'refreshInside', link:<?php echo json_encode($list_url); ?>}}, '*');
-</script>
-				<?php
-				exit;
+				);
+				$HD_Form->finish_popup_add(true, htmlspecialchars(gettext('Created'), ENT_QUOTES, 'UTF-8') . ': ' . count($extcreated),
+					array('link' => $_SERVER['PHP_SELF'], 'listParameters' => $list_parameters));
 			}
 		}
 	}
@@ -255,11 +252,7 @@ function addSipExtension(event) {
 			// alertBase removes the previous window after its 150 ms closing animation.
 			setTimeout(function () {
 				alertBase('url:' + url, <?php echo json_encode(gettext("Add Extension")); ?>,
-					true, false, '#445760', null, popupY, 'UL', null, null, null, null, null, function (result) {
-						if (result.type !== 'refreshInside') return false;
-						setTimeout(function () { window.location.href = result.link; }, 200);
-						return true;
-					});
+					true, false, '#445760', null, popupY, 'UL', null, null, null, null, null, refreshInsideCallback);
 			}, 200);
 			return true;
 		});

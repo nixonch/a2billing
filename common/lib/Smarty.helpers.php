@@ -48,21 +48,30 @@ function a2b_smarty_popup_context($params, $template)
 {
     if (!class_exists('FormHandler', false)) return '';
     $form = FormHandler::GetInstance();
-    if (!$form || !$form->FG_EDITION_POPUP) return '';
+    if (!$form) return '';
     $processed = $form->getProcessed();
-    if (!isset($processed['popup_select']) || (string)$processed['popup_select'] !== '4') return '';
+    $popup_add = $form->is_popup_add_request();
+    if (!$form->FG_EDITION_POPUP && !$form->is_popup_delete_request() && !$popup_add) return '';
+    if (!$popup_add && (!isset($processed['popup_select']) || (string)$processed['popup_select'] !== '4')) return '';
 
     // JSON forms may decode their popup mode after Smarty has been initialized.
     global $popup_select;
-    $popup_select = 4;
-    $template->assign('popupwindow', 4);
+    $popup_select = (int)$processed['popup_select'];
+    $template->assign('popupwindow', $popup_select);
     if (!$form->is_popup_edit_saved()) return '';
 
     // End the response before the entity can output menus, help or other forms.
     $smarty = method_exists($template, 'getSmarty') ? $template->getSmarty() : $template->smarty;
+    a2b_smarty_popup_result($smarty);
+}
+
+function a2b_smarty_popup_result($smarty, $message_html = null, $refresh_payload = null)
+{
+    global $popup_select;
+    $popup_select = 4;
     $smarty->assign('popupwindow', 4);
     echo $smarty->fetch('header.tpl');
-    FormHandler::create_popup_result(null, true);
+    FormHandler::create_popup_result($message_html, true, $refresh_payload);
     echo "\n</div></div>\n</body>\n</html>";
     exit;
 }

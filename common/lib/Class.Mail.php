@@ -327,8 +327,8 @@ class Mail {
 		}
 		try {
 			a2b_mail($this->to_email, $this->title, $this->message, $this->from_email, $this->from_name, null, $this->attachfile);
-		} catch (phpmailerException $e) {
-        	throw new A2bMailException("Error sent mail : ".$e->getMessage()."\n");
+		} catch (\PHPMailer\PHPMailer\Exception $e) {
+			throw new A2bMailException("Error sent mail : ".$e->getMessage()."\n", 0, $e);
         }
 		
 	}

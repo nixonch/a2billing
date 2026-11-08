@@ -58,8 +58,7 @@ if (!isset ($form_action))
 if (!isset ($action))
 	$action = $form_action;
 
-if ($message != "success")
-	$list = $HD_Form->perform_action($form_action);
+$list = $HD_Form->perform_action($form_action);
 
 // #### HEADER SECTION
 $smarty->display('main.tpl');
@@ -75,15 +74,12 @@ if ($form_action == "list") {
 // #### TOP SECTION PAGE
 $HD_Form->create_toppage($form_action);
 
-if ($message != "success") {
 	$HD_Form->create_form($form_action, $list, $id = null);
 ?>	<script type="text/javascript">
 	document.getElementById('<?php if ($form_action=='ask-add') echo 'credit'; else echo 'filterprefix';?>').focus();
 	</script>
 <?php
-}
-
-if ($form_action == "list" && $message != "success" && has_rights (ACX_DISTRIBUTION)) {
+if ($form_action == "list" && has_rights (ACX_DISTRIBUTION)) {
 
 	$table = new Table();
 
@@ -163,12 +159,6 @@ if ($form_action == "list" && $message != "success" && has_rights (ACX_DISTRIBUT
 		<br></br>
 <?php
 	}
-}
-
-if ($message == "success") {
-    FormHandler::create_popup_result(
-        gettext("INSERT NEW Refill")." ".$HD_Form->FG_INTRO_TEXT_ADITION."<br>".gettext("Transaction was completed succesfully")
-    );
 }
 
 // #### FOOTER SECTION

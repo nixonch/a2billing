@@ -53,17 +53,10 @@ if (!isset($action)) $action = $form_action;
 if($form_action=="ask-delete" && is_numeric($id)) {
     $QUERY = "DELETE FROM cc_system_log WHERE id = ".$id;
     $result_query = @ $DBHandle->Execute($QUERY);
+    $HD_Form->finish_popup_delete($result_query);
+    if (!$result_query) echo gettext("error deletion");
     $action = $form_action = "list";
     unset($id);
-    if ($popup_select==4) {
-?>
-<script type="text/javascript">
-    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*');
-    window.parent.postMessage({action:'closeAlert'},'*')
-</script>
-<?php
-	die();
-    }
 }
 
 if ($id!="" || !is_null($id)) {

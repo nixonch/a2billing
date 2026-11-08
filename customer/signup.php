@@ -81,9 +81,11 @@ if ($id != "" || !is_null($id)) {
 	$HD_Form->FG_EDITION_CLAUSE = str_replace("%id", "$id", $HD_Form->FG_EDITION_CLAUSE);
 }
 
+// Registration still has to prepare its session and send the registration email.
+$HD_Form->FG_ADDITION_POPUP_DEFERRED = true;
 $list = $HD_Form->perform_action($form_action);
 
-if ($form_action == "add") {
+if ($form_action == "add" && $HD_Form->is_add_saved()) {
 /**
 echo "form_action       = ".$form_action."<br>And go to signup_confirmation.php<br>";
 echo "language          = ".$language."<br>";
@@ -97,6 +99,10 @@ echo "=========================<br>";
 	$_SESSION["language_code"] = $language;
 	$_SESSION["cardnumber_signup"] = $maxi;
 	$_SESSION["id_signup"] = $HD_Form->RESULT_QUERY;
+	unset($_SESSION['dealer_signup_popup']);
+	if ($HD_Form->is_popup_add_request() && has_rights(ACX_DISTRIBUTION)) {
+		$_SESSION['dealer_signup_popup'] = array('customer_id' => (int)$HD_Form->RESULT_QUERY, 'dealer_id' => (int)$_SESSION['card_id']);
+	}
 /**
 echo "language_code     = ".$_SESSION["language_code"]."<br>";
 echo "cardnumber_signup = ".$maxi."<br>";
@@ -104,6 +110,7 @@ echo "id_signup         = ".$_SESSION["id_signup"]."<br>";
 echo "=========================<br>";
 **/
 	Header("Location: signup_confirmation.php");
+	exit;
 }
 
 //if (!($popup_select>=1) && has_rights (ACX_DISTRIBUTION)) {

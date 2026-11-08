@@ -50,17 +50,6 @@ $call_log_parameters = ['customer', 'sellrate', 'buyrate', 'entercustomer','ente
 getpost_ifset ($call_log_parameters);
 getpost_ifset (['popup_select', 'message']);
 
-// The CDR delete form redirects here after completing the action.
-if ($popup_select == 4 && $message == 'delsuccess') {
-	?>
-<script type="text/javascript">
-window.parent.postMessage({action: 'popupResult', payload: {type: 'refreshInside'}}, '*');
-window.parent.postMessage({action: 'closeAlert'}, '*');
-</script>
-	<?php
-	exit ();
-}
-
 //$fromstatsmonth_sday = "2010-11";
 $cl = 2;
 $cr = 3;

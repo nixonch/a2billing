@@ -86,7 +86,7 @@ $HD_Form -> FG_TABLE_DEFAULT_SENS	= $FG_TABLE_DEFAULT_SENS;
 if (has_rights (ACX_DISTRIBUTION) && !($popup_select>=1)) {
 	$HD_Form -> FG_ADDITION = true;
 	$HD_Form -> FG_LIST_ADDING_BUTTON1 = true;
-	$HD_Form -> FG_LIST_ADDING_BUTTON_LINK1 = "javascript:;\" onClick=\"alertBase('url:signup?form_action=ask-add&id_diller=".$_SESSION["pr_login"]."&margin=".$_SESSION["margin_diller"]."&popup_select=1&popup_formname=myForm&displayheader=0','".gettext("Add Customer")."',true,true)";
+	$HD_Form -> FG_LIST_ADDING_BUTTON_LINK1 = "javascript:;\" onClick=\"alertBase('url:signup?form_action=ask-add&id_diller=".$_SESSION["pr_login"]."&margin=".$_SESSION["margin_diller"]."&popup_select=1&popup_formname=myForm&displayheader=0','".gettext("Add Customer")."',true,true,'info',null,null,null,null,null,null,null,null,refreshInsideCallback)";
 	$HD_Form -> FG_LIST_ADDING_BUTTON_ALT1 = $HD_Form ->FG_LIST_ADDING_BUTTON_MSG1 = gettext("Add Customer");
 	$HD_Form -> FG_LIST_ADDING_BUTTON_IMG1 = Images_Path ."/user_add.png" ;
 }

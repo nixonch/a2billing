@@ -51,13 +51,14 @@ var addFormData = function (prefix, value) {
     }
 };
 
-if (typeof refreshProcessed === 'object' && refreshProcessed !== null) {
-    for (var key in refreshProcessed) {
+var listParameters = payload.listParameters ?? (typeof refreshProcessed === 'object' ? refreshProcessed : null);
+if (listParameters && typeof listParameters === 'object') {
+    for (var key in listParameters) {
 	if (
-	    Object.prototype.hasOwnProperty.call(refreshProcessed, key)
+	    Object.prototype.hasOwnProperty.call(listParameters, key)
 	    && removeParams.indexOf(key) === -1
 	) {
-	    addFormData(key, refreshProcessed[key]);
+	    addFormData(key, listParameters[key]);
 	}
     }
 }
@@ -100,6 +101,7 @@ fetch(link, {
 
 	    if (newPart && oldPart) {
 		oldPart.innerHTML = newPart.innerHTML;
+		if (payload.listParameters) refreshProcessed = payload.listParameters;
 		var currentPage = newPart.getAttribute('data-current-page');
 		if (currentPage !== null) {
 		    oldPart.setAttribute('data-current-page', currentPage);

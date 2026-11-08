@@ -65,6 +65,7 @@ if ($form_action == "delete"){
 		echo "error deletion";
         }else{
 		unlink($path);
+		$HD_Form->finish_popup_delete($res_delete);
         }
 }
 						

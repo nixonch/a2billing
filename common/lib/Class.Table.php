@@ -425,6 +425,7 @@ class Table {
             }
 			if ($this -> debug_st) echo "<br>$QUERY";
             $res = $DBHandle -> Execute($QUERY);
+            if (!$res) return false;
         }
 
 		$QUERY = "DELETE FROM ".$this -> table." WHERE (".trim ($clause).")";

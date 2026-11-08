@@ -181,6 +181,13 @@ $show_completion = isset($_SESSION['message'])
     && $_SESSION['message'] !== gettext("No files selected!")
     && ($method !== 'upload' || $upload_succeeded);
 
+if ($show_completion && $method === 'upload' && $upload_succeeded
+    && in_array((string)$popup_select, array('1', '2', '3', '4'), true)) {
+    $completion_message = htmlspecialchars($_FILES['file']['name'][0], ENT_QUOTES, 'UTF-8') . ' uploaded.';
+    unset($_SESSION['message']);
+    a2b_smarty_popup_result($smarty, $completion_message);
+}
+
 $smarty->display('main.tpl');
 
 ?>

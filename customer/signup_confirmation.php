@@ -47,6 +47,11 @@ if (!$A2B->config["signup"]['enable_signup'] && !has_rights(ACX_DISTRIBUTION)) {
 	exit ();
 }
 
+$dealer_signup_popup = has_rights(ACX_DISTRIBUTION) && isset($_SESSION['dealer_signup_popup'])
+    && $_SESSION['dealer_signup_popup']['customer_id'] > 0
+    && $_SESSION['dealer_signup_popup']['customer_id'] === (int)$_SESSION['id_signup']
+    && $_SESSION['dealer_signup_popup']['dealer_id'] === (int)$_SESSION['card_id'];
+
 if (!isset ($_SESSION["date_mail"]) || (time() - $_SESSION["date_mail"]) > 60) {
 	$_SESSION["date_mail"] = time();
 } else {
@@ -85,6 +90,7 @@ try {
 }
 
 $QUERY = "SELECT username, lastname, firstname, email, uipass, credit, useralias, loginkey, city FROM cc_card WHERE id=" . $_SESSION["id_signup"];
+if ($dealer_signup_popup) $QUERY .= " AND id_diller=" . (int)$_SESSION['card_id'];
 
 $res = $DBHandle->Execute($QUERY);
 $num = 0;
@@ -122,7 +128,12 @@ if (!has_rights(ACX_DISTRIBUTION) && $list[0][8]=="") {
 	    gettext("Your card alias (login) is ")." <b><font color=\"#00AA00\">".$list[0][6]."</font></b><br>".gettext("Your password is ")."<b><font color=\"#00AA00\">".$list[0][4]."</font></b>",$list[0][6],$list[0][4]);
     }
 }
+if ($dealer_signup_popup) {
+    $smarty->assign('popupwindow', 1);
+    $list[0] = array_map(function ($value) { return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8'); }, $list[0]);
+}
 $smarty->display('signup_header.tpl');
+if ($dealer_signup_popup) echo '<div class="msg_success" role="status" style="color:#444;border-color:#aaa;background:#f2f2f2;margin:0 10px 10px;padding:20px;">';
 ?>
 
 <blockquote>
@@ -141,7 +152,7 @@ $smarty->display('signup_header.tpl');
 			  <?php echo gettext("Card alias (login) is "); ?> <b><font color="#00AA00"><?php echo $list[0][6]; ?></font></b><br>
 			  <?php echo gettext("Password is "); ?> <b><font color="#00AA00"><?php echo $list[0][4]; ?></font></b><br>
 			</h3>
-			<script type="text/javascript">window.opener.location.reload();</script>
+			<?php if (!$dealer_signup_popup) { ?><script type="text/javascript">window.opener.location.reload();</script><?php } ?>
 	<?php }else {
 			echo $list[0][2]; ?> <?php echo $list[0][1]; ?>, <?php echo gettext("Thank you for registering with us !");?><br>
 		  <?php echo gettext("An email confirming your information has been sent to"); ?> <b><?php echo $list[0][3]; ?></b><br><br>
@@ -155,6 +166,24 @@ $smarty->display('signup_header.tpl');
 		
 </div>
 </blockquote>      
+
+<?php if ($dealer_signup_popup) {
+    unset($_SESSION['dealer_signup_popup']);
+?>
+</div>
+<div align="center">
+    <input id="signup-result-close" class="form_input_button" type="button" value="<?php echo htmlspecialchars(gettext("Close Window"), ENT_QUOTES, 'UTF-8'); ?>">
+</div>
+<script type="text/javascript">
+(function () {
+    var button = document.getElementById('signup-result-close');
+    button.onclick = function () { window.parent.postMessage({action:'closeAlert'}, '*'); };
+    button.focus();
+    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}}, '*');
+}());
+</script>
+</div></body></html>
+<?php exit; } ?>
 
 <br><br><br>
 <br><br><br>

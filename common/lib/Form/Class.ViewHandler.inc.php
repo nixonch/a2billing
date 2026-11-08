@@ -71,7 +71,7 @@ if( !$processed['popup_select'] && ($this->FG_LIST_ADDING_BUTTON1 || $this->FG_L
 	<?php
 } //END IF
 
-if ($processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
+if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
 ?>
 <script type="text/javascript">
     window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*');
