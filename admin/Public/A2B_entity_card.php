@@ -49,6 +49,39 @@ if (! has_rights (ACX_CUSTOMER)) {
 $HD_Form -> setDBHandler (DbConnect());
 $HD_Form -> init();
 
+if (isset($form_action) && $form_action == 'auto-create-sip') {
+	Header('Content-Type: application/json; charset=UTF-8');
+	$result = array('success' => false, 'message' => gettext('Could not create SIP extension.'));
+	$card_id = isset($_POST['card_id']) && is_scalar($_POST['card_id']) && ctype_digit((string) $_POST['card_id']) ? (int) $_POST['card_id'] : 0;
+	if ($_SERVER['REQUEST_METHOD'] == 'POST' && $card_id > 0) {
+		$DBHandle = $HD_Form->DBHandle;
+		$defaults = get_sip_extension_defaults($card_id, $DBHandle);
+		if ($defaults !== false) {
+			if ($defaults['extquantity'] < 1 || $defaults['extstart'] < $defaults['extmin'] || $defaults['extstart'] > $defaults['extmax']) {
+				$result['message'] = gettext('No SIP extensions available within the customer limit or range.');
+			} else {
+				$created = gen_friends($card_id, $defaults['extstart'], 1, $defaults['extmin'], $defaults['extmax'], $DBHandle, $A2B);
+				if (count($created) == 1) {
+					// The generator returns numbers even if an INSERT fails: verify the saved peer.
+					$peer_result = $DBHandle->Execute("SELECT regexten, defaultuser, secret FROM cc_sip_buddies WHERE id_cc_card = $card_id AND external = 0 AND regexten = " . $DBHandle->qstr($created[0]));
+					if ($peer_result && ($peer = $peer_result->fetchRow())) {
+						$DBHandle->Execute("UPDATE cc_card SET sip_buddy = '1' WHERE id = $card_id");
+						if (!USE_REALTIME) {
+							NotificationsDAO::AddNotification('sip_changed', Notification::$HIGH, Notification::$ADMIN, $_SESSION['admin_id']);
+						}
+						$log = new Logger();
+						$log->insertLog_Update($_SESSION['admin_id'], 1, 'SIP EXTENSION ADDED', $peer[0], 'cc_sip_buddies', $_SERVER['REMOTE_ADDR'], 'A2B_entity_card.php', '', 0);
+						$result = array('success' => true, 'message' => htmlspecialchars(gettext('SIP extension created successfully.'), ENT_QUOTES, 'UTF-8') . '<br><br><strong>REGEXTEN:</strong> ' . htmlspecialchars($peer[0], ENT_QUOTES, 'UTF-8') . '<br><strong>DEFAULTUSER:</strong> ' . htmlspecialchars($peer[1], ENT_QUOTES, 'UTF-8') . '<br><strong>SECRET:</strong> ' . htmlspecialchars($peer[2], ENT_QUOTES, 'UTF-8'));
+					}
+				}
+			}
+		}
+	}
+	if (!$result['success']) $result['message'] = htmlspecialchars($result['message'], ENT_QUOTES, 'UTF-8');
+	echo json_encode($result);
+	exit;
+}
+
 $HD_Form -> FG_EDITION_LINK	       = $_SERVER['PHP_SELF']."?form_action=ask-edit&current_page=$current_page&filterprefix=$filterprefix&id=";
 $HD_Form -> FG_DELETION_LINK	= "url:".$_SERVER['PHP_SELF']."?form_action=ask-delete&current_page=$current_page&filterprefix=$filterprefix&popup_select=4&id=";
 
@@ -159,6 +192,32 @@ $list = $HD_Form -> perform_action($form_action);
 // #### HEADER SECTION
 $smarty->display('main.tpl');
 
+?>
+<script type="text/javascript">
+function autoCreateSipConfig(cardId, event) {
+	var popupX = event.pageX - 15;
+	var popupY = event.pageY + 15;
+	var data = new FormData();
+	data.append('form_action', 'auto-create-sip');
+	data.append('card_id', cardId);
+	var caption = <?php echo json_encode(gettext('Auto Create SIP Config')); ?>;
+	var closeLabel = <?php echo json_encode(gettext('Close')); ?>;
+	var errorText = <?php echo json_encode(htmlspecialchars(gettext('Could not confirm SIP extension creation. Check VoIP Settings before trying again.'), ENT_QUOTES, 'UTF-8')); ?>;
+	fetch(<?php echo json_encode($_SERVER['PHP_SELF']); ?>, { method: 'POST', body: data, credentials: 'same-origin' })
+		.then(function (response) {
+			if (!response.ok || response.redirected) throw new Error(errorText);
+			return response.json();
+		})
+		.then(function (result) {
+			if (!result || typeof result.success !== 'boolean' || typeof result.message !== 'string') throw new Error(errorText);
+			alertBase(result.message, caption, true, true, result.success ? 'success' : 'danger', popupX, popupY, 'UR', null, closeLabel);
+		})
+		.catch(function () {
+			alertBase(errorText, caption, true, true, 'danger', popupX, popupY, 'UR', null, closeLabel);
+		});
+}
+</script>
+<?php
 
 if ($form_action=='list' && !($popup_select>=1)) {
 // #### HELP SECTION

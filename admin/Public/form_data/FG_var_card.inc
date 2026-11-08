@@ -308,7 +308,7 @@ if ($popup_select && $popup_select<4) {
 	$FN_COLUMN_ID="col".($FG_COL_QUERY_COUNT);//get numbers of rows for needed fields
 	$FN_COLUMN_USERNAME="col".($FG_COL_QUERY_COUNT+1);
 	$FN_COLUMN_ALIAS="col".($FG_COL_QUERY_COUNT+2);
-	$HD_Form -> FG_OTHER_BUTTON1_LINK="A2B_entity_friend.php?atmenu=sip&form_action=add_sip&id_cc_card=|$FN_COLUMN_ID|&cardnumber=|$FN_COLUMN_USERNAME|&useralias=|$FN_COLUMN_ALIAS|";
+	$HD_Form -> FG_OTHER_BUTTON1_LINK="javascript:;\" onclick=\"autoCreateSipConfig('|$FN_COLUMN_ID|', event); return false;";
 	$HD_Form -> FG_OTHER_BUTTON2_LINK="A2B_entity_friend.php?atmenu=iax&form_action=add_iax&id_cc_card=|$FN_COLUMN_ID|&cardnumber=|$FN_COLUMN_USERNAME|&useralias=|$FN_COLUMN_ALIAS|";
 	$HD_Form -> FG_OTHER_BUTTON3_LINK="A2B_entity_payment.php?form_action=ask-add&card_id=|$FN_COLUMN_ID|";
 	$HD_Form -> FG_OTHER_BUTTON4_LINK="A2B_entity_subscriber.php?form_action=ask-add&id=|$FN_COLUMN_ID|";
