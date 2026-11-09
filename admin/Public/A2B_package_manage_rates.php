@@ -161,10 +161,13 @@ if ($form_action == "list" || $popup_select < 2)
 <br/>
 
 <SCRIPT LANGUAGE="javascript">
-var win= null;
-function addrate(selvalue){
-	//test si win est encore ouvert et close ou refresh
-    win=MM_openBrWindow('A2B_entity_def_ratecard.php?popup_select=1&package=<?php echo $id ?>','','scrollbars=yes,resizable=yes,width=700,height=500');
+function addrate(){
+    alertBase('url:A2B_entity_def_ratecard.php?popup_select=1', '', true, true, '#445760', null, null, null, null, null, null, null, null, function(payload, event) {
+        if (event.origin !== window.location.origin || event.source !== document.getElementById('alert-iframe').contentWindow) { return false; }
+        if (payload.type !== 'sendValue' || !/^\d+$/.test(payload.selvalue)) { return false; }
+        window.location.href = 'A2B_package_manage_rates.php?id=<?php echo (int)$id; ?>&addrate=' + encodeURIComponent(payload.selvalue);
+        return true;
+    });
 }
 function delrate(){
 	//test si val is not null & numeric

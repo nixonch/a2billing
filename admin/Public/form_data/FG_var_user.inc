@@ -38,12 +38,12 @@ getpost_ifset(array('id', 'groupID', 'userid', 'login','country','city', 'pwd_en
 
 if ($groupID=="0") {
 	$FG_INSTANCE_NAME="Administrator";
-	$ADDING_BUTTON_LINK1 = "A2B_entity_user.php?form_action=ask-add&groupID=0&section=".$_SESSION["menu_section"];
+	$ADDING_BUTTON_LINK1 = "A2B_entity_user?form_action=ask-add&groupID=0&section=".$_SESSION["menu_section"];
 	$ADDING_BUTTON_ALT1 = gettext("Add ADMINISTRATOR");
 	$ADDING_BUTTON_IMG1 = Images_Path ."/user_gray.png" ;
 } elseif ($groupID=="1") {
 	$FG_INSTANCE_NAME="Sub-administrator";
-	$ADDING_BUTTON_LINK1 = "A2B_entity_user.php?form_action=ask-add&groupID=1&section=".$_SESSION["menu_section"];
+	$ADDING_BUTTON_LINK1 = "A2B_entity_user?form_action=ask-add&groupID=1&section=".$_SESSION["menu_section"];
 	$ADDING_BUTTON_ALT1 =  gettext("Add ADMIN ACL");
 	$ADDING_BUTTON_IMG1 = Images_Path ."/user_orange.png" ;
 } else {
@@ -60,7 +60,11 @@ $HD_Form -> FG_TABLE_DEFAULT_SENS = "ASC";
 $HD_Form -> FG_ACTION_SIZE_COLUMN = '1%';
 
 $HD_Form ->FG_LIST_ADDING_BUTTON1 = true;
-$HD_Form ->FG_LIST_ADDING_BUTTON_LINK1 = $ADDING_BUTTON_LINK1;
+$HD_Form ->FG_LIST_ADDING_BUTTON_LINK1 = 'javascript:;" onclick="' . htmlspecialchars(
+	'alertBase(' . json_encode('url:' . $ADDING_BUTTON_LINK1 . '&popup_select=4') .
+	',' . json_encode($ADDING_BUTTON_ALT1) . ",true,true,'info',null,null,null,null,null,null,null,null,refreshInsideCallback);return false;",
+	ENT_QUOTES, 'UTF-8'
+);
 $HD_Form ->FG_LIST_ADDING_BUTTON_ALT1 = $HD_Form ->FG_LIST_ADDING_BUTTON_MSG1 = $ADDING_BUTTON_ALT1;
 $HD_Form ->FG_LIST_ADDING_BUTTON_IMG1 = $ADDING_BUTTON_IMG1;
 

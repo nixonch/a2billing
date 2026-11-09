@@ -71,7 +71,11 @@ $HD_Form ->FG_LIST_ADDING_BUTTON_ALT1 = $HD_Form ->FG_LIST_ADDING_BUTTON_MSG1 = 
 $HD_Form ->FG_LIST_ADDING_BUTTON_IMG1 = Images_Path ."/cog_add.png" ;
 
 $HD_Form ->FG_LIST_ADDING_BUTTON2 = true;
-$HD_Form ->FG_LIST_ADDING_BUTTON_LINK2 = "A2B_entity_voucher.php?form_action=ask-add&section=".$_SESSION["menu_section"];
+$HD_Form ->FG_LIST_ADDING_BUTTON_LINK2 = 'javascript:;" onclick="' . htmlspecialchars(
+	'alertBase(' . json_encode('url:A2B_entity_voucher?form_action=ask-add&popup_select=4&section=' . rawurlencode($_SESSION['menu_section'])) .
+	',' . json_encode(gettext("Add Voucher")) . ",true,true,'info',null,null,null,null,null,null,null,null,refreshInsideCallback);return false;",
+	ENT_QUOTES, 'UTF-8'
+);
 $HD_Form ->FG_LIST_ADDING_BUTTON_ALT2 = $HD_Form ->FG_LIST_ADDING_BUTTON_MSG2 = gettext("Add Voucher");
 $HD_Form ->FG_LIST_ADDING_BUTTON_IMG2 = Images_Path ."/add.png" ;
 

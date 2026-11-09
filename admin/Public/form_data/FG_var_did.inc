@@ -42,7 +42,11 @@ if ( (empty($form_action) || $form_action=="list") && $deleteselected != 'true')
 }
 
 $HD_Form ->FG_LIST_ADDING_BUTTON1 = true;
-$HD_Form ->FG_LIST_ADDING_BUTTON_LINK1 = "A2B_entity_did.php?form_action=ask-add&section=".$_SESSION["menu_section"];
+$HD_Form ->FG_LIST_ADDING_BUTTON_LINK1 = 'javascript:;" onclick="' . htmlspecialchars(
+	'alertBase(' . json_encode('url:A2B_entity_did?form_action=ask-add&popup_select=4&section=' . rawurlencode($_SESSION['menu_section'])) .
+	',' . json_encode(gettext("Add DID")) . ",true,true,'info',null,null,null,null,null,null,null,null,refreshInsideCallback);return false;",
+	ENT_QUOTES, 'UTF-8'
+);
 $HD_Form ->FG_LIST_ADDING_BUTTON_ALT1 = $HD_Form ->FG_LIST_ADDING_BUTTON_MSG1 = gettext("Add DID");
 $HD_Form ->FG_LIST_ADDING_BUTTON_IMG1 = Images_Path ."/telephone_add.png" ;
 
