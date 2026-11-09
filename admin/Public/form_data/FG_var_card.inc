@@ -1166,6 +1166,21 @@ if (has_rights (ACX_MODIFY_CUSTOMERS) && (!($popup_select>=1) || $popup_select==
 			' cbtimeoutunavailable, cbattemptunavailable, cbtimeoutbusy, cbattemptbusy, cbtimeoutnoanswer, cbattemptnoanswer, cbtimeoutmax, ' .
 			' autorefill, initialbalance, invoiceday, vat, vat_rn, discount, traffic, traffic_target, restriction' );
 
+	if ($form_action == 'ask-delete' || $form_action == 'ask-del-confirm') {
+		$delete_fields = array('username', 'useralias', 'lastname', 'firstname', 'email', 'phone', 'credit');
+		$delete_elements = array();
+		foreach ($HD_Form->FG_TABLE_EDITION as $element) {
+			$delete_elements[$element[1]] = $element;
+		}
+		$delete_elements['credit'][0] .= ' (' . strtoupper(BASE_CURRENCY) . ')';
+		$HD_Form->FG_TABLE_EDITION = array();
+		foreach ($delete_fields as $field) {
+			$HD_Form->FG_TABLE_EDITION[] = $delete_elements[$field];
+		}
+		$HD_Form->FG_NB_TABLE_EDITION = count($delete_fields);
+		$HD_Form->FieldEditElement(implode(', ', $delete_fields));
+	}
+
 	$HD_Form -> FG_ADITION_HIDDEN_PARAM		= $HD_Form -> FG_EDITION_HIDDEN_PARAM		= "filterprefix";
 	$HD_Form -> FG_ADITION_HIDDEN_PARAM_VALUE	= $HD_Form -> FG_EDITION_HIDDEN_PARAM_VALUE	= "$filterprefix";
 

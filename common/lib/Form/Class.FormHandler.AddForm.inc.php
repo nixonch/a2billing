@@ -80,7 +80,7 @@ var popupCallback = function (payload) {
 		if ($this->FG_DEBUG == 1) print($this->FG_TABLE_ADITION[$i][3]);
   		if (strtoupper ($this->FG_TABLE_ADITION[$i][3])=="INPUT"){
 	?>
-                 <INPUT class="form_input_text" name=<?php echo $this->FG_TABLE_ADITION[$i][1]?>  <?php echo $this->FG_TABLE_ADITION[$i][4]?> value="<?php echo $processed[$this->FG_TABLE_ADITION[$i][1]];?>">
+                 <INPUT class="form_input_text" name=<?php echo $this->FG_TABLE_ADITION[$i][1]?>  <?php echo $this->FG_TABLE_ADITION[$i][4]?> value="<?php echo $this->displayInput($processed[$this->FG_TABLE_ADITION[$i][1]], true);?>">
 	<?php
 		}elseif (strtoupper ($this->FG_TABLE_ADITION[$i][3])=="LABEL"){
 	?>
@@ -91,8 +91,8 @@ var popupCallback = function (payload) {
 		<INPUT class="form_input_text" name=<?php echo $this->FG_TABLE_ADITION[$i][1]?>  <?php echo $this->FG_TABLE_ADITION[$i][4]?> value="<?php
 
 			if($this->VALID_SQL_REG_EXP && is_array($list)){
-				echo stripslashes($list[0][$i]);
-			}else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]]; }?>"
+				echo $this->displayInput(stripslashes($list[0][$i]));
+			}else{ echo $this->displayInput($processed[$this->FG_TABLE_ADITION[$i][1]], true); }?>"
 		><a href="javascript:;" onclick="alertBase('url:<?= $this->FG_TABLE_EDITION[$i][12]?>popup_formname=myForm&popup_fieldname=<?php echo $this->FG_TABLE_ADITION[$i][1]?>'<?php echo $this->FG_TABLE_ADITION[$i][13]?>);"><img src="<?php echo Images_Path_Main;?>/icon_arrow_orange.gif" valign="bottom"/></a>
 	<?php
 		} elseif (strtoupper ($this->FG_TABLE_ADITION[$i][3])=="POPUPVALUE"){
@@ -100,8 +100,8 @@ var popupCallback = function (payload) {
 		<INPUT class="form_input_text" name=<?php echo $this->FG_TABLE_ADITION[$i][1]?>  <?php echo $this->FG_TABLE_ADITION[$i][4]?> value="<?php
 
 			if($this->VALID_SQL_REG_EXP && is_array($list)){
-				echo stripslashes($list[0][$i]);
-			}else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]]; }?>"
+				echo $this->displayInput(stripslashes($list[0][$i]));
+			}else{ echo $this->displayInput($processed[$this->FG_TABLE_ADITION[$i][1]], true); }?>"
 		><a href="#" onclick="window.open('<?php echo $this->FG_TABLE_ADITION[$i][12]?>popup_formname=myForm&popup_fieldname=<?php echo $this->FG_TABLE_ADITION[$i][1]?>' <?php echo $this->FG_TABLE_ADITION[$i][13]?>);"><img src="<?php echo Images_Path_Main;?>/icon_arrow_orange.gif" valign="bottom"/></a>
 <!--CAPTCHA IMAGE CODE START HERE-->
 	<?php
@@ -113,7 +113,7 @@ var popupCallback = function (payload) {
 				<td> <img src="./captcha/captcha.php" ></td>
 			</tr>			
 			<tr>
-			<td><INPUT class="form_input_text" name=<?php echo $this->FG_TABLE_ADITION[$i][1]?>  <?php echo $this->FG_TABLE_ADITION[$i][4]?> value="<?php echo $processed[$this->FG_TABLE_ADITION[$i][1]];?>"> <?php echo gettext("Enter code from picture here")?>
+			<td><INPUT class="form_input_text" name=<?php echo $this->FG_TABLE_ADITION[$i][1]?>  <?php echo $this->FG_TABLE_ADITION[$i][4]?> value="<?php echo $this->displayInput($processed[$this->FG_TABLE_ADITION[$i][1]], true);?>"> <?php echo gettext("Enter code from picture here")?>
 			</td>
 			</tr>
 			</table>
@@ -125,12 +125,12 @@ var popupCallback = function (payload) {
 		}elseif (strtoupper ($this->FG_TABLE_ADITION[$i][3])=="POPUPVALUETIME")
 		{
 	?>
-		<INPUT class="form_enter" name=<?php echo $this->FG_TABLE_ADITION[$i][1]?>  <?php echo $this->FG_TABLE_ADITION[$i][4]?> value="<?php if($this->VALID_SQL_REG_EXP){ echo stripslashes($list[0][$i]); }else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]]; }?>">
+		<INPUT class="form_enter" name=<?php echo $this->FG_TABLE_ADITION[$i][1]?>  <?php echo $this->FG_TABLE_ADITION[$i][4]?> value="<?php if($this->VALID_SQL_REG_EXP){ echo $this->displayInput(stripslashes($list[0][$i])); }else{ echo $this->displayInput($processed[$this->FG_TABLE_ADITION[$i][1]], true); }?>">
 		<a href="#" onclick="window.open('<?php echo $this->FG_TABLE_ADITION[$i][14]?>formname=myForm&fieldname=<?php echo $this->FG_TABLE_ADITION[$i][1]?>' <?php echo $this->FG_TABLE_ADITION[$i][14]?>);"><img src="<?php echo Images_Path_Main;?>/icon_arrow_orange.gif"/></a>
 	<?php
 		} elseif (strtoupper ($this->FG_TABLE_ADITION[$i][3])=="TEXTAREA") {
 	?>
-            <TEXTAREA class="form_input_textarea" name=<?php echo $this->FG_TABLE_ADITION[$i][1]?> <?php echo $this->FG_TABLE_ADITION[$i][4]?>><?php echo $processed[$this->FG_TABLE_ADITION[$i][1]];?></TEXTAREA> 
+            <TEXTAREA class="form_input_textarea" name=<?php echo $this->FG_TABLE_ADITION[$i][1]?> <?php echo $this->FG_TABLE_ADITION[$i][4]?>><?php echo $this->displayInput($processed[$this->FG_TABLE_ADITION[$i][1]], true);?></TEXTAREA>
 	<?php 	
 		}elseif (strtoupper ($this->FG_TABLE_ADITION[$i][3])=="SELECT"){
 			if ($this->FG_DEBUG == 1) { echo "<br> TYPE DE SELECT :".$this->FG_TABLE_ADITION[$i][7];}

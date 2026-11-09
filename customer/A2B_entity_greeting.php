@@ -45,6 +45,10 @@ if (!has_rights(ACX_SIP_IAX) && !has_rights(ACX_DID)) {
 
 
 getpost_ifset(array('download', 'file', 'langlocale', 'voicename', 'gender', 'greettext', 'greetname', 'speakingRate', 'play', 'id'));
+// TTS text is literal text; SQL binding and output encoding happen at their boundaries.
+if (isset($_POST['greettext']) || isset($_GET['greettext'])) {
+    $greettext = CustomerInput::check('greettext', isset($_POST['greettext']) ? $_POST['greettext'] : $_GET['greettext']);
+}
 
 $customer = $_SESSION["card_id"];
 if (!isset($speakingRate)) $speakingRate="1.0";
@@ -75,10 +79,9 @@ $client = new GuzzleHttp\Client();
 
 if ($play==1 || $play==3) {
     if ($langlocale && $voicename && $greettext) {
-	$greettext = urldecode($greettext);
 	if ($greetname) {
-		$greetname = urldecode($greetname);
-		if (strpos($greetname, '/') !== false || strpos($greetname, '.') !== false) exit;
+		$greetname = stripslashes($greetname);
+		if (!CustomerInput::audioName($greetname) || strpos($greetname, '.') !== false) CustomerInput::fail('greetname');
 	} else {
 		$greetname = "tempplay";
 	}
@@ -145,8 +148,8 @@ $instance_table = new Table('cc_greeting_records');
 
 if ($play==3) {
 	$filename = $greetname.'.wav';
-	$QUERY = "INSERT INTO cc_greeting_records (id_cc_card,technology,lang_locale,voice_name,gender,speed,greet_text,greet_filename) VALUES ({$_SESSION["card_id"]},'Google','$langlocale','$voicename','$gender','$speakingRate','$greettext','$filename') ON DUPLICATE KEY UPDATE no_browther_cache=no_browther_cache+1, technology='Google', lang_locale='$langlocale', voice_name='$voicename', gender='$gender', speed='$speakingRate', greet_text='$greettext', updatetime=CURRENT_TIMESTAMP";
-	$instance_table -> SQLExec ($HD_Form -> DBHandle, $QUERY, 0);
+	$QUERY = "INSERT INTO cc_greeting_records (id_cc_card,technology,lang_locale,voice_name,gender,speed,greet_text,greet_filename) VALUES (?,'Google',?,?,?,?,?,?) ON DUPLICATE KEY UPDATE no_browther_cache=no_browther_cache+1, technology='Google', lang_locale=VALUES(lang_locale), voice_name=VALUES(voice_name), gender=VALUES(gender), speed=VALUES(speed), greet_text=VALUES(greet_text), updatetime=CURRENT_TIMESTAMP";
+	$instance_table -> SQLExec ($HD_Form -> DBHandle, $QUERY, 0, 0, array($_SESSION['card_id'], $langlocale, $voicename, $gender, $speakingRate, $greettext, $filename));
 }
 
 if (isset($soundlist) && count($soundlist)>0) {
@@ -158,8 +161,8 @@ if (isset($soundlist) && count($soundlist)>0) {
 	}
 	foreach ($soundlist as $val) {
 		if (in_array($val,$return)===false) {
-			$QUERY = "INSERT INTO cc_greeting_records (id_cc_card,greet_filename) VALUES (".$_SESSION["card_id"].",'$val')";
-			$instance_table -> SQLExec ($HD_Form -> DBHandle, $QUERY, 0);
+			$QUERY = "INSERT INTO cc_greeting_records (id_cc_card,greet_filename) VALUES (?,?)";
+			$instance_table -> SQLExec ($HD_Form -> DBHandle, $QUERY, 0, 0, array($_SESSION['card_id'], $val));
 		}
 	}
 }
@@ -210,8 +213,6 @@ if (isset($id) && is_numeric($id) && $form_action=='list' && !isset($play)) {
 	    $greetname	  = preg_replace('/\.[^\.\/]+$/', '', $resmax[0][6]);
 	}
 }
-$greettext = stripslashes($greettext);
-$greettext = addslashes($greettext);
 
 if (!isset($langlocale)) {
 	$QUERY = "SELECT technology, lang_locale, voice_name, gender, speed FROM cc_greeting_records WHERE id_cc_card = " . $_SESSION["card_id"] . " AND speed ORDER BY updatetime DESC LIMIT 1";
@@ -282,7 +283,7 @@ if ($form_action == "list") {
 			<audio id="sound2" preload="none" style="width: 100%;" controls controlsList="nodownload"></audio>
 		</td>
 		<td align="right" width="5%">
-			<input class="form_input_text" style="width: 100%;" id="greetname" name="greetname" value="<?php echo $greetname?>" placeholder=" <?php echo gettext("Filename");?>" onkeypress="return keytoDownNumber(event,id,'<?php echo gettext("Enter the filename without extension");?>');" size="16" maxlength="96" required></br>
+			<input class="form_input_text" style="width: 100%;" id="greetname" name="greetname" value="<?php echo CustomerInput::html($greetname)?>" placeholder=" <?php echo gettext("Filename");?>" onkeypress="return keytoDownNumber(event,id,'<?php echo gettext("Enter the filename without extension");?>');" size="16" maxlength="96" required></br>
 			<input class="form_input_button" style="width: 100%;" type="button" value="&nbsp;<?php echo gettext("SAVE/UPDATE");?>&nbsp;" onClick="openURLAjax('<?php echo $_SERVER['PHP_SELF']?>','<?php echo gettext("Enter greeting text");?>','<?php echo gettext("Enter the filename without extension");?>',3,{ id:'main-list' });">
 		</td>
 		<tr>
@@ -295,7 +296,7 @@ if ($form_action == "list") {
 <?php
     } ?>
 	<audio id="sound1" preload="none" controlsList="nodownload"></audio>
-	<script language="JavaScript"> var langfirst = '<?php echo $langlocale?>', voicefirst = '<?php echo $voicename?>', soundpath2 = '<?php echo $_SERVER['PHP_SELF']; ?>?langlocale=';document.theForm.range_weight_disp.value=<?php echo $speakingRate?>;document.theForm.greettext.value="<?php echo $greettext?>";</script>
+	<script language="JavaScript"> var langfirst = <?php echo CustomerInput::script($langlocale)?>, voicefirst = <?php echo CustomerInput::script($voicename)?>, soundpath2 = <?php echo CustomerInput::script($_SERVER['PHP_SELF'].'?langlocale=')?>;document.theForm.range_weight_disp.value=<?php echo CustomerInput::script($speakingRate)?>;document.theForm.greettext.value=<?php echo CustomerInput::script($greettext)?>;</script>
 	<script language="JavaScript" src="./javascript/player.js"></script>
 <?php
 }

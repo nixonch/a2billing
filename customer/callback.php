@@ -131,7 +131,10 @@ if ($A2B -> callingcard_ivr_authenticate_light ($error_msg) && $callback) {
 					$application='';
 					if ($channeloutcid[1]) $callerid = $channeloutcid[1];
 					    else $callerid = $A2B -> config["callback"]['callerid'];
-					$callerid .= "<".$callerid.">";
+					CustomerInput::check('callerid', $callerid);
+					if (!preg_match('/\A[^<>]*<[^<>]+>[ \t]*\z/', $callerid)) {
+						$callerid .= "<".$callerid.">";
+					}
 					$account = $_SESSION["pr_login"];
 					
 					$uniqueid 	=  MDP_NUMERIC(5).'-'.MDP_STRING(7);
@@ -146,9 +149,9 @@ if ($A2B -> callingcard_ivr_authenticate_light ($error_msg) && $callback) {
 					$QUERY = " INSERT INTO cc_callback_spool (uniqueid, status, server_ip, num_attempt, channel, exten, context, priority," .
 							 " variable, id_server_group, callback_time, account, callerid, timeout, next_attempt_time, exten_leg_a, leg_a) " .
 							 " VALUES ('$uniqueid', '$status', '$server_ip', '$num_attempt', '$channel', '$exten', '$context', '$priority'," .
-							 " '$variable', '$id_server_group', ADDTIME(now(),SEC_TO_TIME($timeoutbefore)), '$account', '$callerid'," .
+							 " '$variable', '$id_server_group', ADDTIME(now(),SEC_TO_TIME($timeoutbefore)), '$account', ?," .
 							 " '$timeout', ADDTIME(now(),SEC_TO_TIME($timeoutbefore)), '$A2B->dnid', '$called')";
-					$res = $A2B -> DBHandle -> Execute($QUERY);
+					$res = $A2B -> DBHandle -> Execute($QUERY, array($callerid));
 					
 					if (!$res) {
 						$error_msg= gettext("Cannot insert the callback request in the spool!");

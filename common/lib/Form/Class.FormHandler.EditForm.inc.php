@@ -329,7 +329,7 @@ function updatecontent(id_el, record, field_inst, instance)
 						 <?php if(substr_count($this->FG_TABLE_EDITION[$i][4], "readonly") > 0){?>
 						 style="background-color: #CCCCCC;" 
 						 <?php }?> 
-						name=<?php echo $this->FG_TABLE_EDITION[$i][1]?>  <?php echo $this->FG_TABLE_EDITION[$i][4]?> value="<?php if($this->VALID_SQL_REG_EXP){ echo stripslashes(isset($list[0][$i]) ? (string)$list[0][$i] : ''); }else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]];  }?>">
+						name=<?php echo $this->FG_TABLE_EDITION[$i][1]?>  <?php echo $this->FG_TABLE_EDITION[$i][4]?> value="<?php echo $this->displayInput($this->VALID_SQL_REG_EXP ? stripslashes(isset($list[0][$i]) ? (string)$list[0][$i] : '') : $processed[$this->FG_TABLE_ADITION[$i][1]], !$this->VALID_SQL_REG_EXP); ?>">
                         <?php 
 				} elseif (strtoupper ($this->FG_TABLE_EDITION[$i][3])==strtoupper ("LABEL"))
 				{
@@ -337,27 +337,27 @@ function updatecontent(id_el, record, field_inst, instance)
 						$list[0][$i] = call_user_func($this->FG_TABLE_EDITION[$i][15], $list[0][$i]);
 					}			
 			  ?>  
-                         <?php if($this->VALID_SQL_REG_EXP){ echo stripslashes(isset($list[0][$i]) ? (string)$list[0][$i] : ''); }else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]];  }?>
+                         <?php if($this->VALID_SQL_REG_EXP){ echo $this->displayInput(stripslashes(isset($list[0][$i]) ? (string)$list[0][$i] : '')); }else{ echo $this->displayInput($processed[$this->FG_TABLE_ADITION[$i][1]], true);  }?>
                         <?php 
 				} elseif (strtoupper ($this->FG_TABLE_EDITION[$i][3])=="POPUPVALUEALERT") {
 			?>
 				<INPUT class="form_enter" name=<?php echo $this->FG_TABLE_EDITION[$i][1]?>  <?php echo $this->FG_TABLE_EDITION[$i][4]?> value="<?php
 					if($this->VALID_SQL_REG_EXP && is_array($list)){
-						echo stripslashes(isset($list[0][$i]) ? (string)$list[0][$i] : '');
-					}else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]]; }?>"
+						echo $this->displayInput(stripslashes(isset($list[0][$i]) ? (string)$list[0][$i] : ''));
+					}else{ echo $this->displayInput($processed[$this->FG_TABLE_ADITION[$i][1]], true); }?>"
 				><a href="javascript:;" onclick="alertBase('url:<?= $this->FG_TABLE_EDITION[$i][12]?>popup_formname=myForm&popup_fieldname=<?php echo $this->FG_TABLE_EDITION[$i][1]?>'<?php echo $this->FG_TABLE_EDITION[$i][13]?>);"><img src="<?php echo Images_Path_Main;?>/icon_arrow_orange.gif" valign="bottom"/></a>
 			 <?php
 				} elseif (strtoupper ($this->FG_TABLE_EDITION[$i][3])=="POPUPVALUE") {
 			?>
 				<INPUT class="form_enter" name=<?php echo $this->FG_TABLE_EDITION[$i][1]?>  <?php echo $this->FG_TABLE_EDITION[$i][4]?> value="<?php
 					if($this->VALID_SQL_REG_EXP && is_array($list)){
-						echo stripslashes(isset($list[0][$i]) ? (string)$list[0][$i] : '');
-					}else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]]; }?>"
+						echo $this->displayInput(stripslashes(isset($list[0][$i]) ? (string)$list[0][$i] : ''));
+					}else{ echo $this->displayInput($processed[$this->FG_TABLE_ADITION[$i][1]], true); }?>"
 				><a href="#" onclick="window.open('<?php echo $this->FG_TABLE_EDITION[$i][12]?>popup_formname=myForm&popup_fieldname=<?php echo $this->FG_TABLE_EDITION[$i][1]?>' <?php echo $this->FG_TABLE_EDITION[$i][13]?>);"><img src="<?php echo Images_Path_Main;?>/icon_arrow_orange.gif" valign="bottom"/></a>
 			 <?php
 				} elseif (strtoupper ($this -> FG_TABLE_EDITION[$i][3])=="POPUPVALUETIME") {
                         ?>
-                        <INPUT class="form_enter" name=<?php echo $this->FG_TABLE_EDITION[$i][1]?>  <?php echo $this->FG_TABLE_EDITION[$i][4]?> value="<?php if($this->VALID_SQL_REG_EXP){ echo stripslashes(isset($list[0][$i]) ? (string)$list[0][$i] : ''); }else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]]; }?>">
+                        <INPUT class="form_enter" name=<?php echo $this->FG_TABLE_EDITION[$i][1]?>  <?php echo $this->FG_TABLE_EDITION[$i][4]?> value="<?php if($this->VALID_SQL_REG_EXP){ echo $this->displayInput(stripslashes(isset($list[0][$i]) ? (string)$list[0][$i] : '')); }else{ echo $this->displayInput($processed[$this->FG_TABLE_ADITION[$i][1]], true); }?>">
                          <a href="#" onclick="window.open('<?php echo $this->FG_TABLE_EDITION[$i][12]?>formname=myForm&fieldname=<?php echo $this->FG_TABLE_EDITION[$i][1]?>' <?php echo $this->FG_TABLE_EDITION[$i][14]?>);"><img src="<?php echo Images_Path_Main;?>/icon_arrow_orange.gif"/></a>
                         <?php
 				} elseif (stripos($this->FG_TABLE_EDITION[$i][3],"POPUPDAYTIME")===0) {
@@ -401,12 +401,12 @@ function updatecontent(id_el, record, field_inst, instance)
 					 <?php if(substr_count($this->FG_TABLE_EDITION[$i][4], "readonly") > 0){?>
 						 style="background-color: #CCCCCC;" 
 						 <?php }?> 
-					 name=<?php echo $this->FG_TABLE_EDITION[$i][1]?>  <?php echo $this->FG_TABLE_EDITION[$i][4]?>><?php if($this->VALID_SQL_REG_EXP){ echo stripslashes(isset($list[0][$i]) ? (string)$list[0][$i] : ''); }else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]];  }?></textarea>
+					 name=<?php echo $this->FG_TABLE_EDITION[$i][1]?>  <?php echo $this->FG_TABLE_EDITION[$i][4]?>><?php echo $this->displayInput($this->VALID_SQL_REG_EXP ? stripslashes(isset($list[0][$i]) ? (string)$list[0][$i] : '') : $processed[$this->FG_TABLE_ADITION[$i][1]], !$this->VALID_SQL_REG_EXP); ?></textarea>
 				<?php	
 		  		}elseif (strtoupper ($this->FG_TABLE_EDITION[$i][3])=="SPAN")
 				{
 			  ?>
-                     <span name=<?php echo $this->FG_TABLE_EDITION[$i][1]?>  <?php echo $this->FG_TABLE_EDITION[$i][4]?>><?php if($this->VALID_SQL_REG_EXP){ echo stripslashes(isset($list[0][$i]) ? (string)$list[0][$i] : ''); }else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]];  }?></span>
+                     <span name=<?php echo $this->FG_TABLE_EDITION[$i][1]?>  <?php echo $this->FG_TABLE_EDITION[$i][4]?>><?php if($this->VALID_SQL_REG_EXP){ echo $this->displayInput(stripslashes(isset($list[0][$i]) ? (string)$list[0][$i] : '')); }else{ echo $this->displayInput($processed[$this->FG_TABLE_ADITION[$i][1]], true);  }?></span>
                         <?php 	
 				} elseif (strtoupper ($this->FG_TABLE_EDITION[$i][3])=="SELECT")	{
 					if (strtoupper ($this->FG_TABLE_EDITION[$i][7])=="SQL") {
@@ -504,13 +504,13 @@ function updatecontent(id_el, record, field_inst, instance)
 						$myname.= "[]";
 					 if (stripos($this->FG_TABLE_EDITION[$i][1],'sound')!==false) {?>
 					<div style="position:relative;width:100%">
-					    <INPUT type="text" list="list_<?php echo $myname;?>" name="<?php echo $myname;?>" style="padding-left:13px;width:237px" class="form_input_text" onchange="Visi(this)" <?php echo $this->FG_TABLE_EDITION[$i][4];?> value="<?php if($this->VALID_SQL_REG_EXP){ echo stripslashes(isset($list[0][$i]) ? (string)$list[0][$i] : ''); }else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]];  }?>"/>
+					    <INPUT type="text" list="list_<?php echo $myname;?>" name="<?php echo $myname;?>" style="padding-left:13px;width:237px" class="form_input_text" onchange="Visi(this)" <?php echo $this->FG_TABLE_EDITION[$i][4];?> value="<?php echo $this->displayInput($this->VALID_SQL_REG_EXP ? stripslashes(isset($list[0][$i]) ? (string)$list[0][$i] : '') : $processed[$this->FG_TABLE_ADITION[$i][1]], !$this->VALID_SQL_REG_EXP); ?>"/>
 					    <a href="javascript:;" name="ton" style="position:absolute;left:2px;top:.1em;visibility:hidden">
 						<img src="<?php echo Images_Path; ?>/flv.gif" height="10" onClick="GreetPlay(this)">
 					    </a>
 					</div>
 <?php					 } else {?>
-					<INPUT type="text" list="list_<?php echo $myname;?>" name="<?php echo $myname;?>" class="form_input_text" <?php echo $this->FG_TABLE_EDITION[$i][4];?> value="<?php if($this->VALID_SQL_REG_EXP){ echo stripslashes(isset($list[0][$i]) ? (string)$list[0][$i] : ''); }else{ echo $processed[$this->FG_TABLE_ADITION[$i][1]];  }?>"/>
+					<INPUT type="text" list="list_<?php echo $myname;?>" name="<?php echo $myname;?>" class="form_input_text" <?php echo $this->FG_TABLE_EDITION[$i][4];?> value="<?php echo $this->displayInput($this->VALID_SQL_REG_EXP ? stripslashes(isset($list[0][$i]) ? (string)$list[0][$i] : '') : $processed[$this->FG_TABLE_ADITION[$i][1]], !$this->VALID_SQL_REG_EXP); ?>"/>
 <?php					 }?>
 					<datalist id="list_<?php echo $myname;?>">
 						<?php if ($this->FG_TABLE_EDITION[$i][15]) echo ($this->FG_TABLE_EDITION[$i][15]);
@@ -603,7 +603,7 @@ function updatecontent(id_el, record, field_inst, instance)
 					}
 					$count_usl = (is_array($unselect_list) ? count($unselect_list) : 0);
 ?>
-		<input name="<?php echo $this->FG_TABLE_EDITION[$i][1];?>" value="<?php if($this->VALID_SQL_REG_EXP){ echo $list[0][$i]; }else{ echo $processed[$this->FG_TABLE_EDITION[$i][1]];  }?>" type="hidden">
+		<input name="<?php echo $this->FG_TABLE_EDITION[$i][1];?>" value="<?php if($this->VALID_SQL_REG_EXP){ echo $this->displayInput($list[0][$i]); }else{ echo $this->displayInput($processed[$this->FG_TABLE_EDITION[$i][1]], true);  }?>" type="hidden">
 <?php					if ($count_usl>0) {
 ?>		<table>
 			<tr>

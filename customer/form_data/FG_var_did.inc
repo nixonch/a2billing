@@ -34,8 +34,8 @@
 
 $json_data = $_POST["json_data"];
 if (isset($json_data)) {
-    $json_data = stripslashes($json_data);
-    extract(json_decode($json_data,true,512));
+    $did_input = CustomerInput::json($json_data);
+    extract(array_intersect_key($did_input, array_flip(array('id', 'form_action', 'destination', 'playsound', 'calleesound', 'activated', 'answer', 'priority', 'timeout', 'id_cc_did', 'shedule', 'popup_select'))));
 } else {
     getpost_ifset(array('id', 'billingtype', 'did', 'startingdate', 'expirationdate', 'id_cc_didgroup', 'id_cc_country', 'activated', 'fixrate', 'id_trunk', 'choose_country', 'choose_did', 'assign', 'countrycode', 'arecode', 'phonenumber', 'destination', 'choose_did_rate', 'new_did_page', 'confirm_buy_did', 'action_release'));
 }

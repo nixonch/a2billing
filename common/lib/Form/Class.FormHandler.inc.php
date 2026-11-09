@@ -16,6 +16,7 @@
  *
  ****************************************************************************/
 include (dirname(__FILE__) . "/Class.FormBO.php");
+require_once dirname(__DIR__) . '/customer_input.php';
 
 class FormHandler
 {	
@@ -360,6 +361,7 @@ class FormHandler
     * @public	-	@type string
     */
 	var $FG_QUERY_EDITION='';
+	var $FG_EDITION_BOUND_VALUES = array();
 	var $FG_QUERY_ADITION='';
 
 	
@@ -485,6 +487,9 @@ class FormHandler
     // if it is set to true and confirm flag is true confirm box will be showed.
     var $FG_FK_DELETE_ALLOWED = false;
 
+    // Dependency checks may be used for confirmation without updating/deleting those rows.
+    var $FG_FK_MODIFY_ALLOWED = true;
+
 	// if it is set to true and Allowed flag is true all dependent records will be deleted.
 	var $FG_FK_DELETE = false;
 	
@@ -563,11 +568,11 @@ class FormHandler
 		
 		$json_data = isset($_POST["json_data"]) ? $_POST["json_data"] : null;
 		if (isset($json_data)) {
-			$json_data = stripslashes($json_data);
-			$this->_vars = json_decode($json_data,true,512);
+			$this->_vars = defined('CUSTOMER_INPUT') ? CustomerInput::json($json_data) : json_decode(stripslashes($json_data),true,512);
 		} else {
 			$this->_vars = array_merge((array)$_GET, (array)$_POST);
 		}
+		if (defined('CUSTOMER_INPUT')) CustomerInput::values($this->_vars);
 		
 		$this -> def_list();
 		
@@ -883,6 +888,25 @@ class FormHandler
 			 
 	    $output = preg_replace($search, '', $input);
 	    return $output;
+	}
+
+	function displayInput($value, $processed = false)
+	{
+		return defined('CUSTOMER_INPUT') ? CustomerInput::html($processed ? stripslashes((string)$value) : $value) : $value;
+	}
+
+	function displayJsString($value, $stripAtOutput = false)
+	{
+		if (!defined('CUSTOMER_INPUT')) return $value;
+		$value = CustomerInput::jsString($value);
+		return $stripAtOutput ? addslashes($value) : $value;
+	}
+
+	function displayLinkValue($value, $template, $stripAtOutput = false)
+	{
+		if (!defined('CUSTOMER_INPUT')) return $value;
+		if (preg_match('/javascript:|on[a-z]+\s*=/i', $template)) return $this->displayJsString($value, $stripAtOutput);
+		return rawurlencode(stripslashes((string)$value));
 	}
 		
 	
@@ -1730,6 +1754,8 @@ class FormHandler
 		include_once (FSROOT."lib/Class.Table.php");
 		$this->addition_saved = false;
 		$this->RESULT_QUERY = false;
+		if (defined('CUSTOMER_INPUT')) CustomerInput::form($this, true);
+		$addition_parameters = defined('CUSTOMER_INPUT') ? array() : false;
 		
 		$processed = $this->getProcessed();  //$processed['firstname']
 		$this->VALID_SQL_REG_EXP = $res_funct = true;
@@ -1761,6 +1787,7 @@ class FormHandler
 					$param_add_fields .= $fields_name;
 					if ($i>0) $param_add_value .= ",";
 					$param_add_value .= "'".addslashes(trim($total_mult_select))."'";
+					if ($addition_parameters !== false) $addition_parameters[] = trim($total_mult_select);
 				
 				} else {
 					// NO MULTIPLE SELECT
@@ -1810,6 +1837,7 @@ class FormHandler
 							$param_add_fields .= str_replace('myfrom_', '', $fields_name);
 							if ($i>0) $param_add_value .= ",";
 							$param_add_value .= "'%TAGPREFIX%'";
+							if ($addition_parameters !== false) $addition_parameters[] = '%TAGPREFIX%';
 						}
 					} else {
 						if ($this->FG_DEBUG == 1) echo "<br>$fields_name : ".$processed[$fields_name];
@@ -1820,6 +1848,7 @@ class FormHandler
 									$param_add_fields .= str_replace('myfrom_', '', $fields_name);
 								if ($i>0) $param_add_value .= ",";
 									$param_add_value .= "'".addslashes(trim($processed[$fields_name]))."'";
+									if ($addition_parameters !== false) $addition_parameters[] = trim($processed[$fields_name]);
 							}
 						}
 					}
@@ -1834,6 +1863,7 @@ class FormHandler
 			$split_hidden_fields_value = preg_split("/, /",trim($this->FG_QUERY_ADITION_HIDDEN_VALUE));
 			for ($cur_hidden=0;$cur_hidden<count($split_hidden_fields_value);$cur_hidden++){
 				$param_add_value .= "'".trim($split_hidden_fields_value[$cur_hidden])."'" ;
+				if ($addition_parameters !== false) $addition_parameters[] = stripslashes(trim($split_hidden_fields_value[$cur_hidden]));
 				if($cur_hidden<count($split_hidden_fields_value)-1)$param_add_value.=",";
 			}
 		}
@@ -1850,6 +1880,7 @@ class FormHandler
 				$avalue = explode("','",trim($param_add_value,"'"));
 				foreach ($akeys as $a_val) {
 					$avalue[array_search($a_val, $afields)] = $res_funct[$a_val];
+					if ($addition_parameters !== false) $addition_parameters[array_search($a_val, $afields)] = stripslashes((string)$res_funct[$a_val]);
 				}
 				$param_add_value = "'".implode("','", $avalue)."'";
 			}
@@ -1860,11 +1891,14 @@ class FormHandler
 			if (strpos($param_add_value, '%TAGPREFIX%')) {
 				foreach ($arr_value_to_import as $current_value) {
 					$param_add_value_replaced = str_replace("%TAGPREFIX%", $current_value, $param_add_value);				
-					if ($this->VALID_SQL_REG_EXP) $this -> RESULT_QUERY = $instance_table -> Add_table ($this->DBHandle, $param_add_value_replaced, null, null, $this->FG_TABLE_ID);
+					$parameters = $addition_parameters === false ? false : str_replace('%TAGPREFIX%', $current_value, $addition_parameters);
+					$values = $parameters === false ? $param_add_value_replaced : implode(',', array_fill(0, count($parameters), '?'));
+					if ($this->VALID_SQL_REG_EXP) $this -> RESULT_QUERY = $instance_table -> Add_table ($this->DBHandle, $values, null, null, $this->FG_TABLE_ID, false, null, $parameters);
 					if (!$this->RESULT_QUERY) break;
 				}
 			} else {
-				if ($this->VALID_SQL_REG_EXP) $this -> RESULT_QUERY = $instance_table -> Add_table ($this->DBHandle, $param_add_value, null, null, $this->FG_TABLE_ID);
+				$values = $addition_parameters === false ? $param_add_value : implode(',', array_fill(0, count($addition_parameters), '?'));
+				if ($this->VALID_SQL_REG_EXP) $this -> RESULT_QUERY = $instance_table -> Add_table ($this->DBHandle, $values, null, null, $this->FG_TABLE_ID, false, null, $addition_parameters);
 			}
 			$agent  = (isset($_SESSION["card_id"]) || basename($_SERVER['REQUEST_URI'],".php")=="signup") ? 2 : 0 ;
 			$idcust = ($agent) ? $_SESSION["card_id"]:$_SESSION["admin_id"];
@@ -1904,6 +1938,7 @@ class FormHandler
 	function perform_edit (&$form_action)
 	{
 		$this->edition_popup_saved = false;
+		if (defined('CUSTOMER_INPUT')) CustomerInput::form($this, false);
 		include_once (FSROOT."lib/Class.Table.php");
 
 		$processed = $this->getProcessed();  //$processed['firstname']
@@ -1916,6 +1951,7 @@ class FormHandler
 			$this->FG_EDITION_CLAUSE = str_replace("%id", $id, $this->FG_EDITION_CLAUSE);
 		}
 		$ins_real = false;
+		$edition_parameters = array();
 		for($i=0;$i<$this->FG_NB_TABLE_EDITION;$i++) {
 
 			$pos_mul = strpos($this->FG_TABLE_EDITION[$i][4], "multiple");
@@ -1958,7 +1994,13 @@ class FormHandler
 						$param_update .= $fields_name." = NULL ";
 					} else {
 						if($this->FG_TABLE_EDITION[$i][3]!= "SPAN") {
-							$param_update .= $fields_name." = '".addslashes(trim($processed[$fields_name]))."' ";
+							if (defined('CUSTOMER_INPUT') || array_key_exists($fields_name, $this->FG_EDITION_BOUND_VALUES)) {
+								$param_update .= $fields_name . " = ? ";
+								$edition_parameters[] = array_key_exists($fields_name, $this->FG_EDITION_BOUND_VALUES)
+									? $this->FG_EDITION_BOUND_VALUES[$fields_name] : trim($processed[$fields_name]);
+							} else {
+								$param_update .= $fields_name." = '".addslashes(trim($processed[$fields_name]))."' ";
+							}
 						}
 					}
 				}
@@ -2021,7 +2063,8 @@ class FormHandler
 				echo "<br><hr> PARAM_UPDATE: $param_update<br>".$this->FG_EDITION_CLAUSE;
 			}
 			if ($this->VALID_SQL_REG_EXP) {
-				$this -> RESULT_QUERY = $instance_table -> Update_table ($this->DBHandle, $param_update, $this->FG_EDITION_CLAUSE);
+				$this -> RESULT_QUERY = $instance_table -> Update_table ($this->DBHandle, $param_update, $this->FG_EDITION_CLAUSE, null,
+					$edition_parameters ? $edition_parameters : false);
 				for($i=0;$i<$this->FG_NB_TABLE_EDITION;$i++) {
 					if (stripos($this->FG_TABLE_EDITION[$i][3],"POPUPDAYTIME")===0) {
 						$instance_sub_table = new Table($this->FG_TABLE_EDITION[$i][8], $this->FG_TABLE_EDITION[$i][9]);
@@ -2096,7 +2139,7 @@ class FormHandler
 		    $this->FG_FK_EDITION_CLAUSE = str_replace("%id", $processed['id'], $this->FG_FK_EDITION_CLAUSE);
 		}
 
-		if (($tableCount == $clauseCount) && $clauseCount > 0 && $this-> FG_FK_DELETE_ALLOWED) {
+		if (($tableCount == $clauseCount) && $clauseCount > 0 && $this->FG_FK_DELETE_ALLOWED && $this->FG_FK_MODIFY_ALLOWED) {
 		    if ($processed['id']!="" && !is_null($processed['id'])) {
 			$instance_table = new Table($this->FG_TABLE_NAME, $this->FG_QUERY_EDITION, $this -> FG_FK_TABLENAMES, $this -> FG_FK_EDITION_CLAUSE, $processed['id'], $this -> FG_FK_WARNONLY);
 		    }

@@ -134,11 +134,11 @@ else
 					$arr_input = array("INPUT", "POPUPVALUE", "POPUPVALUETIME");
 					if (in_array(strtoupper ($this->FG_TABLE_EDITION[$i][3]), $arr_input)){
 				?>
-					<INPUT class="form_enter" readonly name=<?php echo $this->FG_TABLE_EDITION[$i][1]?>  <?php echo $this->FG_TABLE_EDITION[$i][4]?> value="<?php echo stripslashes($list[0][$i])?>">
+					<INPUT class="form_enter" readonly name=<?php echo $this->FG_TABLE_EDITION[$i][1]?>  <?php echo $this->FG_TABLE_EDITION[$i][4]?> value="<?php echo $this->displayInput(stripslashes($list[0][$i]))?>">
 				<?php
 					}elseif (strtoupper ($this->FG_TABLE_EDITION[$i][3])==("TEXTAREA")){
 				?>
-					<TEXTAREA class="form_input_textarea" readonly name=<?php echo $this->FG_TABLE_EDITION[$i][1]?> <?php echo $this->FG_TABLE_EDITION[$i][4]?>><?php echo stripslashes($list[0][$i])?></textarea>
+					<TEXTAREA class="form_input_textarea" readonly name=<?php echo $this->FG_TABLE_EDITION[$i][1]?> <?php echo $this->FG_TABLE_EDITION[$i][4]?>><?php echo $this->displayInput(stripslashes($list[0][$i]))?></textarea>
 				<?php
 					}elseif (strtoupper ($this->FG_TABLE_EDITION[$i][3])== ("SELECT")){
 					if ($this->FG_DEBUG == 1) { echo "<br> TYPE DE SELECT :".$this->FG_TABLE_EDITION[$i][7];}

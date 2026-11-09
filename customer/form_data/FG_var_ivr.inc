@@ -33,8 +33,10 @@
 
 $json_data = $_POST["json_data"];
 if (isset($json_data)) {
-    $json_data = stripslashes($json_data);
-    extract(json_decode($json_data,true,512));
+    $ivr_input = CustomerInput::json($json_data);
+    if (array_diff(array('ivrname', 'repeats', 'waitsecsfordigits', 'soundArray', 'destArray'), array_keys($ivr_input))) CustomerInput::fail('json_data');
+    extract(array_intersect_key($ivr_input, array_flip(array('id', 'form_action', 'ivrname', 'repeats', 'waitsecsfordigits', 'soundArray', 'destArray'))));
+    $json_data = CustomerInput::script($ivr_input);
 } else {
     getpost_ifset(array('id','form_action','ivrname','repeats','waitsecsfordigits'));
 }

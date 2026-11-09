@@ -178,7 +178,7 @@ if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['messa
 			<?php if ($this -> FG_FILTER_APPLY){ ?>
 
 				<font class="viewhandler_filter_on"><?php echo gettext("FILTER ON ");?> <?php mb_internal_encoding('UTF-8');?><?php echo mb_strtoupper($this->FG_FILTERFIELDNAME)?> :</font>
-				<INPUT type="text" id="filterprefix" name="filterprefix" value="<?php if(!empty($processed['filterprefix'])) echo $processed['filterprefix']; ?>" class="form_input_text">
+				<INPUT type="text" id="filterprefix" name="filterprefix" value="<?php if(!empty($processed['filterprefix'])) echo $this->displayInput($processed['filterprefix'], true); ?>" class="form_input_text">
 				<?php if ($this->FG_FILTERFIELD!='') {?>
 				<INPUT type="hidden" name="filterfield"	value="<?php echo $this->FG_FILTERFIELD?>">
 				<?php
@@ -196,7 +196,7 @@ if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['messa
 			if ($this -> FG_FILTER_APPLY2){ ?>
 				&nbsp;&nbsp;&nbsp;&nbsp; - &nbsp;&nbsp;&nbsp;&nbsp;
 				<font class="viewhandler_filter_on"><?php echo gettext("FILTER ON ");?> <?php echo $this->FG_FILTERFIELDNAME2?> :</font>
-				<INPUT type="text" name="filterprefix2" value="<?php if(!empty($processed['filterprefix2'])) echo $processed['filterprefix2']; ?>" class="form_input_text">&nbsp;
+					<INPUT type="text" name="filterprefix2" value="<?php if(!empty($processed['filterprefix2'])) echo $this->displayInput($processed['filterprefix2'], true); ?>" class="form_input_text">&nbsp;
 				<?php if ($this->FG_FILTERFIELD2!='') {?>
 				<INPUT type="hidden" name="filterfield2"	value="<?php echo $this->FG_FILTERFIELD2?>">
 				<?php
@@ -325,7 +325,7 @@ if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['messa
 								// Keep link markup out of values reused by calculated columns.
 								$record_display = str_replace("%$l", $select_list[0][$l-1], $record_display);
 								$record_clear = str_replace("%$l", $select_list[0][$l-1], $record_clear);
-								$link_display = str_replace("%$l", $select_list[0][$l-1], $link_display);
+								$link_display = str_replace("%$l", $this->displayLinkValue($select_list[0][$l-1], $link_display, true), $link_display);
 							}
 							if ($list[$ligne_number][$i-$k] >= 0)
 								$record_display = "<a href=\"".$link_display."\">".$record_display;
@@ -421,7 +421,7 @@ if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['messa
 								$findme = "|col$h|";
 								$pos = stripos($capcha, $findme);
 								if ($pos !== false) {
-									$capcha = str_replace($findme,trim(strip_tags($val)),$capcha);
+									$capcha = str_replace($findme,$this->displayJsString(trim(strip_tags($val))),$capcha);
 								}
 							}
 						}
@@ -491,7 +491,7 @@ if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['messa
 										$findme = "|col$h|";
 										$pos = stripos($new_FG_OTHER_BUTTON1_LINK, $findme);
 										if ($pos !== false) {
-											$new_FG_OTHER_BUTTON1_LINK = str_replace($findme,trim(strip_tags($list[$ligne_number][$h])),$new_FG_OTHER_BUTTON1_LINK);
+											$new_FG_OTHER_BUTTON1_LINK = str_replace($findme,$this->displayLinkValue(trim(strip_tags($list[$ligne_number][$h])), $new_FG_OTHER_BUTTON1_LINK),$new_FG_OTHER_BUTTON1_LINK);
 										}
 									}
 								}
@@ -502,7 +502,7 @@ if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['messa
 										$findme = "|col$h|";
 										$pos = stripos($new_FG_OTHER_BUTTON1_IMG, $findme);
 										if ($pos !== false) {
-											$new_FG_OTHER_BUTTON1_IMG = str_replace($findme,$list[$ligne_number][$h],$new_FG_OTHER_BUTTON1_IMG);
+											$new_FG_OTHER_BUTTON1_IMG = str_replace($findme,$this->displayLinkValue($list[$ligne_number][$h], $new_FG_OTHER_BUTTON1_IMG),$new_FG_OTHER_BUTTON1_IMG);
 										}
 									}
 								}
@@ -513,7 +513,7 @@ if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['messa
 										$findme = "|col_orig$h|";
 										$pos = stripos($new_FG_OTHER_BUTTON1_LINK, $findme);
 										if ($pos !== false) {
-											$new_FG_OTHER_BUTTON1_LINK = str_replace($findme,$origlist[$ligne_number][$h],$new_FG_OTHER_BUTTON1_LINK);
+											$new_FG_OTHER_BUTTON1_LINK = str_replace($findme,$this->displayLinkValue($origlist[$ligne_number][$h], $new_FG_OTHER_BUTTON1_LINK),$new_FG_OTHER_BUTTON1_LINK);
 										}
 									}
 								}
@@ -576,7 +576,7 @@ if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['messa
 										$findme = "|col$h|";
 										$pos = stripos($new_FG_OTHER_BUTTON2_LINK, $findme);
 										if ($pos !== false) {
-											$new_FG_OTHER_BUTTON2_LINK = str_replace($findme,trim(strip_tags($list[$ligne_number][$h])),$new_FG_OTHER_BUTTON2_LINK);
+											$new_FG_OTHER_BUTTON2_LINK = str_replace($findme,$this->displayLinkValue(trim(strip_tags($list[$ligne_number][$h])), $new_FG_OTHER_BUTTON2_LINK),$new_FG_OTHER_BUTTON2_LINK);
 										}
 									}
 								}
@@ -587,7 +587,7 @@ if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['messa
 										$findme = "|col$h|";
 										$pos = stripos($new_FG_OTHER_BUTTON2_IMG, $findme);
 										if ($pos !== false) {
-											$new_FG_OTHER_BUTTON2_IMG = str_replace($findme,$list[$ligne_number][$h],$new_FG_OTHER_BUTTON2_IMG);
+											$new_FG_OTHER_BUTTON2_IMG = str_replace($findme,$this->displayLinkValue($list[$ligne_number][$h], $new_FG_OTHER_BUTTON2_IMG),$new_FG_OTHER_BUTTON2_IMG);
 										}
 									}
 								}
@@ -598,7 +598,7 @@ if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['messa
 										$findme = "|col_orig$h|";
 										$pos = stripos($new_FG_OTHER_BUTTON2_LINK, $findme);
 										if ($pos !== false) {
-											$new_FG_OTHER_BUTTON2_LINK = str_replace($findme,$origlist[$ligne_number][$h],$new_FG_OTHER_BUTTON2_LINK);
+											$new_FG_OTHER_BUTTON2_LINK = str_replace($findme,$this->displayLinkValue($origlist[$ligne_number][$h], $new_FG_OTHER_BUTTON2_LINK),$new_FG_OTHER_BUTTON2_LINK);
 										}
 									}
 								}
@@ -660,7 +660,7 @@ if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['messa
 										$findme = "|col$h|";
 										$pos = stripos($new_FG_OTHER_BUTTON3_LINK, $findme);
 										if ($pos !== false) {
-											$new_FG_OTHER_BUTTON3_LINK = str_replace($findme,trim(strip_tags($list[$ligne_number][$h])),$new_FG_OTHER_BUTTON3_LINK);
+											$new_FG_OTHER_BUTTON3_LINK = str_replace($findme,$this->displayLinkValue(trim(strip_tags($list[$ligne_number][$h])), $new_FG_OTHER_BUTTON3_LINK),$new_FG_OTHER_BUTTON3_LINK);
 										}
 									}
 								}
@@ -671,7 +671,7 @@ if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['messa
 										$findme = "|col_orig$h|";
 										$pos = stripos($new_FG_OTHER_BUTTON3_LINK, $findme);
 										if ($pos !== false) {
-											$new_FG_OTHER_BUTTON3_LINK = str_replace($findme,$origlist[$ligne_number][$h],$new_FG_OTHER_BUTTON3_LINK);
+											$new_FG_OTHER_BUTTON3_LINK = str_replace($findme,$this->displayLinkValue($origlist[$ligne_number][$h], $new_FG_OTHER_BUTTON3_LINK),$new_FG_OTHER_BUTTON3_LINK);
 										}
 									}
 								}
@@ -734,7 +734,7 @@ if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['messa
 										$findme = "|col$h|";
 										$pos = stripos($new_FG_OTHER_BUTTON4_LINK, $findme);
 										if ($pos !== false) {
-											$new_FG_OTHER_BUTTON4_LINK = str_replace($findme,$list[$ligne_number][$h],$new_FG_OTHER_BUTTON4_LINK);
+											$new_FG_OTHER_BUTTON4_LINK = str_replace($findme,$this->displayLinkValue($list[$ligne_number][$h], $new_FG_OTHER_BUTTON4_LINK),$new_FG_OTHER_BUTTON4_LINK);
 										}
 									}
 								}
@@ -745,7 +745,7 @@ if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['messa
 										$findme = "|col_orig$h|";
 										$pos = stripos($new_FG_OTHER_BUTTON4_LINK, $findme);
 										if ($pos !== false) {
-											$new_FG_OTHER_BUTTON4_LINK = str_replace($findme,trim(strip_tags($origlist[$ligne_number][$h])),$new_FG_OTHER_BUTTON4_LINK);
+											$new_FG_OTHER_BUTTON4_LINK = str_replace($findme,$this->displayLinkValue(trim(strip_tags($origlist[$ligne_number][$h])), $new_FG_OTHER_BUTTON4_LINK),$new_FG_OTHER_BUTTON4_LINK);
 										}
 									}
 								}
@@ -809,7 +809,7 @@ if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['messa
 										$findme = "|col$h|";
 										$pos = stripos($new_FG_OTHER_BUTTON5_LINK, $findme);
 										if ($pos !== false) {
-											$new_FG_OTHER_BUTTON5_LINK = str_replace($findme,trim(strip_tags($list[$ligne_number][$h])),$new_FG_OTHER_BUTTON5_LINK);
+											$new_FG_OTHER_BUTTON5_LINK = str_replace($findme,$this->displayLinkValue(trim(strip_tags($list[$ligne_number][$h])), $new_FG_OTHER_BUTTON5_LINK),$new_FG_OTHER_BUTTON5_LINK);
 										}
 									}
 								}
@@ -820,7 +820,7 @@ if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['messa
 										$findme = "|col_orig$h|";
 										$pos = stripos($new_FG_OTHER_BUTTON5_LINK, $findme);
 										if ($pos !== false) {
-											$new_FG_OTHER_BUTTON5_LINK = str_replace($findme,$origlist[$ligne_number][$h],$new_FG_OTHER_BUTTON5_LINK);
+											$new_FG_OTHER_BUTTON5_LINK = str_replace($findme,$this->displayLinkValue($origlist[$ligne_number][$h], $new_FG_OTHER_BUTTON5_LINK),$new_FG_OTHER_BUTTON5_LINK);
 										}
 									}
 								}
@@ -955,7 +955,7 @@ if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['messa
 			<?php if ($this -> FG_FILTER_APPLY){ ?>
 
 				<font class="viewhandler_filter_on"><?php echo gettext("FILTER ON ");?> <?php mb_internal_encoding('UTF-8');?><?php echo mb_strtoupper($this->FG_FILTERFIELDNAME)?> :</font>
-				<INPUT type="text" name="filterprefix" value="<?php if(!empty($processed['filterprefix'])) echo $processed['filterprefix']; ?>" class="form_input_text">
+				<INPUT type="text" name="filterprefix" value="<?php if(!empty($processed['filterprefix'])) echo $this->displayInput($processed['filterprefix'], true); ?>" class="form_input_text">
 				<?php if ($this->FG_FILTERFIELD!='') {?>
 				<INPUT type="hidden" name="filterfield"	value="<?php echo $this->FG_FILTERFIELD?>">
 				<?php
@@ -973,7 +973,7 @@ if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['messa
 			if ($this -> FG_FILTER_APPLY2){ ?>
 				&nbsp;&nbsp;&nbsp;&nbsp; - &nbsp;&nbsp;&nbsp;&nbsp;
 				<font class="viewhandler_filter_on"><?php echo gettext("FILTER ON ");?> <?php echo strtoupper($this->FG_FILTERFIELDNAME2)?> :</font>
-				<INPUT type="text" name="filterprefix2" value="<?php if(!empty($processed['filterprefix2'])) echo $processed['filterprefix2']; ?>" class="form_input_text">
+					<INPUT type="text" name="filterprefix2" value="<?php if(!empty($processed['filterprefix2'])) echo $this->displayInput($processed['filterprefix2'], true); ?>" class="form_input_text">
 				<?php if ($this->FG_FILTERFIELD2!='') {?>
 				<INPUT type="hidden" name="filterfield2"	value="<?php echo $this->FG_FILTERFIELD2?>">
 				<?php

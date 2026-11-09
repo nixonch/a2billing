@@ -126,5 +126,27 @@ $HD_Form->create_toppage($form_action);
 
 $HD_Form->create_form($form_action, $list, $id = null);
 
+?>
+<script type="text/javascript">
+(function () {
+    var form = document.getElementById('myForm');
+    var fields = form.querySelectorAll('input.form_input_text:not([readonly]), textarea');
+    form.autocomplete = 'off';
+    for (var i = 0; i < fields.length; i++) {
+        // Chrome ignores "off" for addresses. An unrecognized token blocks
+        // address autofill; unnamed controls also avoid saved input history.
+        fields[i].setAttribute('data-signup-field', fields[i].name);
+        fields[i].removeAttribute('name');
+        fields[i].autocomplete = 'new-customer';
+    }
+    form.addEventListener('formdata', function (event) {
+        for (var i = 0; i < fields.length; i++) {
+            event.formData.append(fields[i].getAttribute('data-signup-field'), fields[i].value);
+        }
+    });
+})();
+</script>
+<?php
+
 // #### FOOTER SECTION
 $smarty->display('signup_footer.tpl');

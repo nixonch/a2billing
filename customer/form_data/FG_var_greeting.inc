@@ -58,8 +58,8 @@ $HD_Form ->FG_LIST_ADDING_BUTTON_IMG2 = Images_Path ."/icon_upload.gif" ;
 
 //$HD_Form -> AddViewElement(gettext("Language/Locale"), "lang_locale", "15%", "center", "sort");
 $HD_Form -> AddViewElement(gettext("Voice"), "voice_name", "15%", "left\" nowrap \"", "sort");
-$HD_Form -> AddViewElement(gettext("Greeting text"), "greet_text", "55%", "center", "sort");
-$HD_Form -> AddViewElement(gettext("FileName"), "greet_filename", "15%", "left\" nowrap \"", "sort");
+$HD_Form -> AddViewElement(gettext("Greeting text"), "greet_text", "55%", "center", "sort", null, null, null, null, null, null, 'CustomerInput::html');
+$HD_Form -> AddViewElement(gettext("FileName"), "greet_filename", "15%", "left\" nowrap \"", "sort", null, null, null, null, null, null, 'CustomerInput::html');
 
 $HD_Form -> FieldViewElement ("CONCAT_WS(IF(LENGTH(gender),'/',''),voice_name,gender) voice_name, greet_text, greet_filename, id, no_browther_cache, lang_locale");
 
@@ -83,6 +83,7 @@ $HD_Form -> FG_EDITION = false;
 $HD_Form -> FG_DELETION = true;
 
 $HD_Form -> FG_FK_DELETE_ALLOWED = true;
+$HD_Form -> FG_FK_MODIFY_ALLOWED = false;
 $HD_Form -> FG_FK_DELETE_CONFIRM = true;
 $HD_Form -> FG_FK_DELETE_BUTTON_IF_DEPENDENT = false;
 $HD_Form -> FG_FK_WARNONLY = true;

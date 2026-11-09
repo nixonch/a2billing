@@ -73,7 +73,7 @@ if (($download == "file") && $file) {
 			if ($path_parts['extension']=='alaw') {
 			    $val = $file.".wav";
 			    $diraudio = "/tmp/";
-			    $sox = "/usr/bin/sox --channels 1 --type raw --rate 8000 -e a-law ".$source." ".$diraudio.$val;
+			    $sox = "/usr/bin/sox --channels 1 --type raw --rate 8000 -e a-law ".escapeshellarg($source)." ".escapeshellarg($diraudio.$val);
 			    exec($sox." >/dev/null 2>&1");
 			}
 			$soundlist[$file] = $val;
@@ -183,20 +183,20 @@ if ($resmax) {
 //print_r($dest); echo '<br>';
 
 if (isset($json_data)) {
-    $QUERYpop = "SELECT id FROM cc_ivr WHERE id_cc_card=".$_SESSION["card_id"]." AND ivrname='$ivrname'";
-    $resmax = $instance_table -> SQLExec ($DBHandle, $QUERYpop);
+    $QUERYpop = "SELECT id FROM cc_ivr WHERE id_cc_card=? AND ivrname=?";
+    $resmax = $instance_table -> SQLExec ($DBHandle, $QUERYpop, 1, 0, array($_SESSION['card_id'], $ivrname));
     if ($resmax) {
 	$id = $resmax[0][0];
-	$QUERYpop = "UPDATE cc_ivr SET repeats='$repeats', waitsecsfordigits='$waitsecsfordigits' WHERE id=".$id;
-	$resmax = $DBHandle->Execute($QUERYpop);
+	$QUERYpop = "UPDATE cc_ivr SET repeats=?, waitsecsfordigits=? WHERE id=? AND id_cc_card=?";
+	$resmax = $DBHandle->Execute($QUERYpop, array($repeats, $waitsecsfordigits, $id, $_SESSION['card_id']));
 	if (!$resmax) {
 	    $error_msg = gettext("Cannot update the IVR")."</br>";
 	}
 	$resmax = $DBHandle->Execute("DELETE FROM cc_ivr_sounds WHERE id_cc_ivr_dest IN (SELECT id FROM cc_ivr_destinations WHERE id_cc_ivr='$id') OR id_cc_ivr='$id'");
 	$resmax = $DBHandle->Execute("DELETE FROM cc_ivr_destinations WHERE id_cc_ivr='$id'");
     } else {
-	$QUERYpop = "INSERT INTO cc_ivr (id_cc_card,ivrname,repeats,waitsecsfordigits) VALUES ('{$_SESSION["card_id"]}','$ivrname','$repeats','$waitsecsfordigits')";
-	$resmax = $DBHandle->Execute($QUERYpop);
+	$QUERYpop = "INSERT INTO cc_ivr (id_cc_card,ivrname,repeats,waitsecsfordigits) VALUES (?,?,?,?)";
+	$resmax = $DBHandle->Execute($QUERYpop, array($_SESSION['card_id'], $ivrname, $repeats, $waitsecsfordigits));
 	if (!$resmax) {
 	    $error_msg = gettext("Cannot insert the new IVR")."</br>";
 	} else {
@@ -206,14 +206,16 @@ if (isset($json_data)) {
     }
     if (isset($id) && is_numeric($id)) {
 	$QUERYpop = "INSERT INTO cc_ivr_sounds (id_cc_ivr,timeout,playsound) VALUES ";
+	$sound_params = array();
 	foreach ($soundArray as $value) {
 	    if ($value['timeout']>0 || strlen($value['playsound'])>0) {
 		if (strlen($QUERYpop)>65) $QUERYpop .= ",";
-		$QUERYpop .= "('$id','{$value['timeout']}','{$value['playsound']}')";
+		$QUERYpop .= "(?,?,?)";
+		array_push($sound_params, $id, $value['timeout'], $value['playsound']);
 	    }
 	}
 	if (strlen($QUERYpop)>65) {
-	    $resmax = $DBHandle->Execute($QUERYpop);
+	    $resmax = $DBHandle->Execute($QUERYpop, $sound_params);
 	} else {
 	    $resmax = true;
 	}
@@ -229,22 +231,24 @@ if (isset($json_data)) {
 			case gettext("Input wrong (finish)")     : $value['waitdigits'] = -4; break;
 			case gettext("Extension input allowed")  : $value['waitdigits'] = -5; break;
 		    }
-		    $destnum = (strlen($value['destinationnum'])>0)?"'".$value['destinationnum']."'":"NULL";
-		    $resmax = $DBHandle->Execute("INSERT INTO cc_ivr_destinations (id_cc_ivr,waitdigits,destinationnum,playsoundcallee) VALUES ('$id','{$value['waitdigits']}',$destnum,'{$value['playsoundcallee']}')");
+		    $destnum = strlen($value['destinationnum']) > 0 ? $value['destinationnum'] : null;
+		    $resmax = $DBHandle->Execute("INSERT INTO cc_ivr_destinations (id_cc_ivr,waitdigits,destinationnum,playsoundcallee) VALUES (?,?,?,?)", array($id, $value['waitdigits'], $destnum, $value['playsoundcallee']));
 		    if (!$resmax) {
 			$error_msg = gettext("Cannot insert Destination")."</br>";
 		    } else {
 			$resmax = $instance_table -> SQLExec ($DBHandle, "SELECT LAST_INSERT_ID()");
 			$iddest = $resmax[0][0];
 			$QUERYpop = "INSERT INTO cc_ivr_sounds (id_cc_ivr_dest,timeout,playsound) VALUES ";
+			$sound_params = array();
 			foreach ($value['soundArray'] as $valdest) {
 			    if ($valdest['timeout']>0 || strlen($valdest['playsound'])>0) {
 				if (strlen($QUERYpop)>70) $QUERYpop .= ",";
-				$QUERYpop .= "('$iddest','{$valdest['timeout']}','{$valdest['playsound']}')";
+				$QUERYpop .= "(?,?,?)";
+				array_push($sound_params, $iddest, $valdest['timeout'], $valdest['playsound']);
 			    }
 			}
 			if (strlen($QUERYpop)>70) {
-			    $resmax = $DBHandle->Execute($QUERYpop);
+			    $resmax = $DBHandle->Execute($QUERYpop, $sound_params);
 			    if (!$resmax) {
 				$error_msg = gettext("Cannot insert Sound")."</br>";
 				break;

@@ -121,12 +121,13 @@ if ($method) {
 				if (!empty($_FILES['file']['error'][0])) {
 					$_SESSION['message'] .= gettext("File Upload Failed");
 				} elseif (count($exp) == (count($file_ext_allow) + 1)) {
-					$_SESSION['message'] .= "<br><img src=\"$dir_img/msg_error.png\" width=\"15\" height=\"15\">&nbsp;<b><font size=\"2\">" . gettext("ERROR: your file type is not allowed") . " (" . getlast($fileupload_name) . ")</font>, " . gettext("or you didn't specify a file to upload") . ".</b><br>";
+					$_SESSION['message'] .= "<br><img src=\"$dir_img/msg_error.png\" width=\"15\" height=\"15\">&nbsp;<b><font size=\"2\">" . gettext("ERROR: your file type is not allowed") . " (" . CustomerInput::html(getlast($fileupload_name)) . ")</font>, " . gettext("or you didn't specify a file to upload") . ".</b><br>";
 				} else {
 					if ($_FILES['file']['size'][0] > $file_size_ind) {
 						$_SESSION['message'] .= "<br><img src=\"$dir_img/msg_error.png\" width=\"15\" height=\"15\">&nbsp;<b><font size=\"2\">" . gettext("ERROR: please get the file size less than") . " " . $file_size_ind . " BYTES  (" . round(($file_size_ind / 1024), 2) . " KB)</font></b><br>";
 					} else {
 						$file_to_upload = $upload_dir . "/" . $_FILES['file']['name'][0];
+						if (!CustomerInput::audioName($_FILES['file']['name'][0])) CustomerInput::fail('file');
 						if (!file_exists($upload_dir)) mkdir($upload_dir, 0755);
 						if (move_uploaded_file($_FILES['file']['tmp_name'][0], $file_to_upload)) {
 							chmod($upload_dir, 0755);
@@ -172,6 +173,8 @@ if ($method) {
 
 	//Rename a file
 	elseif ($method == "rename") {
+		if (!CustomerInput::audioName($file) || !CustomerInput::audioName($to) ||
+		    !in_array(strtolower(pathinfo($to, PATHINFO_EXTENSION)), array_map('strtolower', $file_ext_allow))) CustomerInput::fail('file');
 		rename($upload_dir . "/" . $file, $upload_dir . "/" . $to);
 		$_SESSION['message'] = "Renamed " . $file . " to " . $to;
 	}

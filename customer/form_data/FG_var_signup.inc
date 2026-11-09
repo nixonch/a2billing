@@ -139,11 +139,10 @@ if ($id_group != "" || $id_group != null) {
 
 //check subscriber
 
-$maxi = $maxi2 = $maxi3 = $maxi4 = '';
+$maxi = $maxi2 = $maxi3 = '';
 //	-= Need to install GeoIP http://ua2.php.net/manual/en/geoip.setup.php =-
 if (($form_action == 'ask-add' || $form_action == 'add') && (geoip_db_avail(GEOIP_REGION_EDITION_REV0) || geoip_db_avail(GEOIP_REGION_EDITION_REV1))) {
 	$countryregion = geoip_record_by_name($_SERVER['REMOTE_ADDR']);
-	if (!isset($zipcode)) $maxi4 = "value='".$countryregion['postal_code']."'";
 } else {
 	$country = $region = "";
 }
@@ -206,7 +205,7 @@ $HD_Form->AddEditElement(gettext("LANGUAGE")." *",
 		"language",
 		"$language",
 		"SELECT",
-		"", "",
+		'autocomplete="off"', "",
 		"", "list", "", "", "", $language_list, "%1", "", "");
 $language_editFG = "language,";
 }
@@ -215,7 +214,7 @@ $HD_Form->AddEditElement(gettext("CURRENCY")." *",
 		"currency",
 		"$currency",
 		"SELECT",
-		"", "",
+		'autocomplete="off"', "",
 		"", "list", "", "", "", $currency_list, "%1", "", "");
 $currency_editFG = "currency,";
 }
@@ -233,7 +232,7 @@ $HD_Form->AddEditElement(gettext("LASTNAME")." *",
 		"lastname",
 		'$value',
 		"INPUT",
-		"style=\"width:260px\" maxlength=50", "11",
+		"style=\"width:260px\" maxlength=50 autocomplete=\"off\"", "11",
 		gettext("Insert your lastname"), "", "", "", "", "", "", "", "");
 $lastname_editFG = "lastname,";
 }
@@ -242,7 +241,7 @@ $HD_Form->AddEditElement(gettext("FIRSTNAME")." *",
 		"firstname",
 		'$value',
 		"INPUT",
-		"style=\"width:260px\" maxlength=50", "11",
+		"style=\"width:260px\" maxlength=50 autocomplete=\"off\"", "11",
 		gettext("Insert your firstname"), "", "", "", "", "", "", "", "");
 $firstname_editFG = "firstname,";
 }
@@ -252,7 +251,7 @@ $HD_Form->AddEditElement(gettext("COMPANY NAME"),
 		"company_name",
 		'$value',
 		"INPUT",
-		"style=\"width:260px\" maxlength=50", "",
+		"style=\"width:260px\" maxlength=50 autocomplete=\"off\"", "",
 		gettext("Insert Company name of this customer"), "", "", "", "", "", "", "NO", "");
 $company_name_editFG = "company_name,";
 }
@@ -262,7 +261,7 @@ if (strpos($group_idlist, ',') !== false && !($subscriber_signup>0)) {
 		"id_group",
 		"$id_group",
 		"SELECT",
-		"", "",
+		'autocomplete="off"', "",
 		"", "list", "", "", "", $group_list, "%1", "", "");
 $group_editFG = "id_group,";
 }
@@ -272,7 +271,7 @@ if (strpos($callPlan_idlist, ',') !== false && !($subscriber_signup>0)) {
 								"tariff",
 								"$tariff",
 								"SELECT",
-								"", "",
+								'autocomplete="off"', "",
 								"", "list", "", "", "", $callPlan_list, "%1", "", "");
 $group_editFG .= "tariff,";
 }
@@ -282,7 +281,7 @@ if (has_rights (ACX_DISTRIBUTION) || (isset($id_diller) && $id_diller > 0))  {
 								"margin",
 								'$value',
 								"INPUT",
-								"style=\"width:260px\" maxlength=3",
+								"style=\"width:260px\" maxlength=3 autocomplete=\"off\"",
 								"27", "(0..100)%",
 								"", "", "", "", "", "", "NO", "");
 $group_editFG .= "margin,";
@@ -293,7 +292,7 @@ $HD_Form->AddEditElement(gettext("EMAIL")." *",
 		"email",
 		'$value',
 		"INPUT",
-		"style=\"width:260px\" maxlength=70", "1",
+		"style=\"width:260px\" maxlength=70 autocomplete=\"off\"", "1",
 		gettext("Insert your email"), "", "", "", "", "", "", "", "");
 
 if (ADDRESS_ENABLE && !$quicksignup)  {
@@ -301,7 +300,7 @@ $HD_Form->AddEditElement(gettext("ADDRESS")." *",
 		"address",
 		'$value',
 		"INPUT",
-		"style=\"width:260px\" maxlength=100", "0",
+		"style=\"width:260px\" maxlength=100 autocomplete=\"off\"", "0",
 		gettext("Insert your address"), "", "", "", "", "", "", "", "");
 $address_editFG = ",address";
 }
@@ -311,7 +310,7 @@ if (CITY_ENABLE && !$quicksignup)  {
 								"city",
 								'$value',
 								"INPUT",
-								"style=\"width:260px\" maxlength=40", "0",
+								"style=\"width:260px\" maxlength=40 autocomplete=\"off\"", "0",
 								gettext("Insert your city"), "", "", "", "", "", "", "", "");
 	$city_editFG = ",city";
 }
@@ -321,7 +320,7 @@ if (STATE_ENABLE && !$quicksignup)  {
 								"state",
 								'$value',
 								"INPUT",
-								"style=\"width:260px\" maxlength=40", "11",
+								"style=\"width:260px\" maxlength=40 autocomplete=\"off\"", "11",
 								gettext("Insert your state"), "", "", "", "", "", "", "NO", "");
 	$state_editFG = ",state";
 }
@@ -336,7 +335,7 @@ if (COUNTRY_ENABLE)  {
 	$HD_Form->AddEditElement(gettext("COUNTRY")." *",
 								"country",
 								"$country",
-								"SELECT", "style=\"max-width: 262px\"", "", "",
+								"SELECT", "style=\"max-width: 262px\" autocomplete=\"off\"", "", "",
 								"sql",
 								"cc_country", "countryname, countrycode", 
 								"", "", "%1", "", "", "", '');
@@ -348,7 +347,7 @@ if (ZIPCODE_ENABLE && !$quicksignup)  {
 								"zipcode",
 								'$value',
 								"INPUT",
-								"style=\"width:260px\" maxlength=20 $maxi4","0",
+								"style=\"width:260px\" maxlength=20 autocomplete=\"off\"","0",
 								gettext("Insert your zipcode"), "", "", "", "", "", "", "", "");
 	$zipcode_editFG = ",zipcode";
 }
@@ -407,7 +406,7 @@ if (TIMEZONE_ENABLE)  {
 								"id_timezone",
 								"$id_timezone",
 								"SELECT",
-								"style=\"max-width:262px\"", "", "",
+								"style=\"max-width:262px\" autocomplete=\"off\"", "", "",
 								"list", "", "", "",
 								$timezone_list,
 								"%1", "", "");
@@ -418,7 +417,7 @@ if (PHONE_ENABLE && !$quicksignup)  {
 	$HD_Form->AddEditElement(gettext("PHONE NUMBER")." *",
 								"phone",
 								'$value',
-								"INPUT", "style=\"width:260px\" maxlength=20",
+								"INPUT", "style=\"width:260px\" maxlength=20 autocomplete=\"off\"",
 								"7", "", "", "", "", "", "", "", "", "");
 	$phone_editFG = ",phone";
 }
@@ -427,7 +426,7 @@ if (FAX_ENABLE && !$quicksignup)  {
 	$HD_Form->AddEditElement(gettext("FAXNUMBER"), 
 								"fax", 
 								'$value', 
-								"INPUT", "style=\"width:260px\" maxlength=20", 
+								"INPUT", "style=\"width:260px\" maxlength=20 autocomplete=\"off\"",
 								"7", gettext("Insert your fax number"), "", "", "", "", "", "", "NO");
 	$fax_editFG = ",fax";
 }
@@ -436,7 +435,7 @@ if (COMP_WEB_ENABLE && !$quicksignup)  {
 	$HD_Form->AddEditElement(gettext("COMPANY WEBSITE"), 
 								"company_website",
 								'$value',
-								"INPUT", "style=\"width:260px\" maxlength=60",
+								"INPUT", "style=\"width:260px\" maxlength=60 autocomplete=\"off\"",
 								"8", gettext("Insert the company website of this customer"), "", "", "", "", "", "", "NO", "");
 	$company_website_editFG = ",company_website";
 }
@@ -445,7 +444,7 @@ if (VAT_RN_ENABLE && !$quicksignup)  {
 	$HD_Form->AddEditElement(gettext("VAT REGISTRATION NUMBER "), 
 								"vat_rn", 
 								'$value', 
-								"INPUT", "style=\"width:260px\" maxlength=40",
+								"INPUT", "style=\"width:260px\" maxlength=40 autocomplete=\"off\"",
 								"", gettext("Insert the VAT registration number of this customer"), "", "", "", "", "", "", "NO", "");
 	$VAT_RN_editFG = ",vat_rn";
 
@@ -453,7 +452,7 @@ if (VAT_RN_ENABLE && !$quicksignup)  {
 								"vat",
 								'$value',
 								"INPUT",
-								"style=\"width:260px\" maxlength=6",
+								"style=\"width:260px\" maxlength=6 autocomplete=\"off\"",
 								"12", "%%",
 								"", "", "", "", "", "", "NO", "");
 	$VAT_editFG = ",vat";
@@ -463,7 +462,7 @@ if (TRAFFIC_ENABLE && !$quicksignup)  {
 	$HD_Form->AddEditElement(gettext("TRAFFIC PER MONTH"), 
 								"traffic", 
 								'$value', 
-								"INPUT", "style=\"width:260px\" maxlength=20", 
+								"INPUT", "style=\"width:260px\" maxlength=20 autocomplete=\"off\"",
 								"4", gettext("Insert the traffic per month for this customer"), "", "", "", "", "", "", "NO", "");
 	$traffic_editFG = ",traffic";
 }
@@ -472,7 +471,7 @@ if (TRAFFIC_TARGET_ENABLE && !$quicksignup)  {
 	$HD_Form->AddEditElement(gettext("TARGET TRAFFIC"),
 								"traffic_target",
 								'',
-								"TEXTAREA", "cols=45 rows=4",
+								"TEXTAREA", "cols=45 rows=4 autocomplete=\"off\"",
 								"", gettext("Insert the target traffic description"), "", "", "", "", "", "", "", "");
 	$traffic_target_editFG = ",traffic_target";
 }
@@ -482,7 +481,7 @@ if (has_rights (ACX_DISTRIBUTION) || (isset($id_diller) && $id_diller > 0))  {
 								"id_diller",
 								'$value',
 								"INPUT",
-								'style=\"width:260px\" maxlength=20 readonly style="color: gray;"',
+								'style=\"width:260px\" maxlength=20 readonly style="color: gray;" autocomplete="off"',
 								"6",
 								"", "", "", "", "", "", "", "", "");
 	$subscriber_editFG = ",id_diller";
@@ -491,7 +490,7 @@ if (has_rights (ACX_DISTRIBUTION) || (isset($id_diller) && $id_diller > 0))  {
 								"paypal",
 								$paypal,
 								"SELECT",
-								"",
+								'autocomplete="off"',
 								"",
 								"",
 								"list", "", "", "", $yesno_list, "%1", "", gettext("Apply PayPal payment to this customer"));
@@ -506,7 +505,7 @@ if (has_rights (ACX_DISTRIBUTION) || (isset($id_diller) && $id_diller > 0))  {
 								"captchacode",
 								'$value',
 								"CAPTCHAIMAGE",
-								"size=10 maxlength=6",
+								"size=10 maxlength=6 autocomplete=\"off\"",
 								"19",
 								gettext("Insert code from above picture"), "", "", "", "", "", "", "", "", CAPTCHA_ENABLE);
 	$captcha = ",captchacode";

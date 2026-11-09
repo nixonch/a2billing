@@ -48,6 +48,11 @@ $handle = DbConnect();
 $instance_table = new Table();
 
 if ($form_action == "ask-edit") {
+	if (!isset($id) || !is_scalar($id) || !ctype_digit((string)$id) || (int)$id < 1) {
+		header('HTTP/1.0 400 Bad Request');
+		exit(gettext('Invalid configuration value.'));
+	}
+	$id = (int)$id;
 	$QUERY =  "SELECT config_value, config_listvalues FROM cc_config where id = $id";
 	$result = $instance_table -> SQLExec ($handle, $QUERY);
 	if ($result[0][1] == "yes,no" || $result[0][1] == "no,yes") {
@@ -148,10 +153,39 @@ if($form_action == "list") {
 	$HD_Form -> FG_TABLE_CLAUSE = $_SESSION['ss_groupselect']; 
 }
 
+// Preserve literal text through a bound SQL value, not the HTML-tag sanitizer.
+$config_processed = $HD_Form->getProcessed();
+if (isset($config_processed['form_action']) && $config_processed['form_action'] === 'edit') {
+	$config_id = isset($HD_Form->_vars['id']) ? $HD_Form->_vars['id'] : null;
+	$config_valid = is_scalar($config_id) && ctype_digit((string)$config_id) && (int)$config_id > 0
+		&& isset($HD_Form->_vars['config_value']) && is_scalar($HD_Form->_vars['config_value']);
+	if ($config_valid) {
+		$config_definition = $instance_table->SQLExec($handle,
+			'SELECT config_valuetype, config_listvalues FROM cc_config WHERE id = ?', 1, 0, array((int)$config_id));
+		$config_valid = (bool)$config_definition;
+	}
+	if ($config_valid) {
+		$config_input = (string)$HD_Form->_vars['config_value'];
+		if ((string)$config_definition[0][0] === '1') {
+			$config_valid = in_array($config_input, array('0', '1'), true);
+		} elseif ((string)$config_definition[0][1] !== '') {
+			$config_valid = in_array($config_input, explode(',', $config_definition[0][1]), true);
+		}
+	}
+	if (!$config_valid) {
+		header('HTTP/1.0 400 Bad Request');
+		exit(gettext('Invalid configuration value.'));
+	}
+	$id = (int)$config_id;
+	$HD_Form->_processed['id'] = (string)$id;
+	$HD_Form->FG_EDITION_BOUND_VALUES['config_value'] = $config_input;
+}
+unset($config_processed);
+
 $HD_Form -> FG_EDITION_CLAUSE = "id = %id";
 $HD_Form -> AddViewElement(gettext("TITLE"), "config_title", "10%", "center");
 $HD_Form -> AddViewElement(gettext("KEY"), "config_key", "5%", "center");
-$HD_Form -> AddViewElement(gettext("VALUE"), "config_value", "20%", 'center" style="word-break: break-all;min-width: 10%;max-width: 25%',"","","list-conf",$yesno);
+$HD_Form -> AddViewElement(gettext("VALUE"), "config_value", "20%", 'center" style="word-break: break-all;min-width: 10%;max-width: 25%',"","","list-conf",$yesno, "", "", "", "display_config_value");
 $HD_Form -> AddViewElement(gettext("DESCRIPTION"), "config_description", "30%", 'left" style="word-break: break-all;min-width: 10%;max-width: 60%');
 $HD_Form -> AddViewElement(gettext("GROUP"), "config_group_title", "5%", "center");
 $HD_Form -> FG_ACTION_SIZE_COLUMN = '4%';
@@ -217,7 +251,7 @@ if ($setbool) {
 		"INPUT",
 		"size=100 maxlength=200",
 		"","",
-		"" , "", "", "", "", "", "", gettext("Insert the Value"));
+		"" , "", "", "", "", "", "", gettext("Insert the Value"), null, "display_config_value_input");
 }
 
 if (LIST_OF_VALUES) {

@@ -49,8 +49,9 @@ $HD_Form -> FG_TABLE_DEFAULT_SENS = "ASC";
 
 $HD_Form -> FG_FK_DELETE_CONFIRM = true;
 $HD_Form -> FG_FK_DELETE_ALLOWED = true;
-$HD_Form -> FG_FK_TABLENAMES = array('cc_voicemail_users');
-$HD_Form -> FG_FK_EDITION_CLAUSE = array(strtolower($atmenu)."_buddy_id");
+// Voicemail records belong to SIP peers; the schema has no iax_buddy_id.
+$HD_Form -> FG_FK_TABLENAMES = $atmenu == 'SIP' ? array('cc_voicemail_users') : array();
+$HD_Form -> FG_FK_EDITION_CLAUSE = $atmenu == 'SIP' ? array('sip_buddy_id') : array();
 // DEFINE IF WE WANT TO DELETE THE CARD OR NOT
 $HD_Form -> FG_FK_WARNONLY = (DELETE_FK_CARD == true) ? false: true;
 

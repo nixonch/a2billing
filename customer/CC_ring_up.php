@@ -163,7 +163,7 @@ if ($method == 'ask-edit' && isset($id) && is_numeric($id)) {
 			exit;
 		}
 		if (stripos($the_file_type, 'csv') === false) {
-			$_SESSION['message'] .= gettext("ERROR: your file type is not allowed") . " (" . getlast($the_file_name) . "), " . gettext("or you didn't specify a file to upload");
+			$_SESSION['message'] .= gettext("ERROR: your file type is not allowed") . " (" . CustomerInput::html(getlast($the_file_name)) . "), " . gettext("or you didn't specify a file to upload");
 		} else {
 			if ($_FILES['the_file']['size'] > $file_size_ind) {
 				$_SESSION['message'] .= gettext("ERROR: please get the file size less than") . " " . $file_size_ind . " BYTES  (" . round(($file_size_ind / 1024), 2) . " KB)";
@@ -175,7 +175,7 @@ if ($method == 'ask-edit' && isset($id) && is_numeric($id)) {
 					if (!move_uploaded_file($the_file, $new_filename)) {
 						$_SESSION['message'] .=  gettext("File Save Failed, FILE=" . $new_filename);
 					} else {
-						$_SESSION['message'] = "<font size=\"3\" color=\"green\">" . $the_file_name . " " . gettext("uploaded");
+						$_SESSION['message'] = "<font size=\"3\" color=\"green\">" . CustomerInput::html($the_file_name) . " " . gettext("uploaded");
 						$uploaded = true;
 					}
 				}
@@ -207,11 +207,17 @@ if ($method == 'ask-edit' && isset($id) && is_numeric($id)) {
 	    while (!feof($fp)) {
 		$ligneoriginal = fgets($fp, 4096);
 		$ligneoriginal = trim($ligneoriginal);
-		$ligne = str_replace(array ( '"', "'", "cc_" ), '', $ligneoriginal);
-		$val = preg_split('/[;,]/', $ligne);
+		$separator = strcspn($ligneoriginal, ',;');
+		$val = str_getcsv($ligneoriginal, isset($ligneoriginal[$separator]) ? $ligneoriginal[$separator] : ',');
 		$val[0] = trim($val[0]);
 		if (strlen($val[0]) > 0)
 		{
+			if (!CustomerInput::valid('tonum', $val[0]) ||
+			    (isset($val[1]) && !CustomerInput::valid('name', $val[1])) ||
+			    (isset($val[2]) && !CustomerInput::valid('info', $val[2]))) {
+				$nb_failed++;
+				continue;
+			}
 			if ($id_ringup===false) {
 			    $QUERY = "INSERT INTO cc_ringup (tag,account_id,trunks,simult,maxduration,destination,localtz,callerids) values ('$ringuptag','$custid','$trunks','$simult','$maxduration',$dest,'$localtz','$callerids')";
 			    $result_query = @ $DBHandle->Execute($QUERY);
@@ -221,20 +227,20 @@ if ($method == 'ask-edit' && isset($id) && is_numeric($id)) {
 			    }
 			}
 			if ($id_ringup===false) break;
-			$adding  = (isset($val[1]) && trim($val[1]))?"'".trim($val[1])."',":"NULL,";
-			$adding .= (isset($val[2]) && trim($val[2]))?"'".trim($val[2])."'" :"NULL";
-			$QUERY = "INSERT INTO cc_ringup_list (id_ringup, tonum, name, info) values ($id_ringup,'{$val[0]}',$adding)";
-			$result_query = $DBHandle->Execute($QUERY);
+			$contact_name = isset($val[1]) && trim($val[1]) !== '' ? cleanInput(trim($val[1])) : null;
+			$contact_info = isset($val[2]) && trim($val[2]) !== '' ? cleanInput(trim($val[2])) : null;
+			$QUERY = "INSERT INTO cc_ringup_list (id_ringup, tonum, name, info) values (?,?,?,?)";
+			$result_query = $DBHandle->Execute($QUERY, array($id_ringup, $val[0], $contact_name, $contact_info));
 			if ($result_query) {
 				$nb_imported++;
 			} else {
-				if ($nb_failed<5) $_SESSION['message'] .= "<br><font color=\"gray\">" . $ligneoriginal . " - </font><font color=\"red\">duplicate</font>";
+				if ($nb_failed<5) $_SESSION['message'] .= "<br><font color=\"gray\">" . CustomerInput::html($ligneoriginal) . " - </font><font color=\"red\">duplicate</font>";
 				else if ($nb_failed==5) $_SESSION['message'] .= "<br><font color=\"gray\">... and more. </font>";
 				$nb_failed++;
 			}
 		}
 	    } // END WHILE EOF
-	    if ($nb_failed) $_SESSION['message'] .= "<br><font color=\"red\">Total: $nb_failed duplicated.</font>";
+	    if ($nb_failed) $_SESSION['message'] .= "<br><font color=\"red\">Total: $nb_failed invalid or duplicated.</font>";
 	    if ($nb_imported) {
 		$QUERY = "UPDATE cc_ringup SET lefte=lefte+$nb_imported WHERE id=$id_ringup AND account_id=$custid";
 		$result_query = @ $DBHandle->Execute($QUERY);
@@ -342,7 +348,7 @@ $result_query = $instance_table -> SQLExec ($DBHandle, $QUERY);
 <link href="./javascript/jquery/jqDynaForm.css" media="screen" type="text/css" rel="stylesheet">
 <script language="JavaScript" src="./javascript/jquery/jqDynaForm.js"></script>
 <script language="JavaScript" src="./javascript/jquery/fakeData.js"></script>
-<script> ringupJson['simult']='<?php echo $_SESSION["simultaccess"]==0?1:$_SESSION["simultaccess"]?>';PopUpDayTimeJson=<?php if(count($json_list)){echo json_encode($json_list);}else{?>ringupJson;<?php if($result_query){?>PopUpDayTimeJson['ringuptag']='';<?php }}?> </script>
+<script> ringupJson['simult']='<?php echo $_SESSION["simultaccess"]==0?1:$_SESSION["simultaccess"]?>';PopUpDayTimeJson=<?php if(count($json_list)){echo CustomerInput::script($json_list);}else{?>ringupJson;<?php if($result_query){?>PopUpDayTimeJson['ringuptag']='';<?php }}?> </script>
 
 <script language="JavaScript" type="text/javascript">
 
@@ -781,7 +787,7 @@ function sendtoupload(form){
 
 	    for ($i = 0; $i < count($result_query); $i++) {
 ?><tr>
-	<td style="padding-left:5px;padding-right:5px">&nbsp;<?php echo $result_query[$i][1];?></td>
+	<td style="padding-left:5px;padding-right:5px">&nbsp;<?php echo CustomerInput::html($result_query[$i][1]);?></td>
 	<td style="padding-left:5px;padding-right:5px" align="center"><?php echo $result_query[$i][3];?></td>
 	<td style="padding-left:5px;padding-right:5px" align="center"><?php echo $result_query[$i][5];?></td>
 	<td style="padding-left:5px;padding-right:5px" align="center"><?php echo $result_query[$i][6];?></td>
@@ -790,8 +796,8 @@ function sendtoupload(form){
 	<td style="padding-left:5px;padding-right:5px" align="center"><?php if($result_query[$i][8]==0) echo gettext('STOPPED'); elseif($result_query[$i][8]==1) echo gettext('IN PROGRESS'); elseif($result_query[$i][8]==2) echo gettext('FINISHED'); elseif($result_query[$i][8]==3) echo gettext('TIME-OUT');?></td>
 	<td style="padding-left:5px;padding-right:5px" align="center"><?php if($result_query[$i][8]!=2) { ?><A href="<?php echo $_SERVER['PHP_SELF'];?>?method=<?php if($result_query[$i][8]==0) echo "start"; else echo "stop";?>&amp;id=<?php echo $result_query[$i][0];?>"><div class="upload_button">&nbsp;<?php if($result_query[$i][8]==1 || $result_query[$i][8]==3) echo gettext('Stop'); elseif($result_query[$i][8]==0) echo gettext('Start');?>&nbsp;</div></a><?php }?></td>
 	<td align="left" style="padding-top:4px" nowrap>
-		<A href="javascript:if(confirm('<?php echo gettext("Are you sure to delete ");?> <?php echo $result_query[$i][1];?>?')) location.href='<?php echo $_SERVER['PHP_SELF'];?>?method=delete&amp;id=<?php echo $result_query[$i][0];?>';"><img src="<?php echo $dir_img?>/cross.gif" title="Delete" alt="Delete" border="0"></a>
-		<A href="export_csv?var_export=<?php echo $FG_EXPORT_SESSION_VAR?>&var_export_type=type_csv&filename=<?php echo str_replace(" ","_",$result_query[$i][1]);?>&id=<?php echo $result_query[$i][0];?>" target="_blank"><img src="<?php echo $dir_img?>/dl.gif" title="<?php echo gettext("Export CSV");?>" alt="<?php echo gettext("Export CSV");?>" border="0"></a>
+		<A href="javascript:if(confirm('<?php echo gettext("Are you sure to delete ");?> <?php echo CustomerInput::jsString($result_query[$i][1]);?>?')) location.href='<?php echo $_SERVER['PHP_SELF'];?>?method=delete&amp;id=<?php echo $result_query[$i][0];?>';"><img src="<?php echo $dir_img?>/cross.gif" title="Delete" alt="Delete" border="0"></a>
+		<A href="export_csv?var_export=<?php echo $FG_EXPORT_SESSION_VAR?>&var_export_type=type_csv&filename=<?php echo rawurlencode(str_replace(" ","_",$result_query[$i][1]));?>&id=<?php echo $result_query[$i][0];?>" target="_blank"><img src="<?php echo $dir_img?>/dl.gif" title="<?php echo gettext("Export CSV");?>" alt="<?php echo gettext("Export CSV");?>" border="0"></a>
 		<A href="<?php echo $_SERVER['PHP_SELF'];?>?method=ask-edit&amp;id=<?php echo $result_query[$i][0];?>"><img src="<?php echo $dir_img?>/edit.gif" title="Edit" alt="Edit" border="0"></a>
 		<A href="<?php echo $_SERVER['PHP_SELF'];?>?method=ask-edit&amp;id=<?php echo $result_query[$i][0];?>"><img src="<?php echo $dir_img?>/info.png" title="Phones list" alt="Phones list" border="0" width="12" height="12"></a>
 	</td>

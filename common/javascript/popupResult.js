@@ -46,7 +46,7 @@ var addFormData = function (prefix, value) {
 		addFormData(prefix ? prefix + '[' + key + ']' : key, value[key]);
 	    }
 	}
-    } else {
+    } else if (value !== null) {
 	formData.append(prefix, value);
     }
 };

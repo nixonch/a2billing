@@ -330,6 +330,10 @@ msgid " PhoneNumber"
 msgstr "Номер"
 
 #: A2B_entity_surveillance.php
+msgid "Enter phone number 1 for your audio/video recording device, then phone number 2 for the device to connect to, if needed. Set the duration of each surveillance recording segment."
+msgstr "Введите номер1, принадлежащий Вашему звуко-видео снимающему устройству. Затем, если требуется, номер2 устройства с которым нужно соединяться. И частоту нарезки роликов наблюдения."
+
+#: A2B_entity_surveillance.php
 msgid "Your surveillance request has been queued correctly"
 msgstr "Задание наблюдения успешно добавлено"
 

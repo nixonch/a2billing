@@ -51,13 +51,14 @@ if (($download == "file") && $file) {
 	if (strpos($file, '/') !== false) exit;
 	
 	$value_de = base64_decode ( $file );
+	if (!CustomerInput::audioName($value_de)) CustomerInput::fail('file');
 	$parts = pathinfo($value_de);
 	$value = $parts['filename'];
 	$handle = DbConnect();
 	$handle -> Execute("SET @@session.time_zone=@@global.time_zone");
 	$instance_table = new Table();
-	$QUERY = "SELECT YEAR(starttime), MONTH(starttime), DAYOFMONTH(starttime), cc_card.username FROM cc_call LEFT JOIN cc_card ON cc_card.id=card_id WHERE uniqueid LIKE '$value' ORDER BY cc_call.id DESC LIMIT 1";
-	$result = $instance_table -> SQLExec ($handle, $QUERY);
+	$QUERY = "SELECT YEAR(starttime), MONTH(starttime), DAYOFMONTH(starttime), cc_card.username FROM cc_call LEFT JOIN cc_card ON cc_card.id=card_id WHERE uniqueid LIKE ? ORDER BY cc_call.id DESC LIMIT 1";
+	$result = $instance_table -> SQLExec ($handle, $QUERY, 1, 0, array($value));
 	if (is_array($result) && count($result)>0) {
 	    $dl_full = FAX_PATH . "/" . $result[0][3] . "/" . $result[0][0] . "/" . $result[0][1] . "/" . $result[0][2] . "/" . $value_de;
 	    $dl_name = $value_de;

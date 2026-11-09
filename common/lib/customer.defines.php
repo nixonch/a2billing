@@ -32,6 +32,10 @@
 **/
 
 require_once (dirname(__FILE__)."/vendor/autoload.php");
+require_once __DIR__ . '/customer_input.php';
+define('CUSTOMER_INPUT', true);
+CustomerInput::values($_GET);
+CustomerInput::values($_POST);
 
 define ("PHP_QUICK_PROFILER", false);
 // Include PHP-Quick-Profiler

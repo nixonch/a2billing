@@ -67,15 +67,16 @@ if (($download == "file") && $file && $ACXSEERECORDING && !$accdie) {
 	if (strpos($file, '/') !== false) exit;
 
 	$value_de = base64_decode ( $file );
+	if (!CustomerInput::audioName($value_de)) CustomerInput::fail('file');
 	$parts = pathinfo($value_de);
 	$value = $parts['filename'];
 	$QUERY = "SELECT YEAR(starttime), MONTH(starttime), DAYOFMONTH(starttime), cc_card.username, cc_card.id FROM cc_call
 ".			"LEFT JOIN cc_card ON cc_card.id=card_id
-".			"WHERE uniqueid LIKE '$value' AND (cc_card.id=$customer OR cc_card.id IN
+".			"WHERE uniqueid LIKE ? AND (cc_card.id=$customer OR cc_card.id IN
 ".				"(SELECT aa.concat_card_id FROM cc_card_concat aa LEFT JOIN cc_card_concat bb ON bb.concat_id=aa.concat_id WHERE bb.concat_card_id=$customer AND bb.foreignrecords=1 AND aa.myrecords=1))
 ".			"ORDER BY cc_call.id DESC LIMIT 1";
 	$DBHandle_max -> Execute("SET @@session.time_zone=@@global.time_zone");
-	$result = $instance_table -> SQLExec ($DBHandle_max, $QUERY);
+	$result = $instance_table -> SQLExec ($DBHandle_max, $QUERY, 1, 0, array($value));
 	if (is_array($result) && count($result)>0) {
 
 	    $dl_full = $dl_path_name = MONITOR_PATH . "/" . $result[0][3] . "/" . $result[0][0] . "/" . $result[0][1] . "/" . $result[0][2] . "/" . $value_de;
@@ -88,7 +89,7 @@ if (($download == "file") && $file && $ACXSEERECORDING && !$accdie) {
 	    $dl_name = $value_de;
 	    if ($sens!=1 && $parts['extension']=='WAV') {
 		$dl_path_name = "/tmp/".$value_de;
-		$sox = "/usr/bin/sox ".$dl_full." -c 1 -r 8k -e signed-integer ".$dl_path_name;
+		$sox = "/usr/bin/sox ".escapeshellarg($dl_full)." -c 1 -r 8k -e signed-integer ".escapeshellarg($dl_path_name);
 		exec($sox);
 	    }
 

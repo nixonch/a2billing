@@ -92,7 +92,10 @@ if ($A2B -> callingcard_ivr_authenticate_light ($error_msg) && $callback) {
 					$timeoutbefore = $A2B -> config["callback"]['sec_wait_before_callback'];
 					if ($channeloutcid[1]) $callerid = $channeloutcid[1];
 					    else $callerid = $A2B -> config["callback"]['callerid'];
-					$callerid .= "<".$callerid.">";
+					CustomerInput::check('callerid', $callerid);
+					if (!preg_match('/\A[^<>]*<[^<>]+>[ \t]*\z/', $callerid)) {
+						$callerid .= "<".$callerid.">";
+					}
 					$account = $_SESSION["pr_login"];
 					
 					$uniqueid 	=  MDP_NUMERIC(5).'-'.MDP_STRING(7);
@@ -107,9 +110,9 @@ if ($A2B -> callingcard_ivr_authenticate_light ($error_msg) && $callback) {
 					$QUERY = " INSERT INTO cc_callback_spool (uniqueid, status, server_ip, num_attempt, last_attempt_time, channel, exten, context, priority," .
 							 " variable, id_server_group, callback_time, account, callerid, timeout, next_attempt_time, exten_leg_a, surveillance) " .
 							 " VALUES ('$uniqueid', '$status', '$server_ip', '$num_attempt', now(), '$channel', '$exten', '$context'," .
-							 " '$priority', '$variable', '$id_server_group', now(), '$account', '$callerid'," .
+							 " '$priority', '$variable', '$id_server_group', now(), '$account', ?," .
 							 " '$timeout', now(), '$A2B->dnid', '$duration')";
-					$res = $A2B -> DBHandle -> Execute($QUERY);
+					$res = $A2B -> DBHandle -> Execute($QUERY, array($callerid));
 					if (!$res) {
 						$error_msg = gettext("Cannot insert the surveillance request in the spool!")."</br>";
 					} else {
@@ -154,7 +157,7 @@ if ($form_action == "list") {
 		echo $update_msg;
 ?>
 	  <center>
-	  <font class="error_message"><?php echo gettext("Введите номер1, принадлежащий Вашему звуко-видео снимающему устройству. Затем, если требуется, номер2 устройства с которым нужно соединяться. И частоту нарезки роликов наблюдения."); ?></font>
+	  <font class="error_message"><?php echo gettext("Enter phone number 1 for your audio/video recording device, then phone number 2 for the device to connect to, if needed. Set the duration of each surveillance recording segment."); ?></font>
 	   <table align="center" class="speeddial_table1">
 		<form name="theForm" action="<?php  $_SERVER["PHP_SELF"]?>">
 		<INPUT type="hidden" name="callback" value="1">

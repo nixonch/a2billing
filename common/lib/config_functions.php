@@ -31,6 +31,17 @@
  * 
 **/
 
+function display_config_value($value)
+{
+    return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+}
+
+function display_config_value_input($value)
+{
+    // The legacy INPUT renderer calls stripslashes after the display callback.
+    return addslashes(display_config_value($value));
+}
+
 
 /*
  * Following fuctions return the latest title to add as

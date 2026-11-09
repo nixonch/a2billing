@@ -2,8 +2,8 @@
 
 $json_data = $_POST["json_data"];
 if (isset($json_data)) {
-	$json_data = stripslashes($json_data);
-	extract(json_decode($json_data,true,512));
+	$ringup_input = CustomerInput::json($json_data);
+	extract(array_intersect_key($ringup_input, array_flip(array('id', 'form_action', 'exten_leg_a', 'exten', 'max_attempt', 'data', 'shedule', 'calleridprefix', 'calleridlength', 'timeout1', 'sound1', 'entry_time', 'popup_select'))));
 } else {
 	getpost_ifset(array('id', 'exten_leg_a', 'exten', 'max_attempt'));
 }

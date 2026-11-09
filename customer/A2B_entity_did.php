@@ -76,7 +76,7 @@ if (($download == "file") && $file) {
 			if ($path_parts['extension']=='alaw') {
 			    $val = $file.".wav";
 			    $diraudio = "/tmp/";
-			    $sox = "/usr/bin/sox --channels 1 --type raw --rate 8000 -e a-law ".$source." ".$diraudio.$val;
+			    $sox = "/usr/bin/sox --channels 1 --type raw --rate 8000 -e a-law ".escapeshellarg($source)." ".escapeshellarg($diraudio.$val);
 			    exec($sox." >/dev/null 2>&1");
 			}
 			$soundlist[$file] = $val;

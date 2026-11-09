@@ -38,6 +38,25 @@ getpost_ifset(array('id', 'uniqueid', 'entry_time', 'status', 'server_ip', 'num_
 
 $HD_Form = new FormHandler("cc_callback_spool", gettext("Callback"));
 
+$callback_values =& $HD_Form->getProcessed();
+if ($form_action == 'ask-add') {
+	if (!isset($callback_values['uniqueid']) || $callback_values['uniqueid'] === '') {
+		$callback_values['uniqueid'] = MDP_NUMERIC(5) . '-' . MDP_STRING(7);
+	}
+	$callback_defaults = array(
+		'context' => $A2B->config['callback']['context_callback'],
+		'id_server_group' => $A2B->config['callback']['id_server_group'],
+		'timeout' => $A2B->config['callback']['timeout'] * 1000,
+		'callerid' => $A2B->config['callback']['callerid'],
+		'priority' => 1
+	);
+	foreach ($callback_defaults as $callback_field => $callback_default) {
+		if (!isset($callback_values[$callback_field]) || $callback_values[$callback_field] === '') {
+			$callback_values[$callback_field] = $callback_default;
+		}
+	}
+}
+
 $HD_Form -> FG_DEBUG = 0;
 $HD_Form -> FG_TABLE_DEFAULT_ORDER = "id";
 $HD_Form -> FG_TABLE_DEFAULT_SENS  = "DESC";
@@ -45,7 +64,11 @@ $HD_Form -> FG_TABLE_DEFAULT_SENS  = "DESC";
 
 
 $HD_Form ->FG_LIST_ADDING_BUTTON1 = true;
-$HD_Form ->FG_LIST_ADDING_BUTTON_LINK1 = "A2B_entity_callback.php?form_action=ask-add&section=".$_SESSION["menu_section"];
+$HD_Form ->FG_LIST_ADDING_BUTTON_LINK1 = 'javascript:;" onclick="' . htmlspecialchars(
+	'alertBase(' . json_encode('url:A2B_entity_callback.php?form_action=ask-add&popup_select=4&section=' . rawurlencode($_SESSION['menu_section'])) .
+	',' . json_encode(gettext("Add CALLBACK")) . ",true,true,'info',null,null,null,null,null,null,null,null,refreshInsideCallback);return false;",
+	ENT_QUOTES, 'UTF-8'
+);
 $HD_Form ->FG_LIST_ADDING_BUTTON_ALT1 = $HD_Form ->FG_LIST_ADDING_BUTTON_MSG1 = gettext("Add CALLBACK");
 $HD_Form ->FG_LIST_ADDING_BUTTON_IMG1 = Images_Path ."/lightning_add.png" ;
 
@@ -88,13 +111,15 @@ $HD_Form -> FG_DELETION = true;
 
 $HD_Form -> AddEditElement (gettext("SERVER GROUP"),
 	"id_server_group",
-	'$value',
+	($form_action == 'ask-add' || $form_action == 'add') && isset($callback_values['id_server_group'])
+		? $callback_values['id_server_group'] : '$value',
 	"SELECT",
 	"", "", "",
 	"sql",
 	"cc_server_group",
 	"name, id",
 	"", "", "%1","", "");
+unset($callback_values);
 
 
 $HD_Form -> AddEditElement (gettext("UNIQUEID"),	
@@ -109,11 +134,9 @@ $HD_Form -> AddEditElement (gettext("UNIQUEID"),
 
 $readonly = "readonly";
 if ($form_action=="ask-add") {
-	$begin_date = date("Y");
-	$end_date_plus = date("Y-m-d H:i:s",time()+60);
-	$end_date = date("-m-d H:i:s");
-	$comp_date = "value='".$begin_date.$end_date."'";
-	$comp_date_plus = "value='".$end_date_plus."'";
+	$next_minute = (int)(floor(time() / 60) + 1) * 60;
+	$comp_date = "value='" . date("Y-m-d H:i:s", $next_minute) . "'";
+	$comp_date_plus = "value='" . date("Y-m-d H:i:s", $next_minute + 60) . "'";
 	$readonly = "";
 	$def_ipserver = " value='localhost' "; 
 	$def_nbattempt = " value='0' ";
@@ -173,7 +196,7 @@ $HD_Form -> AddEditElement (gettext("FIRST ATTEMPT"),
 	"callback_time",
 	'$value',
 	"INPUT",
-	"size=20 maxlength=20  $comp_date_plus",
+	"size=20 maxlength=20  $comp_date",
 	"10",
 	"Insert the callback time",
 	"" , "", "",	"", "", "", "NO-NULL", gettext("please use the format YYYY-MM-DD HH:MM:SS. For instance, '2004-12-31 00:00:00'"), "", "res_display_dateformat");
