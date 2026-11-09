@@ -72,17 +72,10 @@ if ($Period=="Month"){
 	}
 }
 
-if (strlen($HD_Form -> FG_TABLE_CLAUSE)>0 && strlen($enteradmin)>0) $HD_Form -> FG_TABLE_CLAUSE.=" AND ";
-if($enteradmin != "")
-{
-	$HD_Form -> FG_TABLE_CLAUSE.=" iduser = '$enteradmin'";
-}	
-if (strlen($enteradmin)>0 && strlen($loglevel)>0 && $loglevel > 0) $HD_Form -> FG_TABLE_CLAUSE.=" AND ";
 if($status >= 0 && $status != '')
 {
 	$HD_Form -> FG_TABLE_CLAUSE.=" status = '$status'";
 }
-if (strlen($loglevel)>0 && strlen($date_clause)>0) $HD_Form -> FG_TABLE_CLAUSE.=" AND ";
 if($date_clause != "")
 {
 	if (strlen($HD_Form -> FG_TABLE_CLAUSE)>0) $date_clause =" AND ".$date_clause;

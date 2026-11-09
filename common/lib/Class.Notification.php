@@ -161,7 +161,7 @@ Class Notification {
 		$link = "";
 		if(!empty($this->link_id) && !empty($this->link_type) && $this->link_type != Notification::$LINK_NONE ){
 			switch ($this->link_type) {
-				case Notification::$LINK_REMITTANCE	:$link .= "A2B_remittance_info?id=";break;
+				case Notification::$LINK_REMITTANCE	:return '';
 				case Notification::$LINK_DID_DESTINATION:$link .= "A2B_entity_did_destination?form_action=ask-edit&id=";break;
 				case Notification::$LINK_TICKET_CUST	:
 				case Notification::$LINK_TICKET_AGENT	:$link .= "CC_ticket_view?id=";break;

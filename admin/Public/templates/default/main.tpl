@@ -84,30 +84,6 @@
 	</ul>
 	</div>
 {/if}
-<!--
-	{if ($ACXADMINISTRATOR  > 0)}
-	<div class="toggle_menu"><li>
-	<a href="javascript:;" class="toggle_menu" target="_self"> <div> <div id="menutitlebutton"> <img id="img2"
-	{if ($section == "2")}
-	src="templates/{$SKIN_NAME}/images/minus.gif"
-	{else}
-	src="templates/{$SKIN_NAME}/images/plus.gif"
-	{/if} onmouseover="this.style.cursor='hand';" ></div> <div id="menutitlesection"><strong>{gettext("AGENTS")}</strong></div></div></a></li></div>
-		<div class="tohide"
-	{if ($section =="2")}
-		style="">
-	{else}
-		style="display:none;">
-	{/if}
-		<ul>
-			<li><ul>
-				<li><a href="A2B_entity_agent.php?atmenu=user&section=2">{gettext("Add :: Search")}</a></li>
-				<li><a href="A2B_entity_signup_agent.php?atmenu=user&section=2">{gettext("Signup URLs")}</a></li>
-			</ul></li>
-		</ul>
-	</div>
-	{/if}
--->
 
 	{if ($ACXADMINISTRATOR  > 0)}
 	<div class="toggle_menu"><li>
@@ -149,7 +125,6 @@
 		<ul>
 			<li><ul>
 				<li><a href="CC_ticket.php?section=4">{gettext("Customer Tickets")}</a></li>
-				<li><a href="A2B_ticket_agent.php?section=4">{gettext("Agent Tickets")}</a></li>
 				<li><a href="CC_support_component.php?section=4">{gettext("Ticket Components")}</a></li>
 				<li><a href="CC_support.php?section=4">{gettext("Support Boxes")}</a></li>
 			</ul></li>
@@ -316,12 +291,6 @@
 				<li><a href="A2B_entity_payment.php?atmenu=payment&section=10">»» {gettext("Payments")}</a></li>
 				<li><a href="A2B_entity_paymentlog.php?section=10">»» {gettext("E-Payment Log")}</a></li>
 				<li><a href="A2B_entity_charge.php?section=10">»» {gettext("Charges")}</a></li>
-<!--
-				<li><a href="A2B_entity_agentsituation.php?atmenu=agentsituation&section=10">{gettext("Agents Balance")}</a></li>
-				<li><a href="A2B_entity_commission_agent.php?atmenu=payment&section=10">»» {gettext("Commissions")}</a></li>
-				<li><a href="A2B_entity_remittance_request.php?atmenu=payment&section=10">»» {gettext("Remittance Request")}</a></li>
-				<li><a href="A2B_entity_transactions_agent.php?atmenu=payment&section=10">»» {gettext("Transactions")}</a></li>
--->
 				<li><a href="A2B_entity_payment_configuration.php?atmenu=payment&section=10">{gettext("Payment Methods")}</a></li>
 				<li><a href="A2B_currencies.php?section=10">{gettext("Currency List")}</a></li>
 			</ul></li>

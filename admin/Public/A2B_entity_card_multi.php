@@ -252,9 +252,6 @@ $nb_tariff = (is_array($list_tariff) ? count($list_tariff) : 0);
 $instance_table_group = new Table("cc_card_group", " id, name ");
 $list_group = $instance_table_group->Get_list($HD_Form->DBHandle, $FG_TABLE_CLAUSE, "name", "ASC", null, null, null, null);
 
-$instance_table_agent = new Table("cc_agent", " id, login ");
-$list_agent = $instance_table_agent->Get_list($HD_Form->DBHandle, $FG_TABLE_CLAUSE, "login", "ASC", null, null, null, null);
-
 $instance_table_seria = new Table("cc_card_seria", " id, name ");
 $list_seria = $instance_table_seria->Get_list($HD_Form->DBHandle, $FG_TABLE_CLAUSE, "name", "ASC", null, null, null, null);
 

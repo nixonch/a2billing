@@ -33,7 +33,13 @@
 
 
 
-$HD_Form = new FormHandler("cc_card","Card");
+$list_query = "cc_card " .
+	"LEFT JOIN (SELECT cc_invoice.id_card, TRUNCATE(SUM(CEIL(cc_invoice_item.price*(1+(cc_invoice_item.vat/100))*100)/100),2) AS invoice " .
+	"FROM cc_invoice LEFT JOIN cc_invoice_item ON cc_invoice_item.id_invoice=cc_invoice.id " .
+	"GROUP BY cc_invoice.id_card) AS invoices ON invoices.id_card=cc_card.id " .
+	"LEFT JOIN (SELECT card_id, TRUNCATE(SUM(payment),2) AS payment FROM cc_logpayment " .
+	"GROUP BY card_id) AS payments ON payments.card_id=cc_card.id";
+$HD_Form = new FormHandler($list_query,"Card");
 
 $HD_Form -> FG_DEBUG = 0;
 $HD_Form -> FG_LIMITE_DISPLAY = 10;
@@ -45,11 +51,11 @@ $HD_Form -> AddViewElement(gettext("FIRSTNAME"), "firstname", "10%", "center", "
 $HD_Form -> AddViewElement(gettext("LASTNAME"), "lastname", "10%", "center", "sort", "15");
 
 $HD_Form -> AddViewElement(gettext("CREDIT"), "credit", "7%", "center", "sort",  "", "", "", "", "", "", "display_2bill");
-$HD_Form -> AddViewElement(gettext("INVOICE"), "invoice", "10%", "center", "sort", "15", "lie", "cc_invoice LEFT JOIN cc_invoice_item ON cc_invoice_item.id_invoice=cc_invoice.id", "TRUNCATE(SUM(CEIL(cc_invoice_item.price*(1+(cc_invoice_item.vat/100))*100)/100),2)", "cc_invoice.id_card='%id' GROUP BY cc_invoice.id_card", "%1");
-$HD_Form -> AddViewElement(gettext("PAYMENT"), "payment", "7%", "center", "sort", "15", "lie", "cc_logpayment as t2", "TRUNCATE(SUM(t2.payment),2),t2.card_id", "t2.card_id='%id' GROUP BY t2.card_id", "%1");
-$HD_Form -> AddViewElement(gettext("TO PAY"), "to pay", "7%", "center", "sort", "", "eval",'(%7 - %6 )'); //abs
+$HD_Form -> AddViewElement(gettext("INVOICE"), "invoice", "10%", "center", "sort", "15");
+$HD_Form -> AddViewElement(gettext("PAYMENT"), "payment", "7%", "center", "sort", "15");
+$HD_Form -> AddViewElement(gettext("TO PAY"), "to_pay", "7%", "center", "sort", "", "eval",'(%7 - %6 )'); //abs
 
-$HD_Form -> FieldViewElement ('id, username, useralias, firstname, lastname, credit, id, id, id');
+$HD_Form -> FieldViewElement ('cc_card.id, username, useralias, firstname, lastname, credit, invoice, payment, COALESCE(payment,0)-COALESCE(invoice,0) AS to_pay');
 
 $HD_Form -> FG_ACTION_SIZE_COLUMN = '15%';
 $HD_Form -> CV_NO_FIELDS  = gettext("THERE IS NO").strtoupper($HD_Form->FG_INSTANCE_NAME)." ".gettext("CREATED!"); 

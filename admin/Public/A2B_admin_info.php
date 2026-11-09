@@ -170,7 +170,7 @@ $lg_liste= Constants::getLanguages();
 <div style="width : 80%; text-align : right; margin-left:auto;margin-right:auto;" >
  	<a class="cssbutton_big"  href="<?php echo "A2B_entity_user.php?atmenu=user&groupID=$groupID&section=3" ?>">
 		<img src="<?php echo Images_Path_Main;?>/icon_arrow_orange.gif"/>
-		<?php echo gettext("AGENT LIST"); ?>
+		<?php echo gettext("ADMINISTRATOR"); ?>
 	</a>
 </div>
 <?php 

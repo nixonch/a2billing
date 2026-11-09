@@ -1232,9 +1232,6 @@ if (has_rights (ACX_MODIFY_CUSTOMERS) && (!($popup_select>=1) || $popup_select==
 		if ($_SESSION["user_type"]=="ADMIN") {
 				$who= Notification::$ADMIN;
 				$who_id=$_SESSION['admin_id'];
-		} elseif ($_SESSION["user_type"]=="AGENT") {
-			$who= Notification::$AGENT;
-			$who_id=$_SESSION['agent_id'];
 		} else {
 			$who=Notification::$UNKNOWN;
 			$who_id=-1;

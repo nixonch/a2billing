@@ -127,42 +127,6 @@ class FormBO {
 		$instance_table_card -> Update_table ($FormHandler->DBHandle, $param_update_card, $clause_update_card, $func_table = null);
 	}
 	
-	/**
-     * Function add_card_refill_agent
-     * @public
-     */
-	static public function add_card_refill_agent()
-	{
-		global $A2B;
-		$FormHandler = FormHandler::GetInstance();
-		$processed = $FormHandler->getProcessed();
-		$credit = $processed['credit'];
-		$card_id = $processed['card_id'];
-	
-		//check if enought credit
-		$instance_table_agent = new Table("cc_agent", "credit, currency");
-		$FG_TABLE_CLAUSE_AGENT = "id = ".$_SESSION['agent_id'] ;
-		$agent_info = $instance_table_agent -> Get_list ($FormHandler -> DBHandle, $FG_TABLE_CLAUSE_AGENT, null, null, null, null, null, null);			
-		$credit_agent = $agent_info[0][0];
-		  
-		if ($credit_agent >= $credit) {
-		
-			//Substract credit for agent
-			$param_update_agent = "credit = credit - '".$credit."'";
-			$instance_table_agent -> Update_table ($FormHandler -> DBHandle, $param_update_agent, $FG_TABLE_CLAUSE_AGENT, $func_table = null);	
-			
-			// REFILL CARD
-			$instance_table_card = new Table("cc_card");
-			$param_update_card = "credit = credit + '".$credit."'";
-			$clause_update_card = " id='$card_id'";
-			$instance_table_card -> Update_table ($FormHandler->DBHandle, $param_update_card, $clause_update_card, $func_table = null);
-			
-			return true;
-		}
-		
-		return false;
-	}
-
 	static public function check_add_card_refill_diller()
 	{
 		$FormHandler = FormHandler::GetInstance();
@@ -444,70 +408,6 @@ class FormBO {
 		}
 	}
 
-	static public function ticket_agent_add()
-	{
-		global $A2B;
-		$FormHandler = FormHandler::GetInstance();
-		$id_ticket = $FormHandler -> RESULT_QUERY;
-		$processed = $FormHandler->getProcessed();
-		$title = $processed['title'];
-		$agent_id = $processed['creator'];
-		$priority = $processed['priority'];
-		$description = $processed['description'];
-		$component_id = $processed['id_component'];
-		$table_agent =new Table("cc_agent", "login,firstname,lastname,language,email");
-		$agent_clause = "id = ".$agent_id;
-		$result=$table_agent ->Get_list($FormHandler->DBHandle, $agent_clause);
-		
-		$owner = $result[0]['username']." (".$result[0]['firstname']." ".$result[0]['lastname'].")";
-		
-		try {
-			$mail = new Mail(Mail::$TYPE_TICKET_NEW, null, $result[0]['language']);
-			$mail->replaceInEmail(Mail::$TICKET_OWNER_KEY, $owner);
-			$mail->replaceInEmail(Mail::$TICKET_NUMBER_KEY, $id_ticket);
-			$mail->replaceInEmail(Mail::$TICKET_DESCRIPTION_KEY, $description);
-			$mail->replaceInEmail(Mail::$TICKET_PRIORITY_KEY, Ticket::DisplayPriority($priority));
-			$mail->replaceInEmail(Mail::$TICKET_STATUS_KEY,"NEW");
-			$mail->replaceInEmail(Mail::$TICKET_TITLE_KEY, $title);
-			$mail->send($result[0]['email']);
-		} catch (A2bMailException $e) {
-            $error_msg = $e->getMessage();
-        }
-        
-		$component_table = new Table('cc_support_component LEFT JOIN cc_support ON id_support = cc_support.id', "email,language");
-		$component_clause = "cc_support_component.id = ".$component_id;
-		$result= $component_table -> Get_list($FormHandler->DBHandle, $component_clause);
-		
-		try {
-			$mail = new Mail(Mail::$TYPE_TICKET_NEW, null, $result[0]['language']);
-			$mail->replaceInEmail(Mail::$TICKET_OWNER_KEY, $owner);
-			$mail->replaceInEmail(Mail::$TICKET_NUMBER_KEY, $id_ticket);
-			$mail->replaceInEmail(Mail::$TICKET_DESCRIPTION_KEY, $description);
-			$mail->replaceInEmail(Mail::$TICKET_PRIORITY_KEY, Ticket::DisplayPriority($priority));
-			$mail->replaceInEmail(Mail::$TICKET_STATUS_KEY,"NEW");
-			$mail->replaceInEmail(Mail::$TICKET_TITLE_KEY, $title);
-			$mail->send($result[0]['email']);
-		} catch (A2bMailException $e) {
-            $error_msg = $e->getMessage();
-        }
-	}
-	
-	
-	static public function add_agent_refill()
-	{
-		global $A2B;
-		$FormHandler = FormHandler::GetInstance();
-		$processed = $FormHandler->getProcessed();
-		$credit = $processed['credit'];
-		$agent_id = $processed['agent_id'];
-		
-		//REFILL CARD .. UPADTE AGENT
-		$instance_table_agent = new Table("cc_agent");
-		$param_update_agent = "credit = credit + '".$credit."'";
-		$clause_update_agent = " id='$agent_id'";
-		$instance_table_agent -> Update_table ($FormHandler->DBHandle, $param_update_agent, $clause_update_agent, $func_table = null);
-	}
-	
 	static public function creation_card_refill()
 	{
 		$FormHandler = FormHandler::GetInstance();
@@ -521,82 +421,6 @@ class FormBO {
 			$value_insert = "'$credit', '$card_id', '$description' ";
 			$instance_refill_table = new Table("cc_logrefill", $field_insert);
 			$instance_refill_table -> Add_table ($FormHandler->DBHandle, $value_insert, null, null);	
-		}
-	}
-	
-	static public function deletion_card_refill_agent()
-	{
-		$FormHandler = FormHandler::GetInstance();
-		$processed = $FormHandler->getProcessed();
-		//AFTER A DELETE YOU DON T HAVE ACCESS TO ANY FIELD AND YOU CAN ACCESS ONLY TO THE ID
-		//SO YOU HAVE TO LOAD THE FIELD THAT YOU NEED
-		$card_id = $processed['id'];
-		$card_table = new Table('cc_card','credit');
-		$card_clause = "id = ".$card_id;
-		$card_result = $card_table -> Get_list($FormHandler->DBHandle, $card_clause, 0);
-		
-		$credit = $card_result[0][0];
-		
-		if ($credit>0 || $credit<0) {
-			if($credit>0){
-				$sign="+";
-			}else{
-				$sign="-";
-			}
-			$instance_table_agent = new Table("cc_agent");
-			$param_update_agent = "credit = credit $sign '".abs($credit)."'";
-			$clause_update_agent = " id='".$_SESSION['agent_id']."'";
-			$instance_table_agent -> Update_table ($FormHandler->DBHandle, $param_update_agent, $clause_update_agent, $func_table = null);
-			$field_insert = " credit, card_id, refill_type, description";
-			$description = gettext("DELETION CARD REFILL");
-			$correction = 0-$credit;
-			$value_insert = "'$correction', '$card_id', 1 ,'$description' ";
-			$instance_refill_table = new Table("cc_logrefill", $field_insert);
-			$instance_refill_table -> Add_table ($FormHandler->DBHandle, $value_insert, null, null);
-			if($credit>0){ 
-				$table_transaction = new Table();
-				$result_agent = $table_transaction -> SQLExec($FormHandler->DBHandle,"SELECT cc_card_group.id_agent FROM cc_card LEFT JOIN cc_card_group ON cc_card_group.id = cc_card.id_group WHERE cc_card.id = $card_id");
-				
-				if (is_array($result_agent)&& !is_null($result_agent[0]['id_agent']) && $result_agent[0]['id_agent']>0 ) {
-					// test if the agent exist and get its commission
-					$id_agent = $result_agent[0]['id_agent'];
-					$agent_table = new Table("cc_agent", "commission");
-					$agent_clause = "id = ".$id_agent;
-					$result_agent= $agent_table -> Get_list($FormHandler->DBHandle,$agent_clause);
-					
-					if (is_array($result_agent) && is_numeric($result_agent[0]['commission']) && $result_agent[0]['commission']>0) {
-						$field_insert = "id_payment, id_card, amount,description,id_agent";
-						$commission = a2b_round($credit * ($result_agent[0]['commission']/100));
-						$description_commission = gettext("CORRECT COMMISSION AFTER CARD DELETED!");
-						$description_commission.= "\nID CARD : ".$card_id;
-						$description_commission.= "\n AMOUNT: ".$credit;
-						$description_commission.= "\nCOMMISSION APPLIED: ".$result_agent[0]['commission'];
-						$value_insert = "'-1', '$card_id', '-$commission','$description_commission','$id_agent'";
-						$commission_table = new Table("cc_agent_commission", $field_insert);
-						$id_commission = $commission_table -> Add_table ($FormHandler->DBHandle, $value_insert, null, null,"id");
-						$table_agent = new Table('cc_agent');
-						$param_update_agent = "com_balance = com_balance - '".$commission."'";
-						$clause_update_agent = " id='".$id_agent."'";
-						$table_agent -> Update_table ($FormHandler->DBHandle, $param_update_agent, $clause_update_agent, $func_table = null);
-					}
-				}		
-			}
-		}
-	}
-	
-	static public function creation_agent_refill()
-	{
-		$FormHandler = FormHandler::GetInstance();
-		$processed = $FormHandler->getProcessed();
-		$credit = $processed['credit'];
-		
-		if ($credit>0) {
-			$field_insert = " credit, agent_id, description";
-			$agent_id = $FormHandler -> RESULT_QUERY;
-			$description = gettext("CREATION AGENT REFILL");
-			$value_insert = "'$credit', '$agent_id', '$description' ";
-			$instance_refill_table = new Table("cc_logrefill_agent", $field_insert);
-			$instance_refill_table -> Add_table ($FormHandler->DBHandle, $value_insert, null, null);
 		}
 	}
 	
@@ -836,48 +660,10 @@ class FormBO {
 		}
 	}
 	
-	static public function processing_commission_add()
-	{
-		$FormHandler = FormHandler::GetInstance();
-		$processed = $FormHandler->getProcessed();
-		$id_agent = $processed['id_agent'];
-		$id = $FormHandler -> RESULT_QUERY;
-		$type_com =  $processed['commission_type'];
-		if (!empty($id_agent)) {
-			//update record with agent commission
-			$table_agent = new Table('cc_agent','commission');
-			$agent_clause = "id = ".$id_agent;
-			$agent_result = $table_agent -> Get_list($FormHandler->DBHandle, $agent_clause, 0);
-			$agent_com = $agent_result[0][0];
-			if (empty($agent_com) ) {
-				$table_commission = new Table("cc_agent_commission");
-				$param_update_commission = "commission_percent = $agent_com";
-				$clause_update_commission = " id='".$id."'";
-				$table_commission -> Update_table ($FormHandler->DBHandle, $param_update_commission, $clause_update_commission, $func_table = null);
-			}
-			$amount = $processed['amount'];
-			if($amount>0)$sign="+";
-			else $sign="-";
-			$param_update_agent = "com_balance = com_balance $sign '".abs($amount)."'";
-			$clause_update_agent = " id='".$id_agent."'";
-			$table_agent -> Update_table ($FormHandler->DBHandle, $param_update_agent, $clause_update_agent, $func_table = null);
-		}
-	}
 	static public function processing_card_add()
 	{
 		self::create_sipiax_friends();
 		self::creation_card_refill();
-		self::create_lock_card();
-	}
-	
-	static public function processing_card_del_agent()
-	{	
-		self::deletion_card_refill_agent();
-	}
-	
-	static public function processing_card_add_agent()
-	{
-		self::create_sipiax_friends();
 		self::create_lock_card();
 	}
 	
@@ -1366,14 +1152,9 @@ class FormBO {
 				
 				// test if the agent exist and get its commission
 				$id_agent = $result_agent[0]['id_agent'];
-				// update refill & payment to keep a trace of agent in the timeline
-				$table_refill = new Table("cc_logrefill");
+				// Keep the agent reference on the payment.
 				$table_payment = new Table("cc_logpayment");
 				$param_update = "agent_id = '".$id_agent."'";
-				if(!empty($id_refill)){
-					$clause_update_refill_agent = " id ='$id_refill'";
-					$table_refill-> Update_table ($FormHandler->DBHandle, $param_update, $clause_update_refill_agent, $func_table = null);
-				}
 				$clause_update_payment_agent = " id ='$id_payment'";
 				$table_payment-> Update_table ($FormHandler->DBHandle, $param_update, $clause_update_payment_agent, $func_table = null);
 				
@@ -1401,41 +1182,6 @@ class FormBO {
 		}
 	}
 
-	static public function create_agent_refill()
-	{
-		global $A2B;
-		$FormHandler = FormHandler::GetInstance();
-		$processed = $FormHandler->getProcessed();
-		
-		if ($processed['added_refill']==1) {
-			$id_payment = $FormHandler -> RESULT_QUERY;
-			
-			//CREATE REFILL
-			$field_insert = "date, credit, agent_id ,refill_type, description";
-			$date = $processed['date'];
-			$credit = $processed['payment'];
-			$agent_id = $processed['agent_id'];
-			$refill_type= $processed['payment_type'];
-			$description = $processed['description'];
-			$value_insert = " '$date' , '$credit', '$agent_id','$refill_type', '$description' ";
-			$instance_sub_table = new Table("cc_logrefill_agent", $field_insert);
-			$id_refill = $instance_sub_table -> Add_table ($FormHandler->DBHandle, $value_insert, null, null,"id");	
-			
-			//REFILL AGENT .. UPADTE AGENT
-			$instance_table_agent = new Table("cc_agent");
-			$param_update_agent = "credit = credit + '".$credit."'";
-			$clause_update_agent = " id='$agent_id'";
-			$instance_table_agent -> Update_table ($FormHandler->DBHandle, $param_update_agent, $clause_update_agent, $func_table = null);
-			
-			//LINK THE REFILL TO THE PAYMENT .. UPADTE PAYMENT
-			$instance_table_pay = new Table("cc_logpayment_agent");
-			$param_update_pay = "id_logrefill = '".$id_refill."'";
-			$clause_update_pay = " id ='$id_payment'";
-			$instance_table_pay-> Update_table ($FormHandler->DBHandle, $param_update_pay, $clause_update_pay, $func_table = null);
-		}
-	}
-	
-	
 	/**
      * Function to edit the fields
      * @public

@@ -33,7 +33,7 @@
 
 
 
-getpost_ifset(array('id', 'name ','id_agent','users_perms', 'description'));
+getpost_ifset(array('id', 'name ','users_perms', 'description'));
 
 
 $HD_Form = new FormHandler("cc_card_group","Customer Group");
@@ -125,17 +125,6 @@ $HD_Form -> AddEditElement (gettext("DESCRIPTION"),
 		"",
 		gettext("Insert the description"),
 		"" , "", "", "", "" , "", "", "");
-/**
-$HD_Form -> AddEditElement (gettext("AGENT"),
-		"id_agent",
-		"",
-		"SELECT",
-		"", "", "",
-		"sql",
-		"cc_agent",
-		"login,id,firstname,lastname",
-		"", "", "%1 - %3 %4 (%2)", "", "", "", '<OPTION  value="-1" selected>'.gettext("NONE").'</OPTION>' );
-**/
 $HD_Form -> AddEditElement (gettext("PERMISSION USER INTERFACE"),
 		"users_perms",
 		'$value',

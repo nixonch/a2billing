@@ -815,25 +815,6 @@ function getnameofcustomer_id($id) {
 	return $value;
 }
 
-function linktoagent($id) {
-	$handle = DbConnect();
-	$inst_table = new Table("cc_agent", "login,firstname,lastname");
-	$FG_TABLE_CLAUSE = "id = '$id'";
-	$list_agent = $inst_table->Get_list($handle, $FG_TABLE_CLAUSE, "", "", "", "", "", "", "", 10);
-	if (is_array($list_agent))
-		$value = $list_agent[0][1] . " " . $list_agent[0][2] . " (" . $list_agent[0][0] . ")";
-	else
-		$value = "";
-	if ($id > 0) {
-		return "<a href=\"A2B_entity_agent.php?form_action=ask-edit&id=$id\">$value</a>";
-	} else {
-		return $value;
-	}
-}
-
-function nameofagent($id) {
-	echo getnameofagent($id);
-}
 function getnameofagent($id) {
 	$handle = DbConnect();
 	$inst_table = new Table("cc_agent", "login,firstname,lastname");

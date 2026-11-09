@@ -78,8 +78,6 @@ def main():
                        "ORDER BY TABLE_NAME").splitlines()
         views = query("SELECT TABLE_NAME FROM information_schema.VIEWS "
                       "WHERE TABLE_SCHEMA='" + database + "' ORDER BY TABLE_NAME").splitlines()
-        # Every agent table is still referenced by PHP or included .inc files.
-        # Keep these until the corresponding application code is removed.
         header = [
             '-- A2Billing 3.0 (nixonch) installation schema for MySQL 8.x.',
             '-- A2Billing / Star2billing S.L.; GNU Affero General Public License v3 or later.',
@@ -87,7 +85,7 @@ def main():
             '-- Canonical final structure and initial data; for an EMPTY database only.',
             '-- Re-export and validate with ../mysql-5.x/build-install.py.',
             '-- Standard prefix names win exact matches; additional Josko prefixes are included.',
-            '-- Agent tables remain because application references still exist.',
+            '-- Agent data still used by shared payments, tickets and history is retained.',
             'SET NAMES utf8 COLLATE utf8_bin;',
             'SET @a2b_install_sql_mode = @@SESSION.sql_mode;',
             "SET SQL_MODE='NO_AUTO_VALUE_ON_ZERO';",

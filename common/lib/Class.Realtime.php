@@ -163,9 +163,6 @@ class Realtime {
 				if (isset($_SESSION["user_type"]) && $_SESSION["user_type"]=="ADMIN") {
 				    $who = Notification::$ADMIN;
 				    $who_id = $_SESSION['admin_id'];
-				} elseif (isset($_SESSION["user_type"]) && $_SESSION["user_type"]=="AGENT") {
-				    $who = Notification::$AGENT;
-				    $who_id = $_SESSION['agent_id'];
 				} else {
 				    $who=Notification::$UNKNOWN;
 				    $id=-1;

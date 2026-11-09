@@ -83,7 +83,7 @@ $right_list["3"] = array( gettext("RATECARD"), "4");
 $right_list["4"] = array( gettext("TRUNK"), "8");
 $right_list["5"] = array( gettext("CALL REPORT"), "16");
 $right_list["6"] = array( gettext("CRONT SERVICE"), "32");
-$right_list["7"] = array( gettext("AGENT / ADMIN"), "64");
+$right_list["7"] = array( gettext("ADMINISTRATOR"), "64");
 $right_list["8"] = array( gettext("MAINTENANCE"), "128");
 $right_list["9"] = array( gettext("MAIL"), "256");
 $right_list["10"] = array( gettext("DID"), "512");
@@ -101,7 +101,6 @@ $right_list["21"] = array( gettext("EDIT/DELETE CUSTOMERS"), "1048576");
 $right_list["22"] = array( gettext("DELETE NOTIFICATIONS"), "2097152");
 $right_list["23"] = array( gettext("DELETE CDR"), "4194304");
 $right_list["24"] = array( gettext("EDIT/DELETE ADMIN"), "8388608");
-$right_list["25"] = array( gettext("EDIT/DELETE AGENT"), "16777216");
 
 $len_right_list = count($right_list);
 

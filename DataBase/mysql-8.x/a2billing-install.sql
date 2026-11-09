@@ -4,7 +4,7 @@
 -- Canonical final structure and initial data; for an EMPTY database only.
 -- Re-export and validate with ../mysql-5.x/build-install.py.
 -- Standard prefix names win exact matches; additional Josko prefixes are included.
--- Agent tables remain because application references still exist.
+-- Agent data still used by shared payments, tickets and history is retained.
 SET NAMES utf8 COLLATE utf8_bin;
 SET @a2b_install_sql_mode = @@SESSION.sql_mode;
 SET SQL_MODE='NO_AUTO_VALUE_ON_ZERO';
@@ -12,34 +12,13 @@ SET SQL_MODE='NO_AUTO_VALUE_ON_ZERO';
 CREATE TABLE `cc_agent` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `datecreation` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `active` char(1) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NOT NULL DEFAULT 'f',
   `login` char(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NOT NULL,
-  `passwd` char(40) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `location` text CHARACTER SET utf8mb3 COLLATE utf8mb3_bin,
   `language` char(5) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT 'en',
-  `id_tariffgroup` int DEFAULT NULL,
-  `options` int NOT NULL DEFAULT '0',
-  `credit` decimal(15,5) NOT NULL DEFAULT '0.00000',
-  `currency` char(3) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT 'USD',
-  `locale` char(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT 'C',
   `commission` decimal(10,4) NOT NULL DEFAULT '0.0000',
-  `vat` decimal(10,4) NOT NULL DEFAULT '0.0000',
-  `banner` text CHARACTER SET utf8mb3 COLLATE utf8mb3_bin,
-  `perms` int DEFAULT NULL,
   `lastname` char(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
   `firstname` char(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `address` char(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `city` char(40) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `state` char(40) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `country` char(40) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `zipcode` char(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `phone` char(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
   `email` char(70) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `fax` char(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `company` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
   `com_balance` decimal(15,5) NOT NULL,
-  `threshold_remittance` decimal(15,5) NOT NULL,
-  `bank_info` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_bin,
   PRIMARY KEY (`id`),
   UNIQUE KEY `login` (`login`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
@@ -52,25 +31,7 @@ CREATE TABLE `cc_agent_commission` (
   `amount` decimal(15,5) NOT NULL,
   `description` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_bin,
   `id_agent` int NOT NULL,
-  `commission_type` tinyint NOT NULL,
-  `commission_percent` decimal(10,4) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
-
-CREATE TABLE `cc_agent_signup` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `id_agent` int NOT NULL,
-  `code` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NOT NULL,
-  `id_tariffgroup` int NOT NULL,
-  `id_group` int NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `code` (`code`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
-
-CREATE TABLE `cc_agent_tariffgroup` (
-  `id_agent` bigint NOT NULL,
-  `id_tariffgroup` int NOT NULL,
-  PRIMARY KEY (`id_agent`,`id_tariffgroup`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 
 CREATE TABLE `cc_alarm` (
@@ -762,24 +723,6 @@ CREATE TABLE `cc_epayment_log` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 
-CREATE TABLE `cc_epayment_log_agent` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `agent_id` bigint NOT NULL DEFAULT '0',
-  `amount` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NOT NULL DEFAULT '0',
-  `vat` float NOT NULL DEFAULT '0',
-  `paymentmethod` char(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NOT NULL,
-  `cc_owner` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `cc_number` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `cc_expires` varchar(7) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `creationdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `status` int NOT NULL DEFAULT '0',
-  `cvv` varchar(4) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `credit_card_type` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `currency` varchar(4) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `transaction_detail` longtext CHARACTER SET utf8mb3 COLLATE utf8mb3_bin,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
-
 CREATE TABLE `cc_fax` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `id_cc_card` int NOT NULL DEFAULT '0',
@@ -970,18 +913,6 @@ CREATE TABLE `cc_logpayment` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 
-CREATE TABLE `cc_logpayment_agent` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `payment` decimal(15,5) NOT NULL,
-  `agent_id` bigint NOT NULL,
-  `id_logrefill` bigint DEFAULT NULL,
-  `description` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_bin,
-  `added_refill` tinyint NOT NULL DEFAULT '0',
-  `payment_type` tinyint NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
-
 CREATE TABLE `cc_logrefill` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -994,26 +925,6 @@ CREATE TABLE `cc_logrefill` (
   `diller_id` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_cc_logrefill_card_date` (`card_id`,`date`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
-
-CREATE TABLE `cc_logrefill_agent` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `credit` decimal(15,5) NOT NULL,
-  `agent_id` bigint NOT NULL,
-  `description` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_bin,
-  `refill_type` tinyint NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
-
-CREATE TABLE `cc_message_agent` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `id_agent` int NOT NULL,
-  `message` longtext CHARACTER SET utf8mb3 COLLATE utf8mb3_bin,
-  `type` tinyint NOT NULL DEFAULT '0',
-  `logo` tinyint NOT NULL DEFAULT '1',
-  `order_display` int NOT NULL,
-  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 
 CREATE TABLE `cc_monitor` (
@@ -1107,29 +1018,6 @@ CREATE TABLE `cc_payments` (
   `customers_id` bigint NOT NULL DEFAULT '0',
   `customers_name` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NOT NULL,
   `customers_email_address` varchar(96) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NOT NULL,
-  `item_name` varchar(127) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `item_id` varchar(127) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `item_quantity` int NOT NULL DEFAULT '0',
-  `payment_method` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NOT NULL,
-  `cc_type` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `cc_owner` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `cc_number` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `cc_expires` varchar(4) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `orders_status` int NOT NULL,
-  `orders_amount` decimal(14,6) DEFAULT NULL,
-  `last_modified` datetime DEFAULT NULL,
-  `date_purchased` datetime DEFAULT NULL,
-  `orders_date_finished` datetime DEFAULT NULL,
-  `currency` char(3) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
-  `currency_value` decimal(14,6) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
-
-CREATE TABLE `cc_payments_agent` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `agent_id` bigint NOT NULL,
-  `agent_name` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NOT NULL,
-  `agent_email_address` varchar(96) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NOT NULL,
   `item_name` varchar(127) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
   `item_id` varchar(127) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL,
   `item_quantity` int NOT NULL DEFAULT '0',
@@ -1405,16 +1293,6 @@ CREATE TABLE `cc_recognize_spool` (
   `destination` varchar(40) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NOT NULL,
   PRIMARY KEY (`id`),
   KEY `status` (`status`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
-
-CREATE TABLE `cc_remittance_request` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `id_agent` bigint NOT NULL,
-  `amount` decimal(15,5) NOT NULL,
-  `type` tinyint NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `status` tinyint NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 
 CREATE TABLE `cc_restricted_phonenumber` (
