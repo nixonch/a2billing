@@ -39,41 +39,6 @@ $HD_Form = new FormHandler("cc_backup","Backup");
 
 $HD_Form -> FG_DEBUG = 0;
 
-if ($form_action!='ask-add')
-	check_demo_mode();
-
-if ($form_action == 'add'){
-        $backup_file = $path;
-
-		if (substr($backup_file,-3)=='.gz'){
-			// WE NEED TO GZIP
-			$backup_file = substr($backup_file,0,-3);
-			$do_gzip=1;
-		}
-        // Make the backup stuff here and redirect to success page
-        //mysqldump -all --databases mya2billing -ua2billinguser -pa2billing > /tmp/test.sql
-        //pg_dump -c -d -U a2billinguser -h localhost -f /tmp/test.sql mya2billing
-		
-        if (DB_TYPE != 'postgres'){
-			$run_backup=MYSQLDUMP." -all --databases ".DBNAME." -u'".USER."' -p'".PASS."' > '{$backup_file}'";
-        }else{
-			$env_var="PGPASSWORD='".PASS."'";
-			putenv($env_var);
-			$run_backup=PG_DUMP." -c -d -U ".USER." -h ".HOST." -f '{$backup_file}' ".DBNAME;
-        }
-	if ($FG_DEBUG == 1 ) echo $run_backup."<br>";
-	exec($run_backup,$output,$error);
-	if ($do_gzip){
-		// Compress file
-		$run_gzip = GZIP_EXE." '$backup_file'";
-		if ($FG_DEBUG == 1 ) echo $run_gzip."<br>";
-		exec($run_gzip,$output,$error_zip);
-	}
-	if($error==0 && $error_zip==0 ) $HD_Form -> FG_GO_LINK_AFTER_ACTION_ADD = 'A2B_entity_restore.php?id';
-	elseif($error!=0)$HD_Form -> FG_TEXT_ADITION_CONFIRMATION = gettext("An error occur when the system tried to backup of the database.")."<br>".gettext("Please check yours system settings for the backup section ");
-	else $HD_Form -> FG_TEXT_ADITION_CONFIRMATION = gettext("An error occur when the system tried to compress the backup realized.")."<br>".gettext("Please check yours system settings for the backup section ");
-}
-
 $HD_Form -> CV_NO_FIELDS  = gettext("THERE IS NO")." ".strtoupper($HD_Form->FG_INSTANCE_NAME)." ".gettext("CREATED!");
 $HD_Form -> CV_DISPLAY_LINE_TITLE_ABOVE_TABLE = false;
 $HD_Form -> CV_TEXT_TITLE_ABOVE_TABLE = '';

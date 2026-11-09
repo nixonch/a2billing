@@ -56,24 +56,29 @@ getpost_ifset(array (
 $handle = DbConnect();
 $instance_table = new Table();
 
+$translation_error = false;
+if (isset ($translate_data) && $translate_data == 'translate') {
+	if (check_translated($id, $languages, $mailtype)) {
+		$translation_saved = update_translation($id, $languages, $subject, $mailtext, $mailtype);
+	} else {
+		$translation_saved = insert_translation($id, $languages, $subject, $mailtext, $mailtype);
+	}
+	if ($translation_saved && $popup_select == 4) a2b_smarty_popup_result($smarty);
+	$translation_error = !$translation_saved;
+}
+
 // #### HEADER SECTION
 $smarty->display('main.tpl');
-
-
-if (isset ($translate_data) && $translate_data == 'translate') {
-	//print check_translated($id, $languages);
-	if (check_translated($id, $languages, $mailtype)) {
-		update_translation($id, $languages, $subject, $mailtext, $mailtype);
-	} else {
-		insert_translation($id, $languages, $subject, $mailtext, $mailtype);
-	}
-}
 
 // Query to get mail template information
 $QUERY = "SELECT id, mailtype, subject, messagetext, id_language FROM cc_templatemail WHERE mailtype = '$mailtype'";
 if (isset ($languages))
 	$QUERY .= " and id_language = '$languages'";
 $mail = $instance_table->SQLExec($handle, $QUERY);
+if ($translation_error) {
+	$mail = array(array($id, $mailtype, stripslashes($subject), stripslashes($mailtext), $languages));
+	echo '<div class="msg_error">' . gettext('The translation could not be saved.') . '</div>';
+}
 
 
 // #### HELP SECTION
@@ -94,7 +99,8 @@ if (is_array($result)) {
 }
 
 ?>
-<FORM name="theForm" action="<?php echo $_SERVER['PHP_SELF'] ?>" METHOD="POST">
+<FORM name="theForm" action="A2B_entity_translate" METHOD="POST">
+<input name="popup_select" value="<?php echo (int)$popup_select; ?>" type="hidden">
 <input name="mailtype" value="<?php echo $mailtype; ?>" type="hidden">
 
 <table cellspacing="2" class="addform_table1">
@@ -123,7 +129,7 @@ if (is_array($result)) {
 		<TR>
 			<TD width="%25" valign="middle" class="form_head"> <?php echo gettext('Subject');?> </TD>  
 			<TD width="%75" valign="top" class="tableBodyRight" background="../Public/templates/default/images/background_cells.gif" class="text">
-			<INPUT class="form_input_text" name="subject"  size=30 maxlength=30 value="<?php echo $mail[0][2]?>">
+			<INPUT class="form_input_text" name="subject"  size=30 maxlength=30 value="<?php echo htmlspecialchars($mail[0][2], ENT_QUOTES, 'UTF-8'); ?>">
 			<span class="liens">
 			</span> 
 			</TD>
@@ -132,7 +138,7 @@ if (is_array($result)) {
 		<TR>
 			<TD width="%25" valign="middle" class="form_head"> <?php echo gettext('Mail Text');?> </TD>  
 			<TD width="%75" valign="top" class="tableBodyRight" background="../Public/templates/default/images/background_cells.gif" class="text">
-			<TEXTAREA class="form_input_textarea" name="mailtext" cols=60 rows=12><?php echo $mail[0][3]?></TEXTAREA> 
+			<TEXTAREA class="form_input_textarea" name="mailtext" cols=60 rows=12><?php echo htmlspecialchars($mail[0][3], ENT_QUOTES, 'UTF-8'); ?></TEXTAREA>
 			<span class="liens">
 			</span> 
 			</TD>

@@ -72,7 +72,7 @@ $expdate_error = false;
 $expday_error = false;
 
 if ($action == "generate") {
-	if (!is_numeric($nb_to_create) || $nb_to_create < 1) {
+	if (!ctype_digit((string)$nb_to_create) || $nb_to_create < 1) {
 		$nb_error++;
 		$number_error = true;
 		$msg_error = gettext("- Choose the number of customers that you want generate!");
@@ -160,6 +160,7 @@ if ($nbcard > 0 && $action == "generate" && $nb_error == 0) {
 	$description_refill = gettext("CREATION CARD REFILL");
 	$field_insert_refill = " credit, card_id, description";
 	$instance_refill_table = new Table("cc_logrefill", $field_insert_refill);
+	$generated = 0;
 
 	for ($k = 0; $k < $nbcard; $k++) {
 		$arr_card_alias = gen_card_with_alias($FG_ADITION_SECOND_ADD_TABLE . ", cc_voucher", 0, $cardnumberlenght_list);
@@ -178,11 +179,19 @@ if ($nbcard > 0 && $action == "generate" && $nb_error == 0) {
 		
 
 		$id_cc_card = $instance_sub_table->Add_table($HD_Form->DBHandle, $FG_ADITION_SECOND_ADD_VALUE, null, null, $HD_Form->FG_TABLE_ID);
+		if (!$id_cc_card) {
+			$nb_error++;
+			break;
+		}
+		$generated++;
 		//create refill for each cards
 
 		if ($addcredit > 0) {
 			$value_insert_refill = "'$addcredit', '$id_cc_card', '$description_refill' ";
-			$instance_refill_table->Add_table($HD_Form->DBHandle, $value_insert_refill, null, null);
+			if (!$instance_refill_table->Add_table($HD_Form->DBHandle, $value_insert_refill, null, null)) {
+				$nb_error++;
+				break;
+			}
 		}
 
 		$instance_realtime -> insert_voip_config ($sip, $iax, $id_cc_card, $accountnumber, $passui_secret, $useralias, $language, $warning_threshold, $say_dialednumber, $say_rateinitial, $say_timetotalk, $say_balance_after_call);
@@ -202,6 +211,11 @@ if ($nbcard > 0 && $action == "generate" && $nb_error == 0) {
 	// Save IAX accounts to file
 	if (isset ($iax)) {
 		$instance_realtime -> create_trunk_config_file ('iax');
+	}
+	if ($nb_error > 0) {
+		$msg_error = gettext('Customer generation stopped because a database operation failed.') . '<br>' . gettext('Created') . ': ' . $generated;
+	} elseif ($popup_select == 4) {
+		$HD_Form->finish_popup_add(true, htmlspecialchars(gettext('Created'), ENT_QUOTES, 'UTF-8') . ': ' . $generated);
 	}
 }
 if (!isset ($_SESSION["IDfilter"]))
@@ -228,7 +242,7 @@ $list = $HD_Form->perform_action($form_action);
 $smarty->display('main.tpl');
 
 // #### HELP SECTION
-if ($form_action == "list" || $popup_select < 2)
+if (!$popup_select)
     echo $CC_help_generate_customer;
 
 $instance_table_tariff = new Table("cc_tariffgroup", "id, tariffgroupname");
@@ -283,7 +297,8 @@ $list_language = Constants::getLanguagesList();
 		<?php echo $msg_error ?>
 	</div>
 <?php } ?>
-<form name="theForm" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+<form name="theForm" action="A2B_entity_card_multi" method="POST">
+<input name="popup_select" value="<?php echo (int)$popup_select; ?>" type="hidden">
 <table border="0" width="735px" align="center">
 <tr>
 	<td align="left" class="bgcolor_001">
@@ -515,6 +530,7 @@ $list_language = Constants::getLanguagesList();
 </div>
 <br>
 <?php
+if (!$popup_select) {
 // #### TOP SECTION PAGE
 $HD_Form -> create_toppage ($form_action);
 
@@ -526,6 +542,7 @@ if (strlen($HD_Form->FG_TABLE_CLAUSE)>1)
 	$_SESSION[$HD_Form->FG_EXPORT_SESSION_VAR] .= " WHERE $HD_Form->FG_TABLE_CLAUSE ";
 if (!is_null ($HD_Form->FG_ORDER) && ($HD_Form->FG_ORDER!='') && !is_null ($HD_Form->FG_SENS) && ($HD_Form->FG_SENS!='')) 
 	$_SESSION[$HD_Form->FG_EXPORT_SESSION_VAR].= " ORDER BY $HD_Form->FG_ORDER $HD_Form->FG_SENS";
+}
 
 // #### FOOTER SECTION
 $smarty->display('footer.tpl');

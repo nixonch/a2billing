@@ -59,8 +59,16 @@ $HD_Form -> FG_LIST_ADDING_BUTTON1 = false;
 $HD_Form -> FG_LIST_ADDING_BUTTON2 = false;
 
 $nbvoucher = $choose_list;
+$voucher_error = '';
+$generated = 0;
+if (isset($choose_list) && $choose_list !== '' &&
+    (!in_array((string)$choose_list, array('5', '10', '50', '100', '200', '500'), true) ||
+     !is_numeric($addcredit) || $addcredit < 0 || !isset($currencies_list[$choose_currency]) ||
+     empty($expirationdate) || strtotime($expirationdate) === false || !ctype_digit((string)$callplan_id))) {
+    $voucher_error = gettext('Please check the number of vouchers, credit, currency, expiration date and call plan.');
+}
 
-if ($nbvoucher>0) {
+if ($nbvoucher > 0 && $voucher_error === '') {
 		
         check_demo_mode();
 
@@ -78,8 +86,15 @@ if ($nbvoucher>0) {
 //            $FG_ADITION_SECOND_ADD_VALUE  = "'$vouchernum', '$addcredit', 't', '$tag_list', '$choose_currency', '$expirationdate'";
             $FG_ADITION_SECOND_ADD_VALUE  = "'$vouchernum', '$addcredit', 't', '$tag_list', '$choose_currency', '$expirationdate', '$callplan_id'";
 			$result_query = $instance_sub_table -> Add_table ($HD_Form -> DBHandle, $FG_ADITION_SECOND_ADD_VALUE, null, null);
+			if (!$result_query) {
+				$voucher_error = gettext('Voucher generation stopped because a database operation failed.') . '<br>' . gettext('Created') . ': ' . $generated;
+				break;
+			}
+			$generated++;
         }
-		
+		if ($voucher_error === '' && $popup_select == 4) {
+			$HD_Form->finish_popup_add(true, htmlspecialchars(gettext('Created'), ENT_QUOTES, 'UTF-8') . ': ' . $generated);
+		}
 }
 
 if (!isset($_SESSION["IDfilter"])) $_SESSION["IDfilter"]='NODEFINED';
@@ -107,12 +122,14 @@ $cus_list_voucher = $cus_cctarrifval -> Get_list ($HD_Form -> DBHandle);
 // #### HEADER SECTION
 $smarty->display('main.tpl');
 // #### HELP SECTION
-if ($form_action == "list" || $popup_select < 2)
+if (!$popup_select)
     echo $CC_help_generate_voucher;
 
 ?>
 <div align="center">
-<form name="theForm" action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL) ?>">
+<?php if ($voucher_error !== '') echo '<div class="msg_error">' . $voucher_error . '</div>'; ?>
+<form name="theForm" action="A2B_entity_voucher_multi" method="POST">
+<input name="popup_select" value="<?php echo (int)$popup_select; ?>" type="hidden">
 <table align="center" border="0">
 <tbody><tr>
     <?php
@@ -128,23 +145,23 @@ if ($form_action == "list" || $popup_select < 2)
     <li>
         <select name="choose_list" size="1" class="form_input_select">
             <option value=""><?php echo gettext("Choose the number of vouchers to create");?></option>
-            <option class="input" value="5"><?php echo gettext("5 Voucher");?></option>
-            <option class="input" value="10"><?php echo gettext("10 Vouchers");?></option>
-            <option class="input" value="50"><?php echo gettext("50 Vouchers");?></option>
-            <option class="input" value="100"><?php echo gettext("100 Vouchers");?></option>
-            <option class="input" value="200"><?php echo gettext("200 Vouchers");?></option>
-            <option class="input" value="500"><?php echo gettext("500 Vouchers");?></option>
+            <option class="input" value="5" <?php if ($choose_list == '5') echo 'selected'; ?>><?php echo gettext("5 Voucher");?></option>
+            <option class="input" value="10" <?php if ($choose_list == '10') echo 'selected'; ?>><?php echo gettext("10 Vouchers");?></option>
+            <option class="input" value="50" <?php if ($choose_list == '50') echo 'selected'; ?>><?php echo gettext("50 Vouchers");?></option>
+            <option class="input" value="100" <?php if ($choose_list == '100') echo 'selected'; ?>><?php echo gettext("100 Vouchers");?></option>
+            <option class="input" value="200" <?php if ($choose_list == '200') echo 'selected'; ?>><?php echo gettext("200 Vouchers");?></option>
+            <option class="input" value="500" <?php if ($choose_list == '500') echo 'selected'; ?>><?php echo gettext("500 Vouchers");?></option>
         </select>
     </li>
     <li>
-        <?php echo gettext("Amount of credit");?> : 	<input class="form_input_text" name="addcredit" size="10" maxlength="10" >
+        <?php echo gettext("Amount of credit");?> : 	<input class="form_input_text" name="addcredit" size="10" maxlength="10" value="<?php echo htmlspecialchars($addcredit, ENT_QUOTES, 'UTF-8'); ?>">
     </li>
     <li>
         <select NAME="choose_currency" size="1" class="form_input_select">
         <?php
         foreach ($currencies_list as $key => $cur_value) {
         ?>
-        <option value='<?php echo $key ?>'><?php echo $cur_value[1].' ('.$cur_value[2].')' ?></option>
+        <option value='<?php echo $key ?>' <?php if ($key == $choose_currency) echo 'selected'; ?>><?php echo $cur_value[1].' ('.$cur_value[2].')' ?></option>
         <?php } ?>
         </select>
     </li>
@@ -153,20 +170,20 @@ if ($form_action == "list" || $popup_select < 2)
             $begin_date_plus = date("Y") + 10;
             $end_date = date("-m-d H:i:s");
             $comp_date = "value='".$begin_date.$end_date."'";
-            $comp_date_plus = "value='".$begin_date_plus.$end_date."'";
+            $comp_date_plus = "value='" . htmlspecialchars(!empty($expirationdate) ? $expirationdate : $begin_date_plus.$end_date, ENT_QUOTES, 'UTF-8') . "'";
         ?>
     <li>
         <?php echo gettext("Expiration date");?> : <input class="form_input_text"  name="expirationdate" size="19" maxlength="19" <?php echo $comp_date_plus; ?>> <?php echo gettext("(respect the format YYYY-MM-DD HH:MM:SS)");?>
     </li>
     <li>
-        <?php echo gettext("Tag");?> : <input class="form_input_text"  name="tag_list" size="40" maxlength="40">
+        <?php echo gettext("Tag");?> : <input class="form_input_text"  name="tag_list" size="40" maxlength="40" value="<?php echo htmlspecialchars(stripslashes($tag_list), ENT_QUOTES, 'UTF-8'); ?>">
     </li>
     <li>
 	Plan : <select name="callplan_id" size="1" class="form_input_select">
         <?php
         foreach ((is_array($cus_list_voucher) ? $cus_list_voucher : array()) as $key => $cus_tariffview) {
         ?>
-        <option value='<?php echo $cus_tariffview[0] ?>'><?php echo $cus_tariffview[1] ?></option>
+        <option value='<?php echo $cus_tariffview[0] ?>' <?php if ($cus_tariffview[0] == $callplan_id) echo 'selected'; ?>><?php echo $cus_tariffview[1] ?></option>
         <?php } ?>
         </select>
     </li>
@@ -185,6 +202,7 @@ if ($form_action == "list" || $popup_select < 2)
 
 <?php
 
+if (!$popup_select) {
 $HD_Form -> create_toppage ($form_action);
 
 $HD_Form -> create_form ($form_action, $list, $id=null) ;
@@ -195,6 +213,7 @@ if (strlen($HD_Form->FG_TABLE_CLAUSE)>1) {
 }
 if (!is_null ($HD_Form->FG_ORDER) && ($HD_Form->FG_ORDER!='') && !is_null ($HD_Form->FG_SENS) && ($HD_Form->FG_SENS!='')) {
     $_SESSION[$HD_Form->FG_EXPORT_SESSION_VAR].= " ORDER BY $HD_Form->FG_ORDER $HD_Form->FG_SENS";
+}
 }
 
 // #### FOOTER SECTION

@@ -137,7 +137,10 @@ if ($popup_select >= 1 && $popup_select != 4) {
 	
 	// Translation
 	$HD_Form -> FG_OTHER_BUTTON2 = true;
-	$HD_Form -> FG_OTHER_BUTTON2_LINK= "A2B_entity_translate.php?form_action=ask-add&id=|param|&mailtype=|col0|&languages=$languages";
+	$HD_Form -> FG_OTHER_BUTTON2_LINK = 'A2B_entity_translate?form_action=ask-add&popup_select=4&id=|param|&mailtype=|col0|&languages=' . rawurlencode($languages) . '" onclick="' . htmlspecialchars(
+		"alertBase('url:' + this.href," . json_encode(gettext('Translate')) . ",true,true,'info',null,null,null,null,null,null,null,null,refreshInsideCallback);return false;",
+		ENT_QUOTES, 'UTF-8'
+	);
 	$HD_Form -> FG_OTHER_BUTTON2_ALT = gettext('Translate');
 }
 

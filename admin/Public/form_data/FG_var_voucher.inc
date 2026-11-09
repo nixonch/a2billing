@@ -66,7 +66,11 @@ foreach($currencies_list as $key => $cur_value) {
 
 
 $HD_Form ->FG_LIST_ADDING_BUTTON1 = true;
-$HD_Form ->FG_LIST_ADDING_BUTTON_LINK1 = "A2B_entity_voucher_multi.php?section=".$_SESSION["menu_section"];
+$HD_Form ->FG_LIST_ADDING_BUTTON_LINK1 = 'javascript:;" onclick="' . htmlspecialchars(
+	'alertBase(' . json_encode('url:A2B_entity_voucher_multi?popup_select=4&section=' . rawurlencode($_SESSION['menu_section'])) .
+	',' . json_encode(gettext("Generate Voucher")) . ",true,true,'info',null,null,null,null,null,null,null,null,refreshInsideCallback);return false;",
+	ENT_QUOTES, 'UTF-8'
+);
 $HD_Form ->FG_LIST_ADDING_BUTTON_ALT1 = $HD_Form ->FG_LIST_ADDING_BUTTON_MSG1 = gettext("Generate Voucher");
 $HD_Form ->FG_LIST_ADDING_BUTTON_IMG1 = Images_Path ."/cog_add.png" ;
 

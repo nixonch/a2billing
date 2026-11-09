@@ -449,7 +449,7 @@
 			<li><ul>
 				<li><a href="A2B_entity_alarm.php?section=16"> {gettext("Alarms")}</a></li>
 				<li><a href="A2B_entity_log_viewer.php?section=16">{gettext("Users Activity")}</a></li>
-				<li><a href="A2B_entity_backup.php?form_action=ask-add&section=16">{gettext("Database Backup")}</a></li>
+				<li><a href="A2B_entity_backup?form_action=ask-add&amp;popup_select=4&amp;section=16" onclick="alertBase('url:' + this.href,this.textContent,true,true,'info',null,null,null,null,null,null,null,null,function(payload) { if (/\/A2B_entity_restore$/.test(location.pathname)) return refreshInsideCallback(payload); return false; });return false;">{gettext("Database Backup")}</a></li>
 				<li><a href="A2B_entity_restore.php?section=16">{gettext("Database Restore")}</a></li>
 				<li><a href="CC_musiconhold.php?section=16">{gettext("MusicOnHold")}</a></li>
 				<li><a href="CC_upload.php?section=16">{gettext("Upload File")}</a></li>
