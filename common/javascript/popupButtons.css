@@ -1,4 +1,4 @@
-html.alert-base-popup :is(.form_input_button, .form_input_button_disabled, .cssbutton_big, button, input[type="submit"], input[type="button"]) {
+html.alert-base-popup :is(.form_input_button, .form_input_button_disabled, .cssbutton_big, button[type="submit"], input[type="submit"], input[type="button"]) {
     display: inline-block;
     padding: 5px 12px;
     font: bold 13px Arial, Helvetica, sans-serif;
@@ -14,7 +14,7 @@ html.alert-base-popup :is(.form_input_button, .form_input_button_disabled, .cssb
     text-shadow: none;
     transition: opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease, text-shadow 0.15s ease;
 }
-html.alert-base-popup :is(.form_input_button, .cssbutton_big, button, input[type="submit"], input[type="button"]):hover {
+html.alert-base-popup :is(.form_input_button, .cssbutton_big, button[type="submit"], input[type="submit"], input[type="button"]):hover {
     opacity: 1;
     background: var(--alert-button-color);
     color: white;
@@ -22,12 +22,12 @@ html.alert-base-popup :is(.form_input_button, .cssbutton_big, button, input[type
     transform: translateY(-1px);
     text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
 }
-html.alert-base-popup :is(.form_input_button, .cssbutton_big, button, input[type="submit"], input[type="button"]):active {
+html.alert-base-popup :is(.form_input_button, .cssbutton_big, button[type="submit"], input[type="submit"], input[type="button"]):active {
     transform: translateY(1px);
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
     text-shadow: none;
 }
-html.alert-base-popup :is(.form_input_button, button, input[type="submit"], input[type="button"]):disabled,
+html.alert-base-popup :is(.form_input_button, button[type="submit"], input[type="submit"], input[type="button"]):disabled,
 html.alert-base-popup .form_input_button_disabled {
     opacity: 0.5;
     cursor: default;

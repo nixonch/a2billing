@@ -845,6 +845,14 @@ call a2b_trf_check;
 
 drop procedure if exists a2b_trf_check;
 
+-- Hide accrued commission in the dealer customer list by default.
+INSERT INTO cc_config (config_title, config_key, config_value, config_description, config_valuetype, config_listvalues, config_group_title)
+SELECT 'Show dealer accrued commission', 'show_dealer_commission', '0', 'Show the COMMISSION ACCRUED column in the dealer customer list.', 1, 'yes,no', 'webcustomerui'
+FROM DUAL
+WHERE NOT EXISTS (
+    SELECT 1 FROM cc_config WHERE config_key='show_dealer_commission' AND config_group_title='webcustomerui'
+);
+
 -- Google integrations in customer templates. Empty identifiers disable their blocks.
 -- Keep configured values when this update is run again.
 INSERT INTO cc_config (config_title, config_key, config_value, config_description, config_valuetype, config_listvalues, config_group_title)

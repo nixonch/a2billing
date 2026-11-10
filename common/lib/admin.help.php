@@ -83,8 +83,8 @@ if (SHOW_HELP) {
 	$CC_help_sipfriend_reload = create_help(gettext("Click reload to commit changes to Asterisk"));
 
 	$CC_help_sipfriend_edit = create_help(gettext("Each SIP/IAX client is identified by a number of parameters.</br></br>") .
-	gettext("More details on how to configure clients are on the Wiki") . ' -> <a href="http://voip-info.org/wiki-Asterisk+config+sip.conf" target="_blank">sip.conf</a> &
-<a href="http://voip-info.org/wiki-Asterisk+config+iax.conf" target="_blank">iax.conf</a>', 'EditFriend', true);
+	gettext("More details on how to configure clients are on the Wiki") . ' -> <a href="https://www.voip-info.org/asterisk-config-sipconf/" target="_blank">sip.conf</a> &
+<a href="https://www.voip-info.org/asterisk-config-iaxconf/" target="_blank">iax.conf</a>', 'EditFriend', true);
 
 	$CC_help_callerid_list = create_help(gettext("Set the caller ID so that the customer calling in is authenticated on the basis of the callerID rather than with the account number"), 'ListCallerID');
 

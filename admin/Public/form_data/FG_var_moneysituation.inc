@@ -70,8 +70,16 @@ $HD_Form -> FG_ADDITION = false;
 
 $HD_Form -> FG_OTHER_BUTTON1 = true;
 $HD_Form -> FG_OTHER_BUTTON2 = true;
-$HD_Form -> FG_OTHER_BUTTON2_LINK="javascript:;\" onClick=\"MM_openBrWindow('A2B_entity_moneysituation_details.php?type=payment&form_action=list&atmenu=card&displayheader=0&popup_select=1&id=|param|','','scrollbars=yes,resizable=yes,width=500,height=270')\"";
-$HD_Form -> FG_OTHER_BUTTON1_LINK="javascript:;\" onClick=\"MM_openBrWindow('A2B_entity_moneysituation_details.php?type=invoice&form_action=list&atmenu=card&displayheader=0&popup_select=1&id=|param|','','scrollbars=yes,resizable=yes,width=500,height=270')\"";
+$HD_Form -> FG_OTHER_BUTTON2_LINK = 'javascript:;" onclick="' . htmlspecialchars(
+	'alertBase(' . json_encode('url:A2B_entity_moneysituation_details?type=payment&form_action=list&atmenu=card&displayheader=0&popup_select=1&id=|param|') .
+	',' . json_encode(gettext('PAYMENT') . ' | |col1|') . ",true,true,'info');return false;",
+	ENT_QUOTES, 'UTF-8'
+);
+$HD_Form -> FG_OTHER_BUTTON1_LINK = 'javascript:;" onclick="' . htmlspecialchars(
+	'alertBase(' . json_encode('url:A2B_entity_moneysituation_details?type=invoice&form_action=list&atmenu=card&displayheader=0&popup_select=1&id=|param|') .
+	',' . json_encode(gettext('INVOICE') . ' | |col1|') . ",true,true,'info');return false;",
+	ENT_QUOTES, 'UTF-8'
+);
 $HD_Form -> FG_OTHER_BUTTON2_ALT = '<font color="red">'.gettext('PAYMENT').'</font>';
 $HD_Form -> FG_OTHER_BUTTON1_ALT = '<font color="red">'.gettext('INVOICE').'</font>';
 

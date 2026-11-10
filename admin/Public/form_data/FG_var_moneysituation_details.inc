@@ -67,6 +67,7 @@ if ($type=='payment'){
 
 
 $HD_Form -> FG_DEBUG = 0;
+$HD_Form -> FG_VIEW_TABLE_WITDH = '90%';
 $HD_Form -> CV_NO_FIELDS  = gettext("THERE IS NO").strtoupper($HD_Form->FG_INSTANCE_NAME)." ".gettext("CREATED!");
 $HD_Form -> CV_DISPLAY_LINE_TITLE_ABOVE_TABLE = false;
 $HD_Form -> CV_TEXT_TITLE_ABOVE_TABLE = '';

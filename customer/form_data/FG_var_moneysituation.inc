@@ -92,21 +92,24 @@ if (has_rights (ACX_DISTRIBUTION) && !($popup_select>=1)) {
 }
 
 $req1 = "cc_card LEFT JOIN cc_callerid ON id_cc_card=cc_card.id";
+$show_dealer_commission = !empty($A2B->config['webcustomerui']['show_dealer_commission']);
 
 $HD_Form -> AddViewElement(gettext("CUSTOMER"), "lastname", "25%", "center", "sort", "", "link2cust", $req1, "CONCAT(IF(status=0,'<del>',''),lastname,' ',firstname,IF(company_name='','',CONCAT(' (',company_name,')')),IF(status=0,'</del>','')), cc_card.id, tariff, '$filterprefix2' AS fp, IF(('$filterprefix2'='' OR cc_card.id = ".$_SESSION['card_id'].") OR (phone+0 NOT LIKE '".$addsearch."' AND cid+0 NOT LIKE '".$addsearch."'),'',CONCAT('(',IF(phone+0 LIKE '".$addsearch."',phone,cid),')')) AS fn", $req2, "%1 %5", "", "javascript:;\" onClick=\"alertBase('url:A2B_entity_moneysituation_details?form_action=ask-edit&displayheader=0&popup_select=1&idcust=%2&tariff=%3','%1',true,false,'#666666')");
 
 $HD_Form -> AddViewElement(gettext("BALANCE"), "credit", "11%", "center", "", "", "", "", "", "", "", "display_refill_money");
-$HD_Form -> AddViewElement(gettext("COMMISSION ACCRUED"), "commission", "17%", "center", "", "", "", "", "", "", "", "display_refill_money");
+if ($show_dealer_commission) {
+    $HD_Form -> AddViewElement(gettext("COMMISSION ACCRUED"), "commission", "17%", "center", "", "", "", "", "", "", "", "display_refill_money");
+}
 $HD_Form -> AddViewElement(gettext("MARGIN"), "margin", "7%", "center", "");
 $HD_Form -> AddViewElement(gettext("INVOICES"), "invoice", "5%", "center", "", "", "link2cust", "cc_invoice LEFT JOIN cc_invoice_item ON cc_invoice_item.id_invoice=cc_invoice.id", "SUM(ROUND(cc_invoice_item.price*(1+(cc_invoice_item.vat/100)),2)), cc_invoice.id_card", "cc_invoice.id_card='%id' GROUP BY cc_invoice.id_card", "%1", "", "javascript:;\" onClick=\"alertBase('url:A2B_entity_moneysituation_details?type=invoice&form_action=list&atmenu=card&displayheader=0&popup_select=1&idcust=%2','".gettext("INVOICES")."',true,false,'#666666')");
 $HD_Form -> AddViewElement(gettext("Payments"), "payment", "5%", "center", "", "", "link2cust", "cc_logpayment as t2", "SUM(ROUND(t2.payment-t2.fee,2)),t2.card_id", "t2.card_id='%id' GROUP BY t2.card_id", "%1", "", "javascript:;\" onClick=\"alertBase('url:A2B_entity_moneysituation_details?type=payment&form_action=list&atmenu=card&displayheader=0&popup_select=1&idcust=%2','".gettext("Payments")."',true,false,'#666666')");
-$HD_Form -> AddViewElement(gettext("TO PAY"), "to_pay", "10%", "center", "", "", "eval", "number_format((%4-%5+abs(%5-%4))/2, 2, '.', ' ')");
+$HD_Form -> AddViewElement(gettext("TO PAY"), "to_pay", "10%", "center", "", "", "eval", $show_dealer_commission ? "number_format((%4-%5+abs(%5-%4))/2, 2, '.', ' ')" : "number_format((%3-%4+abs(%4-%3))/2, 2, '.', ' ')");
 
 //$FieldViewElement = "cc_card.id, CONCAT(cc_card.credit,IFNULL((SELECT IF(card_id=cc_card.id,' 1','') FROM cc_logrefill WHERE diller_id=".$_SESSION["card_id"]." AND TIMEDIFF(NOW(),cc_logrefill.date)<'00:05:00' ORDER BY id DESC LIMIT 1),'')) credit, commission, CONCAT_WS(' ',margin,'%') margin, cc_card.id, cc_card.id, cc_card.id";
 $HD_Form -> FieldViewElement("
     cc_card.id,
     CONCAT(cc_card.credit, IF(recent.card_id IS NOT NULL, ' 1', '')) credit,
-    cc_card.commission,
+    ".($show_dealer_commission ? "cc_card.commission," : "")."
     CONCAT_WS(' ', cc_card.margin, '%') margin,
     cc_card.id,
     cc_card.id,
@@ -135,7 +138,7 @@ if (has_rights (ACX_DISTRIBUTION) && !($popup_select>=1)) {
 */
 //	$HD_Form -> FG_INFO = true;
 
-//	$HD_Form -> FG_OTHER_BUTTON1 = true;
+	$HD_Form -> FG_OTHER_BUTTON1 = true;
 	$HD_Form -> FG_OTHER_BUTTON2 = true;
 //	$HD_Form -> FG_OTHER_BUTTON3 = true;
 	$HD_Form -> FG_OTHER_BUTTON4 = true;
