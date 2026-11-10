@@ -254,14 +254,14 @@ class SOAP_A2Billing
 		    return array("ERROR", "INVALID KEY");
 		}
 		
-	    $return = currencies_update_yahoo($this->DBHandle, $this -> instance_table);
+	    $return = currencies_update($this->DBHandle, $this -> instance_table, $success);
 		
-		if (!$return)
+		if (!$success)
 		{
-		    return array(false, "Currency Update Failure");
+		    return array(false, $return);
 		}
         
-        return array (true, 'Currency Update  SUCCESS'); 
+        return array (true, $return);
     }
     
     /*

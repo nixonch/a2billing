@@ -1604,153 +1604,115 @@ function do_field($sql, $fld, $dbfld, $oro=false, $sko=0) {
 	return $sql;
 }
 
-// Update currency exchange rate list from finance.yahoo.com.
-// To work around yahoo truncating to 4 decimal places before
-// doing a division, leading to >10% errors with weak base_currency,
-// we always request in a strong currency and convert ourselves.
-// We use ounces of silver,  as if silver ever devalues significantly
-// we'll all be pretty much boned anyway,  wouldn't you say?
-function currencies_update_yahoo ($DBHandle, $instance_table)
+// Fetch the price of one unit in the requested base currency.
+function currencies_fetch_values($base_currency, $codes, &$error)
 {
-	$FG_DEBUG = 0;
-	$strong_currency = 'EUR';
-	$url = "http://download.finance.yahoo.com/d/quotes.csv?s=";
-	$return = "";
-	
+	$error = '';
+	$ch = curl_init('https://api.frankfurter.dev/v2/rates?base=USD');
+	curl_setopt_array($ch, array(
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_CONNECTTIMEOUT => 10,
+		CURLOPT_TIMEOUT => 20
+	));
+	$response = curl_exec($ch);
+	$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	curl_close($ch);
+	if ($response === false || $status != 200) {
+		$error = gettext('Cannot download exchange rates from Frankfurter.');
+		return false;
+	}
+	$data = json_decode($response, true);
+	if (!is_array($data) || !isset($data[0])) {
+		$error = gettext('Invalid exchange rate response from Frankfurter.');
+		return false;
+	}
+	$quotes = array('USD' => 1);
+	foreach ($data as $row) {
+		if (!is_array($row) || !isset($row['base'], $row['quote'], $row['rate']) ||
+			$row['base'] !== 'USD' || !is_string($row['quote'])) {
+			$error = gettext('Invalid exchange rate response from Frankfurter.');
+			return false;
+		}
+		$quotes[$row['quote']] = $row['rate'];
+	}
+	if (!isset($quotes[$base_currency]) || !is_numeric($quotes[$base_currency]) ||
+		!is_finite((float)$quotes[$base_currency]) || $quotes[$base_currency] <= 0 || $quotes['USD'] != 1) {
+		$error = gettext('Invalid exchange rate for') . ' ' . $base_currency . '.';
+		return false;
+	}
+	$values = array();
+	foreach ($codes as $code) {
+		if (!array_key_exists($code, $quotes)) continue;
+		$rate = $quotes[$code];
+		if (!is_numeric($rate) || !is_finite((float)$rate) || $rate <= 0) {
+			$error = gettext('Invalid exchange rate for') . ' ' . $code . '.';
+			return false;
+		}
+		$value = round($quotes[$base_currency] / $rate, 10);
+		if (!is_finite($value) || $value <= 0 || $value > 9999999.99999) {
+			$error = gettext('Exchange rate is outside the currency field limits:') . ' ' . $code . '.';
+			return false;
+		}
+		$values[$code] = number_format($value, 10, '.', '');
+	}
+	return $values;
+}
+
+// Return the update message and expose its status to cron and SOAP callers.
+function currencies_update ($DBHandle, $instance_table, &$success = null)
+{
+	$success = false;
+	$base_currency = strtoupper(BASE_CURRENCY);
+	$aborted = ' ' . gettext('Currency update ABORTED.');
 	$QUERY = "SELECT id, currency, basecurrency, value FROM cc_currencies ORDER BY id";
 	$old_currencies = $instance_table->SQLExec($DBHandle, $QUERY);
-	// we will retrieve a .CSV file e.g. USD to EUR and USD to CAD with a URL like:
-	// http://download.finance.yahoo.com/d/quotes.csv?s=USDEUR=X+USDCAD=X&f=l1
-	if (is_array($old_currencies)) {
-		$num_cur = count($old_currencies);
-		if ($FG_DEBUG >= 1)
-			$return .= basename(__FILE__) . ' line:' . __LINE__ . "[CURRENCIES TO UPDATE = $num_cur]\n";
-		for ($i = 0; $i < $num_cur; $i++) {
-			if ($FG_DEBUG >= 1)
-				$return .= $old_currencies[$i][0] . ' - ' . $old_currencies[$i][1] . ' - ' . $old_currencies[$i][2] . "\n";
-			// Finish and add termination ?
-			if ($i +1 == $num_cur) {
-				$url .= $strong_currency . $old_currencies[$i][1] . "=X&f=l1";
-			} else {
-				$url .= $strong_currency . $old_currencies[$i][1] . "=X+";
-			}
-
-			// Save the index of base_currency when we find it
-			if (strcasecmp(BASE_CURRENCY, $old_currencies[$i][1]) == 0) {
-				$index_base_currency = $i;
-			}
-		}
-
-		// Check we found the index of base_currency
-		if (!isset ($index_base_currency)) {
-			return gettext("Can't find our base_currency in cc_currencies.") . ' ' . gettext('Currency update ABORTED.');
-		}
-
-		// Call wget to download the URL to the .CVS file
-		$command = "/usr/bin/wget '" . $url . "' -O /tmp/currencies.cvs 2>&1";
-		exec($command, $output);
-		if ($FG_DEBUG >= 1)
-			$return .= "/usr/bin/wget '" . $url . "' -O /tmp/currencies.cvs\n" . $output;
-
-		// get the file with the currencies to update the database
-		$currencies = file("/tmp/currencies.cvs");
-
-		// trim off any leading/trailing comments/headers that may have been added
-		$i = 0;
-		while (isset($currencies[$i]) && !is_numeric(trim($currencies[$i])) && trim($currencies[$i]) != "N/A") {
-			$i++;
-		}
-/**		$num_res = count($currencies);
-		for ($i = 0; $i < $num_res; $i++) {
-			if (is_numeric(trim($currencies[$i])) || trim($currencies[$i]) == "N/A") {
-				
-				break;
-			}
-		}
-**/		$currencies = array_slice($currencies, $i, $num_cur);
-
-		// do some simple checks to try to verify we've received exactly one
-		// valid response for each currency we requested
-		$num_res = count($currencies);
-		if ($num_res < $num_cur) {
-			return gettext("The CSV file doesn't contain all the currencies we requested.") . ' ' . gettext('Currency update ABORTED.');
-		}
-		for ($i = 0; $i < $num_cur; $i++) {
-			if (!is_numeric(trim($currencies[$i]))) {
-				if (trim($currencies[$i]) == "N/A")		$currencies[$i] = $old_currencies[$i][3];
-				else return gettext("At least one of the entries in the CSV file isn't a number.").' '.$old_currencies[$i][1].' = '.$currencies[$i].'. '.gettext('Currency update ABORTED.');
-			}
-		}
-		
-		// Find base_currency's value in $strong_currency to help avoid Yahoo's
-		// early truncation,  and therefore win back a lot of accuracy
-		$base_value = $currencies[$index_base_currency];
-
-		// Check our base_currency will still fund our addiction to tea and biscuits
-		if (round($base_value, 5) < 0.00001) {
-			return gettext('Our base_currency seems to be worthless.') . ' ' . gettext('Currency update ABORTED.');
-		}
-
-		// update each row we originally retrieved from cc_currencies
-		$i = 0;
-		foreach ($currencies as $currency) {
-
-			$currency = trim($currency);
-
-			if ($currency != 0) {
-				$currency = $base_value / $currency;
-			}
-			if ($old_currencies[$i][1] == 'UAH') {
-				if ($currency > $old_currencies[$i][3])
-					$currency = $old_currencies[$i][3];
-				$url = "http://kurs.com.ua/ajax/valyuta_table/all/".date("d.m.Y")."/".strtolower(BASE_CURRENCY);
-				$command = "/usr/bin/wget '" . $url . "' -O /tmp/currency-uah.json 2>&1";
-				exec($command, $output);
-				$currency_uah = json_decode(file_get_contents("/tmp/currency-uah.json"),true,512);
-				$currency_uah = strstr($currency_uah['table'],BASE_CURRENCY);
-				$dlm = "<span>";
-				if ($currency_uah === false) {
-					$url = "http://m.kurs.com.ua/ajax/main_table/all/".strtolower(BASE_CURRENCY)."/".date("Y-m-d")."/bank";
-					$command = "/usr/bin/wget '" . $url . "' -O /tmp/currency-uah.cvs 2>&1";
-					exec($command, $output);
-					$currency_uah = strstr(file_get_contents("/tmp/currency-uah.cvs"),BASE_CURRENCY);
-					$dlm = "t";
-				}
-				if ($currency_uah !== false) {
-					preg_match_all("/(?<=".$dlm.")\d*\.\d*/", $currency_uah, $uah);
-					if (isset($uah[0][2]) && $uah[0][2] > 1/$currencies[$i])	$currency = 1/$uah[0][2];
-				}
-			}
-//if ($old_currencies[$i][1] == 'RUB')		$currency = $currency*0.83;
-//if ($old_currencies[$i][1] == 'USD')		$currency = $currency*0.96;
-			//  extremely weak currencies are assigned the smallest value the schema permits
-			if (round($currency, 5) < 0.00001) {
-				$currency = '0.00001';
-			}
-
-			// if the currency is base_currency then set to exactly 1.00000
-			if ($i == $index_base_currency)
-				$currency = 1;
-
-			$QUERY = "UPDATE cc_currencies SET value='$currency'";
-
-			// if we've changed base_currency,  update each SQL row to reflect this
-			if (BASE_CURRENCY != $old_currencies[$i][2]) {
-				$QUERY .= ", basecurrency='" . strtoupper(BASE_CURRENCY) . "'";
-			}
-
-			$QUERY .= " , lastupdate = CURRENT_TIMESTAMP WHERE id ='" . $old_currencies[$i][0] . "'";
-			$result = $instance_table->SQLExec($DBHandle, $QUERY, 0);
-			if ($FG_DEBUG >= 1)
-				$return .= "$QUERY -> [$result]\n";
-
-			$i++;
-			if ($i > 2000)
-				return $return;
-		}
-		$return .= gettext('Success! All currencies are now updated.');
+	if (!is_array($old_currencies) || count($old_currencies) == 0) {
+		return gettext('Cannot read currencies from the database.') . $aborted;
 	}
-	return $return;
+	$has_base_currency = false;
+	$codes = array();
+	foreach ($old_currencies as $row) {
+		$codes[] = strtoupper($row[1]);
+		if (strtoupper($row[1]) == $base_currency) $has_base_currency = true;
+	}
+	if (!$has_base_currency) {
+		return gettext("Can't find our base_currency in cc_currencies.") . $aborted;
+	}
+
+	$values = currencies_fetch_values($base_currency, $codes, $error);
+	if ($values === false) return $error . $aborted;
+
+	$cases = $params = $ids = $skipped = array();
+	foreach ($old_currencies as $row) {
+		$code = strtoupper($row[1]);
+		if (!isset($values[$code])) {
+			// An old rate can only be retained when its base currency is unchanged.
+			if (strtoupper($row[2]) != $base_currency) {
+				return gettext('Cannot change the base currency: no exchange rate for') . ' ' . $code . '.' . $aborted;
+			}
+			$skipped[] = $code;
+			continue;
+		}
+		$cases[] = 'WHEN ? THEN ?';
+		$params[] = $row[0];
+		$params[] = $values[$code];
+		$ids[] = $row[0];
+	}
+	// Validate every rate before writing, and save the batch in one statement.
+	$QUERY = 'UPDATE cc_currencies SET value = CASE id ' . implode(' ', $cases) .
+		' END, basecurrency = ?, lastupdate = CURRENT_TIMESTAMP WHERE id IN (' .
+		implode(',', array_fill(0, count($ids), '?')) . ')';
+	$params[] = $base_currency;
+	$params = array_merge($params, $ids);
+	if (!$instance_table->SQLExec($DBHandle, $QUERY, 0, 0, $params)) {
+		return gettext('Cannot save exchange rates to the database.') . $aborted;
+	}
+	$success = true;
+	if (count($skipped) > 0) {
+		return gettext('Currencies updated:') . ' ' . count($ids) . '. ' .
+			gettext('No rates available; existing values and dates kept for:') . ' ' . implode(', ', $skipped) . '.';
+	}
+	return gettext('Success! All currencies are now updated.');
 }
 
 /*

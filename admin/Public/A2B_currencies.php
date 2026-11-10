@@ -44,21 +44,19 @@ if (! has_rights (ACX_BILLING)) {
 	die();	   
 }
 
-getpost_ifset(array('updatecurrency'));
-
 $HD_Form -> setDBHandler (DbConnect());
 $HD_Form -> init();
 
 /********************************* BATCH UPDATE CURRENCY TABLE ***********************************/
 $A2B -> DBHandle = $HD_Form -> DBHandle;
-if ($updatecurrency == 1) {
+if (isset($_POST['updatecurrency']) && $_POST['updatecurrency'] === '1') {
 	
 	check_demo_mode();
 	
 	$instance_table = new Table();
 	$A2B -> set_instance_table ($instance_table);
-	$return = currencies_update_yahoo($A2B -> DBHandle, $A2B -> instance_table);
-	$update_msg = '<center><font color="green"><b>'.$return.'</b></font></center>';
+	$return = currencies_update($A2B -> DBHandle, $A2B -> instance_table);
+	$update_msg = '<center><b>'.htmlspecialchars($return, ENT_QUOTES, 'UTF-8').'</b></center>';
 }
 
 if ($id!="" || !is_null($id)) {
@@ -89,7 +87,7 @@ if ($popup_select != 4)
 	<INPUT type="hidden" name="filterprefix" value="<?php echo $filterprefix?>">
 	<tr>
 	  <td align="center"  class="bgcolor_001">
-		&nbsp;<?php echo gettext("THE CURRENCY LIST IS BASED FROM YAHOO FINANCE"); ?>&nbsp;: 
+		&nbsp;<a href="https://frankfurter.dev/">Frankfurter</a>&nbsp;:
 			<input class="form_input_button"  value=" <?php echo gettext("CLICK HERE TO UPDATE NOW");?>  " type="submit">
 		</td>
 	</tr>

@@ -177,8 +177,8 @@ if (SHOW_HELP) {
 
 	$CC_help_edit_cid = create_help(gettext("Outbound CID offers customers a number which will be selected randomly for a ratecard for outgoing calls"), 'EditCID', true);
 
-	$CC_help_currency = create_help(gettext("Currency data is automatically updated from Yahoo Financial.") .
-	'<br>' . gettext("For more information please visit the website http://finance.yahoo.com.") .
+	$CC_help_currency = create_help(gettext("Exchange rates are provided by Frankfurter and refreshed daily.") .
+	'<br><a href="https://frankfurter.dev/">Frankfurter</a>' .
 	'<br>' . gettext("The list below is based on your currency :") . ' <b>' . BASE_CURRENCY . '</b>', 'CurrencyList');
 
 	$CC_help_list_didgroup = create_help(gettext("DID (or DDI) Group list. DID can be chosen by customers through the customer interface."), 'ListDIDGroup');

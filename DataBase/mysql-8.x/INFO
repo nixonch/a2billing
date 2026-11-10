@@ -25,3 +25,33 @@ Run the commands from the project root. The database must be empty.
    dbtype = mysql
 
    Use the database name, application username and password chosen in step 1.
+
+Currency catalog
+----------------
+
+Initial currency data uses the ISO 4217 monetary list published by SIX on
+2026-09-17. Funds, metals, special units and the internal VED redenomination
+code are excluded; VES remains the code for current Venezuelan transactions
+under SIX Amendment 170. Rates are Frankfurter reference rates dated
+2026-11-09/10 in USD.
+Run Cronjobs/currencies_update.php after configuring the installation to
+refresh rates in the configured base currency.
+Currency rates use DECIMAL(17,10) so weak currencies are not rounded to zero
+or forced to an inaccurate minimum rate. The migration expands older
+cc_currencies.value columns before saving the new rates.
+
+For an existing MySQL installation, preview and apply the catalog migration:
+
+    php DataBase/mysql-8.x/sync-currencies.php
+    php DataBase/mysql-8.x/sync-currencies.php --apply
+
+The migration fetches current rates, preserves IDs for existing currencies,
+adds missing currencies, and removes obsolete currencies and metals only
+after checking currency references. It stops without changing data if any
+currency to remove is still used. --config=/path/to/a2billing.conf selects
+another installation. Run under the same account as the currency cron job.
+
+Sources:
+https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml
+https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/amendments/dl_currency_iso_amendment_170.pdf
+https://frankfurter.dev/

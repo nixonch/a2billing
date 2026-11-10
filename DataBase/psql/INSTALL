@@ -17,3 +17,10 @@
 	psql -f UPDATE-a2billing-v1.4.1-to-v1.4.2.sql -U a2billinguser mya2billing
 	psql -f UPDATE-a2billing-v1.4.2-to-v1.4.3.sql -U a2billinguser mya2billing
 	so on...
+
+The initial currency catalog contains the same 154 monetary currencies as
+the current MySQL installer (SIX ISO 4217 list dated 2026-09-17). Funds,
+metals, special units and the internal VED code are excluded. Initial rates
+are Frankfurter reference rates dated 2026-11-09/10, expressed in USD, with
+ten decimal places. Refresh rates with Cronjobs/currencies_update.php after
+configuring the installation's base currency.

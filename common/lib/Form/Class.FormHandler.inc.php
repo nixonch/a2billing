@@ -841,6 +841,7 @@ class FormHandler
 		}
 		$page = preg_replace('/\.php$/', '', basename($_SERVER['PHP_SELF']));
 		$operation_parameters = array(
+			'A2B_currencies' => array('updatecurrency'),
 			'A2B_entity_card_multi' => array('nb_to_create', 'gen_id'),
 			'A2B_entity_voucher_multi' => array('choose_list', 'gen_id'),
 			'A2B_entity_did' => array('confirm_buy_did', 'action_release', 'choose_did', 'choose_did_rate', 'destination', 'new_did_page'),
