@@ -26,7 +26,7 @@ var refreshInsideCallback = function (payload) {
     var id = payload.id ?? null;
     var className = payload.className ?? null;
 var link = payload.link ?? location.href;
-var removeParams = [
+var removeParams = payload.listParameters ? [] : [
     'popup_select',
     'add_callerid',
     'idcust',

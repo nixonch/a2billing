@@ -45,8 +45,12 @@ if (($form_action=='ask-edit') || ($form_action=='ask-add') || ($form_action=='a
 }
 
 $HD_Form_c -> FG_DEBUG = 0;
-if ($wantinclude==1) $HD_Form_c -> FG_TABLE_DEFAULT_ORDER = $order;
-else $HD_Form_c -> FG_TABLE_DEFAULT_ORDER = "creationdate";
+if ($wantinclude == 1) {
+	$HD_Form_c -> FG_LIST_ID = 'charge-list';
+	$HD_Form_c -> FG_TABLE_DEFAULT_ORDER = $order;
+} else {
+	$HD_Form_c -> FG_TABLE_DEFAULT_ORDER = "creationdate";
+}
 
 $HD_Form_c -> FG_TABLE_DEFAULT_SENS = "DESC";
 $HD_Form_c -> FG_TABLE_CLAUSE = " cc_card.id=id_cc_card ";

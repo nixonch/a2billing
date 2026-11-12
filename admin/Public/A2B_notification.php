@@ -34,6 +34,7 @@
 
 include ("../lib/admin.defines.php");
 include ("../lib/admin.module.access.php");
+include ("../lib/Form/Class.FormHandler.inc.php");
 include ("../lib/admin.smarty.php");
 
 if (!$ACXACCESS) {
@@ -46,7 +47,9 @@ getpost_ifset(array (
 	'id',
 	'page',
 	'action',
-	'ids'
+	'ids',
+	'form_action',
+	'popup_select'
 ));
 
 if ($action=="viewall"&& !empty($ids)) {
@@ -78,21 +81,6 @@ if (!empty ($action) && is_numeric($id)) {
 				echo "false";
 			die();
 			break;
-		
-
-		case "delete" :
-			if (has_rights(ACX_DELETE_NOTIFICATIONS)) {
-				$return = NotificationsDAO :: DelNotification($id);
-				if ($return)
-					echo "true";
-				else
-					echo "false";
-				die();
-			} else {
-				echo "false";
-				die();
-			}
-			break;
 		default :
 			die();
 			break;
@@ -110,6 +98,27 @@ if (!empty ($action) && is_numeric($id)) {
 	die();
 }
 
+$HD_Form = new FormHandler("cc_notification", gettext("Notification"));
+$HD_Form->FG_DELETION = has_rights(ACX_DELETE_NOTIFICATIONS);
+$HD_Form->FG_ENABLE_LOG = 0;
+$HD_Form->AddEditElement(gettext("DATE"), "date", "", "INPUT", "size=25", null, null, null, null, null, null, null, null);
+$HD_Form->FieldEditElement("date");
+$HD_Form->FG_INTRO_TEXT_ASK_DELETION = gettext("Do you want delete this notification ?");
+$HD_Form->FG_FK_DELETE_ALLOWED = true;
+$HD_Form->FG_FK_TABLENAMES = array("cc_notification_admin");
+$HD_Form->FG_FK_EDITION_CLAUSE = array("id_notification");
+$HD_Form->setDBHandler(DbConnect());
+$HD_Form->init();
+
+if (in_array($form_action, array('ask-delete', 'ask-del-confirm', 'delete'), true)) {
+	if (!is_numeric($id)) die(gettext("error deletion"));
+	$HD_Form->FG_EDITION_CLAUSE = str_replace('%id', $id, $HD_Form->FG_EDITION_CLAUSE);
+	$list = $HD_Form->perform_action($form_action);
+	$smarty->display('main.tpl');
+	$HD_Form->create_form($form_action, $list);
+	exit;
+}
+
 if(empty($page))$page=1;
 
 $DBHandle = DbConnect();
@@ -123,6 +132,7 @@ echo $CC_help_notifications;
 $nb_by_page = 15;
 $nb_total = NotificationsDAO::getNbNotifications();
 $nb_page = ceil($nb_total/$nb_by_page);
+$page = max(1, min((int)$page, max(1, $nb_page)));
 $list_notifications = NotificationsDAO::getNotifications($_SESSION['admin_id'],(($page-1)*$nb_by_page),$nb_by_page);
 
 ?>
@@ -135,7 +145,10 @@ $list_notifications = NotificationsDAO::getNotifications($_SESSION['admin_id'],(
 }
 </style>
 
-<?php if((is_array($list_notifications) ? sizeof($list_notifications) : 0)>0 && $list_notifications[0]!=null) {  ?>
+<div id="main-list">
+<?php
+$js_id_array = array();
+if((is_array($list_notifications) ? sizeof($list_notifications) : 0)>0 && $list_notifications[0]!=null) {  ?>
 <table width="90%" style ="margin-left:auto;margin-right:auto;" cellspacing="2" cellpadding="2" border="0">
 	<tr>
 		<td colspan="6" align="center">
@@ -179,7 +192,6 @@ $list_notifications = NotificationsDAO::getNotifications($_SESSION['admin_id'],(
  
 	<?php 
 		$i=0;
-		$js_id_array= array();
 		foreach ($list_notifications as $notification) {
 			if($notification->getNew()) $js_id_array[] = (int) $notification->getId();
 
@@ -218,7 +230,7 @@ $list_notifications = NotificationsDAO::getNotifications($_SESSION['admin_id'],(
 				<?php if($notification->getNew()){ ?>
 					<strong style="font-size:8px; color:#B00000; background-color:white; border:solid 1px;"> &nbsp;NEW&nbsp;</strong>
 				<?php }elseif(has_rights (ACX_DELETE_NOTIFICATIONS)){ ?>
-					<img id=" <?php echo $notification->getId(); ?>" onmouseover="this.style.cursor='pointer'" class="delete" src="<?php echo Images_Path ?>/delete.png" title="<?php echo gettext("Delete this Notification")?>" alt="<?php echo gettext("Delete this Notification")?>" border="0"/>
+					<img data-id="<?php echo $notification->getId(); ?>" onmouseover="this.style.cursor='pointer'" class="delete" src="<?php echo Images_Path ?>/delete.png" title="<?php echo gettext("Delete this Notification")?>" alt="<?php echo gettext("Delete this Notification")?>" border="0"/>
 				<?php } ?>
 				</td>
 			</tr>
@@ -258,38 +270,42 @@ $list_notifications = NotificationsDAO::getNotifications($_SESSION['admin_id'],(
 <?php
 }
 
-$js_id_array_json = json_encode($js_id_array);
+?>
+<input type="hidden" id="notification-page" value="<?php echo $page; ?>">
+<input type="hidden" id="notification-ids" value="<?php echo htmlspecialchars(json_encode($js_id_array), ENT_QUOTES, 'UTF-8'); ?>">
+</div>
+<?php
 
 $smarty->display( 'footer.tpl');
 
 ?>
 <script type="text/javascript">
-var page = <?php echo $page?>;
-var ids = "<?php echo $js_id_array_json?>";
 $(document).ready(function () {
 
-	$('.newrecord').click(function () {
+	$(document).on('click', '.newrecord', function () {
 		$.get("A2B_notification.php", { id: ""+ this.id, action: "view" },
 			  function(data){
 			    if(data=="true") location.reload(true);
 			  });			
         });
 
-	$('#viewall').click(function () {
-		$.get("A2B_notification.php", { page: ""+ page, action: "viewall", ids : ids },
+	$(document).on('click', '#viewall', function () {
+		$.get("A2B_notification.php", { page: $('#notification-page').val(), action: "viewall", ids: $('#notification-ids').val() },
 			  function(data){
 			    if(data=="true") location.reload(true);
 			  });
         });
 
-	$('.delete').click(function () {
-			if (confirm("<?php echo gettext("Do you want delete this notification ?") ?>")) { 
-				$.get("A2B_notification.php", { id: ""+ this.id, action: "delete" },
-					  function(data){
-					      location.reload(true);
-					  });	
-			}		
-	    });
+	$(document).on('click', '.delete', function (event) {
+		alertBase(<?php echo json_encode($HD_Form->get_deletion_link(), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?> + this.getAttribute('data-id'),
+			<?php echo json_encode(gettext("Delete this Notification"), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+			true, false, '#c33d3c', event.pageX-55, event.pageY-100, 'UR', null, null, null, null, null,
+			function (payload) {
+				if (payload.type !== 'refreshInside') return false;
+				return refreshInsideCallback({type: 'refreshInside', link: <?php echo json_encode($_SERVER['PHP_SELF'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+					listParameters: {page: $('#notification-page').val()}});
+			});
+	});
 	$('.view_comment_icon').click(function () {
 		  $("#"+this.id+":checkbox").attr("checked", true);
 		  $("#action").val('view_comment')

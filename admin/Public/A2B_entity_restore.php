@@ -59,14 +59,14 @@ if (!isset($form_action))  $form_action="list"; //ask-add
 if (!isset($action)) $action = $form_action;
 
 if ($form_action == "delete"){
-	$instance_table = new Table($HD_Form -> FG_TABLE_NAME, null);
+	$instance_table = new Table($HD_Form -> FG_TABLE_NAME, 'path');
+	$backup = $instance_table->Get_list($HD_Form->DBHandle, $HD_Form->FG_EDITION_CLAUSE, null, null, null, null, 1, 0);
+	if (!$backup) die(gettext("error deletion"));
 	$res_delete = $instance_table -> Delete_table ($HD_Form -> DBHandle, $HD_Form ->FG_EDITION_CLAUSE, null);
-	if (!$res_delete){  
-		echo "error deletion";
-        }else{
-		unlink($path);
-		$HD_Form->finish_popup_delete($res_delete);
-        }
+	if (!$res_delete) die(gettext("error deletion"));
+	unlink($backup[0][0]);
+	$HD_Form->finish_popup_delete($res_delete);
+	$action = $form_action = "list";
 }
 						
 if ($form_action == "restore"){

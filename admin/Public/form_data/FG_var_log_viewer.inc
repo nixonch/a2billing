@@ -39,6 +39,7 @@ $HD_Form = new FormHandler("cc_system_log csl LEFT JOIN cc_ui_authen cua ON csl.
 
 $HD_Form -> FG_DEBUG = 0;
 $HD_Form -> FG_TABLE_ID = "id";
+$HD_Form -> FG_QUERY_EDITION = "csl.id";
 //$HD_Form -> FG_TABLE_DEFAULT_ORDER = "id";
 $HD_Form -> FG_TABLE_DEFAULT_SENS = "DESC";
 
@@ -103,6 +104,7 @@ $HD_Form -> AddViewElement(gettext("DATE"), "creationdate", "14%", "center", "so
 $HD_Form -> FieldViewElement ('id, IF(agent=2,iduser,cua.login), loglevel, action, description, tablename, pagename, ipaddress, creationdate');
 $HD_Form -> CV_NO_FIELDS  = gettext("THERE IS NO LOG AVAILABLE1!");
 $HD_Form -> FG_INTRO_TEXT_EDITION = "";
+$HD_Form -> FG_CAPCHA_POPUP = 'ID |col0|';
 $HD_Form -> FG_EDITION = false;
 $HD_Form -> FG_DELETION = true;
 $HD_Form -> FG_ADDITION = false;

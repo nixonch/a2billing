@@ -83,7 +83,7 @@ if (isset($form_action) && $form_action == 'auto-create-sip') {
 }
 
 $HD_Form -> FG_EDITION_LINK	       = $_SERVER['PHP_SELF']."?form_action=ask-edit&current_page=$current_page&filterprefix=$filterprefix&id=";
-$HD_Form -> FG_DELETION_LINK	= "url:".$_SERVER['PHP_SELF']."?form_action=ask-delete&current_page=$current_page&filterprefix=$filterprefix&popup_select=4&id=";
+//$HD_Form -> FG_DELETION_LINK	= "url:".$_SERVER['PHP_SELF']."?form_action=ask-delete&current_page=$current_page&filterprefix=$filterprefix&popup_select=4&id=";
 
 /********************************* BATCH UPDATE ***********************************/
 getpost_ifset(array('popup_formname', 'popup_fieldname', 'upd_inuse', 'upd_status', 'upd_language', 'upd_tariff', 'upd_credit',

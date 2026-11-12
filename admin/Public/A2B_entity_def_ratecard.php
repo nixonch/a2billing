@@ -196,7 +196,8 @@ if ($batchupdate == 1 && is_array($check)) {
 /********************************* END BATCH UPDATE ***********************************/
 
 $HD_Form -> FG_EDITION_LINK  = $_SERVER['REDIRECT_URL']."?form_action=ask-edit&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&filterprefix2=$filterprefix2&id=";
-$HD_Form -> FG_DELETION_LINK = 'url:'.$_SERVER['REDIRECT_URL']."?form_action=ask-delete&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&filterprefix2=$filterprefix2&popup_select=4&id=";
+//$HD_Form -> FG_DELETION_LINK = 'url:'.$_SERVER['REDIRECT_URL']."?form_action=ask-delete&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&filterprefix2=$filterprefix2&popup_select=4&id=";
+$HD_Form -> FG_DELETION_LINK = 'url:'.$_SERVER['REDIRECT_URL']."?atmenu=$atmenu&id=";
 
 if ($id != "" || !is_null($id)) {
 	$HD_Form->FG_EDITION_CLAUSE = str_replace("%id", "$id", $HD_Form->FG_EDITION_CLAUSE);

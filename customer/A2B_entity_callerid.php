@@ -100,7 +100,7 @@ $HD_Form -> init();
 
 if ($idcust) {
     $HD_Form -> FG_EDITION_LINK  = $PHP_SELF."?form_action=ask-edit&popup_select=$popup_select&idcust=$idcust&id=";
-    $HD_Form -> FG_DELETION_LINK = $PHP_SELF."?form_action=ask-delete&popup_select=$popup_select&idcust=$idcust&id=";
+//  $HD_Form -> FG_DELETION_LINK = $PHP_SELF."?form_action=ask-delete&popup_select=$popup_select&idcust=$idcust&id=";
 }
 
 // My Code for Where Cluase

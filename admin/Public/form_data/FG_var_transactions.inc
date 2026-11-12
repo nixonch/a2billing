@@ -39,6 +39,7 @@ getpost_ifset(array('id', 'customers_id', 'customers_name', 'customers_email_add
 $HD_Form = new FormHandler("cc_payments","Transactions");
 
 $HD_Form -> FG_DEBUG = 0;
+$HD_Form -> FG_QUERY_EDITION = "id";
 $HD_Form -> FG_TABLE_DEFAULT_ORDER = "id";
 $HD_Form -> FG_TABLE_DEFAULT_SENS = "DESC";
 

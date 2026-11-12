@@ -50,11 +50,12 @@ $HD_Form -> init();
 if (!isset($form_action))  $form_action="list"; //ask-add
 if (!isset($action)) $action = $form_action;
 
-if($form_action=="ask-delete" && is_numeric($id)) {
+if ($form_action == "delete") {
+    if (!is_numeric($id)) die(gettext("error deletion"));
     $QUERY = "DELETE FROM cc_system_log WHERE id = ".$id;
     $result_query = @ $DBHandle->Execute($QUERY);
+    if (!$result_query) die(gettext("error deletion"));
     $HD_Form->finish_popup_delete($result_query);
-    if (!$result_query) echo gettext("error deletion");
     $action = $form_action = "list";
     unset($id);
 }

@@ -17,6 +17,10 @@ $list_parameters = $this->get_list_parameters();
 $legacy_list_context = $this->is_legacy_list_context();
 $refresh_processed = $list_parameters;
 $current_page = $this->CV_CURRENT_PAGE;
+$deletion_refresh = array('type' => 'refreshInside', 'link' => $_SERVER['PHP_SELF'],
+    'id' => $this->FG_LIST_ID, 'listParameters' => $list_parameters);
+$deletion_callback = "function(payload){if(payload.type !== 'refreshInside') return false; return refreshInsideCallback("
+    .json_encode($deletion_refresh, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP).");}";
 ?>
 <script type="text/JavaScript">
 var refreshProcessed = <?= json_encode($refresh_processed, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
@@ -29,9 +33,10 @@ function openURLFilter(theLINK)
 }
 </script>
 <?php
-if (false && !@$processed['popup_select']) {
-?>.
+if ($processed['popup_select'] && $this->FG_DELETION) {
+?>
 <script language="JavaScript" src="./javascript/popupResult.js"></script>
+<script language="JavaScript" src="./javascript/alertBase.js"></script>
 <?php
 }
 if (in_array($processed['popup_select'],[1,2,3])) {
@@ -54,7 +59,7 @@ function sendValue(selvalue, othervalue = null) {
 <?php
 }
 ?>
-<div id="main-list" data-current-page="<?php echo (int)$current_page; ?>">
+<div id="<?php echo htmlspecialchars($this->FG_LIST_ID, ENT_QUOTES, 'UTF-8'); ?>" data-current-page="<?php echo (int)$current_page; ?>">
 <div style="" align="center">
 <table width="<?php echo $this->FG_VIEW_TABLE_WITDH; ?>" border="0" cellpadding="0" cellspacing="0">
 <?php
@@ -71,14 +76,7 @@ if( !$processed['popup_select'] && ($this->FG_LIST_ADDING_BUTTON1 || $this->FG_L
 	<?php
 } //END IF
 
-if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['message'] == 'delsuccess') {
-?>
-<script type="text/javascript">
-    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*');
-    window.parent.postMessage({action:'closeAlert'},'*')
-</script>
-<?php
-} else if (is_array($list) && count($list)>0){
+if (is_array($list) && count($list)>0){
 	$ligne_number=0;
 ?>
 
@@ -435,10 +433,15 @@ if ($legacy_list_context && $processed['popup_select'] == 4 && $processed['messa
 								$check_eval = $this->evaluateViewExpression($condition_eval, $list[$ligne_number], true);
 							}
 							if ($check || $check_eval) {
-							    if (strpos($this->FG_DELETION_LINK,'url:')===0) {
-							?><a href="javascript:;" onClick="alertBase('<?= $this->FG_DELETION_LINK . $list[$ligne_number][$this->FG_NB_TABLE_COL] ?>','<?= $capcha ?>',true,false,'#c33d3c',event.pageX-55,event.pageY-100,'UR',null,null,null,null,null,refreshInsideCallback)"><img src="<?php echo Images_Path_Main;?>/<?php echo $this->FG_DELETION_IMG?>" border="0" title="<?php echo $this->FG_DELETE_ALT?>" alt="<?php echo $this->FG_DELETE_ALT?>"></a><?php
+							    $deletion_link = $this->get_deletion_link();
+							    if (strpos($deletion_link,'url:')===0) {
+							        $deletion_caption = defined('CUSTOMER_INPUT') ? json_decode('"'.$capcha.'"') : $capcha;
+							        $deletion_onclick = 'alertBase('.json_encode($deletion_link.$list[$ligne_number][$this->FG_NB_TABLE_COL], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP)
+							            .','.json_encode($deletion_caption, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP)
+							            .",true,false,'#c33d3c',event.pageX-55,event.pageY-100,'UR',null,null,null,null,null,".$deletion_callback.')';
+							?><a href="javascript:;" onClick="<?php echo htmlspecialchars($deletion_onclick, ENT_QUOTES, 'UTF-8'); ?>"><img src="<?php echo Images_Path_Main;?>/<?php echo $this->FG_DELETION_IMG?>" border="0" title="<?php echo $this->FG_DELETE_ALT?>" alt="<?php echo $this->FG_DELETE_ALT?>"></a><?php
 							    } else {
-							?><a href="<?php echo $this->FG_DELETION_LINK?><?php echo $list[$ligne_number][$this->FG_NB_TABLE_COL]?>"><img src="<?php echo Images_Path_Main;?>/<?php echo $this->FG_DELETION_IMG?>" border="0" title="<?php echo $this->FG_DELETE_ALT?>" alt="<?php echo $this->FG_DELETE_ALT?>"></a><?php
+							?><a href="<?php echo $deletion_link?><?php echo $list[$ligne_number][$this->FG_NB_TABLE_COL]?>"><img src="<?php echo Images_Path_Main;?>/<?php echo $this->FG_DELETION_IMG?>" border="0" title="<?php echo $this->FG_DELETE_ALT?>" alt="<?php echo $this->FG_DELETE_ALT?>"></a><?php
 							    }
 							?><div style="width:20px"></div><?php
 							}

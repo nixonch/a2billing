@@ -144,7 +144,8 @@ if ($atmenu == 'sip' && ($form_action == 'ask-add-extension' || $form_action == 
 }
 
 $HD_Form -> FG_EDITION_LINK	= $_SERVER['PHP_SELF']."?form_action=ask-edit&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&filterprefix2=$filterprefix2&id=";
-$HD_Form -> FG_DELETION_LINK	= "url:".$_SERVER['PHP_SELF']."?popup_select=4&form_action=ask-delete&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&filterprefix2=$filterprefix2&id=";
+//$HD_Form -> FG_DELETION_LINK   = "url:".$_SERVER['PHP_SELF']."?popup_select=4&form_action=ask-delete&atmenu=$atmenu&current_page=$current_page&filterprefix=$filterprefix&filterprefix2=$filterprefix2&id=";
+$HD_Form -> FG_DELETION_LINK	= "url:".$_SERVER['PHP_SELF']."?atmenu=$atmenu&id=";
 
 /********************************* ADD SIP / IAX FRIEND ***********************************/
 getpost_ifset(array("id_cc_card", "cardnumber", "useralias"));

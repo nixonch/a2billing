@@ -50,6 +50,7 @@ class FormHandler
 
 	var $FG_FILTER_SEARCH_TABLE_WITDH = '90%';
 	var $FG_VIEW_TABLE_WITDH = '100%';
+	var $FG_LIST_ID = 'main-list';
 	var $FG_ACTION_SIZE_COLUMN = '25%';
 	/**
     * Sets the debug output (1 = low, 2 = Normal, 3 = High). Default value is "0" .
@@ -140,6 +141,10 @@ class FormHandler
     */
 	var $FG_ADDITION=false;
 	var $FG_DELETION=false;
+	// Show the confirmation form before deleting a record.
+	var $FG_DELETION_CONFIRMATION = true;
+	// Show the success notice instead of closing the popup immediately.
+	var $FG_DELETION_NOTIFICATION = false;
 	var $FG_INFO=false;
 	var $FG_EDITION=false;
 	// Opt in only for forms that do not open another alertBase picker.
@@ -635,22 +640,32 @@ class FormHandler
 		return $form_action !== 'delete' && $this->is_popup_delete_request($form_action);
 	}
 
+	function get_deletion_link()
+	{
+		$parts = explode('?', $this->FG_DELETION_LINK, 2);
+		parse_str($parts[1], $parameters);
+		$parameters = array_replace($parameters, $this->get_list_parameters());
+		$parameters['form_action'] = $this->FG_DELETION_CONFIRMATION ? 'ask-delete' : 'delete';
+		$parameters['popup_select'] = 4;
+		unset($parameters['id']);
+		return $parts[0].'?'.http_build_query($parameters).'&id=';
+	}
+
 	function is_popup_delete_request($form_action = null)
 	{
 		$processed = $this->getProcessed();
 		if ($form_action === null) $form_action = isset($processed['form_action']) ? $processed['form_action'] : null;
 		return in_array($form_action, array('ask-delete', 'ask-del-confirm', 'delete'), true)
-			&& isset($processed['popup_select']) && (string)$processed['popup_select'] === '4'
-			&& !$this->is_legacy_list_context();
+			&& isset($processed['popup_select']) && (string)$processed['popup_select'] === '4';
 	}
 
 	/** Complete only a confirmed deletion, including pages with their own DELETE. */
 	function finish_popup_delete($result)
 	{
-		if (!$result || !$this->is_popup_delete_request('delete')) return;
 		$processed = $this->getProcessed();
+		if (!$result || !isset($processed['popup_select']) || (string)$processed['popup_select'] !== '4') return;
 		$message = str_replace(array('%id', '%table'), array($processed['id'], $this->FG_TABLE_NAME), $this->FG_INTRO_TEXT_DELETION);
-		$this->finish_popup_result($message);
+		$this->finish_popup_result($message, null, !$this->FG_DELETION_NOTIFICATION);
 	}
 
 	function is_popup_add_request($form_action = null)
@@ -673,12 +688,21 @@ class FormHandler
 		$this->finish_popup_result($message_html === null ? $this->FG_TEXT_ADITION_CONFIRMATION : $message_html, $refresh_payload);
 	}
 
-	private function finish_popup_result($message_html, $refresh_payload = null)
+	private function finish_popup_result($message_html, $refresh_payload = null, $close_immediately = false)
 	{
 		// Some entities render main.tpl before perform_action(). Discard that output.
 		if ($this->popup_result_output_level !== null) {
 			while (ob_get_level() > $this->popup_result_output_level) ob_end_clean();
 			$this->popup_result_output_level = null;
+		}
+		if ($close_immediately) {
+?>
+<script type="text/javascript">
+    window.parent.postMessage({action:'popupResult',payload:{type:'refreshInside'}},'*');
+    window.parent.postMessage({action:'closeAlert'},'*');
+</script>
+<?php
+			exit;
 		}
 		global $smarty;
 		a2b_smarty_popup_result($smarty, $message_html, $refresh_payload);
@@ -747,7 +771,7 @@ class FormHandler
 				}
 			}
 		}
-		$this -> FG_DELETION_LINK	= "url:".$PHP_SELF."?form_action=ask-delete&popup_select=4".$ext_link."&id=";
+		$this -> FG_DELETION_LINK	= "url:".$PHP_SELF."?form_action=ask-delete&popup_select=4&id=";
 		
 		$this -> FG_DELETE_ALT = gettext("Delete this ").$this -> FG_INSTANCE_NAME;
 		$this -> FG_EDIT_ALT = gettext("Edit this ").$this -> FG_INSTANCE_NAME;
@@ -820,7 +844,7 @@ class FormHandler
 	function get_list_parameters()
 	{
 		$parameters = $this->getProcessed();
-		if ($this->is_legacy_list_context()) return $parameters;
+		if ($this->is_legacy_list_context() && !$this->FG_DELETION) return $parameters;
 
 		// getProcessed() escapes SQL values; navigation must round-trip the input once.
 		array_walk_recursive($parameters, function (&$value) {
@@ -1447,6 +1471,15 @@ class FormHandler
 		$this->edition_popup_saved = false;
 		//security check
 		global $PHP_SELF;
+		$processed = $this->getProcessed();
+		if (in_array($form_action, array('ask-delete', 'delete'), true) && in_array($processed['id'], $this->FG_DELETION_FORBIDDEN_ID)) {
+			if (!empty($this->FG_GO_LINK_AFTER_ACTION_DELETE)) {
+				Header ("Location: ".$this->FG_GO_LINK_AFTER_ACTION_DELETE.$processed['id']);
+			} else {
+				Header ("Location: ".$PHP_SELF);
+			}
+			die();
+		}
 		switch ($form_action) {
 			case "ask-add":
 			case "add":
@@ -1480,21 +1513,15 @@ class FormHandler
 			   break;
 			case "delete":
 			   $this -> perform_delete($form_action);
+			   if ($this->RESULT_QUERY && !$this->FG_DELETION_NOTIFICATION) {
+				   $form_action = $this->_vars['form_action'] = $this->_processed['form_action'] = 'list';
+			   }
 			   break;
 		}
 				
 		$processed = $this->getProcessed();  //$processed['firstname']
 		if ($this->edition_popup_saved) return array();
 
-		if ($form_action == "ask-delete" && in_array($processed['id'],$this->FG_DELETION_FORBIDDEN_ID) ){
-			if(!empty($this->FG_GO_LINK_AFTER_ACTION_DELETE)){
-				Header ("Location: ".$this->FG_GO_LINK_AFTER_ACTION_DELETE.$processed['id']);
-			}else{
-				Header ("Location: ". $PHP_SELF);
-			}
-			die();
-		}
-		
 		if ( $form_action == "list" || $form_action == "edit" || $form_action == "ask-delete" ||
 			 $form_action == "ask-edit" || $form_action == "add-content" || $form_action == "del-content" || $form_action == "update-content" || $form_action == "ask-del-confirm") {
 			include_once (FSROOT."lib/Class.Table.php");
@@ -2163,10 +2190,10 @@ class FormHandler
 		$this->FG_INTRO_TEXT_DELETION = str_replace("%id", $processed['id'], $this->FG_INTRO_TEXT_DELETION);
 		$this->FG_INTRO_TEXT_DELETION = str_replace("%table", $this->FG_TABLE_NAME, $this->FG_INTRO_TEXT_DELETION);
 		$this->finish_popup_delete($this->RESULT_QUERY);
-		if (($this->RESULT_QUERY || $this->is_legacy_list_context()) && isset($this->FG_GO_LINK_AFTER_ACTION_DELETE)) {
+		if ($this->RESULT_QUERY && !$this->FG_DELETION_NOTIFICATION && isset($this->FG_GO_LINK_AFTER_ACTION_DELETE)) {
 			if ($this->FG_DEBUG == 1)  echo "<br> GOTO ; ".$this->FG_GO_LINK_AFTER_ACTION_DELETE.$processed['id'];
 			if ($this->FG_GO_LINK_AFTER_ACTION_DELETE){
-				$ext_link ='&message=delsuccess';
+				$ext_link = '';
 				if (strpos($this->FG_GO_LINK_AFTER_ACTION_DELETE,'popup_select')===false && is_numeric($processed['popup_select']))
 												$ext_link.="&popup_select=".$processed['popup_select'];
 				if (is_numeric($processed['current_page']))			$ext_link.="&current_page=".$processed['current_page'];
